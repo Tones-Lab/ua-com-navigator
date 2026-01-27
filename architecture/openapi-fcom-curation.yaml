@@ -1,0 +1,942 @@
+openapi: 3.0.0
+info:
+  title: FCOM Curation & Management API
+  version: 1.0.0
+  description: |
+    Centralized REST API for managing FCOM rule files across multiple Unified Assurance (UA) server environments.
+    Interfaces with each UA server's native REST API and SVN version control system.
+
+servers:
+  - url: https://fcom-curator.example.com/api/v1
+    description: Production API
+
+tags:
+  - name: Authentication
+    description: Session and credential management
+  - name: Server Configuration
+    description: UA server instance management
+  - name: File Browser
+    description: Listing and navigation of FCOM files
+  - name: File Editor
+    description: Read, validate, and edit FCOM JSON files
+  - name: Version Control
+    description: SVN diff, history, and commit operations
+  - name: Testing
+    description: Test trap definitions and event configurations
+  - name: Promotion
+    description: Cross-server file promotion and comparison
+  - name: Schema
+    description: FCOM JSON schema and validation
+
+paths:
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Authenticate and create a session
+      description: |
+        Supports two authentication methods against the specified UA server:
+        1. Basic Auth: username + password (HTTP)
+        2. Certificate Auth: TLS certificate + key pair
+        Returns a session token and HTTP-only cookie for subsequent requests.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - type: object
+                  required:
+                    - server_id
+                    - auth_type
+                    - username
+                    - password
+                  properties:
+                    server_id:
+                      type: string
+                      example: "prod-ua-01"
+                      description: Unique identifier for the UA server instance
+                    auth_type:
+                      type: string
+                      enum: [basic]
+                      description: Authentication method
+                    username:
+                      type: string
+                      example: "api"
+                      description: Username on the target UA server
+                    password:
+                      type: string
+                      format: password
+                      description: Password for the user on the target UA server
+                - type: object
+                  required:
+                    - server_id
+                    - auth_type
+                    - cert_path
+                    - key_path
+                    - ca_cert_path
+                  properties:
+                    server_id:
+                      type: string
+                    auth_type:
+                      type: string
+                      enum: [certificate]
+                      description: Certificate-based TLS authentication
+                    cert_path:
+                      type: string
+                      example: "/etc/ssl/User-api.crt"
+                      description: Path to user certificate file
+                    key_path:
+                      type: string
+                      example: "/etc/ssl/User-api.key"
+                      description: Path to private key file
+                    ca_cert_path:
+                      type: string
+                      example: "/etc/ssl/BundleCA.crt"
+                      description: Path to CA certificate bundle
+      responses:
+        '200':
+          description: Session created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  session_id:
+                    type: string
+                    description: Opaque session token (also set as HTTP-only cookie)
+                  user:
+                    type: string
+                  server_id:
+                    type: string
+                  auth_method:
+                    type: string
+                    enum: [basic, certificate]
+                  expires_at:
+                    type: string
+                    format: date-time
+        '401':
+          description: Invalid credentials or certificate
+        '400':
+          description: Missing required fields or invalid server_id
+
+  /auth/logout:
+    post:
+      tags:
+        - Authentication
+      summary: Terminate session
+      security:
+        - sessionCookie: []
+      responses:
+        '204':
+          description: Session terminated
+
+  /auth/session:
+    get:
+      tags:
+        - Authentication
+      summary: Get current session details
+      security:
+        - sessionCookie: []
+      responses:
+        '200':
+          description: Current session info
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  session_id:
+                    type: string
+                  user:
+                    type: string
+                  server_id:
+                    type: string
+                  server_name:
+                    type: string
+                  expires_at:
+                    type: string
+                    format: date-time
+
+  /servers:
+    get:
+      tags:
+        - Server Configuration
+      summary: List all configured UA server instances
+      security:
+        - sessionCookie: []
+      responses:
+        '200':
+          description: List of available servers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    server_id:
+                      type: string
+                      example: "prod-ua-01"
+                    server_name:
+                      type: string
+                      example: "Production UA Primary"
+                    hostname:
+                      type: string
+                      example: "ua.prod.example.com"
+                    environment:
+                      type: string
+                      enum: [dev, test, staging, prod]
+                    svn_url:
+                      type: string
+                      example: "svn://ua.prod.example.com/fcom"
+
+  /servers/{server_id}/switch:
+    post:
+      tags:
+        - Server Configuration
+      summary: Switch session context to a different server
+      description: |
+        Changes the active server for the current session.
+        If unsaved edits exist, the caller must handle the warning and save/discard before switching.
+        Supports both basic auth and certificate-based auth methods.
+      security:
+        - sessionCookie: []
+      parameters:
+        - name: server_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - type: object
+                  required:
+                    - auth_type
+                    - username
+                    - password
+                  properties:
+                    auth_type:
+                      type: string
+                      enum: [basic]
+                    username:
+                      type: string
+                    password:
+                      type: string
+                      format: password
+                - type: object
+                  required:
+                    - auth_type
+                    - cert_path
+                    - key_path
+                  properties:
+                    auth_type:
+                      type: string
+                      enum: [certificate]
+                    cert_path:
+                      type: string
+                    key_path:
+                      type: string
+                    ca_cert_path:
+                      type: string
+      responses:
+        '200':
+          description: Session context switched
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  session_id:
+                    type: string
+                  user:
+                    type: string
+                  server_id:
+                    type: string
+        '401':
+          description: Invalid credentials or certificate for target server
+        '404':
+          description: Server not found
+
+  /files/browse:
+    get:
+      tags:
+        - File Browser
+      summary: List directory tree for FCOM files
+      description: |
+        Fetches the file/directory structure from the active UA server's SVN repository.
+        Supports filtering by vendor, protocol (trap, corba, etc.), and search queries.
+      security:
+        - sessionCookie: []
+      parameters:
+        - name: path
+          in: query
+          schema:
+            type: string
+            default: "/"
+          description: Path within /coms to browse (e.g., "/trap/cisco")
+        - name: vendor
+          in: query
+          schema:
+            type: string
+          description: Filter by vendor folder (e.g., "cisco", "arista")
+        - name: protocol_type
+          in: query
+          schema:
+            type: string
+            enum: [trap, corba, webhook, default, syslog]
+          description: Filter by protocol/type subdirectory
+        - name: search
+          in: query
+          schema:
+            type: string
+          description: Search term for file names or content metadata
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 100
+      responses:
+        '200':
+          description: Directory listing
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  path:
+                    type: string
+                  entries:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        type:
+                          type: string
+                          enum: [file, directory]
+                        path:
+                          type: string
+                        size:
+                          type: integer
+                          description: File size in bytes (null for directories)
+                        last_modified:
+                          type: string
+                          format: date-time
+                        last_author:
+                          type: string
+                          description: SVN commit author
+
+  /files/{file_id}/preview:
+    get:
+      tags:
+        - File Browser
+      summary: Quick preview of a file (structure outline only)
+      description: Returns minimal metadata and a JSON outline without full parsing.
+      security:
+        - sessionCookie: []
+      parameters:
+        - name: file_id
+          in: path
+          required: true
+          schema:
+            type: string
+            description: URL-encoded file path (e.g., "trap%2Fcisco%2FCISCO-TRAP-001.json")
+      responses:
+        '200':
+          description: File preview
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  file_id:
+                    type: string
+                  path:
+                    type: string
+                  size:
+                    type: integer
+                  last_modified:
+                    type: string
+                    format: date-time
+                  last_author:
+                    type: string
+                  object_count:
+                    type: integer
+                    description: Count of objects in the 'objects' array
+                  objects_preview:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        "@objectName":
+                          type: string
+                        description:
+                          type: string
+                          maxLength: 150
+
+  /files/{file_id}/read:
+    get:
+      tags:
+        - File Editor
+      summary: Read and parse a complete FCOM JSON file
+      description: |
+        Fetches the full JSON content from SVN, parses it, and returns structured data.
+        Performs initial schema validation and returns any validation errors.
+      security:
+        - sessionCookie: []
+      parameters:
+        - name: file_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: revision
+          in: query
+          schema:
+            type: string
+          description: Optional SVN revision specifier (e.g., "HEAD", "1234")
+      responses:
+        '200':
+          description: File content with metadata
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  file_id:
+                    type: string
+                  path:
+                    type: string
+                  revision:
+                    type: string
+                  last_modified:
+                    type: string
+                    format: date-time
+                  last_author:
+                    type: string
+                  etag:
+                    type: string
+                    description: Content hash for optimistic locking
+                  content:
+                    type: object
+                    description: Parsed JSON content
+                  validation_errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        field:
+                          type: string
+                        message:
+                          type: string
+                        severity:
+                          type: string
+                          enum: [error, warning]
+        '404':
+          description: File not found
+
+  /files/{file_id}/save:
+    post:
+      tags:
+        - File Editor
+      summary: Validate and commit changes to a FCOM JSON file
+      description: |
+        Validates the provided JSON against the FCOM schema.
+        If valid, commits the changes to SVN with a user-provided commit message.
+        Uses optimistic locking (etag) to prevent lost updates.
+      security:
+        - sessionCookie: []
+      parameters:
+        - name: file_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - content
+                - etag
+                - commit_message
+              properties:
+                content:
+                  type: object
+                  description: Updated JSON content
+                etag:
+                  type: string
+                  description: etag from the last read (for conflict detection)
+                commit_message:
+                  type: string
+                  description: SVN commit message describing the changes
+      responses:
+        '200':
+          description: File saved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  file_id:
+                    type: string
+                  revision:
+                    type: string
+                  last_modified:
+                    type: string
+                    format: date-time
+                  commit_id:
+                    type: string
+                  etag:
+                    type: string
+        '400':
+          description: Validation errors in the JSON
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  validation_errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        field:
+                          type: string
+                        message:
+                          type: string
+        '409':
+          description: Conflict - file has been modified by another user (etag mismatch)
+
+  /files/{file_id}/diff:
+    get:
+      tags:
+        - Version Control
+      summary: Get diff between working copy and HEAD (or two revisions)
+      description: |
+        Returns a unified diff showing changes between the current working copy
+        and the last committed version, or between two specified SVN revisions.
+      security:
+        - sessionCookie: []
+      parameters:
+        - name: file_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: revision_a
+          in: query
+          schema:
+            type: string
+            default: "HEAD"
+        - name: revision_b
+          in: query
+          schema:
+            type: string
+            default: "WORKING"
+      responses:
+        '200':
+          description: Diff output
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  file_id:
+                    type: string
+                  revision_a:
+                    type: string
+                  revision_b:
+                    type: string
+                  unified_diff:
+                    type: string
+                    description: Unified diff format (can be rendered as-is or parsed)
+                  summary:
+                    type: object
+                    properties:
+                      additions:
+                        type: integer
+                      deletions:
+                        type: integer
+
+  /files/{file_id}/history:
+    get:
+      tags:
+        - Version Control
+      summary: Get SVN commit history for a file
+      description: |
+        Returns a paginated list of commits affecting this file,
+        ordered most-recent first.
+      security:
+        - sessionCookie: []
+      parameters:
+        - name: file_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: Commit history
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  file_id:
+                    type: string
+                  total:
+                    type: integer
+                  commits:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        revision:
+                          type: string
+                        author:
+                          type: string
+                        date:
+                          type: string
+                          format: date-time
+                        message:
+                          type: string
+
+  /files/{file_id}/history/{revision}:
+    get:
+      tags:
+        - Version Control
+      summary: Get a specific historical revision of a file
+      security:
+        - sessionCookie: []
+      parameters:
+        - name: file_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: revision
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Historical file content
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  file_id:
+                    type: string
+                  revision:
+                    type: string
+                  author:
+                    type: string
+                  date:
+                    type: string
+                    format: date-time
+                  content:
+                    type: object
+
+  /files/{file_id}/test:
+    post:
+      tags:
+        - Testing
+      summary: Generate and send a test trap for a single event object
+      description: |
+        Calls FCOM2Test (or equivalent) to generate a trap for a specific event object.
+        Sends the test trap to the UA server and returns the result.
+      security:
+        - sessionCookie: []
+      parameters:
+        - name: file_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - object_name
+              properties:
+                object_name:
+                  type: string
+                  description: "@objectName of the event to test"
+      responses:
+        '200':
+          description: Test execution result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  test_id:
+                    type: string
+                  object_name:
+                    type: string
+                  status:
+                    type: string
+                    enum: [success, failure, pending]
+                  output:
+                    type: string
+                  timestamp:
+                    type: string
+                    format: date-time
+
+  /files/{file_id}/test-all:
+    post:
+      tags:
+        - Testing
+      summary: Test all event objects in a file
+      description: |
+        Iterates through all objects in the file and runs a test for each.
+        Returns aggregate results and per-object status.
+      security:
+        - sessionCookie: []
+      parameters:
+        - name: file_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Batch test results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  file_id:
+                    type: string
+                  test_id:
+                    type: string
+                  total_objects:
+                    type: integer
+                  passed:
+                    type: integer
+                  failed:
+                    type: integer
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        object_name:
+                          type: string
+                        status:
+                          type: string
+                          enum: [success, failure, pending]
+                        message:
+                          type: string
+
+  /compare:
+    post:
+      tags:
+        - Promotion
+      summary: Compare a file across two UA servers
+      description: |
+        Fetches a file from both source and target servers and returns
+        a structured diff showing what would change if promoted.
+      security:
+        - sessionCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - source_server_id
+                - target_server_id
+                - file_path
+              properties:
+                source_server_id:
+                  type: string
+                target_server_id:
+                  type: string
+                file_path:
+                  type: string
+      responses:
+        '200':
+          description: Comparison result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  source_server_id:
+                    type: string
+                  target_server_id:
+                    type: string
+                  file_path:
+                    type: string
+                  source_revision:
+                    type: string
+                  target_revision:
+                    type: string
+                  unified_diff:
+                    type: string
+                  summary:
+                    type: object
+                    properties:
+                      identical:
+                        type: boolean
+                      additions:
+                        type: integer
+                      deletions:
+                        type: integer
+
+  /promote:
+    post:
+      tags:
+        - Promotion
+      summary: Promote a file (or folder structure) from source to target server
+      description: |
+        Checks out the file/folder from source, commits to target server's SVN.
+        Supports promoting single files, entire folders, or sub-file structures.
+        Requires explicit confirmation after diff review.
+      security:
+        - sessionCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - source_server_id
+                - target_server_id
+                - source_path
+                - confirmed
+              properties:
+                source_server_id:
+                  type: string
+                target_server_id:
+                  type: string
+                source_path:
+                  type: string
+                  description: File or folder path to promote
+                target_path:
+                  type: string
+                  description: Optional target path (if different from source)
+                target_username:
+                  type: string
+                  description: Username on target server (may differ from source)
+                target_password:
+                  type: string
+                  format: password
+                  description: Password for the target server user
+                commit_message:
+                  type: string
+                confirmed:
+                  type: boolean
+                  description: Must be true; user has reviewed the diff
+      responses:
+        '200':
+          description: Promotion successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  promotion_id:
+                    type: string
+                  source_server_id:
+                    type: string
+                  target_server_id:
+                    type: string
+                  source_path:
+                    type: string
+                  target_revision:
+                    type: string
+                  timestamp:
+                    type: string
+                    format: date-time
+        '409':
+          description: Promotion conflict or target file has been modified
+
+  /schema:
+    get:
+      tags:
+        - Schema
+      summary: Fetch the FCOM JSON schema
+      description: |
+        Returns the centralized JSON Schema (Draft 7 or later) used to validate FCOM files.
+        The frontend uses this to build dynamic validation rules and field metadata.
+      security:
+        - sessionCookie: []
+      responses:
+        '200':
+          description: JSON Schema
+          content:
+            application/json:
+              schema:
+                type: object
+                description: JSON Schema definition for FCOM objects
+
+  /schema/version:
+    get:
+      tags:
+        - Schema
+      summary: Get schema version and last update time
+      security:
+        - sessionCookie: []
+      responses:
+        '200':
+          description: Schema metadata
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  version:
+                    type: string
+                  last_updated:
+                    type: string
+                    format: date-time
+                  checksum:
+                    type: string
+
+components:
+  securitySchemes:
+    sessionCookie:
+      type: apiKey
+      in: cookie
+      name: FCOM_SESSION_ID
+      description: HTTP-only session cookie set after successful login
+
+  responses:
+    Unauthorized:
+      description: Missing or invalid session
+    NotFound:
+      description: Resource not found
+    Conflict:
+      description: Update conflict (optimistic locking or concurrent modification)
+
+security:
+  - sessionCookie: []
