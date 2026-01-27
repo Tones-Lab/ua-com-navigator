@@ -18,6 +18,7 @@ interface UAClientConfig {
   cert_path?: string;
   key_path?: string;
   ca_cert_path?: string;
+  insecure_tls?: boolean;
 }
 
 export class UAClient {
@@ -48,6 +49,10 @@ export class UAClient {
         username: this.config.username,
         password: this.config.password,
       };
+
+      if (this.config.insecure_tls) {
+        axiosConfig.httpsAgent = new https.Agent({ rejectUnauthorized: false });
+      }
     } else if (this.config.auth_method === 'certificate') {
       if (!this.config.cert_path || !this.config.key_path) {
         throw new Error('Certificate and key paths required for certificate auth');
@@ -57,7 +62,7 @@ export class UAClient {
         cert: fs.readFileSync(this.config.cert_path),
         key: fs.readFileSync(this.config.key_path),
         ca: this.config.ca_cert_path ? fs.readFileSync(this.config.ca_cert_path) : undefined,
-        rejectUnauthorized: false, // TODO: Enable in production with proper cert validation
+        rejectUnauthorized: !this.config.insecure_tls,
       });
 
       axiosConfig.httpAgent = httpsAgent;

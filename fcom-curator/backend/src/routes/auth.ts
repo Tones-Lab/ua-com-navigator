@@ -16,6 +16,9 @@ const serverCredentials = new Map<string, AuthRequest>();
 router.post('/login', async (req: Request, res: Response) => {
   try {
     const authReq: AuthRequest = req.body;
+
+    const basicEnabled = (process.env.UA_AUTH_BASIC_ENABLED ?? 'true').toLowerCase() === 'true';
+    const certEnabled = (process.env.UA_AUTH_CERT_ENABLED ?? 'true').toLowerCase() === 'true';
     
     // Validate required fields
     if (!authReq.server_id || !authReq.auth_type) {
@@ -23,10 +26,16 @@ router.post('/login', async (req: Request, res: Response) => {
     }
 
     if (authReq.auth_type === 'basic') {
+      if (!basicEnabled) {
+        return res.status(403).json({ error: 'Basic authentication is disabled' });
+      }
       if (!authReq.username || !authReq.password) {
         return res.status(400).json({ error: 'Missing username or password' });
       }
     } else if (authReq.auth_type === 'certificate') {
+      if (!certEnabled) {
+        return res.status(403).json({ error: 'Certificate authentication is disabled' });
+      }
       if (!authReq.cert_path || !authReq.key_path) {
         return res.status(400).json({ error: 'Missing cert_path or key_path' });
       }

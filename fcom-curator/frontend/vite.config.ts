@@ -7,6 +7,7 @@ export default defineConfig({
   server: {
     port: 5173,
     host: true,
+    allowedHosts: ['lab-ua-tony02.tony.lab'],
     proxy: {
       '/api': {
         target: 'http://localhost:3001',

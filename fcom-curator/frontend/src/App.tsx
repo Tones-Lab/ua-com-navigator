@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
-import { useSessionStore } from '../stores';
-import api from '../services/api';
+import { useSessionStore } from './stores';
+import api from './services/api';
 import './App.css';
 
 function App() {
