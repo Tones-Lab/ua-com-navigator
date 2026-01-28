@@ -74,6 +74,16 @@ function App() {
       return '/';
     };
   const [browseLoading, setBrowseLoading] = useState(false);
+
+  const getRawPath = () => {
+    if (selectedFile?.PathID) {
+      return `/${selectedFile.PathID}`;
+    }
+    if (browseNode) {
+      return `/${browseNode}`;
+    }
+    return '/';
+  };
   const [browseError, setBrowseError] = useState<string | null>(null);
   const [browseData, setBrowseData] = useState<any>(null);
   const [browseNode, setBrowseNode] = useState<string | null>(null);
@@ -820,7 +830,7 @@ function App() {
                         </span>
                       )}
                     </strong>
-                    <span className="file-path">{selectedFile.PathID}</span>
+                    <span className="file-path">{formatDisplayPath(selectedFile.PathID)}</span>
                   </div>
                   <div className="file-meta-row">
                     <span>
@@ -1038,13 +1048,11 @@ function App() {
               <div className="modal-overlay" role="dialog" aria-modal="true">
                 <div className="modal">
                   <h3>Current path</h3>
-                  <input type="text" readOnly value={getCurrentPath()} />
-                  <div className="modal-actions">
-                    <button type="button" onClick={() => setShowPathModal(false)}>
-                      Close
-                    </button>
+                  <div className="path-row">
+                    <div className="path-value monospace">{getCurrentPath()}</div>
                     <button
                       type="button"
+                      className="copy-button"
                       onClick={async () => {
                         try {
                           await navigator.clipboard.writeText(getCurrentPath());
@@ -1054,6 +1062,15 @@ function App() {
                       }}
                     >
                       Copy
+                    </button>
+                  </div>
+                  <p className="path-note">
+                    UA internal paths use an <span className="code-pill">id-core</span> prefix. The UI
+                    displays the cleaned path for readability.
+                  </p>
+                  <div className="modal-actions">
+                    <button type="button" onClick={() => setShowPathModal(false)}>
+                      Close
                     </button>
                   </div>
                 </div>
