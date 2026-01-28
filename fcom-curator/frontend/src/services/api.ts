@@ -46,7 +46,10 @@ class ApiClient {
   }
 
   // File Browser
-  async browsePath(path?: string, filters?: { vendor?: string; protocol_type?: string; search?: string }) {
+  async browsePath(
+    path?: string,
+    filters?: { node?: string; vendor?: string; protocol_type?: string; search?: string },
+  ) {
     return this.client.get('/files/browse', {
       params: {
         path: path || '/',
@@ -61,13 +64,14 @@ class ApiClient {
 
   // File Editor
   async readFile(fileId: string, revision?: string) {
-    return this.client.get<FcomFile>(`/files/${fileId}/read`, {
-      params: { revision },
+    return this.client.get<FcomFile>(`/files/read`, {
+      params: { file_id: fileId, revision },
     });
   }
 
   async saveFile(fileId: string, content: any, etag: string, commitMessage: string) {
-    return this.client.post(`/files/${fileId}/save`, {
+    return this.client.post(`/files/save`, {
+      file_id: fileId,
       content,
       etag,
       commit_message: commitMessage,

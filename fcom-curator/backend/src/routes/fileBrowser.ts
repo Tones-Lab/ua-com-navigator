@@ -1,5 +1,7 @@
 import { Router, Request, Response } from 'express';
 import logger from '../utils/logger';
+import UAClient from '../services/ua';
+import { getCredentials, getServer } from '../services/sessionStore';
 
 const router = Router();
 
@@ -9,41 +11,44 @@ const router = Router();
  */
 router.get('/browse', (req: Request, res: Response) => {
   try {
-    const { path = '/', vendor, protocol_type, search, limit = 100 } = req.query;
+    const { path = '/', node, vendor, protocol_type, search, limit = 100 } = req.query;
 
-    logger.info(`Browsing files at path: ${path}, vendor: ${vendor}, protocol: ${protocol_type}`);
+    const sessionId = req.cookies.FCOM_SESSION_ID;
+    if (!sessionId) {
+      return res.status(401).json({ error: 'No active session' });
+    }
 
-    // TODO: Call UA server REST API to fetch file listing from SVN
-    // For now, return mock data
-    const mockListing = {
-      path: path,
-      entries: [
-        {
-          name: 'cisco',
-          type: 'directory',
-          path: '/trap/cisco',
-          last_modified: new Date().toISOString(),
-          last_author: 'api',
-        },
-        {
-          name: 'arista',
-          type: 'directory',
-          path: '/trap/arista',
-          last_modified: new Date().toISOString(),
-          last_author: 'api',
-        },
-        {
-          name: 'CISCO-ENVMON-MIB-FCOM.json',
-          type: 'file',
-          path: '/trap/cisco/CISCO-ENVMON-MIB-FCOM.json',
-          size: 2048,
-          last_modified: new Date().toISOString(),
-          last_author: 'api',
-        },
-      ],
-    };
+    const auth = getCredentials(sessionId);
+    const server = getServer(sessionId);
+    if (!auth || !server) {
+      return res.status(401).json({ error: 'Session not found or expired' });
+    }
 
-    res.json(mockListing);
+    logger.info(
+      `Browsing files at path: ${path}, node: ${node}, vendor: ${vendor}, protocol: ${protocol_type}`,
+    );
+
+    const insecureTls = (process.env.UA_TLS_INSECURE ?? 'false').toLowerCase() === 'true';
+    const uaClient = new UAClient({
+      hostname: server.hostname,
+      port: server.port,
+      auth_method: auth.auth_type,
+      username: auth.username,
+      password: auth.password,
+      cert_path: auth.cert_path,
+      key_path: auth.key_path,
+      ca_cert_path: auth.ca_cert_path,
+      insecure_tls: insecureTls,
+    });
+
+    // TODO: Map UA response into normalized entries for UI; return raw for now.
+    uaClient
+      .listRules(String(path), Number(limit), node ? String(node) : undefined)
+      .then((data) => res.json(data))
+      .catch((error: any) => {
+        logger.error(`Error browsing files: ${error.message}`);
+        res.status(500).json({ error: 'Failed to browse files' });
+      });
   } catch (error: any) {
     logger.error(`Error browsing files: ${error.message}`);
     res.status(500).json({ error: 'Failed to browse files' });

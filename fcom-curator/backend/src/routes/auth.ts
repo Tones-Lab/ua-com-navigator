@@ -2,12 +2,11 @@ import { Router, Request, Response } from 'express';
 import { AuthRequest, Session } from '../types';
 import logger from '../utils/logger';
 import { v4 as uuidv4 } from 'uuid';
+import UAClient from '../services/ua';
+import { getServerById } from '../services/serverRegistry';
+import { clearSession, getSession, setSession } from '../services/sessionStore';
 
 const router = Router();
-
-// Mock session store - in production, use Redis or database
-const sessions = new Map<string, Session>();
-const serverCredentials = new Map<string, AuthRequest>();
 
 /**
  * POST /api/v1/auth/login
@@ -23,6 +22,11 @@ router.post('/login', async (req: Request, res: Response) => {
     // Validate required fields
     if (!authReq.server_id || !authReq.auth_type) {
       return res.status(400).json({ error: 'Missing server_id or auth_type' });
+    }
+
+    const server = getServerById(authReq.server_id);
+    if (!server) {
+      return res.status(404).json({ error: 'Server not found' });
     }
 
     if (authReq.auth_type === 'basic') {
@@ -41,9 +45,24 @@ router.post('/login', async (req: Request, res: Response) => {
       }
     }
 
-    // TODO: Authenticate against UA server REST API
-    // For now, we'll simulate successful auth
-    logger.info(`Authenticating ${authReq.username || 'cert user'} against server ${authReq.server_id}`);
+    // Authenticate against UA server REST API
+    const insecureTls = (process.env.UA_TLS_INSECURE ?? 'false').toLowerCase() === 'true';
+    const uaClient = new UAClient({
+      hostname: server.hostname,
+      port: server.port,
+      auth_method: authReq.auth_type,
+      username: authReq.username,
+      password: authReq.password,
+      cert_path: authReq.cert_path,
+      key_path: authReq.key_path,
+      ca_cert_path: authReq.ca_cert_path,
+      insecure_tls: insecureTls,
+    });
+
+    logger.info(`Authenticating ${authReq.username || 'cert user'} against server ${server.server_id}`);
+
+    // Verify auth with a lightweight read call (rules list)
+    await uaClient.listRules('/', 1);
 
     const sessionId = uuidv4();
     const expiresAt = new Date(Date.now() + 8 * 3600000); // 8 hours
@@ -57,13 +76,15 @@ router.post('/login', async (req: Request, res: Response) => {
       expires_at: expiresAt,
     };
 
-    sessions.set(sessionId, session);
-    serverCredentials.set(sessionId, authReq);
+    setSession(session, authReq, server);
 
     // Set HTTP-only cookie
+    const forwardedProto = req.headers['x-forwarded-proto'];
+    const isSecure = req.secure || forwardedProto === 'https' || process.env.COOKIE_SECURE === 'true';
+
     res.cookie('FCOM_SESSION_ID', sessionId, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: isSecure,
       sameSite: 'lax',
       maxAge: 8 * 3600000,
     });
@@ -89,8 +110,7 @@ router.post('/logout', (req: Request, res: Response) => {
   try {
     const sessionId = req.cookies.FCOM_SESSION_ID;
     if (sessionId) {
-      sessions.delete(sessionId);
-      serverCredentials.delete(sessionId);
+      clearSession(sessionId);
       res.clearCookie('FCOM_SESSION_ID');
     }
     res.status(204).send();
@@ -107,11 +127,11 @@ router.post('/logout', (req: Request, res: Response) => {
 router.get('/session', (req: Request, res: Response) => {
   try {
     const sessionId = req.cookies.FCOM_SESSION_ID;
-    if (!sessionId || !sessions.has(sessionId)) {
+    if (!sessionId || !getSession(sessionId)) {
       return res.status(401).json({ error: 'No active session' });
     }
 
-    const session = sessions.get(sessionId)!;
+    const session = getSession(sessionId)!;
     res.json({
       session_id: session.session_id,
       user: session.user,

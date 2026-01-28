@@ -1,4 +1,6 @@
 import express, { Express, Request, Response, NextFunction } from 'express';
+import https from 'https';
+import fs from 'fs';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
@@ -18,11 +20,30 @@ dotenv.config();
 
 const app: Express = express();
 const port = process.env.PORT || 3001;
+const sslKeyPath = process.env.SSL_KEY_PATH || '/opt/assure1/etc/ssl/Web.key';
+const sslCertPath = process.env.SSL_CERT_PATH || '/opt/assure1/etc/ssl/Web.crt';
+const useHttps = fs.existsSync(sslKeyPath) && fs.existsSync(sslCertPath);
+
+app.set('trust proxy', 1);
 
 // Middleware
 app.use(helmet());
+const defaultFrontend = useHttps ? 'https://localhost:5173' : 'http://localhost:5173';
+const allowedOrigins = new Set([
+  process.env.FRONTEND_URL,
+  defaultFrontend,
+  'https://lab-ua-tony02.tony.lab:5173',
+  'http://lab-ua-tony02.tony.lab:5173',
+].filter(Boolean) as string[]);
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.has(origin)) {
+      callback(null, true);
+      return;
+    }
+    callback(new Error(`CORS blocked for origin: ${origin}`));
+  },
   credentials: true,
 }));
 app.use(morgan('combined', { stream: { write: msg => logger.info(msg.trim()) } }));
@@ -58,8 +79,16 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   });
 });
 
-app.listen(port, () => {
-  logger.info(`FCOM Curator Backend listening on port ${port}`);
-});
+if (useHttps) {
+  const key = fs.readFileSync(sslKeyPath);
+  const cert = fs.readFileSync(sslCertPath);
+  https.createServer({ key, cert }, app).listen(port, () => {
+    logger.info(`FCOM Curator Backend listening on https://localhost:${port}`);
+  });
+} else {
+  app.listen(port, () => {
+    logger.info(`FCOM Curator Backend listening on http://localhost:${port}`);
+  });
+}
 
 export default app;

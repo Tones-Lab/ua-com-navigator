@@ -1,0 +1,200 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://oracle.example.com/ua/com/fcom.schema.json",
+  "title": "FCOM Curation Schema (Draft)",
+  "description": "Best-effort schema derived from Oracle UA 6.1.1 FCOM curation documentation.",
+  "x-version": "0.1.0",
+  "type": "object",
+  "required": ["objects"],
+  "properties": {
+    "metaData": {
+      "type": "object",
+      "properties": {
+        "certified": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    },
+    "domain": {
+      "type": "string",
+      "description": "Telemetry domain",
+      "enum": ["FAULT"]
+    },
+    "method": {
+      "type": "string",
+      "description": "Internal method identifier, typically 'trap'"
+    },
+    "objects": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/fcomObject" }
+    }
+  },
+  "additionalProperties": true,
+  "definitions": {
+    "descriptionField": {
+      "oneOf": [
+        { "type": "string" },
+        { "type": "array", "items": { "type": "string" } }
+      ]
+    },
+    "evalExpression": {
+      "type": "object",
+      "required": ["eval"],
+      "properties": {
+        "eval": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "stringOrEval": {
+      "oneOf": [
+        { "type": "string" },
+        { "$ref": "#/definitions/evalExpression" }
+      ]
+    },
+    "intOrEval": {
+      "oneOf": [
+        { "type": "integer" },
+        { "type": "string" },
+        { "$ref": "#/definitions/evalExpression" }
+      ]
+    },
+    "fcomObject": {
+      "type": "object",
+      "required": ["@objectName"],
+      "properties": {
+        "@objectName": {
+          "type": "string",
+          "description": "Trap name in MIB::trapName format"
+        },
+        "certification": {
+          "type": "string",
+          "enum": ["STANDARD", "CERTIFIED", "UNCERTIFIED", "IN_REVIEW"]
+        },
+        "description": { "$ref": "#/definitions/descriptionField" },
+        "domain": { "type": "string" },
+        "method": { "type": "string" },
+        "test": { "type": "string" },
+        "tests": {
+          "oneOf": [
+            { "type": "string" },
+            { "type": "array", "items": { "type": "string" } }
+          ]
+        },
+        "event": { "$ref": "#/definitions/event" },
+        "trap": { "$ref": "#/definitions/trap" },
+        "preProcessors": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/preProcessor" }
+        },
+        "preprocessors": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/preProcessor" }
+        }
+      },
+      "additionalProperties": true
+    },
+    "event": {
+      "type": "object",
+      "properties": {
+        "EventCategory": {
+          "description": "1=Resolution, 2=Problem, 3=Discrete",
+          "oneOf": [
+            { "type": "integer", "enum": [1, 2, 3] },
+            { "type": "string" }
+          ]
+        },
+        "EventType": { "$ref": "#/definitions/stringOrEval" },
+        "ExpireTime": { "$ref": "#/definitions/intOrEval" },
+        "Severity": {
+          "description": "0..5",
+          "oneOf": [
+            { "type": "integer", "minimum": 0, "maximum": 5 },
+            { "type": "string" }
+          ]
+        },
+        "SubNode": { "$ref": "#/definitions/stringOrEval" },
+        "Summary": { "$ref": "#/definitions/stringOrEval" }
+      },
+      "additionalProperties": true
+    },
+    "trap": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "oid": { "type": "string" },
+        "variables": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/trapVariable" }
+        }
+      },
+      "additionalProperties": true
+    },
+    "trapVariable": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "oid": { "type": "string" },
+        "valueType": { "type": "string" },
+        "description": { "$ref": "#/definitions/descriptionField" },
+        "enums": { "type": "object" }
+      },
+      "additionalProperties": true
+    },
+    "preProcessor": {
+      "type": "object",
+      "oneOf": [
+        { "required": ["regex"] },
+        { "required": ["lookup"] },
+        { "required": ["conversion"] }
+      ],
+      "properties": {
+        "regex": { "$ref": "#/definitions/regexPreprocessor" },
+        "lookup": { "$ref": "#/definitions/lookupPreprocessor" },
+        "conversion": { "$ref": "#/definitions/conversionPreprocessor" }
+      },
+      "additionalProperties": true
+    },
+    "regexPreprocessor": {
+      "type": "object",
+      "required": ["value", "pattern"],
+      "properties": {
+        "value": { "type": "string" },
+        "pattern": { "type": "string" },
+        "flags": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "lookupPreprocessor": {
+      "type": "object",
+      "required": ["source", "key", "target"],
+      "properties": {
+        "source": { "type": "string" },
+        "key": { "type": "string" },
+        "target": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "conversionPreprocessor": {
+      "type": "object",
+      "required": ["source", "target", "type"],
+      "properties": {
+        "source": { "type": "string" },
+        "target": { "type": "string" },
+        "type": {
+          "type": "string",
+          "enum": [
+            "StringToInt",
+            "CharToInt",
+            "OctetStrToIPv4",
+            "OctetStrToIPv6",
+            "OctetStrToIPv4z",
+            "OctetStrToIPv6z",
+            "OctetStrToDateAndTime",
+            "OctetStrToMacAddress",
+            "OctetStrToHex"
+          ]
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}

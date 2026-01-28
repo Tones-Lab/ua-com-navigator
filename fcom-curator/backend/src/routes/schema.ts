@@ -1,4 +1,7 @@
 import { Router, Request, Response } from 'express';
+import fs from 'fs';
+import path from 'path';
+import crypto from 'crypto';
 import logger from '../utils/logger';
 
 const router = Router();
@@ -10,81 +13,11 @@ const router = Router();
 router.get('/', (req: Request, res: Response) => {
   try {
     logger.info('Fetching FCOM JSON schema');
-
-    // TODO: Serve actual FCOM JSON Schema (Draft 7)
-    // This is a minimal example schema
-    const fcomSchema = {
-      $schema: 'http://json-schema.org/draft-07/schema#',
-      title: 'FCOM Object Schema',
-      type: 'object',
-      properties: {
-        objects: {
-          type: 'array',
-          items: {
-            type: 'object',
-            required: ['@objectName'],
-            properties: {
-              '@objectName': {
-                type: 'string',
-                description: 'Unique identifier for the FCOM object',
-              },
-              description: {
-                type: 'string',
-                description: 'Human-readable description of the event',
-              },
-              certification: {
-                type: 'string',
-                enum: ['CERTIFIED', 'UNCERTIFIED', 'IN_REVIEW'],
-              },
-              test: {
-                type: 'string',
-              },
-              tests: {
-                type: 'string',
-              },
-              event: {
-                type: 'object',
-                properties: {
-                  EventType: { type: 'string' },
-                  Severity: {
-                    type: 'string',
-                    enum: ['CRITICAL', 'MAJOR', 'MINOR', 'WARNING', 'INFORMATIONAL'],
-                  },
-                  Summary: { type: 'string' },
-                  ExpireTime: { type: 'integer' },
-                  SubNode: { type: 'boolean' },
-                  EventCategory: { type: 'string' },
-                },
-              },
-              trap: {
-                type: 'object',
-                properties: {
-                  variables: {
-                    type: 'array',
-                    items: { type: 'string' },
-                  },
-                },
-              },
-              preProcessors: {
-                type: 'array',
-                items: {
-                  type: 'object',
-                  properties: {
-                    type: {
-                      type: 'string',
-                      enum: ['grok', 'lookup', 'regex'],
-                    },
-                    parameters: {
-                      type: 'object',
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    };
+    const schemaPath = path.resolve(process.cwd(), 'schema', 'fcom.schema.json');
+    const fallbackPath = path.resolve(__dirname, '..', 'schema', 'fcom.schema.json');
+    const targetPath = fs.existsSync(schemaPath) ? schemaPath : fallbackPath;
+    const raw = fs.readFileSync(targetPath, 'utf-8');
+    const fcomSchema = JSON.parse(raw);
 
     res.json(fcomSchema);
   } catch (error: any) {
@@ -100,11 +33,17 @@ router.get('/', (req: Request, res: Response) => {
 router.get('/version', (req: Request, res: Response) => {
   try {
     logger.info('Fetching schema version');
+    const schemaPath = path.resolve(process.cwd(), 'schema', 'fcom.schema.json');
+    const fallbackPath = path.resolve(__dirname, '..', 'schema', 'fcom.schema.json');
+    const targetPath = fs.existsSync(schemaPath) ? schemaPath : fallbackPath;
+    const raw = fs.readFileSync(targetPath, 'utf-8');
+    const schema = JSON.parse(raw);
+    const checksum = crypto.createHash('sha256').update(raw).digest('hex');
 
     res.json({
-      version: '1.0.0',
+      version: schema['x-version'] || schema.version || 'unknown',
       last_updated: new Date().toISOString(),
-      checksum: 'abc123def456',
+      checksum,
     });
   } catch (error: any) {
     logger.error(`Error fetching schema version: ${error.message}`);

@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
+import fs from 'fs'
 
 export default defineConfig({
   plugins: [react()],
@@ -8,21 +9,41 @@ export default defineConfig({
     port: 5173,
     host: true,
     allowedHosts: ['lab-ua-tony02.tony.lab'],
+    https: {
+      key: fs.readFileSync('/opt/assure1/etc/ssl/Web.key'),
+      cert: fs.readFileSync('/opt/assure1/etc/ssl/Web.crt'),
+    },
     proxy: {
       '/api': {
-        target: 'http://localhost:3001',
+        target: 'https://localhost:3001',
         changeOrigin: true,
+        secure: false,
       },
     },
   },
   resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
-      '@components': path.resolve(__dirname, './src/components'),
-      '@services': path.resolve(__dirname, './src/services'),
-      '@stores': path.resolve(__dirname, './src/stores'),
-      '@types': path.resolve(__dirname, './src/types'),
-      '@utils': path.resolve(__dirname, './src/utils'),
-    },
+    alias: [
+      { find: '@', replacement: path.resolve(__dirname, './src') },
+      { find: '@components', replacement: path.resolve(__dirname, './src/components') },
+      { find: '@services', replacement: path.resolve(__dirname, './src/services') },
+      { find: '@stores', replacement: path.resolve(__dirname, './src/stores') },
+      { find: '@types', replacement: path.resolve(__dirname, './src/types') },
+      { find: '@utils', replacement: path.resolve(__dirname, './src/utils') },
+      { find: 'ojs', replacement: path.resolve(__dirname, '../node_modules/@oracle/oraclejet/dist/js/libs/oj/debug_esm') },
+      {
+        find: /^jqueryui-amd\/(.*)$/,
+        replacement: path.resolve(
+          __dirname,
+          '../node_modules/@oracle/oraclejet/dist/js/libs/jquery/jqueryui-amd-1.13.2/$1'
+        ),
+      },
+      {
+        find: 'jqueryui-amd',
+        replacement: path.resolve(
+          __dirname,
+          '../node_modules/@oracle/oraclejet/dist/js/libs/jquery/jqueryui-amd-1.13.2'
+        ),
+      },
+    ],
   },
 })

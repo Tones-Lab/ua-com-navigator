@@ -1,55 +1,135 @@
 import { Router, Request, Response } from 'express';
 import crypto from 'crypto';
 import logger from '../utils/logger';
+import UAClient from '../services/ua';
+import { getCredentials, getServer } from '../services/sessionStore';
 
 const router = Router();
+
+const getUaClientFromSession = (req: Request): UAClient => {
+  const sessionId = req.cookies.FCOM_SESSION_ID;
+  if (!sessionId) {
+    throw new Error('No active session');
+  }
+
+  const auth = getCredentials(sessionId);
+  const server = getServer(sessionId);
+  if (!auth || !server) {
+    throw new Error('Session not found or expired');
+  }
+
+  const insecureTls = (process.env.UA_TLS_INSECURE ?? 'false').toLowerCase() === 'true';
+  return new UAClient({
+    hostname: server.hostname,
+    port: server.port,
+    auth_method: auth.auth_type,
+    username: auth.username,
+    password: auth.password,
+    cert_path: auth.cert_path,
+    key_path: auth.key_path,
+    ca_cert_path: auth.ca_cert_path,
+    insecure_tls: insecureTls,
+  });
+};
 
 /**
  * GET /api/v1/files/:file_id/read
  * Read and parse a complete FCOM JSON file
  */
+router.get('/read', (req: Request, res: Response) => {
+  try {
+    const { file_id, revision = 'HEAD' } = req.query;
+    if (!file_id) {
+      return res.status(400).json({ error: 'Missing file_id' });
+    }
+
+    logger.info(`Reading file: ${file_id}, revision: ${revision}`);
+    const uaClient = getUaClientFromSession(req);
+
+    uaClient
+      .readRule(String(file_id), String(revision))
+      .then((data) => {
+        const etag = crypto.createHash('md5').update(JSON.stringify(data)).digest('hex');
+        res.json({
+          file_id: String(file_id),
+          revision: revision as string,
+          etag,
+          content: data,
+          validation_errors: [],
+        });
+      })
+      .catch((error: any) => {
+        logger.error(`Error reading file: ${error.message}`);
+        res.status(500).json({ error: 'Failed to read file' });
+      });
+  } catch (error: any) {
+    logger.error(`Error reading file: ${error.message}`);
+    res.status(401).json({ error: error.message || 'Failed to read file' });
+  }
+});
+
 router.get('/:file_id/read', (req: Request, res: Response) => {
   try {
     const { file_id } = req.params;
     const { revision = 'HEAD' } = req.query;
 
     logger.info(`Reading file: ${file_id}, revision: ${revision}`);
+    const uaClient = getUaClientFromSession(req);
 
-    // TODO: Call UA server REST API to fetch file from SVN
-    // Mock response
-    const mockContent = {
-      objects: [
-        {
-          '@objectName': 'CISCO-ENVMON-FAN-FAILURE',
-          description: 'Fan failure detected in Cisco device',
-          certification: 'CERTIFIED',
-          event: {
-            EventType: 'DEVICE_EVENT',
-            Severity: 'MAJOR',
-            Summary: 'Fan failure',
-          },
-          trap: {
-            variables: ['$v1', '$v2'],
-          },
-        },
-      ],
-    };
-
-    const etag = crypto.createHash('md5').update(JSON.stringify(mockContent)).digest('hex');
-
-    res.json({
-      file_id: file_id,
-      path: `/trap/cisco/${file_id}`,
-      revision: revision as string,
-      last_modified: new Date().toISOString(),
-      last_author: 'api',
-      etag: etag,
-      content: mockContent,
-      validation_errors: [],
-    });
+    uaClient
+      .readRule(file_id, String(revision))
+      .then((data) => {
+        const etag = crypto.createHash('md5').update(JSON.stringify(data)).digest('hex');
+        res.json({
+          file_id: file_id,
+          revision: revision as string,
+          etag,
+          content: data,
+          validation_errors: [],
+        });
+      })
+      .catch((error: any) => {
+        logger.error(`Error reading file: ${error.message}`);
+        res.status(500).json({ error: 'Failed to read file' });
+      });
   } catch (error: any) {
     logger.error(`Error reading file: ${error.message}`);
-    res.status(500).json({ error: 'Failed to read file' });
+    res.status(401).json({ error: error.message || 'Failed to read file' });
+  }
+});
+
+/**
+ * POST /api/v1/files/save
+ * Validate and commit changes to a FCOM JSON file
+ */
+router.post('/save', async (req: Request, res: Response) => {
+  try {
+    const { file_id, content, etag, commit_message } = req.body;
+
+    if (!file_id || !content || !etag || commit_message === undefined) {
+      return res.status(400).json({ error: 'Missing file_id, content, etag, or commit_message' });
+    }
+
+    logger.info(`Saving file: ${file_id}, message: ${commit_message}`);
+
+    const uaClient = getUaClientFromSession(req);
+    const data = await uaClient.updateRule(String(file_id), content, commit_message);
+    const parentNode = String(file_id).split('/').slice(0, -1).join('/');
+    const listing = parentNode
+      ? await uaClient.listRules('/', 500, parentNode)
+      : await uaClient.listRules('/', 500);
+    const entry = listing?.data?.find((item: any) => item.PathName === String(file_id).split('/').pop());
+    const newEtag = crypto.createHash('md5').update(JSON.stringify(content)).digest('hex');
+    res.json({
+      file_id: String(file_id),
+      revision: entry?.LastRevision ?? data?.revision ?? 'HEAD',
+      last_modified: entry?.ModificationTime ?? data?.last_modified ?? new Date().toISOString(),
+      commit_id: entry?.LastRevision ?? data?.commit_id ?? 'unknown',
+      etag: newEtag,
+    });
+  } catch (error: any) {
+    logger.error(`Error saving file: ${error.message}`);
+    res.status(401).json({ error: error.message || 'Failed to save file' });
   }
 });
 
@@ -57,32 +137,35 @@ router.get('/:file_id/read', (req: Request, res: Response) => {
  * POST /api/v1/files/:file_id/save
  * Validate and commit changes to a FCOM JSON file
  */
-router.post('/:file_id/save', (req: Request, res: Response) => {
+router.post('/:file_id/save', async (req: Request, res: Response) => {
   try {
     const { file_id } = req.params;
     const { content, etag, commit_message } = req.body;
 
-    if (!content || !etag || !commit_message) {
+    if (!content || !etag || commit_message === undefined) {
       return res.status(400).json({ error: 'Missing content, etag, or commit_message' });
     }
 
     logger.info(`Saving file: ${file_id}, message: ${commit_message}`);
 
-    // TODO: Validate against FCOM schema
-    // TODO: Call UA server REST API to commit to SVN
-
+    const uaClient = getUaClientFromSession(req);
+    const data = await uaClient.updateRule(file_id, content, commit_message);
+    const parentNode = String(file_id).split('/').slice(0, -1).join('/');
+    const listing = parentNode
+      ? await uaClient.listRules('/', 500, parentNode)
+      : await uaClient.listRules('/', 500);
+    const entry = listing?.data?.find((item: any) => item.PathName === String(file_id).split('/').pop());
     const newEtag = crypto.createHash('md5').update(JSON.stringify(content)).digest('hex');
-
     res.json({
       file_id: file_id,
-      revision: 'HEAD',
-      last_modified: new Date().toISOString(),
-      commit_id: 'mock-commit-id',
+      revision: entry?.LastRevision ?? data?.revision ?? 'HEAD',
+      last_modified: entry?.ModificationTime ?? data?.last_modified ?? new Date().toISOString(),
+      commit_id: entry?.LastRevision ?? data?.commit_id ?? 'unknown',
       etag: newEtag,
     });
   } catch (error: any) {
     logger.error(`Error saving file: ${error.message}`);
-    res.status(500).json({ error: 'Failed to save file' });
+    res.status(401).json({ error: error.message || 'Failed to save file' });
   }
 });
 
@@ -96,21 +179,18 @@ router.get('/:file_id/diff', (req: Request, res: Response) => {
     const { revision_a = 'HEAD', revision_b = 'WORKING' } = req.query;
 
     logger.info(`Getting diff for file: ${file_id}`);
+    const uaClient = getUaClientFromSession(req);
 
-    // TODO: Call UA server REST API for diff
-    res.json({
-      file_id: file_id,
-      revision_a: revision_a,
-      revision_b: revision_b,
-      unified_diff: '--- a/file\n+++ b/file\n@@ -1,3 +1,4 @@\n context\n-removed line\n+added line',
-      summary: {
-        additions: 1,
-        deletions: 1,
-      },
-    });
+    uaClient
+      .diffRules(file_id, String(revision_a), String(revision_b))
+      .then((data) => res.json(data))
+      .catch((error: any) => {
+        logger.error(`Error getting diff: ${error.message}`);
+        res.status(500).json({ error: 'Failed to get diff' });
+      });
   } catch (error: any) {
     logger.error(`Error getting diff: ${error.message}`);
-    res.status(500).json({ error: 'Failed to get diff' });
+    res.status(401).json({ error: error.message || 'Failed to get diff' });
   }
 });
 
@@ -124,29 +204,17 @@ router.get('/:file_id/history', (req: Request, res: Response) => {
     const { limit = 20, offset = 0 } = req.query;
 
     logger.info(`Getting history for file: ${file_id}`);
-
-    // TODO: Call UA server REST API for history
-    res.json({
-      file_id: file_id,
-      total: 5,
-      commits: [
-        {
-          revision: '1234',
-          author: 'user1',
-          date: new Date().toISOString(),
-          message: 'Updated FCOM object definition',
-        },
-        {
-          revision: '1233',
-          author: 'user2',
-          date: new Date(Date.now() - 86400000).toISOString(),
-          message: 'Initial creation',
-        },
-      ],
-    });
+    const uaClient = getUaClientFromSession(req);
+    uaClient
+      .getHistory(file_id, Number(limit), Number(offset))
+      .then((data) => res.json(data))
+      .catch((error: any) => {
+        logger.error(`Error getting history: ${error.message}`);
+        res.status(500).json({ error: 'Failed to get history' });
+      });
   } catch (error: any) {
     logger.error(`Error getting history: ${error.message}`);
-    res.status(500).json({ error: 'Failed to get history' });
+    res.status(401).json({ error: error.message || 'Failed to get history' });
   }
 });
 

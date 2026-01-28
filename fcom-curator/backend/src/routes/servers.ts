@@ -1,45 +1,8 @@
 import { Router, Request, Response } from 'express';
-import { UAServer } from '../types';
 import logger from '../utils/logger';
+import { getServerById, listServers } from '../services/serverRegistry';
 
 const router = Router();
-
-// Mock list of configured UA servers
-const uaServers: Map<string, UAServer> = new Map([
-  [
-    'dev-ua-01',
-    {
-      server_id: 'dev-ua-01',
-      server_name: 'Development UA Primary',
-      hostname: 'ua-dev.example.com',
-      port: 8080,
-      environment: 'dev',
-      svn_url: 'svn://ua-dev.example.com/fcom',
-    },
-  ],
-  [
-    'test-ua-01',
-    {
-      server_id: 'test-ua-01',
-      server_name: 'Test UA Primary',
-      hostname: 'ua-test.example.com',
-      port: 8080,
-      environment: 'test',
-      svn_url: 'svn://ua-test.example.com/fcom',
-    },
-  ],
-  [
-    'prod-ua-01',
-    {
-      server_id: 'prod-ua-01',
-      server_name: 'Production UA Primary',
-      hostname: 'ua-prod.example.com',
-      port: 8080,
-      environment: 'prod',
-      svn_url: 'svn://ua-prod.example.com/fcom',
-    },
-  ],
-]);
 
 /**
  * GET /api/v1/servers
@@ -47,8 +10,7 @@ const uaServers: Map<string, UAServer> = new Map([
  */
 router.get('/', (req: Request, res: Response) => {
   try {
-    const servers = Array.from(uaServers.values());
-    res.json(servers);
+    res.json(listServers());
   } catch (error: any) {
     logger.error(`Error listing servers: ${error.message}`);
     res.status(500).json({ error: 'Failed to retrieve servers' });
@@ -64,7 +26,7 @@ router.post('/:server_id/switch', (req: Request, res: Response) => {
     const { server_id } = req.params;
     const { auth_type, username, password, cert_path, key_path } = req.body;
 
-    if (!uaServers.has(server_id)) {
+    if (!getServerById(server_id)) {
       return res.status(404).json({ error: 'Server not found' });
     }
 

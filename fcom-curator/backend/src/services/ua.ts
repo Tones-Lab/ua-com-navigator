@@ -1,7 +1,7 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import https from 'https';
 import fs from 'fs';
-import logger from './logger';
+import logger from '../utils/logger';
 
 /**
  * UA Service Client
@@ -35,9 +35,6 @@ export class UAClient {
     const axiosConfig: AxiosRequestConfig = {
       baseURL,
       timeout: 10000,
-      headers: {
-        'Content-Type': 'application/json',
-      },
     };
 
     // Configure authentication
@@ -75,12 +72,24 @@ export class UAClient {
   /**
    * List rules files from the FCOM repository
    */
-  async listRules(path: string = '/', limit: number = 100): Promise<any> {
+  async listRules(path: string = '/', limit: number = 100, node?: string): Promise<any> {
     try {
-      logger.info(`[UA] Listing rules at path: ${path}`);
-      const response = await this.client.get('/rule/Rules/read', {
-        params: { path, limit },
-      });
+      logger.info(`[UA] Listing rules at path: ${path}${node ? `, node: ${node}` : ''}`);
+      const params = new URLSearchParams();
+      if (node) {
+        params.set('node', node);
+      } else {
+        params.set('path', path);
+      }
+      params.set('excludeMetadata', 'true');
+      params.set('page', '1');
+      params.set('start', '0');
+      params.set('limit', String(limit));
+      params.set('sort[0][property]', 'Path');
+      params.set('sort[0][direction]', 'ASC');
+
+      const query = params.toString();
+      const response = await this.client.get(`/rule/Rules/read?${query}`);
       return response.data;
     } catch (error: any) {
       logger.error(`[UA] Error listing rules: ${error.message}`);
@@ -110,10 +119,41 @@ export class UAClient {
   async updateRule(id: string, content: any, commitMessage: string): Promise<any> {
     try {
       logger.info(`[UA] Updating rule: ${id}, message: ${commitMessage}`);
-      const response = await this.client.put(`/rule/Rules/${id}`, {
-        content,
-        commit_message: commitMessage,
-      });
+      const normalizedContent = (() => {
+        if (typeof content === 'string') {
+          return { RuleText: content };
+        }
+        if (content && typeof content === 'object') {
+          if ('RuleText' in content) {
+            return content;
+          }
+          return { RuleText: JSON.stringify(content, null, 2) };
+        }
+        return { RuleText: JSON.stringify(content, null, 2) };
+      })();
+
+      const pathName = String(id).split('/').pop() ?? String(id);
+
+      const response = await this.client.put(
+        `/rule/Rules/${id}`,
+        {
+          PathName: pathName,
+          ClonedPath: id,
+          CommitLog: commitMessage,
+          RuleText: normalizedContent.RuleText ?? normalizedContent,
+          commit_message: commitMessage,
+          message: commitMessage,
+          commitMessage,
+          comment: commitMessage,
+        },
+        {
+          params: {
+            commit_message: commitMessage,
+            message: commitMessage,
+            comment: commitMessage,
+          },
+        },
+      );
       return response.data;
     } catch (error: any) {
       logger.error(`[UA] Error updating rule: ${error.message}`);
