@@ -293,6 +293,21 @@ export class UAClient {
       throw error;
     }
   }
+
+  /**
+   * Execute a database query via UA API (Database Query tool).
+   */
+  async queryDatabase(query: string): Promise<any> {
+    try {
+      logger.info('[UA] Executing database query');
+      const endpoint = process.env.UA_DB_QUERY_ENDPOINT || '/db/Query/execute';
+      const response = await this.client.post(endpoint, { query });
+      return response.data;
+    } catch (error: any) {
+      logger.error(`[UA] Error executing database query: ${error.message}`);
+      throw error;
+    }
+  }
 }
 
 export default UAClient;

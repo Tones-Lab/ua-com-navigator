@@ -15,6 +15,11 @@ import serverRoutes from './routes/servers';
 import fileBrowserRoutes from './routes/fileBrowser';
 import fileEditorRoutes from './routes/fileEditor';
 import schemaRoutes from './routes/schema';
+import favoritesRoutes from './routes/favorites';
+import foldersRoutes from './routes/folders';
+import eventsSchemaRoutes from './routes/eventsSchema';
+import searchRoutes from './routes/search';
+import { startSearchIndexing } from './services/searchIndex';
 
 dotenv.config();
 
@@ -64,6 +69,10 @@ app.use('/api/v1/servers', serverRoutes);
 app.use('/api/v1/files', fileBrowserRoutes);
 app.use('/api/v1/files', fileEditorRoutes);
 app.use('/api/v1/schema', schemaRoutes);
+app.use('/api/v1/favorites', favoritesRoutes);
+app.use('/api/v1/folders', foldersRoutes);
+app.use('/api/v1/events/schema', eventsSchemaRoutes);
+app.use('/api/v1/search', searchRoutes);
 
 // Health check
 app.get('/health', (req: Request, res: Response) => {
@@ -90,5 +99,7 @@ if (useHttps) {
     logger.info(`FCOM Curator Backend listening on http://localhost:${port}`);
   });
 }
+
+startSearchIndexing();
 
 export default app;

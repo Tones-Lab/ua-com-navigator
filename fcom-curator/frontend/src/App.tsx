@@ -74,6 +74,22 @@ function App() {
       return '/';
     };
   const [browseLoading, setBrowseLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchScope, setSearchScope] = useState<'all' | 'name' | 'content'>('all');
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [searchError, setSearchError] = useState<string | null>(null);
+  const [searchStatus, setSearchStatus] = useState<any>(null);
+  const [searchRebuildPending, setSearchRebuildPending] = useState(false);
+  const searchRebuildStartRef = useRef<number | null>(null);
+  const searchStatusPollRef = useRef<number | null>(null);
+  const [searchHighlightActive, setSearchHighlightActive] = useState(false);
+  const [highlightQuery, setHighlightQuery] = useState<string | null>(null);
+  const [highlightPathId, setHighlightPathId] = useState<string | null>(null);
+  const [highlightObjectKeys, setHighlightObjectKeys] = useState<string[]>([]);
+  const [currentMatchIndex, setCurrentMatchIndex] = useState(0);
+  const highlightNextOpenRef = useRef(false);
+  const objectRowRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   const getRawPath = () => {
     if (selectedFile?.PathID) {
@@ -84,10 +100,41 @@ function App() {
     }
     return '/';
   };
+
+  const getParentLabel = (node?: string) => {
+    if (!node) {
+      return '';
+    }
+    const cleaned = node.replace(/^\/+/, '');
+    const parts = cleaned.split('/').filter(Boolean);
+    if (parts.length === 0) {
+      return '';
+    }
+    const last = parts[parts.length - 1];
+    return last.startsWith('id-') ? last.replace(/^id-/, '') : last;
+  };
+
+  const getParentPath = (node?: string) => {
+    if (!node) {
+      return '';
+    }
+    const cleaned = node.replace(/^\/+/, '');
+    const parts = cleaned.split('/').filter(Boolean);
+    if (parts.length <= 1) {
+      return '';
+    }
+    return parts.slice(0, -1).join('/');
+  };
   const [browseError, setBrowseError] = useState<string | null>(null);
   const [browseData, setBrowseData] = useState<any>(null);
   const [browseNode, setBrowseNode] = useState<string | null>(null);
   const [entries, setEntries] = useState<any[]>([]);
+  const [favorites, setFavorites] = useState<Array<{ type: 'file' | 'folder'; pathId: string; label: string; node?: string }>>([]);
+  const [favoritesLoading, setFavoritesLoading] = useState(false);
+  const [favoritesError, setFavoritesError] = useState<string | null>(null);
+  const [selectedFolder, setSelectedFolder] = useState<any>(null);
+  const [folderOverview, setFolderOverview] = useState<any>(null);
+  const [folderLoading, setFolderLoading] = useState(false);
   const [breadcrumbs, setBreadcrumbs] = useState<Array<{ label: string; node: string | null }>>([
     { label: '/', node: null },
   ]);
@@ -193,6 +240,26 @@ function App() {
   }, [isAuthenticated, schema, schemaLoading]);
 
   useEffect(() => {
+    if (!isAuthenticated) {
+      return;
+    }
+    const loadStatus = async () => {
+      try {
+        const resp = await api.getSearchStatus();
+        setSearchStatus(resp.data);
+      } catch {
+        // ignore status errors
+      }
+    };
+    loadStatus();
+    return () => {
+      if (searchStatusPollRef.current !== null) {
+        window.clearInterval(searchStatusPollRef.current);
+      }
+    };
+  }, [isAuthenticated]);
+
+  useEffect(() => {
     if (!validator) {
       setValidationErrors([]);
       setJsonParseError(null);
@@ -233,6 +300,25 @@ function App() {
       loadNode(null, '/');
     }
   }, [isAuthenticated, entries.length, browseLoading]);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      return;
+    }
+    const loadFavorites = async () => {
+      setFavoritesError(null);
+      setFavoritesLoading(true);
+      try {
+        const resp = await api.getFavorites();
+        setFavorites(resp.data?.favorites || []);
+      } catch (err: any) {
+        setFavoritesError(err?.response?.data?.error || 'Failed to load favorites');
+      } finally {
+        setFavoritesLoading(false);
+      }
+    };
+    loadFavorites();
+  }, [isAuthenticated]);
 
   useEffect(() => {
     if (!isAuthenticated || urlHydrated.current) {
@@ -283,6 +369,7 @@ function App() {
     window.history.replaceState({}, '', nextUrl);
   }, [browseNode, selectedFile, viewMode, isAuthenticated, session?.server_id]);
 
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -328,7 +415,161 @@ function App() {
     return true;
   };
 
-  const loadNodeInternal = async (node: string | null, label?: string) => {
+  const isFavorite = (pathId: string, type: 'file' | 'folder') => (
+    favorites.some((fav) => fav.pathId === pathId && fav.type === type)
+  );
+
+  const toggleFavorite = async (favorite: { type: 'file' | 'folder'; pathId: string; label: string; node?: string }) => {
+    try {
+      if (isFavorite(favorite.pathId, favorite.type)) {
+        const resp = await api.removeFavorite({ type: favorite.type, pathId: favorite.pathId });
+        setFavorites(resp.data?.favorites || []);
+      } else {
+        const resp = await api.addFavorite(favorite);
+        setFavorites(resp.data?.favorites || []);
+      }
+    } catch (err: any) {
+      setFavoritesError(err?.response?.data?.error || 'Failed to update favorites');
+    }
+  };
+
+  const refreshSearchStatus = async () => {
+    try {
+      const resp = await api.getSearchStatus();
+      setSearchStatus(resp.data);
+    } catch {
+      // ignore
+    }
+  };
+
+  const stopSearchStatusPolling = () => {
+    if (searchStatusPollRef.current !== null) {
+      window.clearInterval(searchStatusPollRef.current);
+      searchStatusPollRef.current = null;
+    }
+  };
+
+  const startSearchStatusPolling = () => {
+    stopSearchStatusPolling();
+    searchStatusPollRef.current = window.setInterval(async () => {
+      try {
+        const resp = await api.getSearchStatus();
+        setSearchStatus(resp.data);
+        const lastBuilt = resp.data?.lastBuiltAt ? new Date(resp.data.lastBuiltAt).getTime() : null;
+        const startedAt = searchRebuildStartRef.current;
+        if (!resp.data?.isBuilding && lastBuilt && startedAt && lastBuilt >= startedAt - 1000) {
+          setSearchRebuildPending(false);
+          searchRebuildStartRef.current = null;
+          stopSearchStatusPolling();
+        }
+      } catch {
+        // ignore polling errors
+      }
+    }, 2000);
+  };
+
+  const runSearch = async (query: string) => {
+    setSearchLoading(true);
+    setSearchError(null);
+    try {
+      const resp = await api.searchComs(query, searchScope, 200);
+      setSearchResults(resp.data?.results || []);
+      if (resp.data?.status) {
+        setSearchStatus(resp.data.status);
+      }
+    } catch (err: any) {
+      const message = err?.response?.data?.error || 'Search failed';
+      setSearchError(message);
+    } finally {
+      setSearchLoading(false);
+    }
+  };
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const query = searchQuery.trim();
+    if (!query) {
+      setSearchResults([]);
+      return;
+    }
+    void runSearch(query);
+  };
+
+  const handleClearSearch = () => {
+    setSearchQuery('');
+    setSearchResults([]);
+    setSearchError(null);
+  };
+
+  const handleResetNavigation = async () => {
+    handleClearSearch();
+    setSelectedFile(null);
+    setSelectedFolder(null);
+    setFileData(null);
+    setFolderOverview(null);
+    setBrowseNode(null);
+    setBrowseData(null);
+    setEntries([]);
+    setBreadcrumbs([{ label: '/', node: null }]);
+    setViewMode('preview');
+    setHighlightQuery(null);
+    setHighlightPathId(null);
+    setHighlightObjectKeys([]);
+    setCurrentMatchIndex(0);
+    setSearchHighlightActive(false);
+    await loadNodeInternal(null, '/');
+  };
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      return;
+    }
+    const query = searchQuery.trim();
+    if (!query) {
+      setSearchResults([]);
+      setSearchError(null);
+      return;
+    }
+    const handle = window.setTimeout(() => {
+      void runSearch(query);
+    }, 350);
+    return () => window.clearTimeout(handle);
+  }, [searchQuery, searchScope, isAuthenticated]);
+
+  const handleRebuildIndex = async () => {
+    setSearchError(null);
+    setSearchLoading(true);
+    try {
+      searchRebuildStartRef.current = Date.now();
+      setSearchRebuildPending(true);
+      const resp = await api.rebuildSearchIndex();
+      setSearchStatus(resp.data);
+      startSearchStatusPolling();
+      const query = searchQuery.trim();
+      if (query) {
+        await runSearch(query);
+      }
+    } catch (err: any) {
+      setSearchError(err?.response?.data?.error || 'Failed to rebuild index');
+    } finally {
+      setSearchLoading(false);
+    }
+  };
+
+  const formatTime = (value?: string | null) => {
+    if (!value) {
+      return '';
+    }
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) {
+      return '';
+    }
+    return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  };
+
+  const getSearchResultName = (result: any) => result?.name || result?.pathId?.split('/').pop() || result?.pathId;
+
+  const loadNodeInternal = async (node: string | null, label?: string): Promise<boolean> => {
     setBrowseError(null);
     setBrowseLoading(true);
     try {
@@ -343,8 +584,10 @@ function App() {
           setBreadcrumbs((prev) => [...prev, { label, node }]);
         }
       }
+      return true;
     } catch (err: any) {
       setBrowseError(err?.response?.data?.error || 'Failed to load files');
+      return false;
     } finally {
       setBrowseLoading(false);
     }
@@ -406,6 +649,15 @@ function App() {
   };
 
   const handleOpenFileInternal = async (entry: any) => {
+    if (!highlightNextOpenRef.current) {
+      setHighlightQuery(null);
+      setHighlightPathId(null);
+      setHighlightObjectKeys([]);
+      setCurrentMatchIndex(0);
+      setSearchHighlightActive(false);
+    }
+    setSelectedFolder(null);
+    setFolderOverview(null);
     setSelectedFile(entry);
     setFileError(null);
     setSaveError(null);
@@ -439,6 +691,7 @@ function App() {
       setFileError(err?.response?.data?.error || 'Failed to load file');
     } finally {
       setFileLoading(false);
+      highlightNextOpenRef.current = false;
     }
   };
 
@@ -448,30 +701,58 @@ function App() {
     }
   };
 
+  const handleOpenFolder = async (entry: any) => {
+    if (!confirmDiscardIfDirty(() => handleOpenFolderInternal(entry))) {
+      return;
+    }
+  };
+
+  const handleOpenFolderInternal = async (entry: any) => {
+    setHighlightQuery(null);
+    setHighlightPathId(null);
+    setHighlightObjectKeys([]);
+    setCurrentMatchIndex(0);
+    setSearchHighlightActive(false);
+    setSelectedFile(null);
+    setFileData(null);
+    setSelectedFolder(entry);
+    setFolderOverview(null);
+    setFolderLoading(true);
+    try {
+      setBreadcrumbs(buildBreadcrumbsFromPath(entry.PathID));
+      await loadNodeInternal(entry.PathID, entry.PathName);
+      const resp = await api.getFolderOverview(entry.PathID, 25);
+      setFolderOverview(resp.data);
+    } catch (err: any) {
+      setBrowseError(err?.response?.data?.error || 'Failed to load folder overview');
+    } finally {
+      setFolderLoading(false);
+    }
+  };
+
   const openFileFromUrl = async (fileId: string, nodeParam?: string | null) => {
     const fileName = fileId.split('/').pop() || fileId;
-    const parentNode = nodeParam || fileId.split('/').slice(0, -1).join('/');
+    const derivedParent = fileId.split('/').slice(0, -1).join('/');
+    const parentNode = nodeParam || derivedParent;
     try {
+      await handleOpenFileInternal({ PathID: fileId, PathName: fileName });
       if (parentNode) {
-        const resp = await api.browsePath(browsePath, { node: parentNode });
-        setBrowseData(resp.data);
-        setEntries(Array.isArray(resp.data?.data) ? resp.data.data : []);
-        setBrowseNode(parentNode);
-        setBreadcrumbs(buildBreadcrumbsFromPath(fileId));
-        const entry = Array.isArray(resp.data?.data)
-          ? resp.data.data.find((item: any) => item.PathID === fileId || item.PathName === fileName)
-          : null;
-        if (entry) {
-          await handleOpenFileInternal(entry);
-          return;
+        try {
+          const resp = await api.browsePath(browsePath, { node: parentNode });
+          setBrowseData(resp.data);
+          setEntries(Array.isArray(resp.data?.data) ? resp.data.data : []);
+          setBrowseNode(parentNode);
+        } catch {
+          // ignore browse failures
         }
       }
-      setBreadcrumbs(buildBreadcrumbsFromPath(fileId));
-      await handleOpenFileInternal({ PathID: fileId, PathName: fileName });
     } catch (err: any) {
       setBrowseError(err?.response?.data?.error || 'Failed to restore file from URL');
     }
   };
+
+  const favoritesFiles = favorites.filter((fav) => fav.type === 'file');
+  const favoritesFolders = favorites.filter((fav) => fav.type === 'folder');
 
   const saveWithContent = async (content: any, message: string) => {
     if (!selectedFile) {
@@ -562,15 +843,72 @@ function App() {
     return [];
   };
 
+  const getObjectKey = (obj: any, index: number) => {
+    const name = obj?.['@objectName'];
+    return name ? `name:${name}` : `idx:${index}`;
+  };
+
+  const scrollToRef = (target?: HTMLDivElement | null) => {
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  };
+
+  const scrollToMatchIndex = (index: number) => {
+    if (index < 0 || index >= highlightObjectKeys.length) {
+      return;
+    }
+    const key = highlightObjectKeys[index];
+    scrollToRef(objectRowRefs.current[key]);
+  };
+
+  const shouldHighlightTerm = () => Boolean(searchHighlightActive && highlightQuery);
+
+  const renderHighlightedText = (text: string) => {
+    if (!shouldHighlightTerm() || !highlightQuery) {
+      return text;
+    }
+    const query = highlightQuery.trim();
+    if (!query) {
+      return text;
+    }
+    const lower = text.toLowerCase();
+    const lowerQuery = query.toLowerCase();
+    if (!lower.includes(lowerQuery)) {
+      return text;
+    }
+    const parts: React.ReactNode[] = [];
+    let start = 0;
+    while (true) {
+      const idx = lower.indexOf(lowerQuery, start);
+      if (idx === -1) {
+        break;
+      }
+      if (idx > start) {
+        parts.push(text.slice(start, idx));
+      }
+      parts.push(
+        <span key={`match-${idx}`} className="match-highlight">
+          {text.slice(idx, idx + query.length)}
+        </span>,
+      );
+      start = idx + query.length;
+    }
+    if (start < text.length) {
+      parts.push(text.slice(start));
+    }
+    return parts;
+  };
+
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
       return '—';
     }
     if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
-      return String(value);
+      return renderHighlightedText(String(value));
     }
     try {
-      return JSON.stringify(value);
+      return renderHighlightedText(JSON.stringify(value));
     } catch {
       return '—';
     }
@@ -593,7 +931,7 @@ function App() {
       <span>
         {parts.map((part, index) => {
           if (!part.match(/^\$v\d+$/)) {
-            return <span key={`text-${index}`}>{part}</span>;
+            return <span key={`text-${index}`}>{renderHighlightedText(part)}</span>;
           }
           return (
             <button
@@ -618,11 +956,49 @@ function App() {
     if (!varModalOpen || !varModalToken) {
       return;
     }
-    const target = varRowRefs.current[varModalToken];
-    if (target) {
-      target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
+    scrollToRef(varRowRefs.current[varModalToken]);
   }, [varModalOpen, varModalToken, varModalVars]);
+
+  useEffect(() => {
+    if (!highlightQuery || !selectedFile || !searchHighlightActive) {
+      setHighlightObjectKeys([]);
+      setCurrentMatchIndex(0);
+      return;
+    }
+    const query = highlightQuery.toLowerCase();
+    const objects = getFriendlyObjects(fileData);
+    const matches: string[] = [];
+    objects.forEach((obj: any, idx: number) => {
+      try {
+        const text = JSON.stringify(obj).toLowerCase();
+        if (text.includes(query)) {
+          matches.push(getObjectKey(obj, idx));
+        }
+      } catch {
+        // ignore
+      }
+    });
+    setHighlightObjectKeys(matches);
+    setCurrentMatchIndex(matches.length > 0 ? 0 : 0);
+  }, [fileData, highlightQuery, highlightPathId, selectedFile]);
+
+  useEffect(() => {
+    if (highlightObjectKeys.length === 0) {
+      return;
+    }
+    scrollToMatchIndex(currentMatchIndex);
+  }, [currentMatchIndex, highlightObjectKeys]);
+
+  useEffect(() => {
+    if (!selectedFile) {
+      setHighlightQuery(null);
+      setHighlightPathId(null);
+      setHighlightObjectKeys([]);
+      setCurrentMatchIndex(0);
+      setSearchHighlightActive(false);
+      return;
+    }
+  }, [selectedFile, highlightPathId]);
 
   const formatDescription = (value: any) => {
     if (Array.isArray(value)) {
@@ -693,29 +1069,18 @@ function App() {
     );
   };
 
-  const quickLinks = [
-    {
-      label: 'CastleRock (trap)',
-      node: 'id-core/default/processing/event/fcom/_objects/trap/CastleRock',
-      crumbs: [
-        { label: '/', node: null },
-        { label: 'core', node: 'id-core' },
-        { label: 'default', node: 'id-core/default' },
-        { label: 'processing', node: 'id-core/default/processing' },
-        { label: 'event', node: 'id-core/default/processing/event' },
-        { label: 'fcom', node: 'id-core/default/processing/event/fcom' },
-        { label: '_objects', node: 'id-core/default/processing/event/fcom/_objects' },
-        { label: 'trap', node: 'id-core/default/processing/event/fcom/_objects/trap' },
-        { label: 'CastleRock', node: 'id-core/default/processing/event/fcom/_objects/trap/CastleRock' },
-      ],
-    },
-  ];
+  const handleNextMatch = () => {
+    if (highlightObjectKeys.length === 0) {
+      return;
+    }
+    setCurrentMatchIndex((prev) => (prev + 1) % highlightObjectKeys.length);
+  };
 
-  const handleQuickLink = async (link: { label: string; node: string; crumbs: Array<{ label: string; node: string | null }> }) => {
-    confirmDiscardIfDirty(async () => {
-      setBreadcrumbs(link.crumbs);
-      await loadNodeInternal(link.node);
-    });
+  const handlePrevMatch = () => {
+    if (highlightObjectKeys.length === 0) {
+      return;
+    }
+    setCurrentMatchIndex((prev) => (prev - 1 + highlightObjectKeys.length) % highlightObjectKeys.length);
   };
 
   return (
@@ -727,6 +1092,7 @@ function App() {
             <div className="header-actions">
               <p>Welcome, {session?.user}</p>
               <button type="button" className="logout-button" onClick={handleLogout}>
+                <span className="logout-icon" aria-hidden="true">🚪</span>
                 Logout
               </button>
             </div>
@@ -762,19 +1128,152 @@ function App() {
                     </button>
                   ))}
                 </div>
-                <div className="quick-links">
-                  {quickLinks.map((link) => (
-                    <button
-                      key={link.label}
-                      type="button"
-                      className="quick-link"
-                      onClick={() => handleQuickLink(link)}
-                    >
-                      {link.label}
-                    </button>
-                  ))}
+                <div className="panel-section">
+                  <div className="panel-section-title">Search</div>
+                  <form className="global-search" onSubmit={handleSearchSubmit}>
+                    <div className="global-search-row">
+                      <input
+                        type="text"
+                        placeholder="Search files and contents"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                      />
+                      <select
+                        value={searchScope}
+                        onChange={(e) => setSearchScope(e.target.value as 'all' | 'name' | 'content')}
+                      >
+                        <option value="all">All</option>
+                        <option value="name">Names</option>
+                        <option value="content">Content</option>
+                      </select>
+                      <button type="submit" className="search-button" disabled={searchLoading}>
+                        {searchLoading ? 'Searching…' : 'Search'}
+                      </button>
+                    </div>
+                    <div className="search-actions-row">
+                      <button
+                        type="button"
+                        className="ghost-button"
+                        onClick={handleClearSearch}
+                        disabled={!searchQuery && searchResults.length === 0}
+                      >
+                        Clear Search
+                      </button>
+                      <button type="button" className="ghost-button" onClick={handleResetNavigation}>
+                        Reset Navigation
+                      </button>
+                    </div>
+                  </form>
+                </div>
+                <div className="panel-section">
+                  <div className="panel-section-title">Favorites</div>
+                  <div className="favorites-section">
+                  <details open={favoritesFolders.length > 0}>
+                    <summary>Favorite Folders</summary>
+                    {favoritesLoading && <div className="muted">Loading…</div>}
+                    {favoritesError && <div className="error">{favoritesError}</div>}
+                    {favoritesFolders.length === 0 ? (
+                      <div className="empty-state">No favorites yet.</div>
+                    ) : (
+                      <ul className="favorites-list">
+                        {favoritesFolders.map((fav) => (
+                          <li key={`${fav.type}-${fav.pathId}`}>
+                            <button
+                              type="button"
+                              className="quick-link"
+                              onClick={() => handleOpenFolder({ PathID: fav.pathId, PathName: fav.label })}
+                            >
+                              {fav.label}
+                              {getParentLabel(getParentPath(fav.pathId)) && (
+                                <span className="favorite-parent"> - ({getParentLabel(getParentPath(fav.pathId))})</span>
+                              )}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </details>
+                  <details open={favoritesFiles.length > 0}>
+                    <summary>Favorite Files</summary>
+                    {favoritesFiles.length === 0 ? (
+                      <div className="empty-state">No favorites yet.</div>
+                    ) : (
+                      <ul className="favorites-list">
+                        {favoritesFiles.map((fav) => (
+                          <li key={`${fav.type}-${fav.pathId}`}>
+                            <button
+                              type="button"
+                              className="quick-link"
+                              onClick={() => openFileFromUrl(fav.pathId, fav.node)}
+                            >
+                              {fav.label}
+                              {fav.node && (
+                                <span className="favorite-parent"> - ({getParentLabel(fav.node)})</span>
+                              )}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </details>
+                  </div>
                 </div>
               </div>
+              {searchQuery.trim() && (
+                <div className="search-results">
+                  <div className="search-results-header">
+                    <span>Search results ({searchResults.length})</span>
+                    {searchLoading && <span className="muted">Searching…</span>}
+                  </div>
+                  {searchError && <div className="error">{searchError}</div>}
+                  {!searchLoading && !searchError && searchResults.length === 0 && (
+                    <div className="empty-state">No matches found.</div>
+                  )}
+                  {searchResults.length > 0 && (
+                    <ul className="search-results-list">
+                      {searchResults.map((result: any) => (
+                        <li key={`${result.pathId}-${result.source}`}>
+                          <button
+                            type="button"
+                            className="search-result-link"
+                            onClick={() => {
+                              highlightNextOpenRef.current = true;
+                              setHighlightQuery(searchQuery.trim());
+                              setHighlightPathId(result.pathId);
+                              setSearchHighlightActive(true);
+                              if (result.type === 'folder') {
+                                void handleOpenFolder({
+                                  PathID: result.pathId,
+                                  PathName: getSearchResultName(result),
+                                });
+                              } else {
+                                void openFileFromUrl(result.pathId);
+                              }
+                            }}
+                          >
+                            <span className="search-icon" aria-hidden="true">
+                              {result.type === 'folder' ? '📁' : '📄'}
+                            </span>
+                            {getSearchResultName(result)}
+                          </button>
+                          <div className="search-result-meta">
+                            <span className="search-result-path">{formatDisplayPath(result.pathId)}</span>
+                            {result.matchCount && (
+                              <span className="pill">{result.matchCount} hit{result.matchCount > 1 ? 's' : ''}</span>
+                            )}
+                            <span className="pill">{result.source}</span>
+                          </div>
+                          {result.matches?.length > 0 && (
+                            <div className="search-snippet">
+                              <span className="muted">L{result.matches[0].line}:</span> {result.matches[0].preview}
+                            </div>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              )}
               {browseError && <div className="error">{browseError}</div>}
               {browseData && (
                 <div className="browse-results">
@@ -786,7 +1285,7 @@ function App() {
                             <button
                               type="button"
                               className="browse-link"
-                              onClick={() => loadNode(entry.PathID, entry.PathName)}
+                              onClick={() => handleOpenFolder(entry)}
                             >
                               <span className="browse-icon" aria-hidden="true">📁</span>
                               {entry.PathName}
@@ -817,13 +1316,106 @@ function App() {
               <div className="panel-header">
                 <h2>File Details</h2>
               </div>
-              {!selectedFile ? (
+              {!selectedFile && !selectedFolder ? (
                 <div className="empty-state">Select a file to preview.</div>
+              ) : selectedFolder && !selectedFile ? (
+                <div className="file-details">
+                  <div className="file-title">
+                    <strong>
+                      {selectedFolder.PathName}
+                      <button
+                        type="button"
+                        className={`star-button ${isFavorite(selectedFolder.PathID, 'folder') ? 'star-active' : ''}`}
+                        onClick={() => toggleFavorite({
+                          type: 'folder',
+                          pathId: selectedFolder.PathID,
+                          label: selectedFolder.PathName,
+                          node: selectedFolder.PathID,
+                        })}
+                        aria-label="Toggle favorite folder"
+                        title="Toggle favorite folder"
+                      >
+                        ★
+                      </button>
+                    </strong>
+                    <span className="file-path">{formatDisplayPath(selectedFolder.PathID)}</span>
+                  </div>
+                  {folderLoading ? (
+                    <div>Loading folder overview…</div>
+                  ) : folderOverview ? (
+                    <div className="folder-overview">
+                      {folderOverview.fileCount > 0 ? (
+                        <>
+                          <div className="folder-summary">
+                            <div>
+                              <span className="label">Files</span>
+                              <span className="value">{folderOverview.fileCount}</span>
+                            </div>
+                            <div>
+                              <span className="label">Objects</span>
+                              <span className="value">{folderOverview.objectCount}</span>
+                            </div>
+                            <div>
+                              <span className="label">Schema Errors</span>
+                              <span className="value">{folderOverview.schemaErrorCount}</span>
+                            </div>
+                            <div>
+                              <span className="label">Unknown Fields</span>
+                              <span className="value">{folderOverview.unknownFieldCount}</span>
+                            </div>
+                          </div>
+                          <div className="folder-table">
+                            <div className="folder-table-header">
+                              <span>File</span>
+                              <span>Schema Errors</span>
+                              <span>Unknown Fields</span>
+                            </div>
+                            {folderOverview.topFiles?.length ? (
+                              folderOverview.topFiles.map((row: any) => (
+                                <div className="folder-table-row" key={row.pathId}>
+                                  <button
+                                    type="button"
+                                    className="folder-link"
+                                    onClick={() => openFileFromUrl(row.pathId)}
+                                  >
+                                    {row.file}
+                                  </button>
+                                  <span>{row.schemaErrors}</span>
+                                  <span>{row.unknownFields}</span>
+                                </div>
+                              ))
+                            ) : (
+                              <div className="empty-state">No files with issues.</div>
+                            )}
+                          </div>
+                        </>
+                      ) : (
+                        <div className="empty-state">No JSON files in this folder.</div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="empty-state">No overview available.</div>
+                  )}
+                </div>
               ) : (
                 <div className="file-details">
                   <div className="file-title">
                     <strong>
                       {selectedFile.PathName}
+                      <button
+                        type="button"
+                        className={`star-button ${isFavorite(selectedFile.PathID, 'file') ? 'star-active' : ''}`}
+                        onClick={() => toggleFavorite({
+                          type: 'file',
+                          pathId: selectedFile.PathID,
+                          label: selectedFile.PathName,
+                          node: browseNode || undefined,
+                        })}
+                        aria-label="Toggle favorite file"
+                        title="Toggle favorite file"
+                      >
+                        ★
+                      </button>
                       {viewMode === 'edit' && editorText !== originalText && (
                         <span className="unsaved-indicator" title="Unsaved changes">
                           ● Unsaved
@@ -930,15 +1522,44 @@ function App() {
                         </div>
                       ) : viewMode === 'friendly' ? (
                         <div className="friendly-view">
+                          {searchHighlightActive && highlightObjectKeys.length > 0 && (
+                            <div className="match-bar">
+                              <span className="match-label">
+                                Match {currentMatchIndex + 1} of {highlightObjectKeys.length}
+                              </span>
+                              <div className="match-actions">
+                                <button type="button" className="match-button" onClick={handlePrevMatch}>
+                                  Prev
+                                </button>
+                                <button type="button" className="match-button" onClick={handleNextMatch}>
+                                  Next
+                                </button>
+                              </div>
+                            </div>
+                          )}
                           {getFriendlyObjects(fileData).length === 0 ? (
                             <div className="empty-state">No objects found.</div>
                           ) : (
                             getFriendlyObjects(fileData).map((obj: any, idx: number) => (
-                              <div className="object-card" key={obj?.['@objectName'] || idx}>
+                              <div
+                                className={`object-card${highlightObjectKeys.includes(getObjectKey(obj, idx))
+                                  ? ' object-card-highlight'
+                                  : ''}${searchHighlightActive && highlightObjectKeys.length > 0 &&
+                                    !highlightObjectKeys.includes(getObjectKey(obj, idx))
+                                    ? ' object-card-dim'
+                                    : ''}`}
+                                key={obj?.['@objectName'] || idx}
+                                ref={(el) => {
+                                  objectRowRefs.current[getObjectKey(obj, idx)] = el;
+                                }}
+                              >
                                 <div className="object-header">
                                   <div className="object-title">
                                     <span className="object-name">{obj?.['@objectName'] || `Object ${idx + 1}`}</span>
                                     {obj?.certification && <span className="pill">{obj.certification}</span>}
+                                    {highlightObjectKeys.includes(getObjectKey(obj, idx)) && (
+                                      <span className="pill match-pill">Match</span>
+                                    )}
                                   </div>
                                   {obj?.description && <div className="object-description">{obj.description}</div>}
                                 </div>
@@ -969,6 +1590,10 @@ function App() {
                                     <div>
                                       <span className="label">Event Category</span>
                                       <span className="value">{renderValue(obj?.event?.EventCategory)}</span>
+                                    </div>
+                                    <div>
+                                      <span className="label">OID</span>
+                                      <span className="value monospace">{renderValue(obj?.trap?.oid)}</span>
                                     </div>
                                   </div>
                                   <div className="object-row object-row-tertiary">
@@ -1047,27 +1672,66 @@ function App() {
             {showPathModal && (
               <div className="modal-overlay" role="dialog" aria-modal="true">
                 <div className="modal">
-                  <h3>Current path</h3>
-                  <div className="path-row">
-                    <div className="path-value monospace">{getCurrentPath()}</div>
-                    <button
-                      type="button"
-                      className="copy-button"
-                      onClick={async () => {
-                        try {
-                          await navigator.clipboard.writeText(getCurrentPath());
-                        } catch {
-                          // ignore
-                        }
-                      }}
-                    >
-                      Copy
-                    </button>
+                  <h3>Tool Overview</h3>
+                  <div className="help-section">
+                    <h4>Current Path</h4>
+                    <div className="path-row">
+                      <div className="path-value monospace">{getCurrentPath()}</div>
+                      <button
+                        type="button"
+                        className="copy-button"
+                        onClick={async () => {
+                          try {
+                            await navigator.clipboard.writeText(getCurrentPath());
+                          } catch {
+                            // ignore
+                          }
+                        }}
+                      >
+                        Copy
+                      </button>
+                    </div>
+                    <p className="path-note">
+                      UA internal paths use an <span className="code-pill">id-core</span> prefix. The UI
+                      displays the cleaned path for readability.
+                    </p>
                   </div>
-                  <p className="path-note">
-                    UA internal paths use an <span className="code-pill">id-core</span> prefix. The UI
-                    displays the cleaned path for readability.
-                  </p>
+                  <div className="help-section">
+                    <h4>Search modes</h4>
+                    <ul>
+                      <li><strong>Names</strong>: searches file and folder names (and paths).</li>
+                      <li><strong>Content</strong>: searches inside file contents only.</li>
+                      <li><strong>All</strong>: searches both names and contents.</li>
+                    </ul>
+                  </div>
+                  <div className="index-status">
+                    <div className="index-status-header">Search Index Status</div>
+                    {searchRebuildPending || searchStatus?.isBuilding ? (
+                      <span className="muted">Index rebuilding…</span>
+                    ) : searchStatus?.lastBuiltAt ? (
+                      <span className="muted">
+                        Indexed {searchStatus.counts?.files || 0} files · Last refresh {formatTime(searchStatus.lastBuiltAt)}
+                        {searchStatus?.nextRefreshAt
+                          ? ` · Next refresh ${formatTime(searchStatus.nextRefreshAt)}`
+                          : ''}
+                      </span>
+                    ) : (
+                      <span className="muted">Index warming…</span>
+                    )}
+                    <div className="index-status-actions">
+                      <button type="button" className="link-button" onClick={refreshSearchStatus}>
+                        Refresh status
+                      </button>
+                      <button
+                        type="button"
+                        className="link-button"
+                        onClick={handleRebuildIndex}
+                        disabled={searchStatus?.isBuilding}
+                      >
+                        Rebuild index
+                      </button>
+                    </div>
+                  </div>
                   <div className="modal-actions">
                     <button type="button" onClick={() => setShowPathModal(false)}>
                       Close

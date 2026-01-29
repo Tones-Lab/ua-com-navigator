@@ -110,6 +110,37 @@ class ApiClient {
   async getSchemaVersion() {
     return this.client.get('/schema/version');
   }
+
+  // Favorites
+  async getFavorites() {
+    return this.client.get('/favorites');
+  }
+
+  async addFavorite(favorite: { type: 'file' | 'folder'; pathId: string; label: string; node?: string }) {
+    return this.client.post('/favorites', favorite);
+  }
+
+  async removeFavorite(favorite: { type: 'file' | 'folder'; pathId: string }) {
+    return this.client.delete('/favorites', { data: favorite });
+  }
+
+  // Folder Overview
+  async getFolderOverview(node: string, limit: number = 25) {
+    return this.client.get('/folders/overview', { params: { node, limit } });
+  }
+
+  // Search
+  async searchComs(query: string, scope: 'all' | 'name' | 'content' = 'all', limit: number = 200) {
+    return this.client.get('/search', { params: { q: query, scope, limit } });
+  }
+
+  async getSearchStatus() {
+    return this.client.get('/search/status');
+  }
+
+  async rebuildSearchIndex() {
+    return this.client.post('/search/rebuild');
+  }
 }
 
 export default new ApiClient();

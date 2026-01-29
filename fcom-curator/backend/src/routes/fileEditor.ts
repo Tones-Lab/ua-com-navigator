@@ -3,6 +3,7 @@ import crypto from 'crypto';
 import logger from '../utils/logger';
 import UAClient from '../services/ua';
 import { getCredentials, getServer } from '../services/sessionStore';
+import { searchIndex } from '../services/searchIndex';
 
 const router = Router();
 
@@ -114,6 +115,11 @@ router.post('/save', async (req: Request, res: Response) => {
 
     const uaClient = getUaClientFromSession(req);
     const data = await uaClient.updateRule(String(file_id), content, commit_message);
+    try {
+      await searchIndex().updateFileFromContent(String(file_id), content);
+    } catch (err: any) {
+      logger.warn(`Search index update failed: ${err?.message || 'unknown error'}`);
+    }
     const parentNode = String(file_id).split('/').slice(0, -1).join('/');
     const listing = parentNode
       ? await uaClient.listRules('/', 500, parentNode)
@@ -150,6 +156,11 @@ router.post('/:file_id/save', async (req: Request, res: Response) => {
 
     const uaClient = getUaClientFromSession(req);
     const data = await uaClient.updateRule(file_id, content, commit_message);
+    try {
+      await searchIndex().updateFileFromContent(String(file_id), content);
+    } catch (err: any) {
+      logger.warn(`Search index update failed: ${err?.message || 'unknown error'}`);
+    }
     const parentNode = String(file_id).split('/').slice(0, -1).join('/');
     const listing = parentNode
       ? await uaClient.listRules('/', 500, parentNode)
