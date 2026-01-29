@@ -1,6 +1,10 @@
 # Project Backlog
 
 ## Now (P0)
+- RBAC gating for edit/execute:
+	- Call UA roles/permissions API on login.
+	- Verify user has edit + execute permissions on rules ACL.
+	- Enable UI edit mode only when permissions allow (including field-level edits and new fields).
 - Validate UA REST API endpoints and parameters against a real UA server.
 - Confirm auth flows (basic + certificate) and session handling.
 - Derive initial FCOM JSON Schema from representative /coms/trap files.
@@ -32,6 +36,9 @@
 	- Single, reusable component for all fields (no per-field logic).
 	- Edit mode supports Literal vs Eval with $vX autocomplete.
 	- Inline validation using schema type (when available).
+- Eval UI improvements (read-only):
+	- Keep raw eval visible; hover $vX to show variable definition tooltip.
+	- Optional hover on eval to show quick legend of referenced variables.
 - Event field type validation using UA Events table schema:
 	- Backend endpoint to fetch/cache Events table field definitions.
 	- UI flags event fields missing from Events table as Critical (remove).
@@ -47,6 +54,9 @@
 - Preprocessor editor.
 - Test single object + test all.
 - Create mature documentation: how-to, usage guide, and README updates.
+- Human-editable COM forms (end goal):
+	- Form-based editor that abstracts JSON structure into field-level UI.
+	- Support editing evals via guided inputs (conditions/outcomes) without raw JSON.
 
 ## Future (P3)
 - Cross-server compare.

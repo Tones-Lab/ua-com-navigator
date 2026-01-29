@@ -381,8 +381,13 @@ function App() {
         : { cert_path: certPath, key_path: keyPath, ca_cert_path: caPath || undefined };
 
       const resp = await api.login(serverId, authType, credentials);
+      // Debug: log login response payload (omit credentials)
+      // eslint-disable-next-line no-console
+      console.info('Login response:', resp?.data);
       setSession(resp.data);
     } catch (err: any) {
+      // eslint-disable-next-line no-console
+      console.error('Login error:', err?.response?.data || err);
       setError(err?.response?.data?.error || 'Login failed');
     } finally {
       setLoading(false);
@@ -907,6 +912,9 @@ function App() {
     if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
       return renderHighlightedText(String(value));
     }
+    if (value && typeof value === 'object' && typeof value.eval === 'string') {
+      return renderEvalDisplay(value.eval);
+    }
     try {
       return renderHighlightedText(JSON.stringify(value));
     } catch {
@@ -1082,6 +1090,133 @@ function App() {
     }
     setCurrentMatchIndex((prev) => (prev - 1 + highlightObjectKeys.length) % highlightObjectKeys.length);
   };
+
+  const normalizeEvalText = (value: string) => (
+    value
+      .replace(/\s+/g, ' ')
+      .replace(/&&/g, ' AND ')
+      .replace(/\|\|/g, ' OR ')
+      .replace(/==/g, ' = ')
+      .replace(/!=/g, ' ≠ ')
+      .replace(/>=/g, ' ≥ ')
+      .replace(/<=/g, ' ≤ ')
+      .replace(/\s+/g, ' ')
+      .trim()
+  );
+
+  const unwrapOuterParens = (value: string) => {
+    let result = value.trim();
+    while (result.startsWith('(') && result.endsWith(')')) {
+      let depth = 0;
+      let isWrapped = true;
+      for (let i = 0; i < result.length; i += 1) {
+        const char = result[i];
+        if (char === '(') {
+          depth += 1;
+        } else if (char === ')') {
+          depth -= 1;
+          if (depth === 0 && i !== result.length - 1) {
+            isWrapped = false;
+            break;
+          }
+        }
+      }
+      if (!isWrapped || depth !== 0) {
+        break;
+      }
+      result = result.slice(1, -1).trim();
+    }
+    return result;
+  };
+
+  const splitTernary = (value: string) => {
+    const cleaned = unwrapOuterParens(value);
+    let questionIndex = -1;
+    let depth = 0;
+    let parenDepth = 0;
+    for (let i = 0; i < cleaned.length; i += 1) {
+      const char = cleaned[i];
+      if (char === '(') {
+        parenDepth += 1;
+      } else if (char === ')') {
+        parenDepth = Math.max(0, parenDepth - 1);
+      }
+      if (parenDepth > 0) {
+        continue;
+      }
+      if (char === '?') {
+        if (depth === 0) {
+          questionIndex = i;
+        }
+        depth += 1;
+      } else if (char === ':') {
+        if (depth === 1) {
+          const condition = cleaned.slice(0, questionIndex);
+          const whenTrue = cleaned.slice(questionIndex + 1, i);
+          const whenFalse = cleaned.slice(i + 1);
+          return { condition, whenTrue, whenFalse };
+        }
+        if (depth > 0) {
+          depth -= 1;
+        }
+      }
+    }
+    return null;
+  };
+
+  const formatEvalReadableList = (text: string) => {
+    const cleaned = unwrapOuterParens(text.trim());
+    const ternary = splitTernary(cleaned);
+    if (!ternary) {
+      return [`Set to ${normalizeEvalText(cleaned)}`];
+    }
+    const lines: string[] = [];
+    const walk = (expr: string, isFirst: boolean) => {
+      const node = splitTernary(unwrapOuterParens(expr.trim()));
+      if (!node) {
+        lines.push(isFirst ? `Set to ${normalizeEvalText(expr)}` : `Else set to ${normalizeEvalText(expr)}`);
+        return;
+      }
+      const condition = normalizeEvalText(node.condition)
+        .replace(/=\s*(\d+)/g, 'is $1')
+        .replace(/\bOR\b/g, 'or');
+      const thenExpr = normalizeEvalText(node.whenTrue);
+      if (isFirst) {
+        lines.push(`If ${condition}, set to ${thenExpr}`);
+      } else {
+        lines.push(`Else if ${condition}, set to ${thenExpr}`);
+      }
+      walk(node.whenFalse, false);
+    };
+    walk(cleaned, true);
+    return lines;
+  };
+  function renderEvalDisplay(evalText: string) {
+    try {
+      const lines = formatEvalReadableList(evalText);
+      return (
+        <div className="eval-display">
+          <span className="eval-label eval-label-hover" title={evalText}>
+            <span className="eval-label-text">Eval</span>
+            <span className="eval-label-icon" aria-hidden="true">ⓘ</span>
+          </span>
+          <div className="eval-demo-lines">
+            {lines.map((line, idx) => (
+              <div key={`eval-line-${idx}`} className="eval-demo-text">
+                {renderHighlightedText(line)}
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    } catch {
+      return (
+        <span className="eval-fallback" title={evalText}>
+          {renderHighlightedText(evalText)}
+        </span>
+      );
+    }
+  }
 
   return (
     <ErrorBoundary>
