@@ -30,6 +30,7 @@ const sslCertPath = process.env.SSL_CERT_PATH || '/opt/assure1/etc/ssl/Web.crt';
 const useHttps = fs.existsSync(sslKeyPath) && fs.existsSync(sslCertPath);
 
 app.set('trust proxy', 1);
+app.disable('etag');
 
 // Middleware
 app.use(helmet());
@@ -51,7 +52,14 @@ app.use(cors({
   },
   credentials: true,
 }));
-app.use(morgan('combined', { stream: { write: msg => logger.info(msg.trim()) } }));
+app.use((req: Request, res: Response, next: NextFunction) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  res.setHeader('Surrogate-Control', 'no-store');
+  next();
+});
+app.use(morgan('combined', { stream: { write: (msg: string) => logger.info(msg.trim()) } }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());

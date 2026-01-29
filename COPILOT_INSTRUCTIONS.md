@@ -22,7 +22,8 @@ These rules keep operations safe and predictable in this repo.
     - `journalctl -u fcom-curator-backend -f`
     - `journalctl -u fcom-curator-frontend -f`
 
-Reminder: after backend behavior changes, restart both services before manual retesting.
+Reminder: after any code change, restart the affected service(s) before manual retesting.
+Explicit requirement: if a code change requires a restart to take effect, you (the agent) must perform the restart of the affected service(s).
 
 ## Operational expectations
 

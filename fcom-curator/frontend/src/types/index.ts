@@ -13,6 +13,7 @@ export interface Session {
   server_id: string;
   auth_method: 'basic' | 'certificate';
   expires_at: string;
+  ua_login?: any;
 }
 
 export interface FcomObject {

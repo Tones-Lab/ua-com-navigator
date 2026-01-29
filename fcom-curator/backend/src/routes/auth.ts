@@ -16,6 +16,11 @@ router.post('/login', async (req: Request, res: Response) => {
   try {
     const authReq: AuthRequest = req.body;
 
+    const maskedPassword = authReq?.password ? '*****' : undefined;
+    logger.info(
+      `[Auth] Login attempt path=${req.path} server_id=${authReq?.server_id || 'unknown'} auth_type=${authReq?.auth_type || 'unknown'} user=${authReq?.username || 'cert user'} password=${maskedPassword || 'n/a'}`,
+    );
+
     const basicEnabled = (process.env.UA_AUTH_BASIC_ENABLED ?? 'true').toLowerCase() === 'true';
     const certEnabled = (process.env.UA_AUTH_CERT_ENABLED ?? 'true').toLowerCase() === 'true';
     
@@ -61,8 +66,14 @@ router.post('/login', async (req: Request, res: Response) => {
 
     logger.info(`Authenticating ${authReq.username || 'cert user'} against server ${server.server_id}`);
 
-    // Verify auth with a lightweight read call (rules list)
-    await uaClient.listRules('/', 1);
+    let uaLoginData: any = null;
+    if (authReq.auth_type === 'basic') {
+      uaLoginData = await uaClient.executeLogin(authReq.username!, authReq.password!);
+      logger.info(`[UA] executeLogin response: ${JSON.stringify(uaLoginData)}`);
+    } else {
+      // Verify auth with a lightweight read call (rules list) for certificate auth
+      await uaClient.listRules('/', 1);
+    }
 
     const sessionId = uuidv4();
     const expiresAt = new Date(Date.now() + 8 * 3600000); // 8 hours
@@ -74,6 +85,7 @@ router.post('/login', async (req: Request, res: Response) => {
       auth_method: authReq.auth_type,
       created_at: new Date(),
       expires_at: expiresAt,
+      ua_login: uaLoginData,
     };
 
     setSession(session, authReq, server);
@@ -89,14 +101,22 @@ router.post('/login', async (req: Request, res: Response) => {
       maxAge: 8 * 3600000,
     });
 
+    logger.info(
+      `[Auth] Login success path=${req.path} server_id=${authReq.server_id} user=${session.user} auth_type=${session.auth_method}`,
+    );
+
     res.json({
       session_id: sessionId,
       user: session.user,
       server_id: session.server_id,
       auth_method: session.auth_method,
       expires_at: session.expires_at.toISOString(),
+      ua_login: uaLoginData,
     });
   } catch (error: any) {
+    logger.error(
+      `[Auth] Login failed path=${req.path} server_id=${req.body?.server_id || 'unknown'} user=${req.body?.username || 'cert user'} auth_type=${req.body?.auth_type || 'unknown'} error=${error.message}`,
+    );
     logger.error(`Login error: ${error.message}`);
     res.status(500).json({ error: 'Authentication failed' });
   }
@@ -137,6 +157,7 @@ router.get('/session', (req: Request, res: Response) => {
       user: session.user,
       server_id: session.server_id,
       expires_at: session.expires_at.toISOString(),
+      ua_login: session.ua_login ?? null,
     });
   } catch (error: any) {
     logger.error(`Session query error: ${error.message}`);

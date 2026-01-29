@@ -125,6 +125,7 @@ function App() {
     }
     return parts.slice(0, -1).join('/');
   };
+
   const [browseError, setBrowseError] = useState<string | null>(null);
   const [browseData, setBrowseData] = useState<any>(null);
   const [browseNode, setBrowseNode] = useState<string | null>(null);
@@ -151,7 +152,9 @@ function App() {
   const [originalText, setOriginalText] = useState('');
   const [showCommitModal, setShowCommitModal] = useState(false);
   const [pendingNav, setPendingNav] = useState<null | (() => void)>(null);
-  const [testSaveCount, setTestSaveCount] = useState(0);
+  const [showSchemaModal, setShowSchemaModal] = useState(false);
+  const [panelEditEnabled, setPanelEditEnabled] = useState(false);
+  const [panelEditState, setPanelEditState] = useState<Record<string, boolean>>({});
   const [schema, setSchema] = useState<any>(null);
   const [schemaLoading, setSchemaLoading] = useState(false);
   const [schemaError, setSchemaError] = useState<string | null>(null);
@@ -163,6 +166,35 @@ function App() {
   const [varModalVars, setVarModalVars] = useState<any[]>([]);
   const varListRef = useRef<HTMLDivElement | null>(null);
   const varRowRefs = useRef<Record<string, HTMLDivElement | null>>({});
+
+  const canEditRules = Boolean(
+    session?.ua_login?.data?.Permissions?.rule?.Rules?.update,
+  );
+
+  useEffect(() => {
+    if (viewMode === 'edit' && !canEditRules) {
+      setViewMode('preview');
+    }
+  }, [viewMode, canEditRules]);
+
+  useEffect(() => {
+    if (!panelEditEnabled) {
+      setPanelEditState({});
+    }
+  }, [panelEditEnabled]);
+
+  useEffect(() => {
+    if (viewMode !== 'friendly' && panelEditEnabled) {
+      setPanelEditEnabled(false);
+    }
+  }, [viewMode, panelEditEnabled]);
+
+  const togglePanelEdit = (key: string) => {
+    setPanelEditState((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
+  };
 
   const ajv = useMemo(() => {
     const instance = new Ajv({ allErrors: true, strict: false });
@@ -221,6 +253,12 @@ function App() {
   }, [setSession, setServers, serverId]);
 
   useEffect(() => {
+    if (!isAuthenticated) {
+      urlHydrated.current = false;
+    }
+  }, [isAuthenticated]);
+
+  useEffect(() => {
     if (!isAuthenticated || schema || schemaLoading) {
       return;
     }
@@ -231,33 +269,13 @@ function App() {
         const resp = await api.getSchema();
         setSchema(resp.data);
       } catch (err: any) {
-        setSchemaError(err?.response?.data?.error || 'Failed to load schema');
+        setSchemaError(err?.response?.data?.error || 'Schema unavailable');
       } finally {
         setSchemaLoading(false);
       }
     };
-    loadSchema();
+    void loadSchema();
   }, [isAuthenticated, schema, schemaLoading]);
-
-  useEffect(() => {
-    if (!isAuthenticated) {
-      return;
-    }
-    const loadStatus = async () => {
-      try {
-        const resp = await api.getSearchStatus();
-        setSearchStatus(resp.data);
-      } catch {
-        // ignore status errors
-      }
-    };
-    loadStatus();
-    return () => {
-      if (searchStatusPollRef.current !== null) {
-        window.clearInterval(searchStatusPollRef.current);
-      }
-    };
-  }, [isAuthenticated]);
 
   useEffect(() => {
     if (!validator) {
@@ -342,7 +360,10 @@ function App() {
     if (nodeParam) {
       setBreadcrumbs(buildBreadcrumbsFromNode(nodeParam));
       void loadNodeInternal(nodeParam);
+      return;
     }
+
+    void loadNodeInternal(null, '/');
   }, [isAuthenticated]);
 
   useEffect(() => {
@@ -799,32 +820,6 @@ function App() {
     await saveWithContent(content, message);
   };
 
-  const handleTestSave = async () => {
-    if (!editorText.trim()) {
-      return;
-    }
-    try {
-      const parsed = JSON.parse(editorText);
-      const firstObject = parsed?.objects?.[0];
-      if (firstObject?.event?.Summary) {
-        firstObject.event.Summary = `${firstObject.event.Summary}x`;
-      } else if (firstObject?.Summary) {
-        firstObject.Summary = `${firstObject.Summary}x`;
-      } else if (firstObject?.event) {
-        firstObject.event.Summary = 'x';
-      }
-      const updatedText = JSON.stringify(parsed, null, 2);
-      const nextCount = testSaveCount + 1;
-      setTestSaveCount(nextCount);
-      setEditorText(updatedText);
-      const commit = 'test save';
-      setCommitMessage(commit);
-      await saveWithContent(parsed, commit);
-    } catch {
-      setSaveError('Test save failed: invalid JSON');
-    }
-  };
-
   const getPreviewContent = (data: any) => {
     const ruleText = data?.content?.data?.[0]?.RuleText;
     if (typeof ruleText === 'string') {
@@ -937,7 +932,7 @@ function App() {
     const parts = text.split(/(\$v\d+)/g);
     return (
       <span>
-        {parts.map((part, index) => {
+        {parts.map((part: string, index: number) => {
           if (!part.match(/^\$v\d+$/)) {
             return <span key={`text-${index}`}>{renderHighlightedText(part)}</span>;
           }
@@ -1191,38 +1186,32 @@ function App() {
     walk(cleaned, true);
     return lines;
   };
-  function renderEvalDisplay(evalText: string) {
+  const renderEvalDisplay = (evalText: string) => {
     try {
       const lines = formatEvalReadableList(evalText);
       return (
         <div className="eval-display">
           <span className="eval-label eval-label-hover" title={evalText}>
-            <span className="eval-label-text">Eval</span>
-            <span className="eval-label-icon" aria-hidden="true">ⓘ</span>
+            <span className="eval-label-icon">ⓘ</span>
+            Eval
           </span>
-          <div className="eval-demo-lines">
-            {lines.map((line, idx) => (
-              <div key={`eval-line-${idx}`} className="eval-demo-text">
-                {renderHighlightedText(line)}
-              </div>
+          <div className="eval-demo eval-demo-lines">
+            {lines.map((line, index) => (
+              <span key={`${line}-${index}`}>{renderHighlightedText(line)}</span>
             ))}
           </div>
         </div>
       );
     } catch {
-      return (
-        <span className="eval-fallback" title={evalText}>
-          {renderHighlightedText(evalText)}
-        </span>
-      );
+      return <span className="eval-fallback">{renderHighlightedText(evalText)}</span>;
     }
-  }
+  };
 
   return (
     <ErrorBoundary>
       <div className="app">
         <header className="app-header">
-          <h1>COM Curation & Management</h1>
+          <h1>COM Curation &amp; Management</h1>
           {isAuthenticated && (
             <div className="header-actions">
               <p>Welcome, {session?.user}</p>
@@ -1568,30 +1557,71 @@ function App() {
                     </span>
                     <span>Modified: {selectedFile.ModificationTime || '—'}</span>
                     <span>Checkouts: {selectedFile.Checkouts || '0'}</span>
+                    <span className="schema-status">
+                      {schemaLoading && <span>Schema: Loading…</span>}
+                      {schemaError && (
+                        <button type="button" className="schema-issue" onClick={() => setShowSchemaModal(true)}>
+                          Schema: Error
+                        </button>
+                      )}
+                      {!schemaLoading && !schemaError && !validator && (
+                        <button type="button" className="schema-issue" onClick={() => setShowSchemaModal(true)}>
+                          Schema: Not available
+                        </button>
+                      )}
+                      {!schemaLoading && !schemaError && validator && !jsonParseError && validationErrors.length === 0 && (
+                        <span className="schema-valid" aria-label="Schema validated">
+                          Schema: ✓
+                        </span>
+                      )}
+                      {!schemaLoading && !schemaError && validator && (jsonParseError || validationErrors.length > 0) && (
+                        <button type="button" className="schema-issue" onClick={() => setShowSchemaModal(true)}>
+                          Schema: {jsonParseError ? 'JSON error' : `${validationErrors.length} issue(s)`}
+                        </button>
+                      )}
+                    </span>
                   </div>
                   <div className="action-row">
-                    <button
-                      type="button"
-                      className={viewMode === 'friendly' ? 'tab-active' : 'tab'}
-                      onClick={() => setViewMode('friendly')}
-                    >
-                      Friendly
-                    </button>
-                    <button
-                      type="button"
-                      className={viewMode === 'preview' ? 'tab-active' : 'tab'}
-                      onClick={() => setViewMode('preview')}
-                    >
-                      Raw
-                    </button>
-                    <button
-                      type="button"
-                      className={viewMode === 'edit' ? 'tab-active' : 'tab'}
-                      onClick={() => setViewMode('edit')}
-                    >
-                      Edit
-                    </button>
-                    {viewMode === 'edit' && (
+                    <div className="view-toggle">
+                      <span className={viewMode === 'friendly' ? 'view-toggle-label active' : 'view-toggle-label'}>
+                        Friendly
+                      </span>
+                      <label className="switch" aria-label="Toggle friendly/raw view">
+                        <input
+                          type="checkbox"
+                          checked={viewMode !== 'friendly'}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setViewMode('preview');
+                            } else {
+                              setViewMode('friendly');
+                            }
+                          }}
+                        />
+                        <span className="slider" />
+                      </label>
+                      <span className={viewMode !== 'friendly' ? 'view-toggle-label active' : 'view-toggle-label'}>
+                        Raw
+                      </span>
+                    </div>
+                    {canEditRules && (
+                      <button
+                        type="button"
+                        className={(viewMode === 'friendly' && panelEditEnabled) || viewMode === 'edit'
+                          ? 'tab-active'
+                          : 'tab'}
+                        onClick={() => {
+                          if (viewMode === 'friendly') {
+                            setPanelEditEnabled((prev) => !prev);
+                          } else {
+                            setViewMode('edit');
+                          }
+                        }}
+                      >
+                        Edit
+                      </button>
+                    )}
+                    {canEditRules && viewMode === 'edit' && (
                       <button
                         type="button"
                         className="save-button"
@@ -1604,46 +1634,10 @@ function App() {
                         Save
                       </button>
                     )}
-                    {viewMode === 'edit' && (
-                      <button
-                        type="button"
-                        className="test-save-button"
-                        onClick={handleTestSave}
-                        disabled={saveLoading}
-                      >
-                        Test Save
-                      </button>
-                    )}
                   </div>
                   {fileError && <div className="error">{fileError}</div>}
                   {saveError && <div className="error">{saveError}</div>}
                   {saveSuccess && <div className="success">{saveSuccess}</div>}
-                  <div className="validation-summary">
-                    {schemaLoading && <span>Schema: Loading…</span>}
-                    {schemaError && <span className="error">Schema: {schemaError}</span>}
-                    {!schemaLoading && !schemaError && !validator && (
-                      <span className="error">Schema: Not available</span>
-                    )}
-                    {!schemaLoading && !schemaError && validator && !jsonParseError && validationErrors.length === 0 && (
-                      <span className="success">Schema: Valid</span>
-                    )}
-                    {!schemaLoading && !schemaError && validator && jsonParseError && (
-                      <span className="error">JSON: {jsonParseError}</span>
-                    )}
-                    {!schemaLoading && !schemaError && validator && !jsonParseError && validationErrors.length > 0 && (
-                      <details>
-                        <summary className="error">Schema: {validationErrors.length} issue(s)</summary>
-                        <ul>
-                          {validationErrors.map((err, idx) => (
-                            <li key={`${err.path}-${idx}`}>
-                              <span className="validation-path">{err.path}</span>
-                              <span className="validation-message">{err.message}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </details>
-                    )}
-                  </div>
                   <div className="file-preview">
                     {fileLoading ? (
                       <div>Loading preview…</div>
@@ -1698,48 +1692,98 @@ function App() {
                                   </div>
                                   {obj?.description && <div className="object-description">{obj.description}</div>}
                                 </div>
-                                <div className="object-grid">
-                                  <div className="object-row object-row-primary">
-                                    <div>
-                                      <span className="label">Node</span>
-                                      <span className="value">{renderValue(obj?.event?.Node)}</span>
+                                <div
+                                  className={`object-panel${panelEditState[`${getObjectKey(obj, idx)}:event`]
+                                    ? ' object-panel-editing'
+                                    : ''}`}
+                                >
+                                  <div className="object-panel-header">
+                                    <span className="object-panel-title">Event</span>
+                                    {canEditRules && panelEditEnabled && (
+                                      <button
+                                        type="button"
+                                        className="panel-edit-button"
+                                        onClick={() => togglePanelEdit(`${getObjectKey(obj, idx)}:event`)}
+                                      >
+                                        {panelEditState[`${getObjectKey(obj, idx)}:event`] ? 'Done' : 'Edit'}
+                                      </button>
+                                    )}
+                                  </div>
+                                  <div className="object-grid">
+                                    <div className="object-row object-row-primary">
+                                      <div>
+                                        <span className="label">Node</span>
+                                        <span className="value">{renderValue(obj?.event?.Node)}</span>
+                                      </div>
+                                      <div>
+                                        <span className="label">Summary</span>
+                                        <span className="value">{renderSummary(obj?.event?.Summary, obj?.trap?.variables)}</span>
+                                      </div>
+                                      <div>
+                                        <span className="label">Severity</span>
+                                        <span className="value">{renderValue(obj?.event?.Severity)}</span>
+                                      </div>
                                     </div>
-                                    <div>
-                                      <span className="label">Summary</span>
-                                      <span className="value">{renderSummary(obj?.event?.Summary, obj?.trap?.variables)}</span>
-                                    </div>
-                                    <div>
-                                      <span className="label">Severity</span>
-                                      <span className="value">{renderValue(obj?.event?.Severity)}</span>
+                                    <div className="object-row object-row-secondary">
+                                      <div>
+                                        <span className="label">Event Type</span>
+                                        <span className="value">{renderValue(obj?.event?.EventType)}</span>
+                                      </div>
+                                      <div>
+                                        <span className="label">Expire Time</span>
+                                        <span className="value">{renderValue(obj?.event?.ExpireTime)}</span>
+                                      </div>
+                                      <div>
+                                        <span className="label">Event Category</span>
+                                        <span className="value">{renderValue(obj?.event?.EventCategory)}</span>
+                                      </div>
+                                      <div>
+                                        <span className="label">OID</span>
+                                        <span className="value monospace">{renderValue(obj?.trap?.oid)}</span>
+                                      </div>
                                     </div>
                                   </div>
-                                  <div className="object-row object-row-secondary">
-                                    <div>
-                                      <span className="label">Event Type</span>
-                                      <span className="value">{renderValue(obj?.event?.EventType)}</span>
-                                    </div>
-                                    <div>
-                                      <span className="label">Expire Time</span>
-                                      <span className="value">{renderValue(obj?.event?.ExpireTime)}</span>
-                                    </div>
-                                    <div>
-                                      <span className="label">Event Category</span>
-                                      <span className="value">{renderValue(obj?.event?.EventCategory)}</span>
-                                    </div>
-                                    <div>
-                                      <span className="label">OID</span>
-                                      <span className="value monospace">{renderValue(obj?.trap?.oid)}</span>
-                                    </div>
+                                </div>
+                                <div
+                                  className={`object-panel${panelEditState[`${getObjectKey(obj, idx)}:pre`]
+                                    ? ' object-panel-editing'
+                                    : ''}`}
+                                >
+                                  <div className="object-panel-header">
+                                    <span className="object-panel-title">PreProcessors</span>
+                                    {canEditRules && panelEditEnabled && (
+                                      <button
+                                        type="button"
+                                        className="panel-edit-button"
+                                        onClick={() => togglePanelEdit(`${getObjectKey(obj, idx)}:pre`)}
+                                      >
+                                        {panelEditState[`${getObjectKey(obj, idx)}:pre`] ? 'Done' : 'Edit'}
+                                      </button>
+                                    )}
                                   </div>
-                                  <div className="object-row object-row-tertiary">
-                                    <div>
-                                      <span className="label">Trap Variables</span>
-                                      <span className="value">{renderTrapVariables(obj?.trap?.variables)}</span>
-                                    </div>
-                                    <div>
-                                      <span className="label">PreProcessors</span>
-                                      <span className="value">{renderValue(obj?.preProcessors)}</span>
-                                    </div>
+                                  <div className="object-panel-body">
+                                    {renderValue(obj?.preProcessors)}
+                                  </div>
+                                </div>
+                                <div
+                                  className={`object-panel${panelEditState[`${getObjectKey(obj, idx)}:trap`]
+                                    ? ' object-panel-editing'
+                                    : ''}`}
+                                >
+                                  <div className="object-panel-header">
+                                    <span className="object-panel-title">Trap Variables</span>
+                                    {canEditRules && panelEditEnabled && (
+                                      <button
+                                        type="button"
+                                        className="panel-edit-button"
+                                        onClick={() => togglePanelEdit(`${getObjectKey(obj, idx)}:trap`)}
+                                      >
+                                        {panelEditState[`${getObjectKey(obj, idx)}:trap`] ? 'Done' : 'Edit'}
+                                      </button>
+                                    )}
+                                  </div>
+                                  <div className="object-panel-body">
+                                    {renderTrapVariables(obj?.trap?.variables)}
                                   </div>
                                 </div>
                               </div>
@@ -1771,6 +1815,35 @@ function App() {
                             disabled={saveLoading}
                           >
                             {saveLoading ? 'Saving…' : 'Save'}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  {showSchemaModal && (
+                    <div className="modal-overlay" role="dialog" aria-modal="true">
+                      <div className="modal">
+                        <h3>Schema issues</h3>
+                        {schemaError && <div className="error">Schema: {schemaError}</div>}
+                        {!schemaError && !validator && (
+                          <div className="error">Schema not available</div>
+                        )}
+                        {!schemaError && validator && jsonParseError && (
+                          <div className="error">JSON: {jsonParseError}</div>
+                        )}
+                        {!schemaError && validator && !jsonParseError && validationErrors.length > 0 && (
+                          <ul>
+                            {validationErrors.map((err, idx) => (
+                              <li key={`${err.path}-${idx}`}>
+                                <span className="validation-path">{err.path}</span>
+                                <span className="validation-message">{err.message}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                        <div className="modal-actions">
+                          <button type="button" onClick={() => setShowSchemaModal(false)}>
+                            Close
                           </button>
                         </div>
                       </div>

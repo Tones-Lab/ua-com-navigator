@@ -98,6 +98,23 @@ export class UAClient {
   }
 
   /**
+   * Execute UA login to establish a session and return session data.
+   */
+  async executeLogin(username: string, password: string): Promise<any> {
+    try {
+      logger.info('[UA] Executing login');
+      const response = await this.client.post('/core/Login/executeLogin', {
+        Username: username,
+        Password: password,
+      });
+      return response.data;
+    } catch (error: any) {
+      logger.error(`[UA] Error executing login: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
    * Read a specific rules file
    */
   async readRule(id: string, revision?: string): Promise<any> {
