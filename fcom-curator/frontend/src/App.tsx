@@ -1078,6 +1078,12 @@ function App() {
     return { editable: false, display: JSON.stringify(value) };
   };
 
+  const getBaseEventDisplay = (obj: any, field: string) => {
+    const baseValue = obj?.event?.[field];
+    const { display } = getEditableValue(baseValue);
+    return display || '—';
+  };
+
   const startEventEdit = (obj: any, key: string) => {
     const draft: Record<string, any> = {};
     eventFields.forEach((field) => {
@@ -2302,7 +2308,10 @@ function App() {
                                           : 'label'}>
                                           Summary
                                           {overrideTargets.has('$.event.Summary') && (
-                                            <span className="pill override-pill pill-inline pill-action">
+                                            <span
+                                              className="pill override-pill pill-inline pill-action"
+                                              title={`Original: ${getBaseEventDisplay(obj, 'Summary')}`}
+                                            >
                                               Override
                                               {canEditRules && panelEditEnabled && overrideValueMap.has('$.event.Summary') && (
                                                 <button
@@ -2355,7 +2364,10 @@ function App() {
                                           : 'label'}>
                                           Severity
                                           {overrideTargets.has('$.event.Severity') && (
-                                            <span className="pill override-pill pill-inline pill-action">
+                                            <span
+                                              className="pill override-pill pill-inline pill-action"
+                                              title={`Original: ${getBaseEventDisplay(obj, 'Severity')}`}
+                                            >
                                               Override
                                               {canEditRules && panelEditEnabled && overrideValueMap.has('$.event.Severity') && (
                                                 <button
@@ -2399,7 +2411,10 @@ function App() {
                                           : 'label'}>
                                           Event Type
                                           {overrideTargets.has('$.event.EventType') && (
-                                            <span className="pill override-pill pill-inline pill-action">
+                                            <span
+                                              className="pill override-pill pill-inline pill-action"
+                                              title={`Original: ${getBaseEventDisplay(obj, 'EventType')}`}
+                                            >
                                               Override
                                               {canEditRules && panelEditEnabled && overrideValueMap.has('$.event.EventType') && (
                                                 <button
@@ -2441,7 +2456,10 @@ function App() {
                                           : 'label'}>
                                           Expire Time
                                           {overrideTargets.has('$.event.ExpireTime') && (
-                                            <span className="pill override-pill pill-inline pill-action">
+                                            <span
+                                              className="pill override-pill pill-inline pill-action"
+                                              title={`Original: ${getBaseEventDisplay(obj, 'ExpireTime')}`}
+                                            >
                                               Override
                                               {canEditRules && panelEditEnabled && overrideValueMap.has('$.event.ExpireTime') && (
                                                 <button
@@ -2483,7 +2501,10 @@ function App() {
                                           : 'label'}>
                                           Event Category
                                           {overrideTargets.has('$.event.EventCategory') && (
-                                            <span className="pill override-pill pill-inline pill-action">
+                                            <span
+                                              className="pill override-pill pill-inline pill-action"
+                                              title={`Original: ${getBaseEventDisplay(obj, 'EventCategory')}`}
+                                            >
                                               Override
                                               {canEditRules && panelEditEnabled && overrideValueMap.has('$.event.EventCategory') && (
                                                 <button
