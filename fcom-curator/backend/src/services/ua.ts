@@ -247,13 +247,31 @@ export class UAClient {
   /**
    * Create a new rules file
    */
-  async createRule(name: string, content: any, path: string = '/'): Promise<any> {
+  async createRule(name: string, content: any, path: string = '/', commitMessage?: string): Promise<any> {
     try {
       logger.info(`[UA] Creating rule: ${name} at ${path}`);
+      const normalizedContent = (() => {
+        if (typeof content === 'string') {
+          return { RuleText: content };
+        }
+        if (content && typeof content === 'object') {
+          if ('RuleText' in content) {
+            return content;
+          }
+          return { RuleText: JSON.stringify(content, null, 2) };
+        }
+        return { RuleText: JSON.stringify(content, null, 2) };
+      })();
+
       const response = await this.client.post('/rule/Rules', {
-        name,
-        content,
+        PathName: name,
+        RuleText: normalizedContent.RuleText ?? normalizedContent,
+        CommitLog: commitMessage,
+        commit_message: commitMessage,
+        message: commitMessage,
+        comment: commitMessage,
         path,
+        name,
       });
       return response.data;
     } catch (error: any) {

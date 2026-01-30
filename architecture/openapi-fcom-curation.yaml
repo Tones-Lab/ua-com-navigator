@@ -27,6 +27,8 @@ tags:
     description: Cross-server file promotion and comparison
   - name: Schema
     description: FCOM JSON schema and validation
+  - name: Overrides
+    description: FCOM override file management
 
 paths:
   /auth/login:
@@ -261,6 +263,106 @@ paths:
           description: Invalid credentials or certificate for target server
         '404':
           description: Server not found
+
+    /overrides:
+      get:
+        tags:
+          - Overrides
+        summary: Read vendor override file
+        description: |
+          Resolves the vendor override path from the provided FCOM file_id and returns
+          the override array if it exists. If no override file exists, returns an empty array.
+          Overrides are stored under /core/default/processing/event/fcom/overrides/<vendor>.override.json.
+        security:
+          - sessionCookie: []
+        parameters:
+          - in: query
+            name: file_id
+            required: true
+            schema:
+              type: string
+            description: Full FCOM file path (PathID)
+        responses:
+          '200':
+            description: Override metadata and payload
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    basePath:
+                      type: string
+                    vendor:
+                      type: string
+                    method:
+                      type: string
+                      enum: [trap, syslog]
+                      nullable: true
+                    overridePath:
+                      type: string
+                    overrides:
+                      type: array
+                      items:
+                        type: object
+                    exists:
+                      type: boolean
+          '400':
+            description: Missing file_id
+          '500':
+            description: Failed to resolve overrides
+
+    /overrides/save:
+      post:
+        tags:
+          - Overrides
+        summary: Save vendor override file
+        description: |
+          Updates the vendor override file for the provided FCOM file_id.
+          The override file must already exist under /core/default/processing/event/fcom/overrides/<vendor>.override.json.
+          Overrides are stored as a JSON array at the root of the file.
+        security:
+          - sessionCookie: []
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - file_id
+                  - overrides
+                  - commit_message
+                properties:
+                  file_id:
+                    type: string
+                  overrides:
+                    type: array
+                    items:
+                      type: object
+                  commit_message:
+                    type: string
+        responses:
+          '200':
+            description: Override file saved
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    overridePath:
+                      type: string
+                    overrides:
+                      type: array
+                      items:
+                        type: object
+                    etag:
+                      type: string
+          '400':
+            description: Missing required fields
+          '409':
+            description: Override file not found (must be created manually)
+          '500':
+            description: Failed to save overrides
 
   /files/browse:
     get:

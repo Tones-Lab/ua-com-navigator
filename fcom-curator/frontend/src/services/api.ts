@@ -93,6 +93,19 @@ class ApiClient {
     });
   }
 
+  // Overrides
+  async getOverrides(fileId: string) {
+    return this.client.get('/overrides', { params: { file_id: fileId } });
+  }
+
+  async saveOverrides(fileId: string, overrides: any[], commitMessage: string) {
+    return this.client.post('/overrides/save', {
+      file_id: fileId,
+      overrides,
+      commit_message: commitMessage,
+    });
+  }
+
   // Testing
   async testObject(fileId: string, objectName: string) {
     return this.client.post(`/files/${fileId}/test`, { object_name: objectName });

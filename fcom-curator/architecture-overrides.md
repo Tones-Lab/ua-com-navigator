@@ -1,10 +1,13 @@
 Architecture Plan (Override‑only editing)
 1) Storage & Naming (Locked)
 Base FCOM (read‑only): /core/default/processing/event/fcom
-Overrides root: /core/default/processing/event/fcom/overrides/<vendor>
+Overrides root: /core/default/processing/event/fcom/overrides
 Single file per vendor: one JSON file containing 1–N override objects.
 No raw JSON edits in UI. All edits emit overrides.
 Override filename: <vendor>.override.json
+
+Rule: UA REST Payloads (Hard Rule)
+Only send fields explicitly documented/required by UA REST endpoints. Do not include extra keys.
 
 2) Override File Model
 File is a JSON array of override objects at the root (current supported format).
@@ -40,7 +43,7 @@ Support wrapper override format (e.g., { "overrides": [] }).
 Detailed Implementation Steps (Checklist)
 A. Discovery & Metadata
 Resolve vendor from file path.
-Locate vendor override path: /core/default/processing/event/fcom/overrides/<vendor>
+Locate vendor override path: /core/default/processing/event/fcom/overrides
 Load override file if exists; parse to array.
 Build override index: {method, scope, objectName} → processors.
 B. Panel Mapping
@@ -53,7 +56,7 @@ D. Save Edits → Override Write
 On panel Save:
 Create or update override object for that objectName/method/scope.
 Merge processors by targetField (update existing, add new).
-Persist vendor override file (create folder/file if needed).
+Persist vendor override file (update only; folder/file must exist).
 E. Revert
 “Revert Panel” removes processors for that panel.
 If override object empty → remove it from array.

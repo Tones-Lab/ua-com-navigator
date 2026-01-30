@@ -19,6 +19,7 @@ import favoritesRoutes from './routes/favorites';
 import foldersRoutes from './routes/folders';
 import eventsSchemaRoutes from './routes/eventsSchema';
 import searchRoutes from './routes/search';
+import overridesRoutes from './routes/overrides';
 import { startSearchIndexing } from './services/searchIndex';
 
 dotenv.config();
@@ -81,6 +82,7 @@ app.use('/api/v1/favorites', favoritesRoutes);
 app.use('/api/v1/folders', foldersRoutes);
 app.use('/api/v1/events/schema', eventsSchemaRoutes);
 app.use('/api/v1/search', searchRoutes);
+app.use('/api/v1/overrides', overridesRoutes);
 
 // Health check
 app.get('/health', (req: Request, res: Response) => {

@@ -52,27 +52,27 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [browsePath, setBrowsePath] = useState('/');
   const [showPathModal, setShowPathModal] = useState(false);
-    const formatDisplayPath = (rawPath: string) => {
-      const cleaned = rawPath.replace(/^\/+/, '');
-      if (!cleaned) {
-        return '/';
-      }
-      const parts = cleaned.split('/');
-      if (parts[0]?.startsWith('id-')) {
-        parts[0] = parts[0].replace(/^id-/, '');
-      }
-      return `/${parts.join('/')}`;
-    };
-
-    const getCurrentPath = () => {
-      if (selectedFile?.PathID) {
-        return formatDisplayPath(selectedFile.PathID);
-      }
-      if (browseNode) {
-        return formatDisplayPath(browseNode);
-      }
+  const formatDisplayPath = (rawPath: string) => {
+    const cleaned = rawPath.replace(/^\/+/, '');
+    if (!cleaned) {
       return '/';
-    };
+    }
+    const parts = cleaned.split('/');
+    if (parts[0]?.startsWith('id-')) {
+      parts[0] = parts[0].replace(/^id-/, '');
+    }
+    return `/${parts.join('/')}`;
+  };
+
+  const getCurrentPath = () => {
+    if (selectedFile?.PathID) {
+      return formatDisplayPath(selectedFile.PathID);
+    }
+    if (browseNode) {
+      return formatDisplayPath(browseNode);
+    }
+    return '/';
+  };
   const [browseLoading, setBrowseLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchScope, setSearchScope] = useState<'all' | 'name' | 'content'>('all');
@@ -148,13 +148,36 @@ function App() {
   const [saveLoading, setSaveLoading] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [saveSuccess, setSaveSuccess] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<'friendly' | 'preview' | 'edit'>('preview');
+  const [viewMode, setViewMode] = useState<'friendly' | 'preview'>('preview');
   const [originalText, setOriginalText] = useState('');
   const [showCommitModal, setShowCommitModal] = useState(false);
   const [pendingNav, setPendingNav] = useState<null | (() => void)>(null);
   const [showSchemaModal, setShowSchemaModal] = useState(false);
   const [panelEditEnabled, setPanelEditEnabled] = useState(false);
   const [panelEditState, setPanelEditState] = useState<Record<string, boolean>>({});
+  const [panelDrafts, setPanelDrafts] = useState<Record<string, any>>({});
+  const [overrideInfo, setOverrideInfo] = useState<any | null>(null);
+  const [overrideLoading, setOverrideLoading] = useState(false);
+  const [overrideError, setOverrideError] = useState<string | null>(null);
+  const [pendingOverrideSave, setPendingOverrideSave] = useState<any[] | null>(null);
+  const [removeOverrideModal, setRemoveOverrideModal] = useState<{
+    open: boolean;
+    objectName?: string;
+    field?: string;
+    baseValue?: string;
+    panelKey?: string;
+  }>({ open: false });
+  const [panelOverrideRemovals, setPanelOverrideRemovals] = useState<Record<string, string[]>>({});
+  const [panelNavWarning, setPanelNavWarning] = useState<{
+    open: boolean;
+    fields: Record<string, string[]>;
+  }>({ open: false, fields: {} });
+  const [removeAllOverridesModal, setRemoveAllOverridesModal] = useState<{
+    open: boolean;
+    panelKey?: string;
+    fields?: string[];
+    baseValues?: Record<string, string>;
+  }>({ open: false });
   const [schema, setSchema] = useState<any>(null);
   const [schemaLoading, setSchemaLoading] = useState(false);
   const [schemaError, setSchemaError] = useState<string | null>(null);
@@ -164,6 +187,14 @@ function App() {
   const [varModalOpen, setVarModalOpen] = useState(false);
   const [varModalToken, setVarModalToken] = useState<string | null>(null);
   const [varModalVars, setVarModalVars] = useState<any[]>([]);
+  const [varModalMode, setVarModalMode] = useState<'view' | 'insert'>('view');
+  const [varInsertContext, setVarInsertContext] = useState<{
+    panelKey: string;
+    field: string;
+    value: string;
+    replaceStart: number;
+    replaceEnd: number;
+  } | null>(null);
   const varListRef = useRef<HTMLDivElement | null>(null);
   const varRowRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
@@ -172,16 +203,16 @@ function App() {
   );
 
   useEffect(() => {
-    if (viewMode === 'edit' && !canEditRules) {
-      setViewMode('preview');
-    }
-  }, [viewMode, canEditRules]);
-
-  useEffect(() => {
     if (!panelEditEnabled) {
       setPanelEditState({});
+      setPanelDrafts({});
     }
   }, [panelEditEnabled]);
+  useEffect(() => {
+    if (viewMode !== 'friendly' && panelEditEnabled) {
+      setPanelEditEnabled(false);
+    }
+  }, [viewMode, panelEditEnabled]);
 
   useEffect(() => {
     if (viewMode !== 'friendly' && panelEditEnabled) {
@@ -348,7 +379,7 @@ function App() {
     const fileParam = params.get('file');
     const viewParam = params.get('view');
 
-    if (viewParam === 'friendly' || viewParam === 'preview' || viewParam === 'edit') {
+    if (viewParam === 'friendly' || viewParam === 'preview') {
       setViewMode(viewParam);
     }
 
@@ -422,6 +453,7 @@ function App() {
       // ignore logout errors
     } finally {
       clearSession();
+      urlHydrated.current = false;
       setSelectedFile(null);
       setFileData(null);
       setEntries([]);
@@ -429,12 +461,14 @@ function App() {
       setBrowseNode(null);
       setBreadcrumbs([{ label: '/', node: null }]);
       setViewMode('preview');
+      window.history.replaceState({}, '', window.location.pathname);
     }
   };
 
   const confirmDiscardIfDirty = (action: () => void) => {
-    if (viewMode === 'edit' && editorText !== originalText) {
-      setPendingNav(() => action);
+    const dirtyMap = getPanelDirtyMap();
+    if (Object.keys(dirtyMap).length > 0) {
+      setPanelNavWarning({ open: true, fields: dirtyMap });
       return false;
     }
     action();
@@ -688,6 +722,8 @@ function App() {
     setFileError(null);
     setSaveError(null);
     setSaveSuccess(null);
+    setOverrideError(null);
+    setOverrideInfo(null);
     setFileLoading(true);
     if (entry?.PathID) {
       setBreadcrumbs(buildBreadcrumbsFromPath(entry.PathID));
@@ -695,6 +731,16 @@ function App() {
     try {
       const resp = await api.readFile(entry.PathID);
       setFileData(resp.data);
+      setOverrideLoading(true);
+      try {
+        const overridesResp = await api.getOverrides(entry.PathID);
+        setOverrideInfo(overridesResp.data);
+      } catch (err: any) {
+        setOverrideError(err?.response?.data?.error || 'Failed to load overrides');
+        setOverrideInfo(null);
+      } finally {
+        setOverrideLoading(false);
+      }
       const ruleText = resp.data?.content?.data?.[0]?.RuleText;
       if (typeof ruleText === 'string') {
         try {
@@ -741,6 +787,8 @@ function App() {
     setSearchHighlightActive(false);
     setSelectedFile(null);
     setFileData(null);
+    setOverrideInfo(null);
+    setOverrideError(null);
     setSelectedFolder(entry);
     setFolderOverview(null);
     setFolderLoading(true);
@@ -820,6 +868,29 @@ function App() {
     await saveWithContent(content, message);
   };
 
+  const handleSaveOverrides = async (message: string) => {
+    if (!selectedFile || !pendingOverrideSave) {
+      return;
+    }
+    setSaveError(null);
+    setSaveSuccess(null);
+    setSaveLoading(true);
+    try {
+      const resp = await api.saveOverrides(selectedFile.PathID, pendingOverrideSave, message.trim());
+      setOverrideInfo(resp.data);
+      setSaveSuccess('Overrides saved. Restart FCOM Processor required.');
+      setPanelEditState({});
+      setPanelDrafts({});
+      setPanelOverrideRemovals({});
+      setPanelNavWarning({ open: false, fields: {} });
+    } catch (err: any) {
+      setSaveError(err?.response?.data?.error || 'Failed to save overrides');
+    } finally {
+      setSaveLoading(false);
+      setPendingOverrideSave(null);
+    }
+  };
+
   const getPreviewContent = (data: any) => {
     const ruleText = data?.content?.data?.[0]?.RuleText;
     if (typeof ruleText === 'string') {
@@ -841,6 +912,436 @@ function App() {
       return content;
     }
     return [];
+  };
+
+  const overrideIndex = useMemo(() => {
+    const entries = Array.isArray(overrideInfo?.overrides) ? overrideInfo.overrides : [];
+    const map = new Map<string, any[]>();
+    entries.forEach((overrideEntry: any) => {
+      const name = overrideEntry?.['@objectName'];
+      if (!name) {
+        return;
+      }
+      const list = map.get(name) || [];
+      list.push(overrideEntry);
+      map.set(name, list);
+    });
+    return map;
+  }, [overrideInfo]);
+
+  const getProcessorTargetField = (processor: any) => {
+    if (!processor || typeof processor !== 'object') {
+      return null;
+    }
+    const keys = [
+      'set',
+      'copy',
+      'replace',
+      'convert',
+      'interpolate',
+      'append',
+      'sort',
+      'split',
+      'math',
+      'length',
+      'date',
+      'regex',
+      'rename',
+      'strcase',
+      'substr',
+    ];
+    for (const key of keys) {
+      const target = processor?.[key]?.targetField;
+      if (target) {
+        return target;
+      }
+    }
+    return null;
+  };
+
+  const getOverrideFlags = (obj: any) => {
+    const objectName = obj?.['@objectName'];
+    if (!objectName) {
+      return { event: false, trap: false, pre: false, any: false };
+    }
+    const overrides = overrideIndex.get(objectName) || [];
+    const processors = overrides.flatMap((entry: any) => (Array.isArray(entry?.processors) ? entry.processors : []));
+    const targets = processors.map(getProcessorTargetField).filter(Boolean) as string[];
+    const event = targets.some((target) => target.startsWith('$.event.'));
+    const trap = targets.some((target) => target.startsWith('$.trap.') || target.includes('trap.variables'));
+    const pre = targets.some((target) => target.startsWith('$.preProcessors'));
+    return { event, trap, pre, any: event || trap || pre };
+  };
+
+  const getOverrideTargets = (obj: any) => {
+    const objectName = obj?.['@objectName'];
+    if (!objectName) {
+      return new Set<string>();
+    }
+    const overrides = overrideIndex.get(objectName) || [];
+    const processors = overrides.flatMap((entry: any) => (Array.isArray(entry?.processors) ? entry.processors : []));
+    const targets = processors.map(getProcessorTargetField).filter(Boolean) as string[];
+    return new Set<string>(targets);
+  };
+
+  const getOverrideValueMap = (obj: any) => {
+    const objectName = obj?.['@objectName'];
+    if (!objectName) {
+      return new Map<string, any>();
+    }
+    const overrides = overrideIndex.get(objectName) || [];
+    const processors = overrides.flatMap((entry: any) => (Array.isArray(entry?.processors) ? entry.processors : []));
+    const map = new Map<string, any>();
+    processors.forEach((processor: any) => {
+      const target = processor?.set?.targetField;
+      if (target) {
+        map.set(target, processor.set.source);
+      }
+    });
+    return map;
+  };
+
+  const getEffectiveEventValue = (obj: any, field: string) => {
+    const overrides = getOverrideValueMap(obj);
+    const target = `$.event.${field}`;
+    if (overrides.has(target)) {
+      return overrides.get(target);
+    }
+    return obj?.event?.[field];
+  };
+
+  const getPanelDirtyFields = (obj: any, panelKey: string) => {
+    const draft = panelDrafts?.[panelKey]?.event;
+    if (!draft) {
+      return [] as string[];
+    }
+    const removals = new Set(panelOverrideRemovals[panelKey] || []);
+    const dirty: string[] = [];
+    eventFields.forEach((field) => {
+      if (removals.has(field)) {
+        dirty.push(field);
+        return;
+      }
+      const original = getEffectiveEventValue(obj, field);
+      const { display } = getEditableValue(original);
+      if (String(draft[field] ?? '') !== String(display ?? '')) {
+        dirty.push(field);
+      }
+    });
+    return dirty;
+  };
+
+  const getEventOverrideFields = (obj: any) => {
+    const overrideValueMap = getOverrideValueMap(obj);
+    const fields: string[] = [];
+    overrideValueMap.forEach((_value, target) => {
+      if (target.startsWith('$.event.')) {
+        fields.push(target.replace('$.event.', ''));
+      }
+    });
+    return fields;
+  };
+
+  const getPanelDirtyMap = () => {
+    const map: Record<string, string[]> = {};
+    const objects = getFriendlyObjects(fileData);
+    objects.forEach((obj: any, idx: number) => {
+      const baseKey = getObjectKey(obj, idx);
+      const panelKey = `${baseKey}:event`;
+      if (!panelEditState[panelKey]) {
+        return;
+      }
+      const dirty = getPanelDirtyFields(obj, panelKey);
+      if (dirty.length > 0) {
+        map[panelKey] = dirty;
+      }
+    });
+    return map;
+  };
+
+  const isFieldHighlighted = (panelKey: string, field: string) => (
+    panelNavWarning.fields?.[panelKey]?.includes(field)
+  );
+
+  const eventFields = ['Summary', 'Severity', 'EventType', 'EventCategory', 'ExpireTime'] as const;
+
+  const getEditableValue = (value: any) => {
+    if (value === null || value === undefined) {
+      return { editable: true, display: '' };
+    }
+    if (typeof value === 'string' || typeof value === 'number') {
+      return { editable: true, display: String(value) };
+    }
+    if (typeof value === 'object' && typeof value.eval === 'string') {
+      return { editable: false, display: value.eval };
+    }
+    return { editable: false, display: JSON.stringify(value) };
+  };
+
+  const startEventEdit = (obj: any, key: string) => {
+    const draft: Record<string, any> = {};
+    eventFields.forEach((field) => {
+      const value = getEffectiveEventValue(obj, field);
+      const { display } = getEditableValue(value);
+      draft[field] = display;
+    });
+    setPanelDrafts((prev) => ({
+      ...prev,
+      [key]: { event: draft },
+    }));
+    setPanelEditState((prev) => ({ ...prev, [key]: true }));
+  };
+
+  const cancelEventEdit = (key: string) => {
+    setPanelDrafts((prev) => {
+      const next = { ...prev };
+      delete next[key];
+      return next;
+    });
+    setPanelEditState((prev) => ({ ...prev, [key]: false }));
+    setPanelOverrideRemovals((prev) => {
+      const next = { ...prev };
+      delete next[key];
+      return next;
+    });
+    setPanelNavWarning((prev) => {
+      if (!prev.fields[key]) {
+        return prev;
+      }
+      const nextFields = { ...prev.fields };
+      delete nextFields[key];
+      return { ...prev, fields: nextFields };
+    });
+  };
+
+  const buildOverrideSetProcessor = (field: string, value: any) => ({
+    set: {
+      source: value,
+      targetField: `$.event.${field}`,
+    },
+  });
+
+  const saveEventEdit = async (obj: any, key: string) => {
+    if (!selectedFile) {
+      return;
+    }
+    const draft = panelDrafts?.[key]?.event || {};
+    const removalFields = new Set(panelOverrideRemovals[key] || []);
+    const updates: { field: string; value: any }[] = [];
+    eventFields.forEach((field) => {
+      const original = getEffectiveEventValue(obj, field);
+      const draftValue = draft[field];
+      const { display } = getEditableValue(original);
+      if (String(draftValue ?? '') !== String(display ?? '')) {
+        let value: any = draftValue;
+        if (draftValue !== '' && !Number.isNaN(Number(draftValue)) && field !== 'Summary') {
+          value = Number(draftValue);
+        }
+        updates.push({ field, value });
+      }
+    });
+
+    if (updates.length === 0 && removalFields.size === 0) {
+      cancelEventEdit(key);
+      return;
+    }
+
+    const objectName = obj?.['@objectName'];
+    if (!objectName) {
+      return;
+    }
+
+    const existingOverrides = Array.isArray(overrideInfo?.overrides) ? [...overrideInfo.overrides] : [];
+    const method = overrideInfo?.method || (String(selectedFile.PathID || '').includes('/syslog/') ? 'syslog' : 'trap');
+    const scope = 'post';
+    const matchIndex = existingOverrides.findIndex((entry: any) => (
+      entry?.['@objectName'] === objectName && entry?.method === method && entry?.scope === scope
+    ));
+
+    const overrideEntry = matchIndex >= 0
+      ? { ...existingOverrides[matchIndex] }
+      : {
+        name: `${objectName} Override`,
+        description: `Overrides for ${objectName}`,
+        domain: 'fault',
+        method,
+        scope,
+        '@objectName': objectName,
+        _type: 'override',
+        processors: [],
+      };
+
+    let processors = Array.isArray(overrideEntry.processors) ? [...overrideEntry.processors] : [];
+
+    if (removalFields.size > 0) {
+      processors = processors.filter((proc: any) => {
+        const target = getProcessorTargetField(proc);
+        if (!target) {
+          return true;
+        }
+        const field = target.replace('$.event.', '');
+        return !removalFields.has(field);
+      });
+    }
+
+    updates.forEach(({ field, value }) => {
+      if (removalFields.has(field)) {
+        return;
+      }
+      const targetField = `$.event.${field}`;
+      const existingIdx = processors.findIndex((proc: any) => {
+        const target = getProcessorTargetField(proc);
+        return target === targetField && proc?.set;
+      });
+      const newProcessor = buildOverrideSetProcessor(field, value);
+      if (existingIdx >= 0) {
+        processors[existingIdx] = newProcessor;
+      } else {
+        processors.push(newProcessor);
+      }
+    });
+
+    if (processors.length === 0) {
+      if (matchIndex >= 0) {
+        existingOverrides.splice(matchIndex, 1);
+      }
+    } else {
+      overrideEntry.processors = processors;
+      if (matchIndex >= 0) {
+        existingOverrides[matchIndex] = overrideEntry;
+      } else {
+        existingOverrides.push(overrideEntry);
+      }
+    }
+
+    setPendingOverrideSave(existingOverrides);
+    setCommitMessage('');
+    setShowCommitModal(true);
+    setPanelNavWarning((prev) => {
+      if (!prev.fields[key]) {
+        return prev;
+      }
+      const nextFields = { ...prev.fields };
+      delete nextFields[key];
+      return { ...prev, fields: nextFields };
+    });
+  };
+
+  const openRemoveOverrideModal = (obj: any, field: string, panelKey: string) => {
+    const original = obj?.event?.[field];
+    const { display } = getEditableValue(original);
+    setRemoveOverrideModal({
+      open: true,
+      objectName: obj?.['@objectName'],
+      field,
+      baseValue: display || '—',
+      panelKey,
+    });
+  };
+
+  const confirmRemoveOverride = () => {
+    if (!removeOverrideModal.objectName || !removeOverrideModal.field || !removeOverrideModal.panelKey) {
+      setRemoveOverrideModal({ open: false });
+      return;
+    }
+
+    const panelKey = removeOverrideModal.panelKey;
+    const field = removeOverrideModal.field;
+
+    setPanelOverrideRemovals((prev) => {
+      const next = { ...prev };
+      const list = new Set(next[panelKey] || []);
+      list.add(field);
+      next[panelKey] = Array.from(list);
+      return next;
+    });
+
+    if (!panelEditState[panelKey]) {
+      const objKey = panelKey.replace(/:event$/, '');
+      const objects = getFriendlyObjects(fileData);
+      const obj = objects.find((item: any, idx: number) => getObjectKey(item, idx) === objKey);
+      if (obj) {
+        startEventEdit(obj, panelKey);
+      }
+    }
+
+    setPanelDrafts((prev) => {
+      const next = { ...prev };
+      const current = next[panelKey]?.event || {};
+      next[panelKey] = {
+        ...next[panelKey],
+        event: {
+          ...current,
+          [field]: removeOverrideModal.baseValue ?? '',
+        },
+      };
+      return next;
+    });
+
+    setRemoveOverrideModal({ open: false });
+  };
+
+  const openRemoveAllOverridesModal = (obj: any, panelKey: string) => {
+    const fields = getEventOverrideFields(obj);
+    if (fields.length === 0) {
+      return;
+    }
+    const baseValues: Record<string, string> = {};
+    fields.forEach((field) => {
+      const original = obj?.event?.[field];
+      const { display } = getEditableValue(original);
+      baseValues[field] = display || '—';
+    });
+    setRemoveAllOverridesModal({
+      open: true,
+      panelKey,
+      fields,
+      baseValues,
+    });
+  };
+
+  const confirmRemoveAllOverrides = () => {
+    if (!removeAllOverridesModal.panelKey || !removeAllOverridesModal.fields) {
+      setRemoveAllOverridesModal({ open: false });
+      return;
+    }
+
+    const panelKey = removeAllOverridesModal.panelKey;
+    const fields = removeAllOverridesModal.fields;
+
+    setPanelOverrideRemovals((prev) => {
+      const next = { ...prev };
+      const list = new Set(next[panelKey] || []);
+      fields.forEach((field) => list.add(field));
+      next[panelKey] = Array.from(list);
+      return next;
+    });
+
+    if (!panelEditState[panelKey]) {
+      const objKey = panelKey.replace(/:event$/, '');
+      const objects = getFriendlyObjects(fileData);
+      const obj = objects.find((item: any, idx: number) => getObjectKey(item, idx) === objKey);
+      if (obj) {
+        startEventEdit(obj, panelKey);
+      }
+    }
+
+    setPanelDrafts((prev) => {
+      const next = { ...prev };
+      const current = next[panelKey]?.event || {};
+      const baseValues = removeAllOverridesModal.baseValues || {};
+      const merged = { ...current };
+      fields.forEach((field) => {
+        merged[field] = baseValues[field] ?? '';
+      });
+      next[panelKey] = {
+        ...next[panelKey],
+        event: merged,
+      };
+      return next;
+    });
+
+    setRemoveAllOverridesModal({ open: false });
   };
 
   const getObjectKey = (obj: any, index: number) => {
@@ -924,6 +1425,80 @@ function App() {
     return typeof value === 'string' ? value : '';
   };
 
+  const getVarInsertMatch = (value: string, cursorIndex: number | null) => {
+    if (cursorIndex === null) {
+      return null;
+    }
+    const prefix = value.slice(0, cursorIndex);
+    const match = prefix.match(/\$v\d*$/);
+    if (!match) {
+      return null;
+    }
+    const start = prefix.lastIndexOf(match[0]);
+    return { token: match[0], replaceStart: start, replaceEnd: cursorIndex };
+  };
+
+  const handleVarInsertSelect = (token: string) => {
+    if (!varInsertContext) {
+      return;
+    }
+    const { panelKey, field, value, replaceStart, replaceEnd } = varInsertContext;
+    const nextValue = `${value.slice(0, replaceStart)}${token}${value.slice(replaceEnd)}`;
+    setPanelDrafts((prev) => ({
+      ...prev,
+      [panelKey]: {
+        ...prev[panelKey],
+        event: {
+          ...prev[panelKey]?.event,
+          [field]: nextValue,
+        },
+      },
+    }));
+    setVarModalOpen(false);
+    setVarModalMode('view');
+    setVarInsertContext(null);
+    setVarModalToken(null);
+  };
+
+  const handleEventInputChange = (
+    obj: any,
+    panelKey: string,
+    field: string,
+    value: string,
+    cursorIndex: number | null,
+    inputType?: string,
+  ) => {
+    setPanelDrafts((prev) => ({
+      ...prev,
+      [panelKey]: {
+        ...prev[panelKey],
+        event: {
+          ...prev[panelKey]?.event,
+          [field]: value,
+        },
+      },
+    }));
+
+    if (inputType && !inputType.startsWith('insert')) {
+      return;
+    }
+    const match = getVarInsertMatch(value, cursorIndex);
+    if (!match) {
+      return;
+    }
+    setVarModalToken(match.token);
+    setVarModalVars(Array.isArray(obj?.trap?.variables) ? obj.trap.variables : []);
+    setVarModalMode('insert');
+    setVarInsertContext({
+      panelKey,
+      field,
+      value,
+      replaceStart: match.replaceStart,
+      replaceEnd: match.replaceEnd,
+    });
+    setVarModalOpen(true);
+  };
+
   const renderSummary = (value: any, trapVars: any[]) => {
     const text = getEvalText(value) || (typeof value === 'string' ? value : '—');
     if (!text || text === '—') {
@@ -944,6 +1519,8 @@ function App() {
               onClick={() => {
                 setVarModalToken(part);
                 setVarModalVars(Array.isArray(trapVars) ? trapVars : []);
+                setVarModalMode('view');
+                setVarInsertContext(null);
                 setVarModalOpen(true);
               }}
             >
@@ -1540,11 +2117,6 @@ function App() {
                       >
                         ★
                       </button>
-                      {viewMode === 'edit' && editorText !== originalText && (
-                        <span className="unsaved-indicator" title="Unsaved changes">
-                          ● Unsaved
-                        </span>
-                      )}
                     </strong>
                     <span className="file-path">{formatDisplayPath(selectedFile.PathID)}</span>
                   </div>
@@ -1604,34 +2176,13 @@ function App() {
                         Raw
                       </span>
                     </div>
-                    {canEditRules && (
+                    {canEditRules && viewMode === 'friendly' && (
                       <button
                         type="button"
-                        className={(viewMode === 'friendly' && panelEditEnabled) || viewMode === 'edit'
-                          ? 'tab-active'
-                          : 'tab'}
-                        onClick={() => {
-                          if (viewMode === 'friendly') {
-                            setPanelEditEnabled((prev) => !prev);
-                          } else {
-                            setViewMode('edit');
-                          }
-                        }}
+                        className={panelEditEnabled ? 'tab-active' : 'tab'}
+                        onClick={() => setPanelEditEnabled((prev) => !prev)}
                       >
                         Edit
-                      </button>
-                    )}
-                    {canEditRules && viewMode === 'edit' && (
-                      <button
-                        type="button"
-                        className="save-button"
-                        onClick={() => {
-                          setCommitMessage('');
-                          setShowCommitModal(true);
-                        }}
-                        disabled={editorText === originalText}
-                      >
-                        Save
                       </button>
                     )}
                   </div>
@@ -1642,14 +2193,7 @@ function App() {
                     {fileLoading ? (
                       <div>Loading preview…</div>
                     ) : (
-                      viewMode === 'edit' ? (
-                        <div className="editor">
-                          <textarea
-                            value={editorText}
-                            onChange={(e) => setEditorText(e.target.value)}
-                          />
-                        </div>
-                      ) : viewMode === 'friendly' ? (
+                      viewMode === 'friendly' ? (
                         <div className="friendly-view">
                           {searchHighlightActive && highlightObjectKeys.length > 0 && (
                             <div className="match-bar">
@@ -1669,7 +2213,14 @@ function App() {
                           {getFriendlyObjects(fileData).length === 0 ? (
                             <div className="empty-state">No objects found.</div>
                           ) : (
-                            getFriendlyObjects(fileData).map((obj: any, idx: number) => (
+                            getFriendlyObjects(fileData).map((obj: any, idx: number) => {
+                              const overrideFlags = getOverrideFlags(obj);
+                              const overrideTargets = getOverrideTargets(obj);
+                              const overrideValueMap = getOverrideValueMap(obj);
+                              const objectKey = getObjectKey(obj, idx);
+                              const eventPanelKey = `${objectKey}:event`;
+                              const eventOverrideFields = getEventOverrideFields(obj);
+                              return (
                               <div
                                 className={`object-card${highlightObjectKeys.includes(getObjectKey(obj, idx))
                                   ? ' object-card-highlight'
@@ -1679,13 +2230,14 @@ function App() {
                                     : ''}`}
                                 key={obj?.['@objectName'] || idx}
                                 ref={(el) => {
-                                  objectRowRefs.current[getObjectKey(obj, idx)] = el;
+                                  objectRowRefs.current[objectKey] = el;
                                 }}
                               >
                                 <div className="object-header">
                                   <div className="object-title">
                                     <span className="object-name">{obj?.['@objectName'] || `Object ${idx + 1}`}</span>
                                     {obj?.certification && <span className="pill">{obj.certification}</span>}
+                                    {overrideFlags.any && <span className="pill override-pill">Override</span>}
                                     {highlightObjectKeys.includes(getObjectKey(obj, idx)) && (
                                       <span className="pill match-pill">Match</span>
                                     )}
@@ -1693,20 +2245,49 @@ function App() {
                                   {obj?.description && <div className="object-description">{obj.description}</div>}
                                 </div>
                                 <div
-                                  className={`object-panel${panelEditState[`${getObjectKey(obj, idx)}:event`]
+                                  className={`object-panel${panelEditState[eventPanelKey]
                                     ? ' object-panel-editing'
                                     : ''}`}
                                 >
                                   <div className="object-panel-header">
-                                    <span className="object-panel-title">Event</span>
-                                    {canEditRules && panelEditEnabled && (
+                                    <div className="panel-title-group">
+                                      <span className="object-panel-title">Event</span>
+                                    </div>
+                                    {canEditRules && panelEditEnabled && !panelEditState[eventPanelKey] && (
                                       <button
                                         type="button"
                                         className="panel-edit-button"
-                                        onClick={() => togglePanelEdit(`${getObjectKey(obj, idx)}:event`)}
+                                        onClick={() => startEventEdit(obj, eventPanelKey)}
                                       >
-                                        {panelEditState[`${getObjectKey(obj, idx)}:event`] ? 'Done' : 'Edit'}
+                                        Edit
                                       </button>
+                                    )}
+                                    {canEditRules && panelEditEnabled && panelEditState[eventPanelKey] && (
+                                      <div className="panel-edit-actions">
+                                        {eventOverrideFields.length > 1 && (
+                                          <button
+                                            type="button"
+                                            className="override-remove-all-button"
+                                            onClick={() => openRemoveAllOverridesModal(obj, eventPanelKey)}
+                                          >
+                                            Remove All Overrides
+                                          </button>
+                                        )}
+                                        <button
+                                          type="button"
+                                          className="panel-edit-button"
+                                          onClick={() => saveEventEdit(obj, eventPanelKey)}
+                                        >
+                                          Save
+                                        </button>
+                                        <button
+                                          type="button"
+                                          className="panel-edit-button"
+                                          onClick={() => cancelEventEdit(eventPanelKey)}
+                                        >
+                                          Cancel
+                                        </button>
+                                      </div>
                                     )}
                                   </div>
                                   <div className="object-grid">
@@ -1716,26 +2297,227 @@ function App() {
                                         <span className="value">{renderValue(obj?.event?.Node)}</span>
                                       </div>
                                       <div>
-                                        <span className="label">Summary</span>
-                                        <span className="value">{renderSummary(obj?.event?.Summary, obj?.trap?.variables)}</span>
+                                        <span className={isFieldHighlighted(eventPanelKey, 'Summary')
+                                          ? 'label label-warning'
+                                          : 'label'}>
+                                          Summary
+                                          {overrideTargets.has('$.event.Summary') && (
+                                            <span className="pill override-pill pill-inline pill-action">
+                                              Override
+                                              {canEditRules && panelEditEnabled && overrideValueMap.has('$.event.Summary') && (
+                                                <button
+                                                  type="button"
+                                                  className="pill-close"
+                                                  aria-label="Remove Summary override"
+                                                  onClick={() => openRemoveOverrideModal(obj, 'Summary', eventPanelKey)}
+                                                >
+                                                  ×
+                                                </button>
+                                              )}
+                                            </span>
+                                          )}
+                                        </span>
+                                        {panelEditState[`${getObjectKey(obj, idx)}:event`] ? (
+                                          (() => {
+                                            const value = getEffectiveEventValue(obj, 'Summary');
+                                            const editable = getEditableValue(value);
+                                            return (
+                                              <input
+                                                className={isFieldHighlighted(eventPanelKey, 'Summary')
+                                                  ? 'panel-input panel-input-warning'
+                                                  : 'panel-input'}
+                                                value={panelDrafts?.[`${getObjectKey(obj, idx)}:event`]?.event?.Summary ?? ''}
+                                                onChange={(e) => handleEventInputChange(
+                                                  obj,
+                                                  eventPanelKey,
+                                                  'Summary',
+                                                  e.target.value,
+                                                  e.target.selectionStart,
+                                                  (e.nativeEvent as InputEvent | undefined)?.inputType,
+                                                )}
+                                                disabled={!editable.editable}
+                                                title={editable.editable ? '' : 'Eval values cannot be edited yet'}
+                                              />
+                                            );
+                                          })()
+                                        ) : (
+                                          <span className="value">
+                                            {renderSummary(
+                                              overrideValueMap.get('$.event.Summary') ?? obj?.event?.Summary,
+                                              obj?.trap?.variables,
+                                            )}
+                                          </span>
+                                        )}
                                       </div>
                                       <div>
-                                        <span className="label">Severity</span>
-                                        <span className="value">{renderValue(obj?.event?.Severity)}</span>
+                                        <span className={isFieldHighlighted(eventPanelKey, 'Severity')
+                                          ? 'label label-warning'
+                                          : 'label'}>
+                                          Severity
+                                          {overrideTargets.has('$.event.Severity') && (
+                                            <span className="pill override-pill pill-inline pill-action">
+                                              Override
+                                              {canEditRules && panelEditEnabled && overrideValueMap.has('$.event.Severity') && (
+                                                <button
+                                                  type="button"
+                                                  className="pill-close"
+                                                  aria-label="Remove Severity override"
+                                                  onClick={() => openRemoveOverrideModal(obj, 'Severity', eventPanelKey)}
+                                                >
+                                                  ×
+                                                </button>
+                                              )}
+                                            </span>
+                                          )}
+                                        </span>
+                                        {panelEditState[`${getObjectKey(obj, idx)}:event`] ? (
+                                          <input
+                                            className={isFieldHighlighted(eventPanelKey, 'Severity')
+                                              ? 'panel-input panel-input-warning'
+                                              : 'panel-input'}
+                                            value={panelDrafts?.[`${getObjectKey(obj, idx)}:event`]?.event?.Severity ?? ''}
+                                            onChange={(e) => handleEventInputChange(
+                                              obj,
+                                              eventPanelKey,
+                                              'Severity',
+                                              e.target.value,
+                                              e.target.selectionStart,
+                                              (e.nativeEvent as InputEvent | undefined)?.inputType,
+                                            )}
+                                          />
+                                        ) : (
+                                          <span className="value">
+                                            {renderValue(overrideValueMap.get('$.event.Severity') ?? obj?.event?.Severity)}
+                                          </span>
+                                        )}
                                       </div>
                                     </div>
                                     <div className="object-row object-row-secondary">
                                       <div>
-                                        <span className="label">Event Type</span>
-                                        <span className="value">{renderValue(obj?.event?.EventType)}</span>
+                                        <span className={isFieldHighlighted(eventPanelKey, 'EventType')
+                                          ? 'label label-warning'
+                                          : 'label'}>
+                                          Event Type
+                                          {overrideTargets.has('$.event.EventType') && (
+                                            <span className="pill override-pill pill-inline pill-action">
+                                              Override
+                                              {canEditRules && panelEditEnabled && overrideValueMap.has('$.event.EventType') && (
+                                                <button
+                                                  type="button"
+                                                  className="pill-close"
+                                                  aria-label="Remove Event Type override"
+                                                  onClick={() => openRemoveOverrideModal(obj, 'EventType', eventPanelKey)}
+                                                >
+                                                  ×
+                                                </button>
+                                              )}
+                                            </span>
+                                          )}
+                                        </span>
+                                        {panelEditState[`${getObjectKey(obj, idx)}:event`] ? (
+                                          <input
+                                            className={isFieldHighlighted(eventPanelKey, 'EventType')
+                                              ? 'panel-input panel-input-warning'
+                                              : 'panel-input'}
+                                            value={panelDrafts?.[`${getObjectKey(obj, idx)}:event`]?.event?.EventType ?? ''}
+                                            onChange={(e) => handleEventInputChange(
+                                              obj,
+                                              eventPanelKey,
+                                              'EventType',
+                                              e.target.value,
+                                              e.target.selectionStart,
+                                              (e.nativeEvent as InputEvent | undefined)?.inputType,
+                                            )}
+                                          />
+                                        ) : (
+                                          <span className="value">
+                                            {renderValue(overrideValueMap.get('$.event.EventType') ?? obj?.event?.EventType)}
+                                          </span>
+                                        )}
                                       </div>
                                       <div>
-                                        <span className="label">Expire Time</span>
-                                        <span className="value">{renderValue(obj?.event?.ExpireTime)}</span>
+                                        <span className={isFieldHighlighted(eventPanelKey, 'ExpireTime')
+                                          ? 'label label-warning'
+                                          : 'label'}>
+                                          Expire Time
+                                          {overrideTargets.has('$.event.ExpireTime') && (
+                                            <span className="pill override-pill pill-inline pill-action">
+                                              Override
+                                              {canEditRules && panelEditEnabled && overrideValueMap.has('$.event.ExpireTime') && (
+                                                <button
+                                                  type="button"
+                                                  className="pill-close"
+                                                  aria-label="Remove Expire Time override"
+                                                  onClick={() => openRemoveOverrideModal(obj, 'ExpireTime', eventPanelKey)}
+                                                >
+                                                  ×
+                                                </button>
+                                              )}
+                                            </span>
+                                          )}
+                                        </span>
+                                        {panelEditState[`${getObjectKey(obj, idx)}:event`] ? (
+                                          <input
+                                            className={isFieldHighlighted(eventPanelKey, 'ExpireTime')
+                                              ? 'panel-input panel-input-warning'
+                                              : 'panel-input'}
+                                            value={panelDrafts?.[`${getObjectKey(obj, idx)}:event`]?.event?.ExpireTime ?? ''}
+                                            onChange={(e) => handleEventInputChange(
+                                              obj,
+                                              eventPanelKey,
+                                              'ExpireTime',
+                                              e.target.value,
+                                              e.target.selectionStart,
+                                              (e.nativeEvent as InputEvent | undefined)?.inputType,
+                                            )}
+                                          />
+                                        ) : (
+                                          <span className="value">
+                                            {renderValue(overrideValueMap.get('$.event.ExpireTime') ?? obj?.event?.ExpireTime)}
+                                          </span>
+                                        )}
                                       </div>
                                       <div>
-                                        <span className="label">Event Category</span>
-                                        <span className="value">{renderValue(obj?.event?.EventCategory)}</span>
+                                        <span className={isFieldHighlighted(eventPanelKey, 'EventCategory')
+                                          ? 'label label-warning'
+                                          : 'label'}>
+                                          Event Category
+                                          {overrideTargets.has('$.event.EventCategory') && (
+                                            <span className="pill override-pill pill-inline pill-action">
+                                              Override
+                                              {canEditRules && panelEditEnabled && overrideValueMap.has('$.event.EventCategory') && (
+                                                <button
+                                                  type="button"
+                                                  className="pill-close"
+                                                  aria-label="Remove Event Category override"
+                                                  onClick={() => openRemoveOverrideModal(obj, 'EventCategory', eventPanelKey)}
+                                                >
+                                                  ×
+                                                </button>
+                                              )}
+                                            </span>
+                                          )}
+                                        </span>
+                                        {panelEditState[`${getObjectKey(obj, idx)}:event`] ? (
+                                          <input
+                                            className={isFieldHighlighted(eventPanelKey, 'EventCategory')
+                                              ? 'panel-input panel-input-warning'
+                                              : 'panel-input'}
+                                            value={panelDrafts?.[`${getObjectKey(obj, idx)}:event`]?.event?.EventCategory ?? ''}
+                                            onChange={(e) => handleEventInputChange(
+                                              obj,
+                                              eventPanelKey,
+                                              'EventCategory',
+                                              e.target.value,
+                                              e.target.selectionStart,
+                                              (e.nativeEvent as InputEvent | undefined)?.inputType,
+                                            )}
+                                          />
+                                        ) : (
+                                          <span className="value">
+                                            {renderValue(overrideValueMap.get('$.event.EventCategory') ?? obj?.event?.EventCategory)}
+                                          </span>
+                                        )}
                                       </div>
                                       <div>
                                         <span className="label">OID</span>
@@ -1751,15 +2533,6 @@ function App() {
                                 >
                                   <div className="object-panel-header">
                                     <span className="object-panel-title">PreProcessors</span>
-                                    {canEditRules && panelEditEnabled && (
-                                      <button
-                                        type="button"
-                                        className="panel-edit-button"
-                                        onClick={() => togglePanelEdit(`${getObjectKey(obj, idx)}:pre`)}
-                                      >
-                                        {panelEditState[`${getObjectKey(obj, idx)}:pre`] ? 'Done' : 'Edit'}
-                                      </button>
-                                    )}
                                   </div>
                                   <div className="object-panel-body">
                                     {renderValue(obj?.preProcessors)}
@@ -1772,22 +2545,14 @@ function App() {
                                 >
                                   <div className="object-panel-header">
                                     <span className="object-panel-title">Trap Variables</span>
-                                    {canEditRules && panelEditEnabled && (
-                                      <button
-                                        type="button"
-                                        className="panel-edit-button"
-                                        onClick={() => togglePanelEdit(`${getObjectKey(obj, idx)}:trap`)}
-                                      >
-                                        {panelEditState[`${getObjectKey(obj, idx)}:trap`] ? 'Done' : 'Edit'}
-                                      </button>
-                                    )}
                                   </div>
                                   <div className="object-panel-body">
                                     {renderTrapVariables(obj?.trap?.variables)}
                                   </div>
                                 </div>
                               </div>
-                            ))
+                              );
+                            })
                           )}
                         </div>
                       ) : (
@@ -1806,15 +2571,61 @@ function App() {
                           onChange={(e) => setCommitMessage(e.target.value)}
                         />
                         <div className="modal-actions">
-                          <button type="button" onClick={() => setShowCommitModal(false)}>
+                          <button type="button" onClick={() => {
+                            setPendingOverrideSave(null);
+                            setShowCommitModal(false);
+                          }}>
                             Cancel
                           </button>
                           <button
                             type="button"
-                            onClick={() => handleSaveFile(commitMessage)}
+                            onClick={() => {
+                              if (pendingOverrideSave) {
+                                handleSaveOverrides(commitMessage);
+                              } else {
+                                handleSaveFile(commitMessage);
+                              }
+                              setShowCommitModal(false);
+                            }}
                             disabled={saveLoading}
                           >
                             {saveLoading ? 'Saving…' : 'Save'}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  {removeOverrideModal.open && (
+                    <div className="modal-overlay" role="dialog" aria-modal="true">
+                      <div className="modal">
+                        <h3>Remove override</h3>
+                        <p>Removing this override will default to original value:</p>
+                        <pre className="code-block">{removeOverrideModal.baseValue ?? '—'}</pre>
+                        <p>Are you sure?</p>
+                        <div className="modal-actions">
+                          <button type="button" onClick={() => setRemoveOverrideModal({ open: false })}>
+                            No
+                          </button>
+                          <button type="button" onClick={confirmRemoveOverride}>
+                            Yes
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  {removeAllOverridesModal.open && (
+                    <div className="modal-overlay" role="dialog" aria-modal="true">
+                      <div className="modal">
+                        <h3>Remove all overrides</h3>
+                        <p>Removing these overrides will default to original values:</p>
+                        <pre className="code-block">{JSON.stringify(removeAllOverridesModal.baseValues ?? {}, null, 2)}</pre>
+                        <p>Are you sure?</p>
+                        <div className="modal-actions">
+                          <button type="button" onClick={() => setRemoveAllOverridesModal({ open: false })}>
+                            No
+                          </button>
+                          <button type="button" onClick={confirmRemoveAllOverrides}>
+                            Yes
                           </button>
                         </div>
                       </div>
@@ -1844,6 +2655,19 @@ function App() {
                         <div className="modal-actions">
                           <button type="button" onClick={() => setShowSchemaModal(false)}>
                             Close
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  {panelNavWarning.open && (
+                    <div className="modal-overlay" role="dialog" aria-modal="true">
+                      <div className="modal">
+                        <h3>Unsaved panel edits</h3>
+                        <p>Please save or cancel the panel edits before navigating away.</p>
+                        <div className="modal-actions">
+                          <button type="button" onClick={() => setPanelNavWarning((prev) => ({ ...prev, open: false }))}>
+                            OK
                           </button>
                         </div>
                       </div>
@@ -1952,6 +2776,9 @@ function App() {
               <div className="modal-overlay" role="dialog" aria-modal="true">
                 <div className="modal modal-wide">
                   <h3>Trap variables {varModalToken ? `for ${varModalToken}` : ''}</h3>
+                  {varModalMode === 'insert' && (
+                    <p className="muted">Select a variable to insert.</p>
+                  )}
                   {varModalVars.length === 0 ? (
                     <div className="empty-state">No trap variables available.</div>
                   ) : (
@@ -1961,10 +2788,23 @@ function App() {
                         const isSelected = token === varModalToken;
                         return (
                         <div
-                          className={`trap-var${isSelected ? ' trap-var-selected' : ''}`}
+                          className={`trap-var${isSelected ? ' trap-var-selected' : ''}${varModalMode === 'insert' ? ' trap-var-clickable' : ''}`}
                           key={variable?.name || variable?.oid || index}
                           ref={(el) => {
                             varRowRefs.current[token] = el;
+                          }}
+                          role={varModalMode === 'insert' ? 'button' : undefined}
+                          tabIndex={varModalMode === 'insert' ? 0 : undefined}
+                          onClick={() => {
+                            if (varModalMode === 'insert') {
+                              handleVarInsertSelect(token);
+                            }
+                          }}
+                          onKeyDown={(e) => {
+                            if (varModalMode === 'insert' && (e.key === 'Enter' || e.key === ' ')) {
+                              e.preventDefault();
+                              handleVarInsertSelect(token);
+                            }
                           }}
                         >
                           <div className="trap-var-title">
@@ -1995,7 +2835,11 @@ function App() {
                     </div>
                   )}
                   <div className="modal-actions">
-                    <button type="button" onClick={() => setVarModalOpen(false)}>
+                    <button type="button" onClick={() => {
+                      setVarModalOpen(false);
+                      setVarModalMode('view');
+                      setVarInsertContext(null);
+                    }}>
                       Close
                     </button>
                   </div>

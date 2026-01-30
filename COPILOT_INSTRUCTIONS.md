@@ -36,6 +36,11 @@ Explicit requirement: if a code change requires a restart to take effect, you (t
   - [architecture/openapi-fcom-curation.yaml](architecture/openapi-fcom-curation.yaml)
   - Related README/plan docs when applicable.
 
+## UA REST API payload rules (hard rule)
+
+- **Only send fields explicitly documented or required by the UA REST API.**
+- **Do not include extra/unknown keys** even if they appear to be tolerated by UA.
+
 ## Git commit messages
 
 Prefer descriptive, multi-line commit messages that include what changed and why. Avoid one-line commits for non-trivial changes.
