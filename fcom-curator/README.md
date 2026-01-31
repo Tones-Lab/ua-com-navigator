@@ -44,31 +44,28 @@ fcom-curator/
 
 ### Prerequisites
 - Node.js 18+
-- Yarn 3.x
+- npm 9+ (or Yarn 3.x)
 
 ### Installation
 
 ```bash
-# From project root
-yarn install
+# From project root (npm)
+npm install
 
 # Or install individual workspaces
-cd backend && yarn install
-cd ../frontend && yarn install
+cd backend && npm install
+cd ../frontend && npm install
 ```
 
 ### Development
 
 ```bash
-# From project root - runs both backend and frontend
-yarn dev
-
-# Or individually:
+# Recommended: run individually (npm)
 # Terminal 1
-cd backend && yarn dev
+cd backend && npm run dev
 
 # Terminal 2
-cd frontend && yarn dev
+cd frontend && npm run dev -- --host 0.0.0.0 --port 5173
 ```
 
 Frontend will be available at `http://localhost:5173`
@@ -77,6 +74,7 @@ Backend API at `http://localhost:3001`
 ### Building for Production
 
 ```bash
+# If using yarn workspaces
 yarn build
 ```
 
@@ -84,10 +82,10 @@ yarn build
 
 ```bash
 # Backend
-cd backend && yarn start
+cd backend && npm run start
 
 # Frontend
-cd frontend && yarn preview
+cd frontend && npm run preview
 ```
 
 ## Architecture Overview
@@ -100,7 +98,7 @@ cd frontend && yarn preview
   - Authentication (`/api/v1/auth/*`)
   - Server configuration (`/api/v1/servers/*`)
   - File browser (`/api/v1/files/browse`)
-  - File editor (`/api/v1/files/:id/read`, `/save`, `/diff`, `/history`)
+  - File editor (`/api/v1/files/read`, `/save`, `/diff`, `/history`)
   - Testing (`/api/v1/files/:id/test`, `/test-all`)
   - Schema (`/api/v1/schema`)
 
@@ -111,9 +109,11 @@ cd frontend && yarn preview
 - **Key Features:**
   - Multi-server session management
   - File browser with search/filtering
-  - Code editor with JSON validation
-  - SVN diff & history viewer
-  - Event testing (single & batch)
+  - Friendly/Raw view for FCOM objects
+  - Overrides UI with per-field edit/preview
+  - Eval builder (friendly + raw)
+  - Add field from Events schema
+  - Save + commit message flow
   - Real-time validation against FCOM JSON schema
 
 ## Authentication
@@ -156,12 +156,37 @@ PORT=3001
 NODE_ENV=development
 FRONTEND_URL=http://localhost:5173
 LOG_LEVEL=info
+
+# Auth flags
+UA_AUTH_BASIC_ENABLED=true
+UA_AUTH_CERT_ENABLED=true
+
+# UA TLS options
+UA_TLS_INSECURE=true
+UA_TLS_CERT_PATH=
+UA_TLS_KEY_PATH=
+UA_TLS_CA_PATH=
+
+# COMs indexing
+COMS_ROOT=/root/navigator/coms
+COMS_PATH_PREFIX=id-core/default/processing/event/fcom/_objects
 ```
 
-### Frontend (.env)
-```
-VITE_API_BASE_URL=http://localhost:3001/api/v1
-```
+### Frontend
+No env required by default. The frontend proxies API calls to the backend.
+
+## Admin/Backend Notes
+- UA server list is configured in [backend/src/services/serverRegistry.ts](backend/src/services/serverRegistry.ts).
+- Permissions: users without rule update rights see read-only UI (no Edit controls).
+- Overrides are stored in `/core/default/processing/event/fcom/overrides/<vendor>.override.json`.
+
+## UI Workflow (Quick)
+1. Login (basic or certificate auth).
+2. Browse folders or search.
+3. Open a file (Friendly/Raw toggle).
+4. Enable Edit (if permitted) to update event fields or overrides.
+5. Use Builder for eval expressions or raw edit.
+6. Save with a commit message.
 
 ## Development Workflow
 

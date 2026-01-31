@@ -14,6 +14,7 @@ export interface Session {
   auth_method: 'basic' | 'certificate';
   expires_at: string;
   ua_login?: any;
+  can_edit_rules?: boolean;
 }
 
 export interface FcomObject {

@@ -124,6 +124,10 @@ class ApiClient {
     return this.client.get('/schema/version');
   }
 
+  async getEventsSchema() {
+    return this.client.get('/events/schema');
+  }
+
   // Favorites
   async getFavorites() {
     return this.client.get('/favorites');

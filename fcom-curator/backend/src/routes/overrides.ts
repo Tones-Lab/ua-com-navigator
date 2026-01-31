@@ -78,13 +78,16 @@ const extractRuleText = (data: any) => {
 const parseOverridePayload = (ruleText: string) => {
   const trimmed = ruleText.trim();
   if (!trimmed) {
-    return [];
+    return { overrides: [], format: 'array' as const };
   }
   const parsed = JSON.parse(trimmed);
   if (Array.isArray(parsed)) {
-    return parsed;
+    return { overrides: parsed, format: 'array' as const };
   }
-  throw new Error('Override file must be a JSON array at the root');
+  if (parsed && typeof parsed === 'object') {
+    return { overrides: [parsed], format: 'object' as const };
+  }
+  throw new Error('Override file must be a JSON array or object at the root');
 };
 
 router.get('/', async (req: Request, res: Response) => {
@@ -100,19 +103,44 @@ router.get('/', async (req: Request, res: Response) => {
     try {
       const data = await uaClient.readRule(resolved.overridePath, 'HEAD');
       const ruleText = extractRuleText(data);
-      const overrides = parseOverridePayload(ruleText);
+      const parsed = parseOverridePayload(ruleText);
+      const overrides = parsed.overrides;
       const etag = crypto.createHash('md5').update(ruleText).digest('hex');
+      let overrideMeta: any = null;
+      try {
+        const listing = await uaClient.listRules('/', 500, resolved.overrideRoot);
+        const entries = Array.isArray(listing?.data) ? listing.data : [];
+        const entry = entries.find((item: any) => (
+          item?.PathName === resolved.overrideFileName
+          || item?.PathID === resolved.overridePath
+          || String(item?.PathID || '').endsWith(`/${resolved.overrideFileName}`)
+        ));
+        if (entry) {
+          overrideMeta = {
+            pathId: entry.PathID,
+            pathName: entry.PathName,
+            revision: entry.LastRevision ?? entry.Revision ?? entry.Rev,
+            modified: entry.ModificationTime ?? entry.LastModified ?? entry.Modified,
+            modifiedBy: entry.ModifiedBy ?? entry.LastModifiedBy ?? entry.Modifier ?? entry.User,
+          };
+        }
+      } catch (error: any) {
+        logger.warn(`Override meta lookup failed for ${resolved.overrideRoot}: ${error?.message || 'unknown error'}`);
+      }
       return res.json({
         ...resolved,
         overrides,
+        overrideFormat: parsed.format,
+        overrideMeta,
         etag,
-        exists: true,
+        exists: Boolean(overrideMeta),
       });
     } catch (error: any) {
       logger.warn(`Override read failed for ${resolved.overridePath}: ${error?.message || 'unknown error'}`);
       return res.json({
         ...resolved,
         overrides: [],
+        overrideMeta: null,
         etag: null,
         exists: false,
       });
@@ -133,9 +161,12 @@ router.post('/save', async (req: Request, res: Response) => {
     const resolved = resolveOverrideLocation(String(file_id));
     const uaClient = getUaClientFromSession(req);
 
-    const payload = JSON.stringify(overrides, null, 2);
+    let overrideFormat: 'array' | 'object' = 'array';
     try {
-      await uaClient.readRule(resolved.overridePath, 'HEAD');
+      const data = await uaClient.readRule(resolved.overridePath, 'HEAD');
+      const ruleText = extractRuleText(data);
+      const parsed = parseOverridePayload(ruleText);
+      overrideFormat = parsed.format;
     } catch {
       return res.status(409).json({
         error: 'Override file not found. Create it manually before saving overrides.',
@@ -143,12 +174,39 @@ router.post('/save', async (req: Request, res: Response) => {
       });
     }
 
+    const payload = overrideFormat === 'object' && overrides.length === 1
+      ? JSON.stringify(overrides[0], null, 2)
+      : JSON.stringify(overrides, null, 2);
     const response = await uaClient.updateRule(resolved.overridePath, payload, commit_message);
 
     const etag = crypto.createHash('md5').update(payload).digest('hex');
+    let overrideMeta: any = null;
+    try {
+      const listing = await uaClient.listRules('/', 500, resolved.overrideRoot);
+      const entries = Array.isArray(listing?.data) ? listing.data : [];
+      const entry = entries.find((item: any) => (
+        item?.PathName === resolved.overrideFileName
+        || item?.PathID === resolved.overridePath
+        || String(item?.PathID || '').endsWith(`/${resolved.overrideFileName}`)
+      ));
+      if (entry) {
+        overrideMeta = {
+          pathId: entry.PathID,
+          pathName: entry.PathName,
+          revision: entry.LastRevision ?? entry.Revision ?? entry.Rev,
+          modified: entry.ModificationTime ?? entry.LastModified ?? entry.Modified,
+          modifiedBy: entry.ModifiedBy ?? entry.LastModifiedBy ?? entry.Modifier ?? entry.User,
+        };
+      }
+    } catch (error: any) {
+      logger.warn(`Override meta lookup failed for ${resolved.overrideRoot}: ${error?.message || 'unknown error'}`);
+    }
     res.json({
       ...resolved,
       overrides,
+      overrideFormat: overrideFormat === 'object' && overrides.length === 1 ? 'object' : 'array',
+      overrideMeta,
+      exists: Boolean(overrideMeta),
       etag,
       result: response,
     });

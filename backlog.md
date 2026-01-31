@@ -14,39 +14,66 @@
 - Cert-based auth cleanup: confirm UA cert→user mapping and enable certificate auth (currently 401).
 
 ## Next (P1)
-- File browser tree with search/filters.
-- File preview pane.
-- Favorites (server-side, per-user, per-server):
-	- Separate collapsible sections for Favorite Files and Favorite Folders.
-	- Star toggle in File Details header (files) and Folder Overview (folders).
-	- Remove favorites only via star toggle (list removal later).
-- Folder Overview (right pane for folder selection):
-	- Summary: file count, object/notification count, schema error count.
-	- Table (Top 25): File | #Schema Errors | #Unknown Fields.
-	- Ranked by schema errors + unknown fields.
-	- Cache results server-side (TTL) for performance.
-- Events schema cache (UA Events table):
-	- Backend endpoint to fetch/cache UA Events field definitions.
-	- Use UA DB Query tool (DESCRIBE Event.Events) and cache at startup/TTL.
-	- Unknown fields flagged as Critical.
+- ✅ File browser tree with search/filters.
+- ✅ File preview pane.
+- ✅ Favorites (server-side, per-user, per-server):
+	- ✅ Separate collapsible sections for Favorite Files and Favorite Folders.
+	- ✅ Star toggle in File Details header (files) and Folder Overview (folders).
+	- ✅ Remove favorites only via star toggle (list removal later).
+- ✅ Folder Overview (right pane for folder selection):
+	- ✅ Summary: file count, object/notification count, schema error count.
+	- ✅ Table (Top 25): File | #Schema Errors | #Unknown Fields.
+	- ✅ Ranked by schema errors + unknown fields.
+	- ✅ Cache results server-side (TTL) for performance.
+- ✅ Events schema cache (UA Events table):
+	- ✅ Backend endpoint to fetch/cache UA Events field definitions.
+	- ✅ Use UA DB Query tool (DESCRIBE Event.Events) and cache at startup/TTL.
+	- ✅ Unknown fields flagged as Critical.
 - Core FCOM object editor (form-based).
-- Real-time schema validation in UI.
+- ✅ Real-time schema validation in UI.
 - Generic value renderer/editor for event fields (string/int/eval/objects):
 	- Render raw strings/ints normally; show eval badge for {eval: "..."}.
 	- Single, reusable component for all fields (no per-field logic).
 	- Edit mode supports Literal vs Eval with $vX autocomplete.
 	- Inline validation using schema type (when available).
 - Eval UI improvements (read-only):
-	- Keep raw eval visible; hover $vX to show variable definition tooltip.
+	- ✅ Keep raw eval visible.
+	- ⛔ $vX hover tooltip not implemented (currently click opens modal).
 	- Optional hover on eval to show quick legend of referenced variables.
 - Event field type validation using UA Events table schema:
 	- Backend endpoint to fetch/cache Events table field definitions.
 	- UI flags event fields missing from Events table as Critical (remove).
 	- Unknown fields allowed only when explicitly whitelisted/extended.
-- Save/commit flow with commit message.
+- ✅ Save/commit flow with commit message.
 - Smarter defaults: show FCOM/PCOM folders by default, allow user overrides/favorites.
-- Session state: remember last opened folder path and restore on reload.
-- Remove temporary CastleRock quick link after testing.
+- ✅ Session state: remember last opened folder path and restore on reload (URL-based via node/file params).
+- ✅ Remove temporary CastleRock quick link after testing.
+- ✅ Event field add-from-schema flow:
+	- ✅ In Edit mode, allow “Add field” to pick from UA Events schema.
+	- ✅ Modal lists all fields; gray out ones already present; exclude EventKey/EventID.
+	- ✅ Selected field starts as empty string and becomes editable like defaults.
+	- ✅ On save, any newly added field becomes an override (blank string allowed).
+	- ✅ If override already exists, update it (including switching to eval/regex/etc.).
+- Display conversions:
+	- If a field has a display conversion (enum/lookup), show the converted value in UI.
+	- Use display value alongside raw value to help users interpret fields.
+- Global overrides awareness:
+	- Detect and surface catch-all/global overrides in relevant files.
+	- Summarize global overrides and link to their files from the UI.
+- Processor builder rollout (priority order):
+	1) set
+	2) regex
+	3) convert
+	4) math
+	5) append/concat
+	6) map/lookup
+	7) split
+	8) substr
+	9) strcase
+	10) length
+	11) date
+- Documentation refresh (post-processor rollout):
+	- Update install/prereqs, admin/backend notes, and UI workflow.
 
 ## Later (P2)
 - Diff viewer and history panel.
@@ -63,3 +90,4 @@
 - Promotion workflow (file/folder).
 - Bulk operations.
 - MIB browser + stub generation.
+- Integrate UA Mib2FCOM tools (MIB browser, stub generation, conversion workflows).

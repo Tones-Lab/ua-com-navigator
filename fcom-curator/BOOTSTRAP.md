@@ -109,22 +109,22 @@
 
 ```bash
 # Install dependencies
-yarn install
+npm install
 
 # Development
-yarn dev                 # Both backend + frontend
-cd backend && yarn dev   # Backend only
-cd frontend && yarn dev  # Frontend only
+cd backend && npm run dev
+cd ../frontend && npm run dev -- --host 0.0.0.0 --port 5173
 
-# Build
+# Build (yarn workspace optional)
 yarn build
 
 # Linting
-yarn lint
+cd backend && npm run lint
+cd ../frontend && npm run lint
 
 # Production
-cd backend && yarn start  # Backend server
-cd frontend && yarn preview  # Frontend preview
+cd backend && npm run start
+cd ../frontend && npm run preview
 ```
 
 ---

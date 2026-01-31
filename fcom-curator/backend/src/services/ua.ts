@@ -335,8 +335,19 @@ export class UAClient {
   async queryDatabase(query: string): Promise<any> {
     try {
       logger.info('[UA] Executing database query');
-      const endpoint = process.env.UA_DB_QUERY_ENDPOINT || '/db/Query/execute';
-      const response = await this.client.post(endpoint, { query });
+      const endpoint = process.env.UA_DB_QUERY_ENDPOINT || '/database/queryTools/executeQuery';
+      const params = new URLSearchParams();
+      params.set('QueryDBName', process.env.UA_DB_QUERY_NAME || 'Event');
+      params.set('QueryDatabaseID', process.env.UA_DB_QUERY_ID || '');
+      params.set('Query', query);
+      params.set('QueryShardID', process.env.UA_DB_QUERY_SHARD || '');
+      params.set('QueryLimit', process.env.UA_DB_QUERY_LIMIT || '100');
+      params.set('page', '1');
+      params.set('start', '0');
+      params.set('limit', process.env.UA_DB_QUERY_LIMIT || '100');
+      const response = await this.client.post(endpoint, params.toString(), {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      });
       return response.data;
     } catch (error: any) {
       logger.error(`[UA] Error executing database query: ${error.message}`);

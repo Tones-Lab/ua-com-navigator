@@ -73,6 +73,41 @@ function App() {
     }
     return '/';
   };
+    const renderOverrideSummaryCard = (
+      obj: any,
+      overrideValueMap: Map<string, any>,
+      fields: string[],
+      title: string,
+    ) => {
+      const maxItems = 6;
+      const visible = fields.slice(0, maxItems);
+      const remaining = fields.length - visible.length;
+      return (
+        <div className="override-summary-card" role="tooltip">
+          <div className="override-summary-title">
+            {title}
+          </div>
+          <ul className="override-summary-list">
+            {visible.map((field) => (
+              <li key={field} className="override-summary-item">
+                <span className="override-summary-field">{formatEventFieldLabel(field)}</span>
+                <span className="override-summary-value">
+                  {renderValue(
+                    overrideValueMap.get(`$.event.${field}`),
+                    obj?.trap?.variables,
+                  )}
+                </span>
+              </li>
+            ))}
+            {remaining > 0 && (
+              <li className="override-summary-item">
+                <span className="override-summary-value">+{remaining} more</span>
+              </li>
+            )}
+          </ul>
+        </div>
+      );
+    };
   const [browseLoading, setBrowseLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchScope, setSearchScope] = useState<'all' | 'name' | 'content'>('all');
@@ -151,11 +186,13 @@ function App() {
   const [viewMode, setViewMode] = useState<'friendly' | 'preview'>('preview');
   const [originalText, setOriginalText] = useState('');
   const [showCommitModal, setShowCommitModal] = useState(false);
+  const [saveElapsed, setSaveElapsed] = useState(0);
   const [pendingNav, setPendingNav] = useState<null | (() => void)>(null);
   const [showSchemaModal, setShowSchemaModal] = useState(false);
   const [panelEditEnabled, setPanelEditEnabled] = useState(false);
   const [panelEditState, setPanelEditState] = useState<Record<string, boolean>>({});
   const [panelDrafts, setPanelDrafts] = useState<Record<string, any>>({});
+  const [panelEvalModes, setPanelEvalModes] = useState<Record<string, Record<string, boolean>>>({});
   const [overrideInfo, setOverrideInfo] = useState<any | null>(null);
   const [overrideLoading, setOverrideLoading] = useState(false);
   const [overrideError, setOverrideError] = useState<string | null>(null);
@@ -183,6 +220,13 @@ function App() {
   const [schemaError, setSchemaError] = useState<string | null>(null);
   const [validationErrors, setValidationErrors] = useState<Array<{ path: string; message: string }>>([]);
   const [jsonParseError, setJsonParseError] = useState<string | null>(null);
+  const [eventsSchemaFields, setEventsSchemaFields] = useState<string[]>([]);
+  const [eventsSchemaLoading, setEventsSchemaLoading] = useState(false);
+  const [eventsSchemaError, setEventsSchemaError] = useState<string | null>(null);
+  const [showAddFieldModal, setShowAddFieldModal] = useState(false);
+  const [addFieldSearch, setAddFieldSearch] = useState('');
+  const [addFieldContext, setAddFieldContext] = useState<{ panelKey: string; obj: any } | null>(null);
+  const [panelAddedFields, setPanelAddedFields] = useState<Record<string, string[]>>({});
   const urlHydrated = useRef(false);
   const [varModalOpen, setVarModalOpen] = useState(false);
   const [varModalToken, setVarModalToken] = useState<string | null>(null);
@@ -195,12 +239,110 @@ function App() {
     replaceStart: number;
     replaceEnd: number;
   } | null>(null);
+  const [builderOpen, setBuilderOpen] = useState(true);
+  const [builderTarget, setBuilderTarget] = useState<{ panelKey: string; field: string } | null>(null);
+  const [builderFocus, setBuilderFocus] = useState<'eval' | 'processor' | null>(null);
+  const [builderMode, setBuilderMode] = useState<'friendly' | 'regular'>('friendly');
+  const [builderRows, setBuilderRows] = useState<Array<{
+    left: string;
+    operator: string;
+    right: string;
+    result: string;
+  }>>([
+    { left: '$v1', operator: '==', right: '1', result: '1' },
+  ]);
+  const [builderElseResult, setBuilderElseResult] = useState('0');
+  const [builderRegularText, setBuilderRegularText] = useState('');
   const varListRef = useRef<HTMLDivElement | null>(null);
   const varRowRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
-  const canEditRules = Boolean(
-    session?.ua_login?.data?.Permissions?.rule?.Rules?.update,
+  const getNestedValue = (source: any, path: string) => (
+    path.split('.').reduce((acc, key) => (acc == null ? undefined : acc[key]), source)
   );
+  const parsePermissionFlag = (value: any) => {
+    if (typeof value === 'boolean') {
+      return value;
+    }
+    if (typeof value === 'number') {
+      return value > 0;
+    }
+    if (typeof value === 'string') {
+      const normalized = value.trim().toLowerCase();
+      if (['true', '1', 'yes', 'y'].includes(normalized)) {
+        return true;
+      }
+      if (['false', '0', 'no', 'n', ''].includes(normalized)) {
+        return false;
+      }
+    }
+    return false;
+  };
+  const parseAccessValue = (value: any) => {
+    if (typeof value === 'string') {
+      const normalized = value.trim().toLowerCase();
+      if (/(write|update|edit|modify|rw|readwrite)/.test(normalized)) {
+        return true;
+      }
+      if (/(read|ro|view|readonly|read-only)/.test(normalized)) {
+        return false;
+      }
+    }
+    return null;
+  };
+  const findRulePermissionValues = (source: any) => {
+    const matches: any[] = [];
+    const walk = (node: any, pathKeys: string[]) => {
+      if (!node) {
+        return;
+      }
+      if (Array.isArray(node)) {
+        node.forEach((item, index) => walk(item, [...pathKeys, String(index)]));
+        return;
+      }
+      if (typeof node !== 'object') {
+        return;
+      }
+      Object.entries(node).forEach(([key, value]) => {
+        const nextPath = [...pathKeys, key];
+        const hasRule = nextPath.some((segment) => /rule/i.test(segment));
+        const hasRules = nextPath.some((segment) => /rules/i.test(segment));
+        if (/update/i.test(key) && hasRule && hasRules) {
+          matches.push(value);
+        }
+        if (/(access|permission|mode)/i.test(key) && hasRule && hasRules) {
+          matches.push(value);
+        }
+        walk(value, nextPath);
+      });
+    };
+    walk(source, []);
+    return matches;
+  };
+  const permissionPaths = [
+    'data.Permissions.rule.Rules.update',
+    'data.Permissions.rule.Rules.Update',
+    'data.Permissions.Rule.Rules.update',
+    'data.Permissions.Rule.Rules.Update',
+    'Permissions.rule.Rules.update',
+    'Permissions.rule.Rules.Update',
+    'Permissions.Rule.Rules.update',
+    'Permissions.Rule.Rules.Update',
+    'data.permissions.rule.Rules.update',
+    'permissions.rule.Rules.update',
+  ];
+  const explicitFlags = permissionPaths
+    .map((path) => getNestedValue(session?.ua_login, path))
+    .filter((value) => value !== undefined);
+  const recursiveFlags = findRulePermissionValues(session?.ua_login);
+  const accessFlags = [...explicitFlags, ...recursiveFlags]
+    .map((value) => parseAccessValue(value))
+    .filter((value) => value !== null) as boolean[];
+  const derivedEditRules = explicitFlags.some((value) => parsePermissionFlag(value))
+    || recursiveFlags.some((value) => parsePermissionFlag(value))
+    || accessFlags.some((value) => value);
+  const canEditRules = typeof session?.can_edit_rules === 'boolean'
+    ? session.can_edit_rules
+    : derivedEditRules;
 
   useEffect(() => {
     if (!panelEditEnabled) {
@@ -208,6 +350,39 @@ function App() {
       setPanelDrafts({});
     }
   }, [panelEditEnabled]);
+  useEffect(() => {
+    if (panelEditEnabled) {
+      setBuilderOpen(false);
+    }
+  }, [panelEditEnabled]);
+
+  const ensureEventsSchema = async () => {
+    if (eventsSchemaLoading || eventsSchemaFields.length > 0) {
+      return;
+    }
+    setEventsSchemaLoading(true);
+    setEventsSchemaError(null);
+    try {
+      const resp = await api.getEventsSchema();
+      const fields = Array.isArray(resp.data?.fields) ? resp.data.fields.map(String) : [];
+      setEventsSchemaFields(fields);
+    } catch (err: any) {
+      setEventsSchemaError(err?.response?.data?.error || 'Failed to load Events schema');
+    } finally {
+      setEventsSchemaLoading(false);
+    }
+  };
+  useEffect(() => {
+    if (!saveLoading) {
+      setSaveElapsed(0);
+      return;
+    }
+    setSaveElapsed(0);
+    const interval = window.setInterval(() => {
+      setSaveElapsed((prev) => prev + 1);
+    }, 1000);
+    return () => window.clearInterval(interval);
+  }, [saveLoading]);
   useEffect(() => {
     if (viewMode !== 'friendly' && panelEditEnabled) {
       setPanelEditEnabled(false);
@@ -1017,7 +1192,7 @@ function App() {
     }
     const removals = new Set(panelOverrideRemovals[panelKey] || []);
     const dirty: string[] = [];
-    eventFields.forEach((field) => {
+    getEventFieldList(obj, panelKey).forEach((field) => {
       if (removals.has(field)) {
         dirty.push(field);
         return;
@@ -1063,19 +1238,107 @@ function App() {
     panelNavWarning.fields?.[panelKey]?.includes(field)
   );
 
-  const eventFields = ['Summary', 'Severity', 'EventType', 'EventCategory', 'ExpireTime'] as const;
+  const isEvalMode = (panelKey: string, field: string) => (
+    panelEvalModes?.[panelKey]?.[field] ?? false
+  );
+
+  const isEvalValue = (value: any) => (
+    value && typeof value === 'object' && typeof value.eval === 'string'
+  );
+
+  const shouldShowEvalToggle = (panelKey: string, field: string, obj: any) => (
+    isEvalMode(panelKey, field) || isEvalValue(getEffectiveEventValue(obj, field))
+  );
+
+  const reservedEventFields = new Set(['EventID', 'EventKey', 'Method']);
+  const baseEventFieldOrder = ['Node', 'Summary', 'Severity', 'EventType', 'EventCategory', 'ExpireTime'];
+
+  const getExistingEventFields = (obj: any, panelKey: string) => {
+    const fields = new Set<string>();
+    Object.keys(obj?.event || {}).forEach((field) => fields.add(field));
+    getEventOverrideFields(obj).forEach((field) => fields.add(field));
+    (panelAddedFields[panelKey] || []).forEach((field) => fields.add(field));
+    return fields;
+  };
+
+  const getBaseEventFields = (obj: any, panelKey: string) => {
+    const existing = getExistingEventFields(obj, panelKey);
+    return baseEventFieldOrder.filter((field) => existing.has(field));
+  };
+
+  const getAdditionalEventFields = (obj: any, panelKey: string) => {
+    const existing = Array.from(getExistingEventFields(obj, panelKey));
+    const baseFields = new Set(getBaseEventFields(obj, panelKey));
+    return existing.filter((field) => !baseFields.has(field) && !reservedEventFields.has(field));
+  };
+
+  const getEventFieldList = (obj: any, panelKey: string) => (
+    [...getBaseEventFields(obj, panelKey), ...getAdditionalEventFields(obj, panelKey)]
+  );
+
+  const formatEventFieldLabel = (field: string) => (
+    field.replace(/([a-z])([A-Z])/g, '$1 $2')
+  );
+
+  const openAddFieldModal = (panelKey: string, obj: any) => {
+    setAddFieldContext({ panelKey, obj });
+    setShowAddFieldModal(true);
+    setAddFieldSearch('');
+    ensureEventsSchema();
+  };
+
+  const addFieldToPanel = (field: string) => {
+    if (!addFieldContext) {
+      return;
+    }
+    const { panelKey } = addFieldContext;
+    setPanelAddedFields((prev) => {
+      const existing = new Set(prev[panelKey] || []);
+      existing.add(field);
+      return { ...prev, [panelKey]: Array.from(existing) };
+    });
+    setPanelDrafts((prev) => ({
+      ...prev,
+      [panelKey]: {
+        ...prev[panelKey],
+        event: {
+          ...prev[panelKey]?.event,
+          [field]: '',
+        },
+      },
+    }));
+    setPanelEvalModes((prev) => ({
+      ...prev,
+      [panelKey]: {
+        ...prev[panelKey],
+        [field]: false,
+      },
+    }));
+    setShowAddFieldModal(false);
+  };
+
+  const isFieldDirty = (obj: any, panelKey: string, field: string) => {
+    const removals = new Set(panelOverrideRemovals[panelKey] || []);
+    if (removals.has(field)) {
+      return true;
+    }
+    const draftValue = panelDrafts?.[panelKey]?.event?.[field];
+    const original = getEffectiveEventValue(obj, field);
+    const { display } = getEditableValue(original);
+    return String(draftValue ?? '') !== String(display ?? '');
+  };
 
   const getEditableValue = (value: any) => {
     if (value === null || value === undefined) {
-      return { editable: true, display: '' };
+      return { editable: true, display: '', isEval: false };
     }
     if (typeof value === 'string' || typeof value === 'number') {
-      return { editable: true, display: String(value) };
+      return { editable: true, display: String(value), isEval: false };
     }
     if (typeof value === 'object' && typeof value.eval === 'string') {
-      return { editable: false, display: value.eval };
+      return { editable: true, display: value.eval, isEval: true };
     }
-    return { editable: false, display: JSON.stringify(value) };
+    return { editable: true, display: JSON.stringify(value), isEval: false };
   };
 
   const getBaseEventDisplay = (obj: any, field: string) => {
@@ -1086,14 +1349,20 @@ function App() {
 
   const startEventEdit = (obj: any, key: string) => {
     const draft: Record<string, any> = {};
-    eventFields.forEach((field) => {
+    const evalModes: Record<string, boolean> = {};
+    getEventFieldList(obj, key).forEach((field) => {
       const value = getEffectiveEventValue(obj, field);
-      const { display } = getEditableValue(value);
+      const { display, isEval } = getEditableValue(value);
       draft[field] = display;
+      evalModes[field] = Boolean(isEval);
     });
     setPanelDrafts((prev) => ({
       ...prev,
       [key]: { event: draft },
+    }));
+    setPanelEvalModes((prev) => ({
+      ...prev,
+      [key]: evalModes,
     }));
     setPanelEditState((prev) => ({ ...prev, [key]: true }));
   };
@@ -1105,6 +1374,11 @@ function App() {
       return next;
     });
     setPanelEditState((prev) => ({ ...prev, [key]: false }));
+    setPanelEvalModes((prev) => {
+      const next = { ...prev };
+      delete next[key];
+      return next;
+    });
     setPanelOverrideRemovals((prev) => {
       const next = { ...prev };
       delete next[key];
@@ -1134,21 +1408,25 @@ function App() {
     const draft = panelDrafts?.[key]?.event || {};
     const removalFields = new Set(panelOverrideRemovals[key] || []);
     const updates: { field: string; value: any }[] = [];
-    eventFields.forEach((field) => {
+    getEventFieldList(obj, key).forEach((field) => {
       const original = getEffectiveEventValue(obj, field);
       const draftValue = draft[field];
       const { display } = getEditableValue(original);
       if (String(draftValue ?? '') !== String(display ?? '')) {
         let value: any = draftValue;
-        if (draftValue !== '' && !Number.isNaN(Number(draftValue)) && field !== 'Summary') {
+        if (!isEvalMode(key, field) && draftValue !== '' && !Number.isNaN(Number(draftValue)) && field !== 'Summary') {
           value = Number(draftValue);
+        }
+        if (isEvalMode(key, field)) {
+          value = { eval: String(draftValue ?? '') };
         }
         updates.push({ field, value });
       }
     });
 
     if (updates.length === 0 && removalFields.size === 0) {
-      cancelEventEdit(key);
+      setSaveError(null);
+      setSaveSuccess('No changes made.');
       return;
     }
 
@@ -1407,7 +1685,7 @@ function App() {
     return parts;
   };
 
-  const renderValue = (value: any) => {
+  const renderValue = (value: any, trapVars?: any[]) => {
     if (value === null || value === undefined) {
       return '—';
     }
@@ -1415,7 +1693,7 @@ function App() {
       return renderHighlightedText(String(value));
     }
     if (value && typeof value === 'object' && typeof value.eval === 'string') {
-      return renderEvalDisplay(value.eval);
+      return renderEvalDisplay(value.eval, trapVars);
     }
     try {
       return renderHighlightedText(JSON.stringify(value));
@@ -1505,10 +1783,176 @@ function App() {
     setVarModalOpen(true);
   };
 
+  const openBuilderForField = (panelKey: string, field: string) => {
+    setBuilderTarget({ panelKey, field });
+    setBuilderOpen(true);
+    setBuilderFocus(null);
+  };
+
+  const updatePanelDraftField = (panelKey: string, field: string, value: string) => {
+    setPanelDrafts((prev) => ({
+      ...prev,
+      [panelKey]: {
+        ...prev[panelKey],
+        event: {
+          ...prev[panelKey]?.event,
+          [field]: value,
+        },
+      },
+    }));
+  };
+
+  const setEvalModeForField = (panelKey: string, field: string, enabled: boolean) => {
+    setPanelEvalModes((prev) => ({
+      ...prev,
+      [panelKey]: {
+        ...prev[panelKey],
+        [field]: enabled,
+      },
+    }));
+  };
+
+  const isBuilderTargetReady = builderTarget && panelEditState[builderTarget.panelKey];
+
+  const applyBuilderTemplate = (template: string) => {
+    if (!builderTarget || !panelEditState[builderTarget.panelKey]) {
+      return;
+    }
+    setBuilderRegularText(template);
+  };
+
+  const updateBuilderRow = (index: number, key: 'left' | 'operator' | 'right' | 'result', value: string) => {
+    setBuilderRows((prev) => prev.map((row, idx) => (
+      idx === index ? { ...row, [key]: value } : row
+    )));
+  };
+
+  const addBuilderRow = () => {
+    setBuilderRows((prev) => ([
+      ...prev,
+      { left: '$v1', operator: '==', right: '1', result: '' },
+    ]));
+  };
+
+  const removeBuilderRow = (index: number) => {
+    setBuilderRows((prev) => prev.filter((_, idx) => idx !== index));
+  };
+
+  const buildFriendlyEval = () => {
+    if (builderRows.length === 0) {
+      return '';
+    }
+    const elseValue = builderElseResult.trim();
+    if (!elseValue) {
+      return '';
+    }
+    let expr = elseValue;
+    for (let i = builderRows.length - 1; i >= 0; i -= 1) {
+      const row = builderRows[i];
+      const left = row.left.trim();
+      const right = row.right.trim();
+      const result = row.result.trim();
+      if (!left || !row.operator || !right || !result) {
+        return '';
+      }
+      const condition = `${left} ${row.operator} ${right}`;
+      expr = `(${condition}) ? ${result} : ${expr}`;
+    }
+    return expr;
+  };
+
+  const applyFriendlyEval = () => {
+    if (!builderTarget || !panelEditState[builderTarget.panelKey]) {
+      return;
+    }
+    const compiled = buildFriendlyEval();
+    if (!compiled) {
+      return;
+    }
+    updatePanelDraftField(builderTarget.panelKey, builderTarget.field, compiled);
+    setEvalModeForField(builderTarget.panelKey, builderTarget.field, true);
+  };
+
+  const applyRegularEval = () => {
+    if (!builderTarget || !panelEditState[builderTarget.panelKey]) {
+      return;
+    }
+    const text = builderRegularText.trim();
+    if (!text) {
+      return;
+    }
+    updatePanelDraftField(builderTarget.panelKey, builderTarget.field, text);
+    setEvalModeForField(builderTarget.panelKey, builderTarget.field, true);
+  };
+
+  const clearRegularEval = () => {
+    setBuilderRegularText('');
+  };
+
+  const enableEvalForTarget = () => {
+    if (!builderTarget || !panelEditState[builderTarget.panelKey]) {
+      return;
+    }
+    setEvalModeForField(builderTarget.panelKey, builderTarget.field, true);
+  };
+
+  const renderVarToken = (token: string, trapVars?: any[]) => {
+    const index = Number(token.replace('$v', '')) - 1;
+    const variable = Array.isArray(trapVars) ? trapVars[index] : null;
+    const description = Array.isArray(variable?.description)
+      ? variable.description.filter(Boolean).join(' ')
+      : renderValue(variable?.description);
+    return (
+      <span className="override-summary var-token-wrap" tabIndex={0}>
+        <button
+          type="button"
+          className="var-token"
+          onClick={() => {
+            setVarModalToken(token);
+            setVarModalVars(Array.isArray(trapVars) ? trapVars : []);
+            setVarModalMode('view');
+            setVarInsertContext(null);
+            setVarModalOpen(true);
+          }}
+        >
+          {token}
+        </button>
+        {variable && (
+          <div className="override-summary-card" role="tooltip">
+            <div className="override-summary-title">Variable {token}</div>
+            <ul className="override-summary-list">
+              <li className="override-summary-item">
+                <span className="override-summary-field">Name</span>
+                <span className="override-summary-value">{renderValue(variable?.name)}</span>
+              </li>
+              <li className="override-summary-item">
+                <span className="override-summary-field">OID</span>
+                <span className="override-summary-value">{renderValue(variable?.oid)}</span>
+              </li>
+              {description && description !== '—' && (
+                <li className="override-summary-item">
+                  <span className="override-summary-field">Description</span>
+                  <span className="override-summary-value">{description}</span>
+                </li>
+              )}
+            </ul>
+          </div>
+        )}
+      </span>
+    );
+  };
+
   const renderSummary = (value: any, trapVars: any[]) => {
-    const text = getEvalText(value) || (typeof value === 'string' ? value : '—');
+    if (value && typeof value === 'object' && typeof value.eval === 'string') {
+      return renderEvalDisplay(value.eval, trapVars);
+    }
+    const text = typeof value === 'string' ? value : '—';
     if (!text || text === '—') {
       return text;
+    }
+    const isEvalLike = Boolean(splitTernary(unwrapOuterParens(text.trim())));
+    if (isEvalLike) {
+      return renderEvalDisplay(text, trapVars);
     }
     const parts = text.split(/(\$v\d+)/g);
     return (
@@ -1518,20 +1962,27 @@ function App() {
             return <span key={`text-${index}`}>{renderHighlightedText(part)}</span>;
           }
           return (
-            <button
-              key={`var-${index}`}
-              type="button"
-              className="var-token"
-              onClick={() => {
-                setVarModalToken(part);
-                setVarModalVars(Array.isArray(trapVars) ? trapVars : []);
-                setVarModalMode('view');
-                setVarInsertContext(null);
-                setVarModalOpen(true);
-              }}
-            >
-              {part}
-            </button>
+            <span key={`var-${index}`}>
+              {renderVarToken(part, trapVars)}
+            </span>
+          );
+        })}
+      </span>
+    );
+  };
+
+  const renderEvalLineWithVars = (line: string, trapVars?: any[]) => {
+    const parts = line.split(/(\$v\d+)/g);
+    return (
+      <span>
+        {parts.map((part: string, index: number) => {
+          if (!part.match(/^\$v\d+$/)) {
+            return <span key={`line-text-${index}`}>{renderHighlightedText(part)}</span>;
+          }
+          return (
+            <span key={`line-var-${index}`}>
+              {renderVarToken(part, trapVars)}
+            </span>
           );
         })}
       </span>
@@ -1769,7 +2220,7 @@ function App() {
     walk(cleaned, true);
     return lines;
   };
-  const renderEvalDisplay = (evalText: string) => {
+  const renderEvalDisplay = (evalText: string, trapVars?: any[]) => {
     try {
       const lines = formatEvalReadableList(evalText);
       return (
@@ -1780,7 +2231,7 @@ function App() {
           </span>
           <div className="eval-demo eval-demo-lines">
             {lines.map((line, index) => (
-              <span key={`${line}-${index}`}>{renderHighlightedText(line)}</span>
+              <span key={`${line}-${index}`}>{renderEvalLineWithVars(line, trapVars)}</span>
             ))}
           </div>
         </div>
@@ -1789,6 +2240,8 @@ function App() {
       return <span className="eval-fallback">{renderHighlightedText(evalText)}</span>;
     }
   };
+
+  const friendlyPreview = buildFriendlyEval();
 
   return (
     <ErrorBoundary>
@@ -1809,215 +2262,224 @@ function App() {
         {isAuthenticated ? (
           <div className="split-layout">
             <div className="panel">
-              <div className="panel-header">
-                <div className="panel-title-row">
-                  <h2>File Browser</h2>
-                  <button
-                    type="button"
-                    className="info-button"
-                    onClick={() => setShowPathModal(true)}
-                    aria-label="Show full path"
-                    title="Show full path"
-                  >
-                    ?
-                  </button>
-                </div>
-                <div className="breadcrumbs">
-                  {breadcrumbs.map((crumb, index) => (
+              <div className="panel-scroll">
+                <div className="panel-header">
+                  <div className="panel-title-row">
+                    <h2>File Browser</h2>
                     <button
-                      key={`${crumb.label}-${index}`}
                       type="button"
-                      className="crumb"
-                      onClick={() => handleCrumbClick(index)}
-                      disabled={index === breadcrumbs.length - 1}
+                      className="info-button"
+                      onClick={() => setShowPathModal(true)}
+                      aria-label="Show full path"
+                      title="Show full path"
                     >
-                      {crumb.label}
+                      ?
                     </button>
-                  ))}
-                </div>
-                <div className="panel-section">
-                  <div className="panel-section-title">Search</div>
-                  <form className="global-search" onSubmit={handleSearchSubmit}>
-                    <div className="global-search-row">
-                      <input
-                        type="text"
-                        placeholder="Search files and contents"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                      />
-                      <select
-                        value={searchScope}
-                        onChange={(e) => setSearchScope(e.target.value as 'all' | 'name' | 'content')}
-                      >
-                        <option value="all">All</option>
-                        <option value="name">Names</option>
-                        <option value="content">Content</option>
-                      </select>
-                      <button type="submit" className="search-button" disabled={searchLoading}>
-                        {searchLoading ? 'Searching…' : 'Search'}
-                      </button>
+                  </div>
+                  {!canEditRules && (
+                    <div className="panel-flag-row">
+                      <span className="read-only-flag" title="You do not have permission to edit rules.">
+                        Read-only access
+                      </span>
                     </div>
-                    <div className="search-actions-row">
+                  )}
+                  <div className="breadcrumbs">
+                    {breadcrumbs.map((crumb, index) => (
                       <button
+                        key={`${crumb.label}-${index}`}
                         type="button"
-                        className="ghost-button"
-                        onClick={handleClearSearch}
-                        disabled={!searchQuery && searchResults.length === 0}
+                        className="crumb"
+                        onClick={() => handleCrumbClick(index)}
+                        disabled={index === breadcrumbs.length - 1}
                       >
-                        Clear Search
+                        {crumb.label}
                       </button>
-                      <button type="button" className="ghost-button" onClick={handleResetNavigation}>
-                        Reset Navigation
-                      </button>
+                    ))}
+                  </div>
+                  <div className="panel-section">
+                    <div className="panel-section-title">Search</div>
+                    <form className="global-search" onSubmit={handleSearchSubmit}>
+                      <div className="global-search-row">
+                        <input
+                          type="text"
+                          placeholder="Search files and contents"
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                        <select
+                          value={searchScope}
+                          onChange={(e) => setSearchScope(e.target.value as 'all' | 'name' | 'content')}
+                        >
+                          <option value="all">All</option>
+                          <option value="name">Names</option>
+                          <option value="content">Content</option>
+                        </select>
+                        <button type="submit" className="search-button" disabled={searchLoading}>
+                          {searchLoading ? 'Searching…' : 'Search'}
+                        </button>
+                      </div>
+                      <div className="search-actions-row">
+                        <button
+                          type="button"
+                          className="ghost-button"
+                          onClick={handleClearSearch}
+                          disabled={!searchQuery && searchResults.length === 0}
+                        >
+                          Clear Search
+                        </button>
+                        <button type="button" className="ghost-button" onClick={handleResetNavigation}>
+                          Reset Navigation
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                  <div className="panel-section">
+                    <div className="panel-section-title">Favorites</div>
+                    <div className="favorites-section">
+                    <details open={favoritesFolders.length > 0}>
+                      <summary>Favorite Folders</summary>
+                      {favoritesLoading && <div className="muted">Loading…</div>}
+                      {favoritesError && <div className="error">{favoritesError}</div>}
+                      {favoritesFolders.length === 0 ? (
+                        <div className="empty-state">No favorites yet.</div>
+                      ) : (
+                        <ul className="favorites-list">
+                          {favoritesFolders.map((fav) => (
+                            <li key={`${fav.type}-${fav.pathId}`}>
+                              <button
+                                type="button"
+                                className="quick-link"
+                                onClick={() => handleOpenFolder({ PathID: fav.pathId, PathName: fav.label })}
+                              >
+                                {fav.label}
+                                {getParentLabel(getParentPath(fav.pathId)) && (
+                                  <span className="favorite-parent"> - ({getParentLabel(getParentPath(fav.pathId))})</span>
+                                )}
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </details>
+                    <details open={favoritesFiles.length > 0}>
+                      <summary>Favorite Files</summary>
+                      {favoritesFiles.length === 0 ? (
+                        <div className="empty-state">No favorites yet.</div>
+                      ) : (
+                        <ul className="favorites-list">
+                          {favoritesFiles.map((fav) => (
+                            <li key={`${fav.type}-${fav.pathId}`}>
+                              <button
+                                type="button"
+                                className="quick-link"
+                                onClick={() => openFileFromUrl(fav.pathId, fav.node)}
+                              >
+                                {fav.label}
+                                {fav.node && (
+                                  <span className="favorite-parent"> - ({getParentLabel(fav.node)})</span>
+                                )}
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </details>
                     </div>
-                  </form>
-                </div>
-                <div className="panel-section">
-                  <div className="panel-section-title">Favorites</div>
-                  <div className="favorites-section">
-                  <details open={favoritesFolders.length > 0}>
-                    <summary>Favorite Folders</summary>
-                    {favoritesLoading && <div className="muted">Loading…</div>}
-                    {favoritesError && <div className="error">{favoritesError}</div>}
-                    {favoritesFolders.length === 0 ? (
-                      <div className="empty-state">No favorites yet.</div>
-                    ) : (
-                      <ul className="favorites-list">
-                        {favoritesFolders.map((fav) => (
-                          <li key={`${fav.type}-${fav.pathId}`}>
-                            <button
-                              type="button"
-                              className="quick-link"
-                              onClick={() => handleOpenFolder({ PathID: fav.pathId, PathName: fav.label })}
-                            >
-                              {fav.label}
-                              {getParentLabel(getParentPath(fav.pathId)) && (
-                                <span className="favorite-parent"> - ({getParentLabel(getParentPath(fav.pathId))})</span>
-                              )}
-                            </button>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </details>
-                  <details open={favoritesFiles.length > 0}>
-                    <summary>Favorite Files</summary>
-                    {favoritesFiles.length === 0 ? (
-                      <div className="empty-state">No favorites yet.</div>
-                    ) : (
-                      <ul className="favorites-list">
-                        {favoritesFiles.map((fav) => (
-                          <li key={`${fav.type}-${fav.pathId}`}>
-                            <button
-                              type="button"
-                              className="quick-link"
-                              onClick={() => openFileFromUrl(fav.pathId, fav.node)}
-                            >
-                              {fav.label}
-                              {fav.node && (
-                                <span className="favorite-parent"> - ({getParentLabel(fav.node)})</span>
-                              )}
-                            </button>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </details>
                   </div>
                 </div>
-              </div>
-              {searchQuery.trim() && (
-                <div className="search-results">
-                  <div className="search-results-header">
-                    <span>Search results ({searchResults.length})</span>
-                    {searchLoading && <span className="muted">Searching…</span>}
-                  </div>
-                  {searchError && <div className="error">{searchError}</div>}
-                  {!searchLoading && !searchError && searchResults.length === 0 && (
-                    <div className="empty-state">No matches found.</div>
-                  )}
-                  {searchResults.length > 0 && (
-                    <ul className="search-results-list">
-                      {searchResults.map((result: any) => (
-                        <li key={`${result.pathId}-${result.source}`}>
-                          <button
-                            type="button"
-                            className="search-result-link"
-                            onClick={() => {
-                              highlightNextOpenRef.current = true;
-                              setHighlightQuery(searchQuery.trim());
-                              setHighlightPathId(result.pathId);
-                              setSearchHighlightActive(true);
-                              if (result.type === 'folder') {
-                                void handleOpenFolder({
-                                  PathID: result.pathId,
-                                  PathName: getSearchResultName(result),
-                                });
-                              } else {
-                                void openFileFromUrl(result.pathId);
-                              }
-                            }}
-                          >
-                            <span className="search-icon" aria-hidden="true">
-                              {result.type === 'folder' ? '📁' : '📄'}
-                            </span>
-                            {getSearchResultName(result)}
-                          </button>
-                          <div className="search-result-meta">
-                            <span className="search-result-path">{formatDisplayPath(result.pathId)}</span>
-                            {result.matchCount && (
-                              <span className="pill">{result.matchCount} hit{result.matchCount > 1 ? 's' : ''}</span>
-                            )}
-                            <span className="pill">{result.source}</span>
-                          </div>
-                          {result.matches?.length > 0 && (
-                            <div className="search-snippet">
-                              <span className="muted">L{result.matches[0].line}:</span> {result.matches[0].preview}
+                {searchQuery.trim() && (
+                  <div className="search-results">
+                    <div className="search-results-header">
+                      <span>Search results ({searchResults.length})</span>
+                      {searchLoading && <span className="muted">Searching…</span>}
+                    </div>
+                    {searchError && <div className="error">{searchError}</div>}
+                    {!searchLoading && !searchError && searchResults.length === 0 && (
+                      <div className="empty-state">No matches found.</div>
+                    )}
+                    {searchResults.length > 0 && (
+                      <ul className="search-results-list">
+                        {searchResults.map((result: any) => (
+                          <li key={`${result.pathId}-${result.source}`}>
+                            <button
+                              type="button"
+                              className="search-result-link"
+                              onClick={() => {
+                                highlightNextOpenRef.current = true;
+                                setHighlightQuery(searchQuery.trim());
+                                setHighlightPathId(result.pathId);
+                                setSearchHighlightActive(true);
+                                if (result.type === 'folder') {
+                                  void handleOpenFolder({
+                                    PathID: result.pathId,
+                                    PathName: getSearchResultName(result),
+                                  });
+                                } else {
+                                  void openFileFromUrl(result.pathId);
+                                }
+                              }}
+                            >
+                              <span className="search-icon" aria-hidden="true">
+                                {result.type === 'folder' ? '📁' : '📄'}
+                              </span>
+                              {getSearchResultName(result)}
+                            </button>
+                            <div className="search-result-meta">
+                              <span className="search-result-path">{formatDisplayPath(result.pathId)}</span>
+                              {result.matchCount && (
+                                <span className="pill">{result.matchCount} hit{result.matchCount > 1 ? 's' : ''}</span>
+                              )}
+                              <span className="pill">{result.source}</span>
                             </div>
-                          )}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              )}
-              {browseError && <div className="error">{browseError}</div>}
-              {browseData && (
-                <div className="browse-results">
-                  {entries.length > 0 ? (
-                    <ul className="browse-list">
-                      {entries.map((entry: any) => (
-                        <li key={entry.PathID || entry.PathName}>
-                          {isFolder(entry) ? (
-                            <button
-                              type="button"
-                              className="browse-link"
-                              onClick={() => handleOpenFolder(entry)}
-                            >
-                              <span className="browse-icon" aria-hidden="true">📁</span>
-                              {entry.PathName}
-                            </button>
-                          ) : (
-                            <button
-                              type="button"
-                              className="browse-link file-link"
-                              onClick={() => handleOpenFile(entry)}
-                            >
-                              <span className="browse-icon" aria-hidden="true">📄</span>
-                              {entry.PathName}
-                            </button>
-                          )}
-                          <span className="browse-meta">
-                            {entry.Info || ''}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <pre>{JSON.stringify(browseData, null, 2)}</pre>
-                  )}
-                </div>
-              )}
+                            {result.matches?.length > 0 && (
+                              <div className="search-snippet">
+                                <span className="muted">L{result.matches[0].line}:</span> {result.matches[0].preview}
+                              </div>
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                )}
+                {browseError && <div className="error">{browseError}</div>}
+                {browseData && (
+                  <div className="browse-results">
+                    {entries.length > 0 ? (
+                      <ul className="browse-list">
+                        {entries.map((entry: any) => (
+                          <li key={entry.PathID || entry.PathName}>
+                            {isFolder(entry) ? (
+                              <button
+                                type="button"
+                                className="browse-link"
+                                onClick={() => handleOpenFolder(entry)}
+                              >
+                                <span className="browse-icon" aria-hidden="true">📁</span>
+                                {entry.PathName}
+                              </button>
+                            ) : (
+                              <button
+                                type="button"
+                                className="browse-link file-link"
+                                onClick={() => handleOpenFile(entry)}
+                              >
+                                <span className="browse-icon" aria-hidden="true">📄</span>
+                                {entry.PathName}
+                              </button>
+                            )}
+                            <span className="browse-meta">
+                              {entry.Info || ''}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <pre>{JSON.stringify(browseData, null, 2)}</pre>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
             <div className="panel">
               <div className="panel-header">
@@ -2045,7 +2507,6 @@ function App() {
                         ★
                       </button>
                     </strong>
-                    <span className="file-path">{formatDisplayPath(selectedFolder.PathID)}</span>
                   </div>
                   {folderLoading ? (
                     <div>Loading folder overview…</div>
@@ -2124,17 +2585,8 @@ function App() {
                         ★
                       </button>
                     </strong>
-                    <span className="file-path">{formatDisplayPath(selectedFile.PathID)}</span>
                   </div>
                   <div className="file-meta-row">
-                    <span>
-                      Revision:{' '}
-                      {selectedFile.LastRevision && /^[0-9]+$/.test(String(selectedFile.LastRevision))
-                        ? `r${selectedFile.LastRevision}`
-                        : selectedFile.LastRevision || '—'}
-                    </span>
-                    <span>Modified: {selectedFile.ModificationTime || '—'}</span>
-                    <span>Checkouts: {selectedFile.Checkouts || '0'}</span>
                     <span className="schema-status">
                       {schemaLoading && <span>Schema: Loading…</span>}
                       {schemaError && (
@@ -2159,6 +2611,23 @@ function App() {
                       )}
                     </span>
                   </div>
+                  {overrideInfo?.overrideMeta?.pathName
+                    && Array.isArray(overrideInfo?.overrides)
+                    && overrideInfo.overrides.length > 0 && (
+                    <div className="override-meta-row">
+                      <span>
+                        Override file: {overrideInfo?.overrideMeta?.pathName || overrideInfo?.overrideFileName || '—'}
+                      </span>
+                      <span>
+                        Revision:{' '}
+                        {overrideInfo?.overrideMeta?.revision && /^[0-9]+$/.test(String(overrideInfo.overrideMeta.revision))
+                          ? `r${overrideInfo.overrideMeta.revision}`
+                          : overrideInfo?.overrideMeta?.revision || '—'}
+                      </span>
+                      <span>Modified: {overrideInfo?.overrideMeta?.modified || '—'}</span>
+                      <span>Modified by: {overrideInfo?.overrideMeta?.modifiedBy || '—'}</span>
+                    </div>
+                  )}
                   <div className="action-row">
                     <div className="view-toggle">
                       <span className={viewMode === 'friendly' ? 'view-toggle-label active' : 'view-toggle-label'}>
@@ -2200,7 +2669,8 @@ function App() {
                       <div>Loading preview…</div>
                     ) : (
                       viewMode === 'friendly' ? (
-                        <div className="friendly-view">
+                        <div className={panelEditEnabled ? 'friendly-layout' : 'friendly-view'}>
+                          <div className={panelEditEnabled ? 'friendly-main' : ''}>
                           {searchHighlightActive && highlightObjectKeys.length > 0 && (
                             <div className="match-bar">
                               <span className="match-label">
@@ -2226,6 +2696,7 @@ function App() {
                               const objectKey = getObjectKey(obj, idx);
                               const eventPanelKey = `${objectKey}:event`;
                               const eventOverrideFields = getEventOverrideFields(obj);
+                              const baseFields = getBaseEventFields(obj, eventPanelKey);
                               return (
                               <div
                                 className={`object-card${highlightObjectKeys.includes(getObjectKey(obj, idx))
@@ -2258,6 +2729,17 @@ function App() {
                                   <div className="object-panel-header">
                                     <div className="panel-title-group">
                                       <span className="object-panel-title">Event</span>
+                                      {eventOverrideFields.length > 0 && (
+                                        <div className="override-summary" tabIndex={0}>
+                                          <span className="pill override-pill">Override</span>
+                                          {renderOverrideSummaryCard(
+                                            obj,
+                                            overrideValueMap,
+                                            eventOverrideFields,
+                                            `Overrides (${eventOverrideFields.length})`,
+                                          )}
+                                        </div>
+                                      )}
                                     </div>
                                     {canEditRules && panelEditEnabled && !panelEditState[eventPanelKey] && (
                                       <button
@@ -2282,7 +2764,18 @@ function App() {
                                         <button
                                           type="button"
                                           className="panel-edit-button"
+                                          onClick={() => openAddFieldModal(eventPanelKey, obj)}
+                                        >
+                                          Add Field
+                                        </button>
+                                        <button
+                                          type="button"
+                                          className="panel-edit-button"
                                           onClick={() => saveEventEdit(obj, eventPanelKey)}
+                                          disabled={getPanelDirtyFields(obj, eventPanelKey).length === 0}
+                                          title={getPanelDirtyFields(obj, eventPanelKey).length === 0
+                                            ? 'No changes to save'
+                                            : ''}
                                         >
                                           Save
                                         </button>
@@ -2298,253 +2791,566 @@ function App() {
                                   </div>
                                   <div className="object-grid">
                                     <div className="object-row object-row-primary">
-                                      <div>
-                                        <span className="label">Node</span>
-                                        <span className="value">{renderValue(obj?.event?.Node)}</span>
-                                      </div>
-                                      <div>
-                                        <span className={isFieldHighlighted(eventPanelKey, 'Summary')
-                                          ? 'label label-warning'
-                                          : 'label'}>
-                                          Summary
-                                          {overrideTargets.has('$.event.Summary') && (
-                                            <span
-                                              className="pill override-pill pill-inline pill-action"
-                                              title={`Original: ${getBaseEventDisplay(obj, 'Summary')}`}
-                                            >
-                                              Override
-                                              {canEditRules && panelEditEnabled && overrideValueMap.has('$.event.Summary') && (
-                                                <button
-                                                  type="button"
-                                                  className="pill-close"
-                                                  aria-label="Remove Summary override"
-                                                  onClick={() => openRemoveOverrideModal(obj, 'Summary', eventPanelKey)}
-                                                >
-                                                  ×
-                                                </button>
-                                              )}
-                                            </span>
-                                          )}
-                                        </span>
-                                        {panelEditState[`${getObjectKey(obj, idx)}:event`] ? (
-                                          (() => {
-                                            const value = getEffectiveEventValue(obj, 'Summary');
-                                            const editable = getEditableValue(value);
-                                            return (
-                                              <input
-                                                className={isFieldHighlighted(eventPanelKey, 'Summary')
-                                                  ? 'panel-input panel-input-warning'
-                                                  : 'panel-input'}
-                                                value={panelDrafts?.[`${getObjectKey(obj, idx)}:event`]?.event?.Summary ?? ''}
-                                                onChange={(e) => handleEventInputChange(
-                                                  obj,
-                                                  eventPanelKey,
-                                                  'Summary',
-                                                  e.target.value,
-                                                  e.target.selectionStart,
-                                                  (e.nativeEvent as InputEvent | undefined)?.inputType,
+                                      {baseFields.includes('Node') && (
+                                        <div>
+                                          <span className="label">Node</span>
+                                          <span className="value">{renderValue(obj?.event?.Node, obj?.trap?.variables)}</span>
+                                        </div>
+                                      )}
+                                      {baseFields.includes('Summary') && (
+                                        <div>
+                                          <span className={isFieldHighlighted(eventPanelKey, 'Summary')
+                                            ? 'label label-warning'
+                                            : 'label'}>
+                                            Summary
+                                            {panelEditEnabled && panelEditState[eventPanelKey] && (
+                                              <span className="label-actions">
+                                                {shouldShowEvalToggle(eventPanelKey, 'Summary', obj) && (
+                                                  <button
+                                                    type="button"
+                                                    className={isEvalMode(eventPanelKey, 'Summary')
+                                                      ? 'eval-toggle eval-toggle-active'
+                                                      : 'eval-toggle'}
+                                                    onClick={() => setPanelEvalModes((prev) => ({
+                                                      ...prev,
+                                                      [eventPanelKey]: {
+                                                        ...prev[eventPanelKey],
+                                                        Summary: !isEvalMode(eventPanelKey, 'Summary'),
+                                                      },
+                                                    }))}
+                                                  >
+                                                    Eval
+                                                  </button>
                                                 )}
-                                                disabled={!editable.editable}
-                                                title={editable.editable ? '' : 'Eval values cannot be edited yet'}
-                                              />
-                                            );
-                                          })()
-                                        ) : (
-                                          <span className="value">
-                                            {renderSummary(
-                                              overrideValueMap.get('$.event.Summary') ?? obj?.event?.Summary,
-                                              obj?.trap?.variables,
-                                            )}
-                                          </span>
-                                        )}
-                                      </div>
-                                      <div>
-                                        <span className={isFieldHighlighted(eventPanelKey, 'Severity')
-                                          ? 'label label-warning'
-                                          : 'label'}>
-                                          Severity
-                                          {overrideTargets.has('$.event.Severity') && (
-                                            <span
-                                              className="pill override-pill pill-inline pill-action"
-                                              title={`Original: ${getBaseEventDisplay(obj, 'Severity')}`}
-                                            >
-                                              Override
-                                              {canEditRules && panelEditEnabled && overrideValueMap.has('$.event.Severity') && (
                                                 <button
                                                   type="button"
-                                                  className="pill-close"
-                                                  aria-label="Remove Severity override"
-                                                  onClick={() => openRemoveOverrideModal(obj, 'Severity', eventPanelKey)}
+                                                  className="builder-link"
+                                                  onClick={() => openBuilderForField(eventPanelKey, 'Summary')}
                                                 >
-                                                  ×
+                                                  Builder
                                                 </button>
+                                              </span>
+                                            )}
+                                            {overrideTargets.has('$.event.Summary') && (
+                                              <div className="override-summary" tabIndex={0}>
+                                                <span
+                                                  className="pill override-pill pill-inline pill-action"
+                                                  title={`Original: ${getBaseEventDisplay(obj, 'Summary')}`}
+                                                >
+                                                  Override
+                                                  {canEditRules && panelEditEnabled && overrideValueMap.has('$.event.Summary') && (
+                                                    <button
+                                                      type="button"
+                                                      className="pill-close"
+                                                      aria-label="Remove Summary override"
+                                                      onClick={() => openRemoveOverrideModal(obj, 'Summary', eventPanelKey)}
+                                                    >
+                                                      ×
+                                                    </button>
+                                                  )}
+                                                </span>
+                                                {renderOverrideSummaryCard(
+                                                  obj,
+                                                  overrideValueMap,
+                                                  ['Summary'],
+                                                  'Override',
+                                                )}
+                                              </div>
+                                            )}
+                                            {panelEditState[eventPanelKey] && isFieldDirty(obj, eventPanelKey, 'Summary') && (
+                                              <span className="dirty-indicator" title="Unsaved change">✎</span>
+                                            )}
+                                          </span>
+                                          {panelEditState[`${getObjectKey(obj, idx)}:event`] ? (
+                                            (() => {
+                                              const value = getEffectiveEventValue(obj, 'Summary');
+                                              const editable = getEditableValue(value);
+                                              return (
+                                                <input
+                                                  className={isFieldHighlighted(eventPanelKey, 'Summary')
+                                                    ? 'panel-input panel-input-warning'
+                                                    : 'panel-input'}
+                                                  value={panelDrafts?.[`${getObjectKey(obj, idx)}:event`]?.event?.Summary ?? ''}
+                                                  onChange={(e) => handleEventInputChange(
+                                                    obj,
+                                                    eventPanelKey,
+                                                    'Summary',
+                                                    e.target.value,
+                                                    e.target.selectionStart,
+                                                    (e.nativeEvent as InputEvent | undefined)?.inputType,
+                                                  )}
+                                                  disabled={!editable.editable}
+                                                  title={editable.editable ? '' : 'Eval values cannot be edited yet'}
+                                                />
+                                              );
+                                            })()
+                                          ) : (
+                                            <span className="value">
+                                              {renderSummary(
+                                                overrideValueMap.get('$.event.Summary') ?? obj?.event?.Summary,
+                                                obj?.trap?.variables,
                                               )}
                                             </span>
                                           )}
-                                        </span>
-                                        {panelEditState[`${getObjectKey(obj, idx)}:event`] ? (
-                                          <input
-                                            className={isFieldHighlighted(eventPanelKey, 'Severity')
-                                              ? 'panel-input panel-input-warning'
-                                              : 'panel-input'}
-                                            value={panelDrafts?.[`${getObjectKey(obj, idx)}:event`]?.event?.Severity ?? ''}
-                                            onChange={(e) => handleEventInputChange(
-                                              obj,
-                                              eventPanelKey,
-                                              'Severity',
-                                              e.target.value,
-                                              e.target.selectionStart,
-                                              (e.nativeEvent as InputEvent | undefined)?.inputType,
+                                        </div>
+                                      )}
+                                      {baseFields.includes('Severity') && (
+                                        <div>
+                                          <span className={isFieldHighlighted(eventPanelKey, 'Severity')
+                                            ? 'label label-warning'
+                                            : 'label'}>
+                                            Severity
+                                            {panelEditEnabled && panelEditState[eventPanelKey] && (
+                                              <span className="label-actions">
+                                                {shouldShowEvalToggle(eventPanelKey, 'Severity', obj) && (
+                                                  <button
+                                                    type="button"
+                                                    className={isEvalMode(eventPanelKey, 'Severity')
+                                                      ? 'eval-toggle eval-toggle-active'
+                                                      : 'eval-toggle'}
+                                                    onClick={() => setPanelEvalModes((prev) => ({
+                                                      ...prev,
+                                                      [eventPanelKey]: {
+                                                        ...prev[eventPanelKey],
+                                                        Severity: !isEvalMode(eventPanelKey, 'Severity'),
+                                                      },
+                                                    }))}
+                                                  >
+                                                    Eval
+                                                  </button>
+                                                )}
+                                                <button
+                                                  type="button"
+                                                  className="builder-link"
+                                                  onClick={() => openBuilderForField(eventPanelKey, 'Severity')}
+                                                >
+                                                  Builder
+                                                </button>
+                                              </span>
                                             )}
-                                          />
-                                        ) : (
-                                          <span className="value">
-                                            {renderValue(overrideValueMap.get('$.event.Severity') ?? obj?.event?.Severity)}
+                                            {overrideTargets.has('$.event.Severity') && (
+                                              <div className="override-summary" tabIndex={0}>
+                                                <span
+                                                  className="pill override-pill pill-inline pill-action"
+                                                  title={`Original: ${getBaseEventDisplay(obj, 'Severity')}`}
+                                                >
+                                                  Override
+                                                  {canEditRules && panelEditEnabled && overrideValueMap.has('$.event.Severity') && (
+                                                    <button
+                                                      type="button"
+                                                      className="pill-close"
+                                                      aria-label="Remove Severity override"
+                                                      onClick={() => openRemoveOverrideModal(obj, 'Severity', eventPanelKey)}
+                                                    >
+                                                      ×
+                                                    </button>
+                                                  )}
+                                                </span>
+                                                {renderOverrideSummaryCard(
+                                                  obj,
+                                                  overrideValueMap,
+                                                  ['Severity'],
+                                                  'Override',
+                                                )}
+                                              </div>
+                                            )}
+                                            {panelEditState[eventPanelKey] && isFieldDirty(obj, eventPanelKey, 'Severity') && (
+                                              <span className="dirty-indicator" title="Unsaved change">✎</span>
+                                            )}
                                           </span>
-                                        )}
-                                      </div>
+                                          {panelEditState[`${getObjectKey(obj, idx)}:event`] ? (
+                                            <input
+                                              className={isFieldHighlighted(eventPanelKey, 'Severity')
+                                                ? 'panel-input panel-input-warning'
+                                                : 'panel-input'}
+                                              value={panelDrafts?.[`${getObjectKey(obj, idx)}:event`]?.event?.Severity ?? ''}
+                                              onChange={(e) => handleEventInputChange(
+                                                obj,
+                                                eventPanelKey,
+                                                'Severity',
+                                                e.target.value,
+                                                e.target.selectionStart,
+                                                (e.nativeEvent as InputEvent | undefined)?.inputType,
+                                              )}
+                                            />
+                                          ) : (
+                                            <span className="value">
+                                              {renderValue(
+                                                overrideValueMap.get('$.event.Severity') ?? obj?.event?.Severity,
+                                                obj?.trap?.variables,
+                                              )}
+                                            </span>
+                                          )}
+                                        </div>
+                                      )}
                                     </div>
                                     <div className="object-row object-row-secondary">
-                                      <div>
-                                        <span className={isFieldHighlighted(eventPanelKey, 'EventType')
-                                          ? 'label label-warning'
-                                          : 'label'}>
-                                          Event Type
-                                          {overrideTargets.has('$.event.EventType') && (
-                                            <span
-                                              className="pill override-pill pill-inline pill-action"
-                                              title={`Original: ${getBaseEventDisplay(obj, 'EventType')}`}
-                                            >
-                                              Override
-                                              {canEditRules && panelEditEnabled && overrideValueMap.has('$.event.EventType') && (
+                                      {baseFields.includes('EventType') && (
+                                        <div>
+                                          <span className={isFieldHighlighted(eventPanelKey, 'EventType')
+                                            ? 'label label-warning'
+                                            : 'label'}>
+                                            Event Type
+                                            {panelEditEnabled && panelEditState[eventPanelKey] && (
+                                              <span className="label-actions">
+                                                {shouldShowEvalToggle(eventPanelKey, 'EventType', obj) && (
+                                                  <button
+                                                    type="button"
+                                                    className={isEvalMode(eventPanelKey, 'EventType')
+                                                      ? 'eval-toggle eval-toggle-active'
+                                                      : 'eval-toggle'}
+                                                    onClick={() => setPanelEvalModes((prev) => ({
+                                                      ...prev,
+                                                      [eventPanelKey]: {
+                                                        ...prev[eventPanelKey],
+                                                        EventType: !isEvalMode(eventPanelKey, 'EventType'),
+                                                      },
+                                                    }))}
+                                                  >
+                                                    Eval
+                                                  </button>
+                                                )}
                                                 <button
                                                   type="button"
-                                                  className="pill-close"
-                                                  aria-label="Remove Event Type override"
-                                                  onClick={() => openRemoveOverrideModal(obj, 'EventType', eventPanelKey)}
+                                                  className="builder-link"
+                                                  onClick={() => openBuilderForField(eventPanelKey, 'EventType')}
                                                 >
-                                                  ×
+                                                  Builder
                                                 </button>
+                                              </span>
+                                            )}
+                                            {overrideTargets.has('$.event.EventType') && (
+                                              <div className="override-summary" tabIndex={0}>
+                                                <span
+                                                  className="pill override-pill pill-inline pill-action"
+                                                  title={`Original: ${getBaseEventDisplay(obj, 'EventType')}`}
+                                                >
+                                                  Override
+                                                  {canEditRules && panelEditEnabled && overrideValueMap.has('$.event.EventType') && (
+                                                    <button
+                                                      type="button"
+                                                      className="pill-close"
+                                                      aria-label="Remove EventType override"
+                                                      onClick={() => openRemoveOverrideModal(obj, 'EventType', eventPanelKey)}
+                                                    >
+                                                      ×
+                                                    </button>
+                                                  )}
+                                                </span>
+                                                {renderOverrideSummaryCard(
+                                                  obj,
+                                                  overrideValueMap,
+                                                  ['EventType'],
+                                                  'Override',
+                                                )}
+                                              </div>
+                                            )}
+                                            {panelEditState[eventPanelKey] && isFieldDirty(obj, eventPanelKey, 'EventType') && (
+                                              <span className="dirty-indicator" title="Unsaved change">✎</span>
+                                            )}
+                                          </span>
+                                          {panelEditState[`${getObjectKey(obj, idx)}:event`] ? (
+                                            <input
+                                              className={isFieldHighlighted(eventPanelKey, 'EventType')
+                                                ? 'panel-input panel-input-warning'
+                                                : 'panel-input'}
+                                              value={panelDrafts?.[`${getObjectKey(obj, idx)}:event`]?.event?.EventType ?? ''}
+                                              onChange={(e) => handleEventInputChange(
+                                                obj,
+                                                eventPanelKey,
+                                                'EventType',
+                                                e.target.value,
+                                                e.target.selectionStart,
+                                                (e.nativeEvent as InputEvent | undefined)?.inputType,
+                                              )}
+                                            />
+                                          ) : (
+                                            <span className="value">
+                                              {renderValue(
+                                                overrideValueMap.get('$.event.EventType') ?? obj?.event?.EventType,
+                                                obj?.trap?.variables,
                                               )}
                                             </span>
                                           )}
-                                        </span>
-                                        {panelEditState[`${getObjectKey(obj, idx)}:event`] ? (
-                                          <input
-                                            className={isFieldHighlighted(eventPanelKey, 'EventType')
-                                              ? 'panel-input panel-input-warning'
-                                              : 'panel-input'}
-                                            value={panelDrafts?.[`${getObjectKey(obj, idx)}:event`]?.event?.EventType ?? ''}
-                                            onChange={(e) => handleEventInputChange(
-                                              obj,
-                                              eventPanelKey,
-                                              'EventType',
-                                              e.target.value,
-                                              e.target.selectionStart,
-                                              (e.nativeEvent as InputEvent | undefined)?.inputType,
-                                            )}
-                                          />
-                                        ) : (
-                                          <span className="value">
-                                            {renderValue(overrideValueMap.get('$.event.EventType') ?? obj?.event?.EventType)}
-                                          </span>
-                                        )}
-                                      </div>
-                                      <div>
-                                        <span className={isFieldHighlighted(eventPanelKey, 'ExpireTime')
-                                          ? 'label label-warning'
-                                          : 'label'}>
-                                          Expire Time
-                                          {overrideTargets.has('$.event.ExpireTime') && (
-                                            <span
-                                              className="pill override-pill pill-inline pill-action"
-                                              title={`Original: ${getBaseEventDisplay(obj, 'ExpireTime')}`}
-                                            >
-                                              Override
-                                              {canEditRules && panelEditEnabled && overrideValueMap.has('$.event.ExpireTime') && (
+                                        </div>
+                                      )}
+                                      {baseFields.includes('ExpireTime') && (
+                                        <div>
+                                          <span className={isFieldHighlighted(eventPanelKey, 'ExpireTime')
+                                            ? 'label label-warning'
+                                            : 'label'}>
+                                            Expire Time
+                                            {panelEditEnabled && panelEditState[eventPanelKey] && (
+                                              <span className="label-actions">
+                                                {shouldShowEvalToggle(eventPanelKey, 'ExpireTime', obj) && (
+                                                  <button
+                                                    type="button"
+                                                    className={isEvalMode(eventPanelKey, 'ExpireTime')
+                                                      ? 'eval-toggle eval-toggle-active'
+                                                      : 'eval-toggle'}
+                                                    onClick={() => setPanelEvalModes((prev) => ({
+                                                      ...prev,
+                                                      [eventPanelKey]: {
+                                                        ...prev[eventPanelKey],
+                                                        ExpireTime: !isEvalMode(eventPanelKey, 'ExpireTime'),
+                                                      },
+                                                    }))}
+                                                  >
+                                                    Eval
+                                                  </button>
+                                                )}
                                                 <button
                                                   type="button"
-                                                  className="pill-close"
-                                                  aria-label="Remove Expire Time override"
-                                                  onClick={() => openRemoveOverrideModal(obj, 'ExpireTime', eventPanelKey)}
+                                                  className="builder-link"
+                                                  onClick={() => openBuilderForField(eventPanelKey, 'ExpireTime')}
                                                 >
-                                                  ×
+                                                  Builder
                                                 </button>
+                                              </span>
+                                            )}
+                                            {overrideTargets.has('$.event.ExpireTime') && (
+                                              <div className="override-summary" tabIndex={0}>
+                                                <span
+                                                  className="pill override-pill pill-inline pill-action"
+                                                  title={`Original: ${getBaseEventDisplay(obj, 'ExpireTime')}`}
+                                                >
+                                                  Override
+                                                  {canEditRules && panelEditEnabled && overrideValueMap.has('$.event.ExpireTime') && (
+                                                    <button
+                                                      type="button"
+                                                      className="pill-close"
+                                                      aria-label="Remove ExpireTime override"
+                                                      onClick={() => openRemoveOverrideModal(obj, 'ExpireTime', eventPanelKey)}
+                                                    >
+                                                      ×
+                                                    </button>
+                                                  )}
+                                                </span>
+                                                {renderOverrideSummaryCard(
+                                                  obj,
+                                                  overrideValueMap,
+                                                  ['ExpireTime'],
+                                                  'Override',
+                                                )}
+                                              </div>
+                                            )}
+                                            {panelEditState[eventPanelKey] && isFieldDirty(obj, eventPanelKey, 'ExpireTime') && (
+                                              <span className="dirty-indicator" title="Unsaved change">✎</span>
+                                            )}
+                                          </span>
+                                          {panelEditState[`${getObjectKey(obj, idx)}:event`] ? (
+                                            <input
+                                              className={isFieldHighlighted(eventPanelKey, 'ExpireTime')
+                                                ? 'panel-input panel-input-warning'
+                                                : 'panel-input'}
+                                              value={panelDrafts?.[`${getObjectKey(obj, idx)}:event`]?.event?.ExpireTime ?? ''}
+                                              onChange={(e) => handleEventInputChange(
+                                                obj,
+                                                eventPanelKey,
+                                                'ExpireTime',
+                                                e.target.value,
+                                                e.target.selectionStart,
+                                                (e.nativeEvent as InputEvent | undefined)?.inputType,
+                                              )}
+                                            />
+                                          ) : (
+                                            <span className="value">
+                                              {renderValue(
+                                                overrideValueMap.get('$.event.ExpireTime') ?? obj?.event?.ExpireTime,
+                                                obj?.trap?.variables,
                                               )}
                                             </span>
                                           )}
-                                        </span>
-                                        {panelEditState[`${getObjectKey(obj, idx)}:event`] ? (
-                                          <input
-                                            className={isFieldHighlighted(eventPanelKey, 'ExpireTime')
-                                              ? 'panel-input panel-input-warning'
-                                              : 'panel-input'}
-                                            value={panelDrafts?.[`${getObjectKey(obj, idx)}:event`]?.event?.ExpireTime ?? ''}
-                                            onChange={(e) => handleEventInputChange(
-                                              obj,
-                                              eventPanelKey,
-                                              'ExpireTime',
-                                              e.target.value,
-                                              e.target.selectionStart,
-                                              (e.nativeEvent as InputEvent | undefined)?.inputType,
-                                            )}
-                                          />
-                                        ) : (
-                                          <span className="value">
-                                            {renderValue(overrideValueMap.get('$.event.ExpireTime') ?? obj?.event?.ExpireTime)}
-                                          </span>
-                                        )}
-                                      </div>
-                                      <div>
-                                        <span className={isFieldHighlighted(eventPanelKey, 'EventCategory')
-                                          ? 'label label-warning'
-                                          : 'label'}>
-                                          Event Category
-                                          {overrideTargets.has('$.event.EventCategory') && (
-                                            <span
-                                              className="pill override-pill pill-inline pill-action"
-                                              title={`Original: ${getBaseEventDisplay(obj, 'EventCategory')}`}
-                                            >
-                                              Override
-                                              {canEditRules && panelEditEnabled && overrideValueMap.has('$.event.EventCategory') && (
+                                        </div>
+                                      )}
+                                      {baseFields.includes('EventCategory') && (
+                                        <div>
+                                          <span className={isFieldHighlighted(eventPanelKey, 'EventCategory')
+                                            ? 'label label-warning'
+                                            : 'label'}>
+                                            Event Category
+                                            {panelEditEnabled && panelEditState[eventPanelKey] && (
+                                              <span className="label-actions">
+                                                {shouldShowEvalToggle(eventPanelKey, 'EventCategory', obj) && (
+                                                  <button
+                                                    type="button"
+                                                    className={isEvalMode(eventPanelKey, 'EventCategory')
+                                                      ? 'eval-toggle eval-toggle-active'
+                                                      : 'eval-toggle'}
+                                                    onClick={() => setPanelEvalModes((prev) => ({
+                                                      ...prev,
+                                                      [eventPanelKey]: {
+                                                        ...prev[eventPanelKey],
+                                                        EventCategory: !isEvalMode(eventPanelKey, 'EventCategory'),
+                                                      },
+                                                    }))}
+                                                  >
+                                                    Eval
+                                                  </button>
+                                                )}
                                                 <button
                                                   type="button"
-                                                  className="pill-close"
-                                                  aria-label="Remove Event Category override"
-                                                  onClick={() => openRemoveOverrideModal(obj, 'EventCategory', eventPanelKey)}
+                                                  className="builder-link"
+                                                  onClick={() => openBuilderForField(eventPanelKey, 'EventCategory')}
                                                 >
-                                                  ×
+                                                  Builder
                                                 </button>
+                                              </span>
+                                            )}
+                                            {overrideTargets.has('$.event.EventCategory') && (
+                                              <div className="override-summary" tabIndex={0}>
+                                                <span
+                                                  className="pill override-pill pill-inline pill-action"
+                                                  title={`Original: ${getBaseEventDisplay(obj, 'EventCategory')}`}
+                                                >
+                                                  Override
+                                                  {canEditRules && panelEditEnabled && overrideValueMap.has('$.event.EventCategory') && (
+                                                    <button
+                                                      type="button"
+                                                      className="pill-close"
+                                                      aria-label="Remove EventCategory override"
+                                                      onClick={() => openRemoveOverrideModal(obj, 'EventCategory', eventPanelKey)}
+                                                    >
+                                                      ×
+                                                    </button>
+                                                  )}
+                                                </span>
+                                                {renderOverrideSummaryCard(
+                                                  obj,
+                                                  overrideValueMap,
+                                                  ['EventCategory'],
+                                                  'Override',
+                                                )}
+                                              </div>
+                                            )}
+                                            {panelEditState[eventPanelKey] && isFieldDirty(obj, eventPanelKey, 'EventCategory') && (
+                                              <span className="dirty-indicator" title="Unsaved change">✎</span>
+                                            )}
+                                          </span>
+                                          {panelEditState[`${getObjectKey(obj, idx)}:event`] ? (
+                                            <input
+                                              className={isFieldHighlighted(eventPanelKey, 'EventCategory')
+                                                ? 'panel-input panel-input-warning'
+                                                : 'panel-input'}
+                                              value={panelDrafts?.[`${getObjectKey(obj, idx)}:event`]?.event?.EventCategory ?? ''}
+                                              onChange={(e) => handleEventInputChange(
+                                                obj,
+                                                eventPanelKey,
+                                                'EventCategory',
+                                                e.target.value,
+                                                e.target.selectionStart,
+                                                (e.nativeEvent as InputEvent | undefined)?.inputType,
+                                              )}
+                                            />
+                                          ) : (
+                                            <span className="value">
+                                              {renderValue(
+                                                overrideValueMap.get('$.event.EventCategory') ?? obj?.event?.EventCategory,
+                                                obj?.trap?.variables,
                                               )}
                                             </span>
                                           )}
-                                        </span>
-                                        {panelEditState[`${getObjectKey(obj, idx)}:event`] ? (
-                                          <input
-                                            className={isFieldHighlighted(eventPanelKey, 'EventCategory')
-                                              ? 'panel-input panel-input-warning'
-                                              : 'panel-input'}
-                                            value={panelDrafts?.[`${getObjectKey(obj, idx)}:event`]?.event?.EventCategory ?? ''}
-                                            onChange={(e) => handleEventInputChange(
-                                              obj,
-                                              eventPanelKey,
-                                              'EventCategory',
-                                              e.target.value,
-                                              e.target.selectionStart,
-                                              (e.nativeEvent as InputEvent | undefined)?.inputType,
-                                            )}
-                                          />
-                                        ) : (
-                                          <span className="value">
-                                            {renderValue(overrideValueMap.get('$.event.EventCategory') ?? obj?.event?.EventCategory)}
-                                          </span>
-                                        )}
-                                      </div>
+                                        </div>
+                                      )}
                                       <div>
                                         <span className="label">OID</span>
                                         <span className="value monospace">{renderValue(obj?.trap?.oid)}</span>
                                       </div>
                                     </div>
+                                    {getAdditionalEventFields(obj, eventPanelKey).length > 0 && (
+                                      <div className="object-row object-row-additional">
+                                        {getAdditionalEventFields(obj, eventPanelKey).map((field) => (
+                                          <div key={`${eventPanelKey}-${field}`}>
+                                            <span className={isFieldHighlighted(eventPanelKey, field)
+                                              ? 'label label-warning'
+                                              : 'label'}>
+                                              {formatEventFieldLabel(field)}
+                                              {panelEditEnabled && panelEditState[eventPanelKey] && (
+                                                <span className="label-actions">
+                                                  {shouldShowEvalToggle(eventPanelKey, field, obj) && (
+                                                    <button
+                                                      type="button"
+                                                      className={isEvalMode(eventPanelKey, field)
+                                                        ? 'eval-toggle eval-toggle-active'
+                                                        : 'eval-toggle'}
+                                                      onClick={() => setPanelEvalModes((prev) => ({
+                                                        ...prev,
+                                                        [eventPanelKey]: {
+                                                          ...prev[eventPanelKey],
+                                                          [field]: !isEvalMode(eventPanelKey, field),
+                                                        },
+                                                      }))}
+                                                    >
+                                                      Eval
+                                                    </button>
+                                                  )}
+                                                  <button
+                                                    type="button"
+                                                    className="builder-link"
+                                                    onClick={() => openBuilderForField(eventPanelKey, field)}
+                                                  >
+                                                    Builder
+                                                  </button>
+                                                </span>
+                                              )}
+                                              {overrideTargets.has(`$.event.${field}`) && (
+                                                <div className="override-summary" tabIndex={0}>
+                                                  <span
+                                                    className="pill override-pill pill-inline pill-action"
+                                                    title={`Original: ${getBaseEventDisplay(obj, field)}`}
+                                                  >
+                                                    Override
+                                                    {canEditRules && panelEditEnabled
+                                                      && overrideValueMap.has(`$.event.${field}`) && (
+                                                        <button
+                                                          type="button"
+                                                          className="pill-close"
+                                                          aria-label={`Remove ${field} override`}
+                                                          onClick={() => openRemoveOverrideModal(obj, field, eventPanelKey)}
+                                                        >
+                                                          ×
+                                                        </button>
+                                                      )}
+                                                  </span>
+                                                  {renderOverrideSummaryCard(
+                                                    obj,
+                                                    overrideValueMap,
+                                                    [field],
+                                                    'Override',
+                                                  )}
+                                                </div>
+                                              )}
+                                              {panelEditState[eventPanelKey] && isFieldDirty(obj, eventPanelKey, field) && (
+                                                <span className="dirty-indicator" title="Unsaved change">✎</span>
+                                              )}
+                                            </span>
+                                            {panelEditState[eventPanelKey] ? (
+                                              <input
+                                                className={isFieldHighlighted(eventPanelKey, field)
+                                                  ? 'panel-input panel-input-warning'
+                                                  : 'panel-input'}
+                                                value={panelDrafts?.[eventPanelKey]?.event?.[field] ?? ''}
+                                                onChange={(e) => handleEventInputChange(
+                                                  obj,
+                                                  eventPanelKey,
+                                                  field,
+                                                  e.target.value,
+                                                  e.target.selectionStart,
+                                                  (e.nativeEvent as InputEvent | undefined)?.inputType,
+                                                )}
+                                              />
+                                            ) : (
+                                              <span className="value">
+                                                {renderValue(
+                                                  overrideValueMap.get(`$.event.${field}`) ?? obj?.event?.[field],
+                                                  obj?.trap?.variables,
+                                                )}
+                                              </span>
+                                            )}
+                                          </div>
+                                        ))}
+                                      </div>
+                                    )}
                                   </div>
                                 </div>
                                 <div
@@ -2574,6 +3380,285 @@ function App() {
                               </div>
                               );
                             })
+                          )}
+                          </div>
+                          {panelEditEnabled && (
+                            <aside className={`builder-sidebar${builderOpen ? '' : ' builder-sidebar-collapsed'}`}>
+                              <div className="builder-header">
+                                <div>
+                                  <h3>Builder</h3>
+                                  <div className="builder-target">
+                                    Target: {builderTarget ? `${builderTarget.field}` : 'None'}
+                                  </div>
+                                </div>
+                                <button
+                                  type="button"
+                                  className="builder-toggle"
+                                  onClick={() => setBuilderOpen((prev) => !prev)}
+                                >
+                                  {builderOpen ? 'Hide' : 'Show'}
+                                </button>
+                              </div>
+                              {builderOpen && (
+                                <div className="builder-body">
+                                  <div className="builder-section">
+                                    <div className="builder-section-title">
+                                      Builder Type{builderFocus ? '' : ' (Select one)'}
+                                    </div>
+                                    {!isBuilderTargetReady && (
+                                      <div className="builder-hint">Select a field in Edit mode.</div>
+                                    )}
+                                    {isBuilderTargetReady && !builderFocus && (
+                                      <div className="builder-hint">Choose Eval or Processor to continue.</div>
+                                    )}
+                                    <div className="builder-focus-row">
+                                      <button
+                                        type="button"
+                                        className={builderFocus === 'eval'
+                                          ? 'builder-card builder-card-selected'
+                                          : 'builder-card'}
+                                        disabled={!isBuilderTargetReady}
+                                        onClick={() => setBuilderFocus('eval')}
+                                      >
+                                        Eval
+                                      </button>
+                                      <button
+                                        type="button"
+                                        className={builderFocus === 'processor'
+                                          ? 'builder-card builder-card-selected'
+                                          : 'builder-card'}
+                                        disabled={!isBuilderTargetReady}
+                                        onClick={() => setBuilderFocus('processor')}
+                                      >
+                                        Processor
+                                      </button>
+                                    </div>
+                                  </div>
+                                  {builderFocus === 'eval' && (
+                                    <div className="builder-section">
+                                      <div className="builder-section-title">Eval Builder</div>
+                                      <div className="builder-mode-toggle">
+                                        <button
+                                          type="button"
+                                          className={builderMode === 'friendly'
+                                            ? 'builder-mode-button builder-mode-button-active'
+                                            : 'builder-mode-button'}
+                                          onClick={() => setBuilderMode('friendly')}
+                                        >
+                                          Friendly
+                                        </button>
+                                        <button
+                                          type="button"
+                                          className={builderMode === 'regular'
+                                            ? 'builder-mode-button builder-mode-button-active'
+                                            : 'builder-mode-button'}
+                                          onClick={() => setBuilderMode('regular')}
+                                        >
+                                          Regular
+                                        </button>
+                                      </div>
+                                      {builderMode === 'friendly' ? (
+                                        <div className="builder-friendly">
+                                          <div className="builder-friendly-rows">
+                                            {builderRows.map((row, index) => (
+                                              <div className="builder-friendly-row" key={`row-${index}`}>
+                                                <input
+                                                  className="builder-input"
+                                                  value={row.left}
+                                                  onChange={(e) => updateBuilderRow(index, 'left', e.target.value)}
+                                                  placeholder="$v1"
+                                                  disabled={!isBuilderTargetReady}
+                                                />
+                                                <select
+                                                  className="builder-select"
+                                                  value={row.operator}
+                                                  onChange={(e) => updateBuilderRow(index, 'operator', e.target.value)}
+                                                  disabled={!isBuilderTargetReady}
+                                                >
+                                                  <option value="==">==</option>
+                                                  <option value="!=">!=</option>
+                                                  <option value=">">&gt;</option>
+                                                  <option value=">=">&gt;=</option>
+                                                  <option value="<">&lt;</option>
+                                                  <option value="<=">&lt;=</option>
+                                                </select>
+                                                <input
+                                                  className="builder-input"
+                                                  value={row.right}
+                                                  onChange={(e) => updateBuilderRow(index, 'right', e.target.value)}
+                                                  placeholder="1"
+                                                  disabled={!isBuilderTargetReady}
+                                                />
+                                                <span className="builder-friendly-arrow">→</span>
+                                                <input
+                                                  className="builder-input builder-input-result"
+                                                  value={row.result}
+                                                  onChange={(e) => updateBuilderRow(index, 'result', e.target.value)}
+                                                  placeholder="result"
+                                                  disabled={!isBuilderTargetReady}
+                                                />
+                                                <button
+                                                  type="button"
+                                                  className="builder-remove"
+                                                  onClick={() => removeBuilderRow(index)}
+                                                  disabled={!isBuilderTargetReady || builderRows.length === 1}
+                                                  aria-label="Remove condition"
+                                                >
+                                                  ×
+                                                </button>
+                                              </div>
+                                            ))}
+                                          </div>
+                                          <button
+                                            type="button"
+                                            className="builder-link"
+                                            onClick={addBuilderRow}
+                                            disabled={!isBuilderTargetReady}
+                                          >
+                                            Add condition
+                                          </button>
+                                          <div className="builder-friendly-else">
+                                            <span className="builder-friendly-label">Else</span>
+                                            <input
+                                              className="builder-input"
+                                              value={builderElseResult}
+                                              onChange={(e) => setBuilderElseResult(e.target.value)}
+                                              placeholder="0"
+                                              disabled={!isBuilderTargetReady}
+                                            />
+                                          </div>
+                                          <div className="builder-friendly-actions">
+                                            <button
+                                              type="button"
+                                              className="builder-card"
+                                              disabled={!isBuilderTargetReady || !friendlyPreview}
+                                              onClick={applyFriendlyEval}
+                                            >
+                                              Apply Friendly Eval
+                                            </button>
+                                          </div>
+                                          <div className="builder-preview">
+                                            <div className="builder-preview-label">Preview</div>
+                                            <div className="builder-preview-value">
+                                              {friendlyPreview || '—'}
+                                            </div>
+                                          </div>
+                                        </div>
+                                      ) : (
+                                        <div className="builder-regular">
+                                          <div className="builder-regular-input">
+                                            <textarea
+                                              className="builder-textarea"
+                                              placeholder="Enter raw eval expression"
+                                              value={builderRegularText}
+                                              onChange={(e) => setBuilderRegularText(e.target.value)}
+                                              disabled={!isBuilderTargetReady}
+                                            />
+                                            {builderRegularText && (
+                                              <button
+                                                type="button"
+                                                className="builder-clear"
+                                                onClick={clearRegularEval}
+                                                aria-label="Clear eval"
+                                              >
+                                                ×
+                                              </button>
+                                            )}
+                                          </div>
+                                          <div className="builder-regular-actions">
+                                            <button
+                                              type="button"
+                                              className="builder-card"
+                                              disabled={!isBuilderTargetReady || !builderRegularText.trim()}
+                                              onClick={applyRegularEval}
+                                            >
+                                              Apply Regular Eval
+                                            </button>
+                                          </div>
+                                          <div className="builder-regular-templates">
+                                            <div className="builder-example-title">Templates</div>
+                                            <button
+                                              type="button"
+                                              className="builder-card"
+                                              disabled={!isBuilderTargetReady || Boolean(builderRegularText.trim())}
+                                              onClick={() => applyBuilderTemplate('($v1==1) ? 1 : 0')}
+                                            >
+                                              Ternary (if/else)
+                                            </button>
+                                            <button
+                                              type="button"
+                                              className="builder-card"
+                                              disabled={!isBuilderTargetReady || Boolean(builderRegularText.trim())}
+                                              onClick={() => applyBuilderTemplate('($v1==1) ? 1 : (($v1==2) ? 2 : 0)')}
+                                            >
+                                              Else-if chain
+                                            </button>
+                                            <button
+                                              type="button"
+                                              className="builder-card"
+                                              disabled={!isBuilderTargetReady || Boolean(builderRegularText.trim())}
+                                              onClick={() => applyBuilderTemplate('$v1')}
+                                            >
+                                              Variable ($vN)
+                                            </button>
+                                          </div>
+                                        </div>
+                                      )}
+                                    </div>
+                                  )}
+                                  {builderFocus === 'processor' && (
+                                    <div className="builder-section">
+                                      <div className="builder-section-title">Processor Builder</div>
+                                      <button type="button" className="builder-card">Set</button>
+                                      <button type="button" className="builder-card">Copy</button>
+                                      <button type="button" className="builder-card">Regex</button>
+                                    </div>
+                                  )}
+                                  <div className="builder-section">
+                                    <div className="builder-section-title">Examples</div>
+                                    <div className="builder-example-group">
+                                      <div className="builder-example-title">Eval examples</div>
+                                      <div className="builder-example">
+                                        ($v3==1) ? 3600 : 86400
+                                      </div>
+                                      <div className="builder-example">
+                                        ($v5==1) ? 0 : (($v5==2) ? 1 : 3)
+                                      </div>
+                                    </div>
+                                    <div className="builder-example-group">
+                                      <div className="builder-example-title">Processor examples</div>
+                                      <div className="builder-example-block">
+                                        <div className="builder-example-header">Set</div>
+                                        <div className="builder-example-friendly">
+                                          Set Description to Summary
+                                        </div>
+                                        <div className="builder-example">
+                                          {'{"set": {"source": "$.event.Summary", "targetField": "$.event.Description"}}'}
+                                        </div>
+                                      </div>
+                                      <div className="builder-example-block">
+                                        <div className="builder-example-header">Copy</div>
+                                        <div className="builder-example-friendly">
+                                          Copy trap OID into event OID
+                                        </div>
+                                        <div className="builder-example">
+                                          {'{"copy": {"source": "$.trap.oid", "targetField": "$.event.OID"}}'}
+                                        </div>
+                                      </div>
+                                      <div className="builder-example-block">
+                                        <div className="builder-example-header">Regex</div>
+                                        <div className="builder-example-friendly">
+                                          Extract event type from Summary using a pattern
+                                        </div>
+                                        <div className="builder-example">
+                                          {'{"regex": {"source": "$.event.Summary", "pattern": "type=(\\w+)", "group": 1, "targetField": "$.event.EventType"}}'}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+                            </aside>
                           )}
                         </div>
                       ) : (
@@ -2714,6 +3799,76 @@ function App() {
                             }}
                           >
                             Discard
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  {saveLoading && (
+                    <div className="save-overlay" aria-live="polite" aria-busy="true">
+                      <div className="save-overlay-card">
+                        <div className="save-spinner" aria-hidden="true" />
+                        <div>
+                          <div className="save-overlay-title">Saving changes…</div>
+                          <div className="save-overlay-subtitle">
+                            Please wait{saveElapsed ? ` • ${saveElapsed}s` : ''}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  {showAddFieldModal && addFieldContext && (
+                    <div className="modal-overlay" role="dialog" aria-modal="true">
+                      <div className="modal modal-wide">
+                        <h3>Add Event Field</h3>
+                        <p>Select a field from the Events schema to add to this object.</p>
+                        <input
+                          type="text"
+                          placeholder="Search fields"
+                          value={addFieldSearch}
+                          onChange={(e) => setAddFieldSearch(e.target.value)}
+                        />
+                        {eventsSchemaLoading && <div className="muted">Loading schema…</div>}
+                        {eventsSchemaError && <div className="error">{eventsSchemaError}</div>}
+                        {!eventsSchemaLoading && !eventsSchemaError && (
+                          <div className="add-field-list">
+                            {eventsSchemaFields
+                              .filter((field) => field.toLowerCase().includes(addFieldSearch.toLowerCase()))
+                              .map((field) => {
+                                const existingFields = new Set([
+                                  ...Object.keys(addFieldContext.obj?.event || {}),
+                                  ...(panelAddedFields[addFieldContext.panelKey] || []),
+                                ]);
+                                const isReserved = reservedEventFields.has(field);
+                                const isExisting = existingFields.has(field);
+                                return (
+                                  <button
+                                    key={field}
+                                    type="button"
+                                    className={isReserved || isExisting
+                                      ? 'add-field-item add-field-item-disabled'
+                                      : 'add-field-item'}
+                                    onClick={() => {
+                                      if (!isReserved && !isExisting) {
+                                        addFieldToPanel(field);
+                                      }
+                                    }}
+                                    disabled={isReserved || isExisting}
+                                    title={isReserved
+                                      ? 'Reserved field'
+                                      : isExisting
+                                        ? 'Already present'
+                                        : ''}
+                                  >
+                                    {field}
+                                  </button>
+                                );
+                              })}
+                          </div>
+                        )}
+                        <div className="modal-actions">
+                          <button type="button" onClick={() => setShowAddFieldModal(false)}>
+                            Close
                           </button>
                         </div>
                       </div>

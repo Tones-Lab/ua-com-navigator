@@ -15,6 +15,7 @@ export interface Session {
   created_at: Date;
   expires_at: Date;
   ua_login?: any;
+  can_edit_rules?: boolean;
 }
 
 export interface FcomObject {

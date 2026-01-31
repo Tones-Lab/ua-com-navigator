@@ -1,8 +1,8 @@
-# FCOM Curator - Bootstrap Summary
+# FCOM Curator - Getting Started
 
 ## ✅ What's Complete
 
-You now have a **fully scaffolded, production-ready foundation** for the FCOM Curation & Management Interface.
+The app now includes a working end-to-end flow (login → browse → edit → save) with real UA integrations.
 
 ### Deliverables
 
@@ -13,26 +13,21 @@ You now have a **fully scaffolded, production-ready foundation** for the FCOM Cu
    - Ready for Swagger UI, code generation, or manual testing
 
 2. **Backend (Express.js + TypeScript)**
-   - Framework setup with middleware (CORS, helmet, logging)
-   - 5 route modules (auth, servers, files, editor, schema)
-   - Full UA service client (`services/ua.ts`) for REST API calls
-   - Logging with Pino
-   - Session management (cookie-based)
-   - Error handling & request tracking
-   - **~600 lines of production code**
+   - UA REST API proxy for rules read/save/diff/history
+   - Overrides support + metadata
+   - UA Events schema cache (DB query tool)
+   - Session + permissions enforcement
 
 3. **Frontend (React + Vite + Oracle JET)**
-   - Modern build setup with TypeScript
-   - Zustand state management (session + editor)
-   - Full-featured API client layer
-   - Basic layout & styling (Redwood-compatible)
-   - Ready for Oracle JET component integration
-   - **~400 lines of production code**
+   - File browser + favorites + search
+   - Friendly/Raw view of FCOM objects
+   - Override editing + eval builder
+   - Add field from Events schema
+   - Save + commit message flow
 
 4. **Monorepo Structure**
-   - Yarn workspaces for shared types
-   - Single `yarn dev` to run both backend + frontend
-   - Unified `yarn build` for production
+   - Yarn workspaces supported (optional)
+   - npm supported via per-package scripts
 
 5. **Documentation**
    - `README.md` – Overview, quick start, architecture
@@ -58,48 +53,11 @@ You now have a **fully scaffolded, production-ready foundation** for the FCOM Cu
 
 ---
 
-## 🚀 Next Actions (Priority Order)
+## 🚀 Next Focus
 
-### 1. **Validate UA REST API Endpoints** (Day 1)
-   - Confirm actual paths for:
-     - `GET /api/rule/Rules/read` (list files)
-     - `GET /api/rule/Rules/{id}` (read file)
-     - `PUT /api/rule/Rules/{id}` (update/commit)
-     - `GET /api/rule/Rules/readDiff` (get diff)
-     - `GET /api/rule/Rules/readRevisionHistory` (get history)
-   - Test authentication (basic + certificate)
-   - Document any parameter differences
-
-### 2. **Derive FCOM JSON Schema** (Day 2)
-   - Analyze 5-10 representative `.json` files from `/root/navigator/coms/`
-   - Identify common fields: `@objectName`, `description`, `event`, `trap`, `preProcessors`, etc.
-   - Build JSON Schema (Draft 7)
-   - Implement frontend validator (AJV)
-
-### 3. **Implement UA Service Integration** (Day 3)
-   - Update `backend/src/services/ua.ts` with actual UA API details
-   - Replace mock responses in routes with real UA calls
-   - Add error handling & retry logic
-   - Test against dev UA server
-
-### 4. **Build Login Page** (Day 4)
-   - Create `frontend/src/components/LoginPage.tsx`
-   - Use Oracle JET components (form, button, input)
-   - Auth type selector (basic/certificate)
-   - Server dropdown
-   - Error display & loading states
-
-### 5. **File Browser & Preview** (Days 5-6)
-   - Tree view component for file listing
-   - Search & filter
-   - Preview pane (read-only JSON outline)
-   - Click to open in editor
-
-### 6. **Core Editor** (Days 7-8)
-   - Display FCOM objects in tabs/cards
-   - Form inputs for core fields
-   - Real-time validation
-   - Save & commit flow
+- Processor builder rollout (see backlog priority order)
+- Display conversions (enum/lookup)
+- Global overrides awareness
 
 ---
 
@@ -164,20 +122,13 @@ You now have a **fully scaffolded, production-ready foundation** for the FCOM Cu
 ```bash
 # Install all dependencies
 cd /root/navigator/fcom-curator
-yarn install
+npm install
 
-# Run both backend and frontend in development mode
-yarn dev
-
-# Or run individually:
 # Terminal 1: Backend (port 3001)
-cd backend && yarn dev
+cd backend && npm run dev
 
 # Terminal 2: Frontend (port 5173)
-cd frontend && yarn dev
-
-# Build for production
-yarn build
+cd ../frontend && npm run dev -- --host 0.0.0.0 --port 5173
 ```
 
 ---

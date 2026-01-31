@@ -8,6 +8,51 @@ import { clearSession, getSession, setSession } from '../services/sessionStore';
 
 const router = Router();
 
+const getNestedValue = (source: any, path: string) => (
+  path.split('.').reduce((acc, key) => (acc == null ? undefined : acc[key]), source)
+);
+
+const parsePermissionFlag = (value: any) => {
+  if (typeof value === 'boolean') {
+    return value;
+  }
+  if (typeof value === 'number') {
+    return value > 0;
+  }
+  if (typeof value === 'string') {
+    const normalized = value.trim().toLowerCase();
+    if (['true', '1', 'yes', 'y'].includes(normalized)) {
+      return true;
+    }
+    if (['false', '0', 'no', 'n', ''].includes(normalized)) {
+      return false;
+    }
+  }
+  return false;
+};
+
+const resolveCanEditRules = (uaLoginData: any): boolean => {
+  const permissionPaths = [
+    'data.Permissions.rule.Rules.update',
+    'data.Permissions.rule.Rules.Update',
+    'data.Permissions.Rule.Rules.update',
+    'data.Permissions.Rule.Rules.Update',
+    'Permissions.rule.Rules.update',
+    'Permissions.rule.Rules.Update',
+    'Permissions.Rule.Rules.update',
+    'Permissions.Rule.Rules.Update',
+    'data.permissions.rule.Rules.update',
+    'permissions.rule.Rules.update',
+  ];
+  for (const path of permissionPaths) {
+    const value = getNestedValue(uaLoginData, path);
+    if (value !== undefined) {
+      return parsePermissionFlag(value);
+    }
+  }
+  return false;
+};
+
 /**
  * POST /api/v1/auth/login
  * Authenticate against a UA server (basic or certificate auth)
@@ -78,6 +123,7 @@ router.post('/login', async (req: Request, res: Response) => {
     const sessionId = uuidv4();
     const expiresAt = new Date(Date.now() + 8 * 3600000); // 8 hours
 
+    const canEditRules = resolveCanEditRules(uaLoginData);
     const session: Session = {
       session_id: sessionId,
       user: authReq.username || 'api',
@@ -86,6 +132,7 @@ router.post('/login', async (req: Request, res: Response) => {
       created_at: new Date(),
       expires_at: expiresAt,
       ua_login: uaLoginData,
+      can_edit_rules: canEditRules,
     };
 
     setSession(session, authReq, server);
@@ -112,6 +159,7 @@ router.post('/login', async (req: Request, res: Response) => {
       auth_method: session.auth_method,
       expires_at: session.expires_at.toISOString(),
       ua_login: uaLoginData,
+      can_edit_rules: canEditRules,
     });
   } catch (error: any) {
     logger.error(
@@ -158,6 +206,7 @@ router.get('/session', (req: Request, res: Response) => {
       server_id: session.server_id,
       expires_at: session.expires_at.toISOString(),
       ua_login: session.ua_login ?? null,
+      can_edit_rules: session.can_edit_rules ?? false,
     });
   } catch (error: any) {
     logger.error(`Session query error: ${error.message}`);
