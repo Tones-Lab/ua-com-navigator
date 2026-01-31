@@ -54,6 +54,21 @@
 2.  **Event & Preprocessor Configuration:**
     *   (As before) Form-driven UI for `event` fields and `preProcessors`, with a helper panel showing available variables from the `trap` definition.
 
+3.  **Processor Builder (Priority Rollout):**
+    *   Roll out processor support in this order:
+        1) set
+        2) regex
+        3) convert
+        4) math
+        5) append/concat
+        6) map/lookup
+        7) split
+        8) substr
+        9) strcase
+        10) length
+        11) date
+    *   **UI concept:** Use a right-side Processor drawer (similar to Builder) with Select → Configure → Review steps to avoid crowding the Event panel.
+
 ---
 
 ## Phase 4: Cross-Environment Management
@@ -86,3 +101,12 @@
     *   **MIB Upload & Parsing:** Implement a feature to upload one or more MIB files. The backend will parse them and make their structure browsable.
     *   **MIB Tree Viewer:** Add a new UI view that presents a classic MIB tree, allowing users to navigate OIDs.
     *   **FCOM/PCOM Stub Generation:** Allow users to select a `NOTIFICATION-TYPE` (for FCOM) or other OIDs (for PCOM) from the MIB tree and click a "Generate Stub" button. This action will trigger a backend process, similar to Oracle's `MIB2FCOM` utility, to create a basic, un-curated `.json` file. This new file can then be saved to the server and opened in the main editor for full curation.
+
+2.  **LLM Assistant (Server-Side, Suggestions-Only):**
+    *   **Near-term scope:** Assist with discrete edits on existing FCOM files (e.g., recommend a processor or draft a processor configuration).
+    *   **Access control:** Only available to users with edit permissions.
+    *   **Context pack:** Current file + overrides + active drafts/unsaved edits are included in the request.
+    *   **Providers:** OpenAI + OCI (reuse prior UA chatbot integration patterns).
+    *   **RAG:** Optional vector store for UA/FCOM documentation, schemas, and internal guides.
+    *   **UX:** A right-side “Help” drawer is preferred to keep editing context visible. Suggestions require user confirmation.
+    *   **Long-term scope:** New FCOM generation from MIBs once MIB Browser/Mib2FCOM integration lands.

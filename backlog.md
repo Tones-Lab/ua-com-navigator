@@ -60,6 +60,12 @@
 - Global overrides awareness:
 	- Detect and surface catch-all/global overrides in relevant files.
 	- Summarize global overrides and link to their files from the UI.
+- LLM assistant (server-side, suggestions-only, edit-gated):
+	- Reuse UA chatbot LLM API integration (OpenAI + OCI).
+	- RAG with vector store (FCOM/PCOM docs, UA docs, schema).
+	- Context pack: current file + overrides + active edits/drafts.
+	- Help entry point (modal/side panel) to ask for guidance (e.g., processor selection/build).
+	- Future: generate new FCOM from MIBs via Mib2FCOM and MIB browser.
 - Processor builder rollout (priority order):
 	1) set
 	2) regex

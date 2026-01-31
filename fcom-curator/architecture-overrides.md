@@ -37,6 +37,7 @@ If no vendor override file → create vendor folder + file.
 If override object becomes empty → remove it from vendor file.
 Show “Restart FCOM Processor required” banner after save.
 Backlog Items (Added)
+Priority 1: Friendly eval builder to support AND/OR grouping and nested conditionals with parentheses-aware UI.
 Global overrides support (@objectName: GLOBAL).
 Support for pre‑conversion overrides.
 Support wrapper override format (e.g., { "overrides": [] }).

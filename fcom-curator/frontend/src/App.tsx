@@ -73,41 +73,41 @@ function App() {
     }
     return '/';
   };
-    const renderOverrideSummaryCard = (
-      obj: any,
-      overrideValueMap: Map<string, any>,
-      fields: string[],
-      title: string,
-    ) => {
-      const maxItems = 6;
-      const visible = fields.slice(0, maxItems);
-      const remaining = fields.length - visible.length;
-      return (
-        <div className="override-summary-card" role="tooltip">
-          <div className="override-summary-title">
-            {title}
-          </div>
-          <ul className="override-summary-list">
-            {visible.map((field) => (
-              <li key={field} className="override-summary-item">
-                <span className="override-summary-field">{formatEventFieldLabel(field)}</span>
-                <span className="override-summary-value">
-                  {renderValue(
-                    overrideValueMap.get(`$.event.${field}`),
-                    obj?.trap?.variables,
-                  )}
-                </span>
-              </li>
-            ))}
-            {remaining > 0 && (
-              <li className="override-summary-item">
-                <span className="override-summary-value">+{remaining} more</span>
-              </li>
-            )}
-          </ul>
+  const renderOverrideSummaryCard = (
+    obj: any,
+    overrideValueMap: Map<string, any>,
+    fields: string[],
+    title: string,
+  ) => {
+    const maxItems = 6;
+    const visible = fields.slice(0, maxItems);
+    const remaining = fields.length - visible.length;
+    return (
+      <div className="override-summary-card" role="tooltip">
+        <div className="override-summary-title">
+          {title}
         </div>
-      );
-    };
+        <ul className="override-summary-list">
+          {visible.map((field) => (
+            <li key={field} className="override-summary-item">
+              <span className="override-summary-field">{formatEventFieldLabel(field)}</span>
+              <span className="override-summary-value">
+                {renderValue(
+                  overrideValueMap.get(`$.event.${field}`),
+                  obj?.trap?.variables,
+                )}
+              </span>
+            </li>
+          ))}
+          {remaining > 0 && (
+            <li className="override-summary-item">
+              <span className="override-summary-value">+{remaining} more</span>
+            </li>
+          )}
+        </ul>
+      </div>
+    );
+  };
   const [browseLoading, setBrowseLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchScope, setSearchScope] = useState<'all' | 'name' | 'content'>('all');
@@ -189,7 +189,6 @@ function App() {
   const [saveElapsed, setSaveElapsed] = useState(0);
   const [pendingNav, setPendingNav] = useState<null | (() => void)>(null);
   const [showSchemaModal, setShowSchemaModal] = useState(false);
-  const [panelEditEnabled, setPanelEditEnabled] = useState(false);
   const [panelEditState, setPanelEditState] = useState<Record<string, boolean>>({});
   const [panelDrafts, setPanelDrafts] = useState<Record<string, any>>({});
   const [panelEvalModes, setPanelEvalModes] = useState<Record<string, Record<string, boolean>>>({});
@@ -241,8 +240,26 @@ function App() {
   } | null>(null);
   const [builderOpen, setBuilderOpen] = useState(true);
   const [builderTarget, setBuilderTarget] = useState<{ panelKey: string; field: string } | null>(null);
-  const [builderFocus, setBuilderFocus] = useState<'eval' | 'processor' | null>(null);
+  const [builderFocus, setBuilderFocus] = useState<'eval' | 'processor' | 'literal' | null>(null);
+  const [builderTypeLocked, setBuilderTypeLocked] = useState<'eval' | 'processor' | 'literal' | null>(null);
   const [builderMode, setBuilderMode] = useState<'friendly' | 'regular'>('friendly');
+  const [showBuilderHelpModal, setShowBuilderHelpModal] = useState(false);
+  const [processorStep, setProcessorStep] = useState<'select' | 'configure' | 'review'>('select');
+  const [processorType, setProcessorType] = useState<'set' | 'regex' | 'convert' | 'math' | null>(null);
+  const [showProcessorJson, setShowProcessorJson] = useState(true);
+  const [builderLiteralText, setBuilderLiteralText] = useState('');
+  const [builderSwitchModal, setBuilderSwitchModal] = useState<{
+    open: boolean;
+    from?: 'eval' | 'processor' | 'literal' | null;
+    to?: 'eval' | 'processor' | 'literal' | null;
+  }>({ open: false });
+  const [processorDraft, setProcessorDraft] = useState({
+    sourceType: 'literal' as 'literal' | 'path',
+    source: '',
+    pattern: '',
+    group: '1',
+    targetField: '',
+  });
   const [builderRows, setBuilderRows] = useState<Array<{
     left: string;
     operator: string;
@@ -255,6 +272,7 @@ function App() {
   const [builderRegularText, setBuilderRegularText] = useState('');
   const varListRef = useRef<HTMLDivElement | null>(null);
   const varRowRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const builderSyncRef = useRef<'friendly' | 'regular' | null>(null);
 
   const getNestedValue = (source: any, path: string) => (
     path.split('.').reduce((acc, key) => (acc == null ? undefined : acc[key]), source)
@@ -345,16 +363,15 @@ function App() {
     : derivedEditRules;
 
   useEffect(() => {
-    if (!panelEditEnabled) {
-      setPanelEditState({});
-      setPanelDrafts({});
+    if (viewMode === 'friendly') {
+      return;
     }
-  }, [panelEditEnabled]);
-  useEffect(() => {
-    if (panelEditEnabled) {
-      setBuilderOpen(false);
-    }
-  }, [panelEditEnabled]);
+    setPanelEditState({});
+    setPanelDrafts({});
+    setPanelEvalModes({});
+    setPanelOverrideRemovals({});
+    setPanelNavWarning({ open: false, fields: {} });
+  }, [viewMode]);
 
   const ensureEventsSchema = async () => {
     if (eventsSchemaLoading || eventsSchemaFields.length > 0) {
@@ -383,23 +400,85 @@ function App() {
     }, 1000);
     return () => window.clearInterval(interval);
   }, [saveLoading]);
-  useEffect(() => {
-    if (viewMode !== 'friendly' && panelEditEnabled) {
-      setPanelEditEnabled(false);
-    }
-  }, [viewMode, panelEditEnabled]);
-
-  useEffect(() => {
-    if (viewMode !== 'friendly' && panelEditEnabled) {
-      setPanelEditEnabled(false);
-    }
-  }, [viewMode, panelEditEnabled]);
+  const isAnyPanelEditing = Object.values(panelEditState).some(Boolean);
 
   const togglePanelEdit = (key: string) => {
     setPanelEditState((prev) => ({
       ...prev,
       [key]: !prev[key],
     }));
+  };
+
+  const updateBuilderDraftField = (field: string, value: string) => {
+    if (field === 'processorSource') {
+      setProcessorDraft((prev) => ({
+        ...prev,
+        source: value,
+      }));
+    }
+  };
+
+  const handleProcessorSourceChange = (value: string, cursorIndex: number | null) => {
+    setProcessorDraft((prev) => ({
+      ...prev,
+      source: value,
+    }));
+    if (!builderTarget) {
+      return;
+    }
+    const match = getVarInsertMatch(value, cursorIndex);
+    if (!match) {
+      return;
+    }
+    const obj = getObjectByPanelKey(builderTarget.panelKey);
+    const trapVars = obj?.trap?.variables || [];
+    setVarModalVars(Array.isArray(trapVars) ? trapVars : []);
+    setVarInsertContext({
+      panelKey: builderTarget.panelKey,
+      field: 'processorSource',
+      value,
+      replaceStart: match.replaceStart,
+      replaceEnd: match.replaceEnd,
+    });
+    setVarModalMode('insert');
+    setVarModalOpen(true);
+    setVarModalToken(match.token);
+  };
+
+  const parseEvalToRows = (text: string) => {
+    const cleaned = unwrapOuterParens(text.trim());
+    if (!cleaned) {
+      return null;
+    }
+    const rows: Array<{ left: string; operator: string; right: string; result: string }> = [];
+    let elseResult = '';
+    const walk = (expr: string): boolean => {
+      const node = splitTernary(unwrapOuterParens(expr.trim()));
+      if (!node) {
+        elseResult = expr.trim();
+        return true;
+      }
+      const condition = unwrapOuterParens(node.condition.trim());
+      const match = condition.match(/^(.+?)(==|!=|>=|<=|>|<)(.+)$/);
+      if (!match) {
+        return false;
+      }
+      const [, left, operator, right] = match;
+      rows.push({
+        left: left.trim(),
+        operator,
+        right: right.trim(),
+        result: node.whenTrue.trim(),
+      });
+      return walk(node.whenFalse);
+    };
+    if (!walk(cleaned)) {
+      return null;
+    }
+    if (!elseResult || rows.length === 0) {
+      return null;
+    }
+    return { rows, elseResult };
   };
 
   const ajv = useMemo(() => {
@@ -1250,6 +1329,25 @@ function App() {
     isEvalMode(panelKey, field) || isEvalValue(getEffectiveEventValue(obj, field))
   );
 
+  const renderFieldBadges = (
+    panelKey: string,
+    field: string,
+    obj: any,
+    overrideTargets: Set<string>,
+  ) => {
+    const evalFlag = shouldShowEvalToggle(panelKey, field, obj);
+    const processorFlag = overrideTargets.has(`$.event.${field}`);
+    if (!evalFlag && !processorFlag) {
+      return null;
+    }
+    return (
+      <span className="field-badges">
+        {evalFlag && <span className="pill status-pill status-pill-eval">Eval</span>}
+        {processorFlag && <span className="pill status-pill status-pill-processor">Processor</span>}
+      </span>
+    );
+  };
+
   const reservedEventFields = new Set(['EventID', 'EventKey', 'Method']);
   const baseEventFieldOrder = ['Node', 'Summary', 'Severity', 'EventType', 'EventCategory', 'ExpireTime'];
 
@@ -1365,6 +1463,7 @@ function App() {
       [key]: evalModes,
     }));
     setPanelEditState((prev) => ({ ...prev, [key]: true }));
+    setBuilderOpen(true);
   };
 
   const cancelEventEdit = (key: string) => {
@@ -1392,6 +1491,9 @@ function App() {
       delete nextFields[key];
       return { ...prev, fields: nextFields };
     });
+    if (builderTarget?.panelKey === key) {
+      closeBuilder();
+    }
   };
 
   const buildOverrideSetProcessor = (field: string, value: any) => ({
@@ -1728,20 +1830,56 @@ function App() {
     }
     const { panelKey, field, value, replaceStart, replaceEnd } = varInsertContext;
     const nextValue = `${value.slice(0, replaceStart)}${token}${value.slice(replaceEnd)}`;
-    setPanelDrafts((prev) => ({
-      ...prev,
-      [panelKey]: {
-        ...prev[panelKey],
-        event: {
-          ...prev[panelKey]?.event,
-          [field]: nextValue,
+    if (field === 'processorSource') {
+      updateBuilderDraftField(field, nextValue);
+    } else if (field === 'builderLiteral') {
+      setBuilderLiteralText(nextValue);
+    } else {
+      setPanelDrafts((prev) => ({
+        ...prev,
+        [panelKey]: {
+          ...prev[panelKey],
+          event: {
+            ...prev[panelKey]?.event,
+            [field]: nextValue,
+          },
         },
-      },
-    }));
+      }));
+    }
     setVarModalOpen(false);
     setVarModalMode('view');
     setVarInsertContext(null);
     setVarModalToken(null);
+  };
+
+  const handleLiteralInputChange = (
+    value: string,
+    cursorIndex: number | null,
+    inputType?: string,
+  ) => {
+    setBuilderLiteralText(value);
+    if (!builderTarget) {
+      return;
+    }
+    if (inputType && !inputType.startsWith('insert')) {
+      return;
+    }
+    const match = getVarInsertMatch(value, cursorIndex);
+    if (!match) {
+      return;
+    }
+    const obj = getObjectByPanelKey(builderTarget.panelKey);
+    setVarModalToken(match.token);
+    setVarModalVars(Array.isArray(obj?.trap?.variables) ? obj.trap.variables : []);
+    setVarModalMode('insert');
+    setVarInsertContext({
+      panelKey: builderTarget.panelKey,
+      field: 'builderLiteral',
+      value,
+      replaceStart: match.replaceStart,
+      replaceEnd: match.replaceEnd,
+    });
+    setVarModalOpen(true);
   };
 
   const handleEventInputChange = (
@@ -1783,10 +1921,95 @@ function App() {
     setVarModalOpen(true);
   };
 
-  const openBuilderForField = (panelKey: string, field: string) => {
+  const openBuilderForField = (obj: any, panelKey: string, field: string) => {
+    if (!panelEditState[panelKey]) {
+      startEventEdit(obj, panelKey);
+    }
+    const overrideProcessors = (() => {
+      const objectName = obj?.['@objectName'];
+      if (!objectName) {
+        return [];
+      }
+      const overrides = Array.isArray(overrideInfo?.overrides) ? overrideInfo.overrides : [];
+      const method = overrideInfo?.method || (String(selectedFile?.PathID || '').includes('/syslog/') ? 'syslog' : 'trap');
+      const scope = 'post';
+      const entry = overrides.find((item: any) => (
+        item?.['@objectName'] === objectName && item?.method === method && item?.scope === scope
+      ));
+      return Array.isArray(entry?.processors) ? entry.processors : [];
+    })();
+    const targetPath = `$.event.${field}`;
+    const existingProcessor = overrideProcessors.find((proc: any) => getProcessorTargetField(proc) === targetPath);
+    const evalValue = getEffectiveEventValue(obj, field);
+    const evalText = typeof evalValue === 'object' && typeof evalValue.eval === 'string'
+      ? evalValue.eval
+      : typeof evalValue === 'string'
+        ? evalValue.trim()
+        : '';
+
     setBuilderTarget({ panelKey, field });
     setBuilderOpen(true);
+    setShowProcessorJson(true);
+    if (existingProcessor?.regex) {
+      setBuilderFocus('processor');
+      setBuilderTypeLocked('processor');
+      setProcessorType('regex');
+      setProcessorStep('configure');
+      setProcessorDraft({
+        sourceType: existingProcessor.regex?.source?.startsWith('$.') ? 'path' : 'literal',
+        source: String(existingProcessor.regex?.source ?? ''),
+        pattern: String(existingProcessor.regex?.pattern ?? ''),
+        group: String(existingProcessor.regex?.group ?? '1'),
+        targetField: existingProcessor.regex?.targetField ?? targetPath,
+      });
+      return;
+    }
+    if (existingProcessor?.set) {
+      setBuilderFocus('processor');
+      setBuilderTypeLocked('processor');
+      setProcessorType('set');
+      setProcessorStep('configure');
+      setProcessorDraft({
+        sourceType: existingProcessor.set?.source?.startsWith('$.') ? 'path' : 'literal',
+        source: String(existingProcessor.set?.source ?? ''),
+        pattern: '',
+        group: '1',
+        targetField: existingProcessor.set?.targetField ?? targetPath,
+      });
+      return;
+    }
+    const evalEnabled = isEvalMode(panelKey, field)
+      || (typeof evalValue === 'object' && typeof evalValue.eval === 'string');
+    if (evalEnabled && evalText) {
+      const parsed = parseEvalToRows(evalText);
+      setBuilderFocus('eval');
+      setBuilderTypeLocked('eval');
+      if (parsed) {
+        setBuilderMode('friendly');
+        setBuilderRows(parsed.rows);
+        setBuilderElseResult(parsed.elseResult);
+      } else {
+        setBuilderMode('regular');
+      }
+      setBuilderRegularText(evalText);
+      return;
+    }
+    if (!evalEnabled) {
+      setBuilderFocus('literal');
+      setBuilderTypeLocked('literal');
+      setBuilderLiteralText(getCurrentFieldValue(obj, panelKey, field));
+      return;
+    }
     setBuilderFocus(null);
+    setProcessorStep('select');
+    setProcessorType(null);
+    setProcessorDraft({
+      sourceType: 'literal',
+      source: '',
+      pattern: '',
+      group: '1',
+      targetField: targetPath,
+    });
   };
 
   const updatePanelDraftField = (panelKey: string, field: string, value: string) => {
@@ -1813,6 +2036,253 @@ function App() {
   };
 
   const isBuilderTargetReady = builderTarget && panelEditState[builderTarget.panelKey];
+  const isFieldLockedByBuilder = (panelKey: string, field: string) => (
+    Boolean(builderTarget
+      && panelEditState[builderTarget.panelKey]
+      && builderTarget.panelKey === panelKey
+      && builderTarget.field !== field)
+  );
+  const getCurrentFieldValue = (obj: any, panelKey: string, field: string) => {
+    const draftValue = panelDrafts?.[panelKey]?.event?.[field];
+    if (draftValue !== undefined) {
+      return String(draftValue ?? '');
+    }
+    const original = getEffectiveEventValue(obj, field);
+    const { display } = getEditableValue(original);
+    return String(display ?? '');
+  };
+  const getLiteralEligibility = () => {
+    if (!builderTarget) {
+      return { eligible: false, value: '' };
+    }
+    const obj = getObjectByPanelKey(builderTarget.panelKey);
+    if (!obj) {
+      return { eligible: false, value: '' };
+    }
+    if (isEvalMode(builderTarget.panelKey, builderTarget.field)) {
+      return { eligible: false, value: '' };
+    }
+    const original = getEffectiveEventValue(obj, builderTarget.field);
+    const { display, isEval } = getEditableValue(original);
+    const eligible = !isEval
+      && (typeof original === 'string' || typeof original === 'number' || original == null);
+    return { eligible, value: String(display ?? '') };
+  };
+  const closeBuilder = () => {
+    setBuilderTarget(null);
+    setBuilderFocus(null);
+    setProcessorStep('select');
+    setProcessorType(null);
+    setBuilderLiteralText('');
+    setBuilderTypeLocked(null);
+    setBuilderSwitchModal({ open: false });
+  };
+
+  const applyBuilderTypeSwitch = (target: 'eval' | 'processor' | 'literal') => {
+    if (!builderTarget) {
+      return;
+    }
+    const obj = getObjectByPanelKey(builderTarget.panelKey);
+    if (!obj) {
+      return;
+    }
+    if (target === 'literal') {
+      setBuilderLiteralText(getCurrentFieldValue(obj, builderTarget.panelKey, builderTarget.field));
+      setBuilderFocus('literal');
+    }
+    if (target === 'eval') {
+      const baseValue = getCurrentFieldValue(obj, builderTarget.panelKey, builderTarget.field);
+      setBuilderMode('regular');
+      setBuilderRegularText(baseValue);
+      setBuilderFocus('eval');
+    }
+    if (target === 'processor') {
+      setProcessorStep('select');
+      setProcessorType(null);
+      setBuilderFocus('processor');
+    }
+    setBuilderTypeLocked(target);
+  };
+
+  const getObjectByPanelKey = (panelKey: string) => {
+    const baseKey = panelKey.includes(':')
+      ? panelKey.slice(0, panelKey.lastIndexOf(':'))
+      : panelKey;
+    const objects = getFriendlyObjects(fileData);
+    for (let idx = 0; idx < objects.length; idx += 1) {
+      if (getObjectKey(objects[idx], idx) === baseKey) {
+        return objects[idx];
+      }
+    }
+    return null;
+  };
+
+  const normalizeTargetField = (value: string, fallbackField?: string) => {
+    const trimmed = value.trim();
+    if (trimmed.startsWith('$.')) {
+      return trimmed;
+    }
+    if (!trimmed && fallbackField) {
+      return `$.event.${fallbackField}`;
+    }
+    return `$.event.${trimmed}`;
+  };
+
+  const normalizeSourcePath = (value: string) => {
+    const trimmed = value.trim();
+    if (trimmed.startsWith('$.')) {
+      return trimmed;
+    }
+    if (!trimmed) {
+      return '';
+    }
+    return `$.event.${trimmed}`;
+  };
+
+  const buildProcessorPayload = () => {
+    if (!processorType || !builderTarget) {
+      return null;
+    }
+    const targetField = normalizeTargetField(processorDraft.targetField, builderTarget.field);
+    if (processorType === 'set') {
+      const sourceValue = processorDraft.sourceType === 'path'
+        ? normalizeSourcePath(processorDraft.source)
+        : processorDraft.source;
+      return {
+        set: {
+          source: sourceValue,
+          targetField,
+        },
+      };
+    }
+    if (processorType === 'regex') {
+      const sourceValue = processorDraft.sourceType === 'path'
+        ? normalizeSourcePath(processorDraft.source)
+        : processorDraft.source;
+      return {
+        regex: {
+          source: sourceValue,
+          pattern: processorDraft.pattern,
+          group: Number(processorDraft.group) || 1,
+          targetField,
+        },
+      };
+    }
+    return null;
+  };
+
+  const applyProcessor = () => {
+    if (!builderTarget) {
+      return;
+    }
+    const obj = getObjectByPanelKey(builderTarget.panelKey);
+    if (!obj || !selectedFile) {
+      return;
+    }
+    const processor = buildProcessorPayload();
+    if (!processor) {
+      return;
+    }
+    const objectName = obj?.['@objectName'];
+    if (!objectName) {
+      return;
+    }
+    const existingOverrides = Array.isArray(overrideInfo?.overrides) ? [...overrideInfo.overrides] : [];
+    const method = overrideInfo?.method || (String(selectedFile.PathID || '').includes('/syslog/') ? 'syslog' : 'trap');
+    const scope = 'post';
+    const matchIndex = existingOverrides.findIndex((entry: any) => (
+      entry?.['@objectName'] === objectName && entry?.method === method && entry?.scope === scope
+    ));
+    const overrideEntry = matchIndex >= 0
+      ? { ...existingOverrides[matchIndex] }
+      : {
+        name: `${objectName} Override`,
+        description: `Overrides for ${objectName}`,
+        domain: 'fault',
+        method,
+        scope,
+        '@objectName': objectName,
+        _type: 'override',
+        processors: [],
+      };
+    const processors = Array.isArray(overrideEntry.processors) ? [...overrideEntry.processors] : [];
+    const processorKey = Object.keys(processor)[0];
+    const targetField = getProcessorTargetField(processor);
+    const existingIdx = processors.findIndex((proc: any) => (
+      Object.keys(proc || {})[0] === processorKey && getProcessorTargetField(proc) === targetField
+    ));
+    if (existingIdx >= 0) {
+      const existingProcessor = processors[existingIdx];
+      if (JSON.stringify(existingProcessor) === JSON.stringify(processor)) {
+        closeBuilder();
+        return;
+      }
+      processors[existingIdx] = processor;
+    } else {
+      processors.push(processor);
+    }
+    overrideEntry.processors = processors;
+    if (matchIndex >= 0) {
+      existingOverrides[matchIndex] = overrideEntry;
+    } else {
+      existingOverrides.push(overrideEntry);
+    }
+    setPendingOverrideSave(existingOverrides);
+    setCommitMessage('');
+    setShowCommitModal(true);
+    setProcessorStep('review');
+    closeBuilder();
+  };
+
+  const processorHelp: Record<string, { title: string; description: string; example: string }> = {
+    set: {
+      title: 'Set',
+      description: 'Set a target field to a literal value or another field path. Useful for overrides or copying values.',
+      example: '{"set": {"source": "$.event.Summary", "targetField": "$.event.Description"}}',
+    },
+    regex: {
+      title: 'Regex',
+      description: 'Extract a value from text using a regular expression capture group and store it in a target field.',
+      example: '{"regex": {"source": "$.event.Summary", "pattern": "type=(\\w+)", "group": 1, "targetField": "$.event.EventType"}}',
+    },
+    convert: {
+      title: 'Convert',
+      description: 'Convert a value from one type/format to another (planned).',
+      example: '{"convert": {"source": "$.event.ExpireTime", "type": "int", "targetField": "$.event.ExpireTime"}}',
+    },
+    math: {
+      title: 'Math',
+      description: 'Apply arithmetic to a numeric source and store the result (planned).',
+      example: '{"math": {"source": "$.event.Retry", "op": "*", "value": 2, "targetField": "$.event.Retry"}}',
+    },
+    append: {
+      title: 'Append',
+      description: 'Append or concatenate text to a source value (planned).',
+      example: '{"append": {"source": "$.event.Summary", "value": " (validated)", "targetField": "$.event.Summary"}}',
+    },
+    map: {
+      title: 'Map/Lookup',
+      description: 'Map a value to a new output using a lookup table (planned).',
+      example: '{"map": {"source": "$.event.Severity", "map": {"1": "Critical"}, "targetField": "$.event.Severity"}}',
+    },
+  };
+
+  const renderProcessorHelp = (key: keyof typeof processorHelp) => {
+    const help = processorHelp[key];
+    return (
+      <span className="processor-help override-summary" tabIndex={0}>
+        <span className="processor-help-icon">?</span>
+        <div className="override-summary-card" role="tooltip">
+          <div className="override-summary-title">{help.title}</div>
+          <div className="processor-help-text">{help.description}</div>
+          <details className="processor-help-code">
+            <summary>Example</summary>
+            <div className="processor-help-snippet">{help.example}</div>
+          </details>
+        </div>
+      </span>
+    );
+  };
 
   const applyBuilderTemplate = (template: string) => {
     if (!builderTarget || !panelEditState[builderTarget.panelKey]) {
@@ -1820,6 +2290,46 @@ function App() {
     }
     setBuilderRegularText(template);
   };
+
+  useEffect(() => {
+    if (!builderTarget) {
+      return;
+    }
+    const compiled = buildFriendlyEval();
+    if (!compiled) {
+      return;
+    }
+    if (builderSyncRef.current === 'regular') {
+      builderSyncRef.current = null;
+      return;
+    }
+    if (compiled.trim() === builderRegularText.trim()) {
+      return;
+    }
+    builderSyncRef.current = 'friendly';
+    setBuilderRegularText(compiled);
+  }, [builderRows, builderElseResult]);
+
+  useEffect(() => {
+    if (!builderTarget) {
+      return;
+    }
+    const text = builderRegularText.trim();
+    if (!text) {
+      return;
+    }
+    if (builderSyncRef.current === 'friendly') {
+      builderSyncRef.current = null;
+      return;
+    }
+    const parsed = parseEvalToRows(text);
+    if (!parsed) {
+      return;
+    }
+    builderSyncRef.current = 'regular';
+    setBuilderRows(parsed.rows);
+    setBuilderElseResult(parsed.elseResult);
+  }, [builderRegularText]);
 
   const updateBuilderRow = (index: number, key: 'left' | 'operator' | 'right' | 'result', value: string) => {
     setBuilderRows((prev) => prev.map((row, idx) => (
@@ -1869,8 +2379,16 @@ function App() {
     if (!compiled) {
       return;
     }
-    updatePanelDraftField(builderTarget.panelKey, builderTarget.field, compiled);
+    const obj = getObjectByPanelKey(builderTarget.panelKey);
+    if (!obj) {
+      return;
+    }
+    const currentValue = getCurrentFieldValue(obj, builderTarget.panelKey, builderTarget.field);
+    if (String(currentValue) !== String(compiled)) {
+      updatePanelDraftField(builderTarget.panelKey, builderTarget.field, compiled);
+    }
     setEvalModeForField(builderTarget.panelKey, builderTarget.field, true);
+    closeBuilder();
   };
 
   const applyRegularEval = () => {
@@ -1881,8 +2399,32 @@ function App() {
     if (!text) {
       return;
     }
-    updatePanelDraftField(builderTarget.panelKey, builderTarget.field, text);
+    const obj = getObjectByPanelKey(builderTarget.panelKey);
+    if (!obj) {
+      return;
+    }
+    const currentValue = getCurrentFieldValue(obj, builderTarget.panelKey, builderTarget.field);
+    if (String(currentValue) !== String(text)) {
+      updatePanelDraftField(builderTarget.panelKey, builderTarget.field, text);
+    }
     setEvalModeForField(builderTarget.panelKey, builderTarget.field, true);
+    closeBuilder();
+  };
+
+  const applyLiteralValue = () => {
+    if (!builderTarget || !panelEditState[builderTarget.panelKey]) {
+      return;
+    }
+    const obj = getObjectByPanelKey(builderTarget.panelKey);
+    if (!obj) {
+      return;
+    }
+    const currentValue = getCurrentFieldValue(obj, builderTarget.panelKey, builderTarget.field);
+    if (String(currentValue) !== String(builderLiteralText)) {
+      updatePanelDraftField(builderTarget.panelKey, builderTarget.field, builderLiteralText);
+    }
+    setEvalModeForField(builderTarget.panelKey, builderTarget.field, false);
+    closeBuilder();
   };
 
   const clearRegularEval = () => {
@@ -1940,6 +2482,22 @@ function App() {
         )}
       </span>
     );
+  };
+
+  const openVarInsertModal = (panelKey: string, field: string, currentValue: string, replaceStart?: number, replaceEnd?: number) => {
+    const start = replaceStart ?? currentValue.length;
+    const end = replaceEnd ?? currentValue.length;
+    setVarInsertContext({
+      panelKey,
+      field,
+      value: currentValue,
+      replaceStart: start,
+      replaceEnd: end,
+    });
+    setVarModalToken(null);
+    setVarModalMode('insert');
+    setVarModalVars(Array.isArray(varModalVars) ? varModalVars : []);
+    setVarModalOpen(true);
   };
 
   const renderSummary = (value: any, trapVars: any[]) => {
@@ -2225,9 +2783,13 @@ function App() {
       const lines = formatEvalReadableList(evalText);
       return (
         <div className="eval-display">
-          <span className="eval-label eval-label-hover" title={evalText}>
+          <span className="eval-label eval-label-hover override-summary" tabIndex={0}>
             <span className="eval-label-icon">ⓘ</span>
             Eval
+            <div className="override-summary-card eval-summary-card" role="tooltip">
+              <div className="override-summary-title">Eval (Raw)</div>
+              <div className="override-summary-value monospace">{evalText}</div>
+            </div>
           </span>
           <div className="eval-demo eval-demo-lines">
             {lines.map((line, index) => (
@@ -2242,6 +2804,20 @@ function App() {
   };
 
   const friendlyPreview = buildFriendlyEval();
+  const literalMeta = getLiteralEligibility();
+  const literalDirty = builderTarget
+    ? (() => {
+      const obj = getObjectByPanelKey(builderTarget.panelKey);
+      if (!obj) {
+        return false;
+      }
+      return getCurrentFieldValue(
+        obj,
+        builderTarget.panelKey,
+        builderTarget.field,
+      ) !== builderLiteralText;
+    })()
+    : false;
 
   return (
     <ErrorBoundary>
@@ -2651,15 +3227,6 @@ function App() {
                         Raw
                       </span>
                     </div>
-                    {canEditRules && viewMode === 'friendly' && (
-                      <button
-                        type="button"
-                        className={panelEditEnabled ? 'tab-active' : 'tab'}
-                        onClick={() => setPanelEditEnabled((prev) => !prev)}
-                      >
-                        Edit
-                      </button>
-                    )}
                   </div>
                   {fileError && <div className="error">{fileError}</div>}
                   {saveError && <div className="error">{saveError}</div>}
@@ -2669,8 +3236,8 @@ function App() {
                       <div>Loading preview…</div>
                     ) : (
                       viewMode === 'friendly' ? (
-                        <div className={panelEditEnabled ? 'friendly-layout' : 'friendly-view'}>
-                          <div className={panelEditEnabled ? 'friendly-main' : ''}>
+                        <div className={isAnyPanelEditing ? 'friendly-layout' : 'friendly-view'}>
+                          <div className={isAnyPanelEditing ? 'friendly-main' : ''}>
                           {searchHighlightActive && highlightObjectKeys.length > 0 && (
                             <div className="match-bar">
                               <span className="match-label">
@@ -2741,7 +3308,7 @@ function App() {
                                         </div>
                                       )}
                                     </div>
-                                    {canEditRules && panelEditEnabled && !panelEditState[eventPanelKey] && (
+                                    {canEditRules && !panelEditState[eventPanelKey] && (
                                       <button
                                         type="button"
                                         className="panel-edit-button"
@@ -2750,7 +3317,7 @@ function App() {
                                         Edit
                                       </button>
                                     )}
-                                    {canEditRules && panelEditEnabled && panelEditState[eventPanelKey] && (
+                                    {canEditRules && panelEditState[eventPanelKey] && (
                                       <div className="panel-edit-actions">
                                         {eventOverrideFields.length > 1 && (
                                           <button
@@ -2765,6 +3332,10 @@ function App() {
                                           type="button"
                                           className="panel-edit-button"
                                           onClick={() => openAddFieldModal(eventPanelKey, obj)}
+                                          disabled={builderTarget?.panelKey === eventPanelKey}
+                                          title={builderTarget?.panelKey === eventPanelKey
+                                            ? 'Finish or cancel the builder to add fields'
+                                            : ''}
                                         >
                                           Add Field
                                         </button>
@@ -2803,29 +3374,14 @@ function App() {
                                             ? 'label label-warning'
                                             : 'label'}>
                                             Summary
-                                            {panelEditEnabled && panelEditState[eventPanelKey] && (
+                                            {renderFieldBadges(eventPanelKey, 'Summary', obj, overrideTargets)}
+                                            {panelEditState[eventPanelKey] && (
                                               <span className="label-actions">
-                                                {shouldShowEvalToggle(eventPanelKey, 'Summary', obj) && (
-                                                  <button
-                                                    type="button"
-                                                    className={isEvalMode(eventPanelKey, 'Summary')
-                                                      ? 'eval-toggle eval-toggle-active'
-                                                      : 'eval-toggle'}
-                                                    onClick={() => setPanelEvalModes((prev) => ({
-                                                      ...prev,
-                                                      [eventPanelKey]: {
-                                                        ...prev[eventPanelKey],
-                                                        Summary: !isEvalMode(eventPanelKey, 'Summary'),
-                                                      },
-                                                    }))}
-                                                  >
-                                                    Eval
-                                                  </button>
-                                                )}
                                                 <button
                                                   type="button"
                                                   className="builder-link"
-                                                  onClick={() => openBuilderForField(eventPanelKey, 'Summary')}
+                                                  onClick={() => openBuilderForField(obj, eventPanelKey, 'Summary')}
+                                                  disabled={isFieldLockedByBuilder(eventPanelKey, 'Summary')}
                                                 >
                                                   Builder
                                                 </button>
@@ -2838,7 +3394,7 @@ function App() {
                                                   title={`Original: ${getBaseEventDisplay(obj, 'Summary')}`}
                                                 >
                                                   Override
-                                                  {canEditRules && panelEditEnabled && overrideValueMap.has('$.event.Summary') && (
+                                                  {canEditRules && panelEditState[eventPanelKey] && overrideValueMap.has('$.event.Summary') && (
                                                     <button
                                                       type="button"
                                                       className="pill-close"
@@ -2879,8 +3435,14 @@ function App() {
                                                     e.target.selectionStart,
                                                     (e.nativeEvent as InputEvent | undefined)?.inputType,
                                                   )}
-                                                  disabled={!editable.editable}
-                                                  title={editable.editable ? '' : 'Eval values cannot be edited yet'}
+                                                  disabled={!editable.editable || isFieldLockedByBuilder(eventPanelKey, 'Summary')}
+                                                  title={
+                                                    !editable.editable
+                                                      ? 'Eval values cannot be edited yet'
+                                                      : isFieldLockedByBuilder(eventPanelKey, 'Summary')
+                                                        ? 'Finish or cancel the builder to edit other fields'
+                                                        : ''
+                                                  }
                                                 />
                                               );
                                             })()
@@ -2900,29 +3462,14 @@ function App() {
                                             ? 'label label-warning'
                                             : 'label'}>
                                             Severity
-                                            {panelEditEnabled && panelEditState[eventPanelKey] && (
+                                            {renderFieldBadges(eventPanelKey, 'Severity', obj, overrideTargets)}
+                                            {panelEditState[eventPanelKey] && (
                                               <span className="label-actions">
-                                                {shouldShowEvalToggle(eventPanelKey, 'Severity', obj) && (
-                                                  <button
-                                                    type="button"
-                                                    className={isEvalMode(eventPanelKey, 'Severity')
-                                                      ? 'eval-toggle eval-toggle-active'
-                                                      : 'eval-toggle'}
-                                                    onClick={() => setPanelEvalModes((prev) => ({
-                                                      ...prev,
-                                                      [eventPanelKey]: {
-                                                        ...prev[eventPanelKey],
-                                                        Severity: !isEvalMode(eventPanelKey, 'Severity'),
-                                                      },
-                                                    }))}
-                                                  >
-                                                    Eval
-                                                  </button>
-                                                )}
                                                 <button
                                                   type="button"
                                                   className="builder-link"
-                                                  onClick={() => openBuilderForField(eventPanelKey, 'Severity')}
+                                                  onClick={() => openBuilderForField(obj, eventPanelKey, 'Severity')}
+                                                  disabled={isFieldLockedByBuilder(eventPanelKey, 'Severity')}
                                                 >
                                                   Builder
                                                 </button>
@@ -2935,7 +3482,7 @@ function App() {
                                                   title={`Original: ${getBaseEventDisplay(obj, 'Severity')}`}
                                                 >
                                                   Override
-                                                  {canEditRules && panelEditEnabled && overrideValueMap.has('$.event.Severity') && (
+                                                  {canEditRules && panelEditState[eventPanelKey] && overrideValueMap.has('$.event.Severity') && (
                                                     <button
                                                       type="button"
                                                       className="pill-close"
@@ -2972,6 +3519,10 @@ function App() {
                                                 e.target.selectionStart,
                                                 (e.nativeEvent as InputEvent | undefined)?.inputType,
                                               )}
+                                              disabled={isFieldLockedByBuilder(eventPanelKey, 'Severity')}
+                                              title={isFieldLockedByBuilder(eventPanelKey, 'Severity')
+                                                ? 'Finish or cancel the builder to edit other fields'
+                                                : ''}
                                             />
                                           ) : (
                                             <span className="value">
@@ -2991,29 +3542,14 @@ function App() {
                                             ? 'label label-warning'
                                             : 'label'}>
                                             Event Type
-                                            {panelEditEnabled && panelEditState[eventPanelKey] && (
+                                            {renderFieldBadges(eventPanelKey, 'EventType', obj, overrideTargets)}
+                                            {panelEditState[eventPanelKey] && (
                                               <span className="label-actions">
-                                                {shouldShowEvalToggle(eventPanelKey, 'EventType', obj) && (
-                                                  <button
-                                                    type="button"
-                                                    className={isEvalMode(eventPanelKey, 'EventType')
-                                                      ? 'eval-toggle eval-toggle-active'
-                                                      : 'eval-toggle'}
-                                                    onClick={() => setPanelEvalModes((prev) => ({
-                                                      ...prev,
-                                                      [eventPanelKey]: {
-                                                        ...prev[eventPanelKey],
-                                                        EventType: !isEvalMode(eventPanelKey, 'EventType'),
-                                                      },
-                                                    }))}
-                                                  >
-                                                    Eval
-                                                  </button>
-                                                )}
                                                 <button
                                                   type="button"
                                                   className="builder-link"
-                                                  onClick={() => openBuilderForField(eventPanelKey, 'EventType')}
+                                                  onClick={() => openBuilderForField(obj, eventPanelKey, 'EventType')}
+                                                  disabled={isFieldLockedByBuilder(eventPanelKey, 'EventType')}
                                                 >
                                                   Builder
                                                 </button>
@@ -3026,7 +3562,7 @@ function App() {
                                                   title={`Original: ${getBaseEventDisplay(obj, 'EventType')}`}
                                                 >
                                                   Override
-                                                  {canEditRules && panelEditEnabled && overrideValueMap.has('$.event.EventType') && (
+                                                  {canEditRules && panelEditState[eventPanelKey] && overrideValueMap.has('$.event.EventType') && (
                                                     <button
                                                       type="button"
                                                       className="pill-close"
@@ -3063,6 +3599,10 @@ function App() {
                                                 e.target.selectionStart,
                                                 (e.nativeEvent as InputEvent | undefined)?.inputType,
                                               )}
+                                              disabled={isFieldLockedByBuilder(eventPanelKey, 'EventType')}
+                                              title={isFieldLockedByBuilder(eventPanelKey, 'EventType')
+                                                ? 'Finish or cancel the builder to edit other fields'
+                                                : ''}
                                             />
                                           ) : (
                                             <span className="value">
@@ -3080,29 +3620,14 @@ function App() {
                                             ? 'label label-warning'
                                             : 'label'}>
                                             Expire Time
-                                            {panelEditEnabled && panelEditState[eventPanelKey] && (
+                                            {renderFieldBadges(eventPanelKey, 'ExpireTime', obj, overrideTargets)}
+                                            {panelEditState[eventPanelKey] && (
                                               <span className="label-actions">
-                                                {shouldShowEvalToggle(eventPanelKey, 'ExpireTime', obj) && (
-                                                  <button
-                                                    type="button"
-                                                    className={isEvalMode(eventPanelKey, 'ExpireTime')
-                                                      ? 'eval-toggle eval-toggle-active'
-                                                      : 'eval-toggle'}
-                                                    onClick={() => setPanelEvalModes((prev) => ({
-                                                      ...prev,
-                                                      [eventPanelKey]: {
-                                                        ...prev[eventPanelKey],
-                                                        ExpireTime: !isEvalMode(eventPanelKey, 'ExpireTime'),
-                                                      },
-                                                    }))}
-                                                  >
-                                                    Eval
-                                                  </button>
-                                                )}
                                                 <button
                                                   type="button"
                                                   className="builder-link"
-                                                  onClick={() => openBuilderForField(eventPanelKey, 'ExpireTime')}
+                                                  onClick={() => openBuilderForField(obj, eventPanelKey, 'ExpireTime')}
+                                                  disabled={isFieldLockedByBuilder(eventPanelKey, 'ExpireTime')}
                                                 >
                                                   Builder
                                                 </button>
@@ -3115,7 +3640,7 @@ function App() {
                                                   title={`Original: ${getBaseEventDisplay(obj, 'ExpireTime')}`}
                                                 >
                                                   Override
-                                                  {canEditRules && panelEditEnabled && overrideValueMap.has('$.event.ExpireTime') && (
+                                                  {canEditRules && panelEditState[eventPanelKey] && overrideValueMap.has('$.event.ExpireTime') && (
                                                     <button
                                                       type="button"
                                                       className="pill-close"
@@ -3152,6 +3677,10 @@ function App() {
                                                 e.target.selectionStart,
                                                 (e.nativeEvent as InputEvent | undefined)?.inputType,
                                               )}
+                                              disabled={isFieldLockedByBuilder(eventPanelKey, 'ExpireTime')}
+                                              title={isFieldLockedByBuilder(eventPanelKey, 'ExpireTime')
+                                                ? 'Finish or cancel the builder to edit other fields'
+                                                : ''}
                                             />
                                           ) : (
                                             <span className="value">
@@ -3169,29 +3698,14 @@ function App() {
                                             ? 'label label-warning'
                                             : 'label'}>
                                             Event Category
-                                            {panelEditEnabled && panelEditState[eventPanelKey] && (
+                                            {renderFieldBadges(eventPanelKey, 'EventCategory', obj, overrideTargets)}
+                                            {panelEditState[eventPanelKey] && (
                                               <span className="label-actions">
-                                                {shouldShowEvalToggle(eventPanelKey, 'EventCategory', obj) && (
-                                                  <button
-                                                    type="button"
-                                                    className={isEvalMode(eventPanelKey, 'EventCategory')
-                                                      ? 'eval-toggle eval-toggle-active'
-                                                      : 'eval-toggle'}
-                                                    onClick={() => setPanelEvalModes((prev) => ({
-                                                      ...prev,
-                                                      [eventPanelKey]: {
-                                                        ...prev[eventPanelKey],
-                                                        EventCategory: !isEvalMode(eventPanelKey, 'EventCategory'),
-                                                      },
-                                                    }))}
-                                                  >
-                                                    Eval
-                                                  </button>
-                                                )}
                                                 <button
                                                   type="button"
                                                   className="builder-link"
-                                                  onClick={() => openBuilderForField(eventPanelKey, 'EventCategory')}
+                                                  onClick={() => openBuilderForField(obj, eventPanelKey, 'EventCategory')}
+                                                  disabled={isFieldLockedByBuilder(eventPanelKey, 'EventCategory')}
                                                 >
                                                   Builder
                                                 </button>
@@ -3204,7 +3718,7 @@ function App() {
                                                   title={`Original: ${getBaseEventDisplay(obj, 'EventCategory')}`}
                                                 >
                                                   Override
-                                                  {canEditRules && panelEditEnabled && overrideValueMap.has('$.event.EventCategory') && (
+                                                  {canEditRules && panelEditState[eventPanelKey] && overrideValueMap.has('$.event.EventCategory') && (
                                                     <button
                                                       type="button"
                                                       className="pill-close"
@@ -3241,6 +3755,10 @@ function App() {
                                                 e.target.selectionStart,
                                                 (e.nativeEvent as InputEvent | undefined)?.inputType,
                                               )}
+                                              disabled={isFieldLockedByBuilder(eventPanelKey, 'EventCategory')}
+                                              title={isFieldLockedByBuilder(eventPanelKey, 'EventCategory')
+                                                ? 'Finish or cancel the builder to edit other fields'
+                                                : ''}
                                             />
                                           ) : (
                                             <span className="value">
@@ -3265,29 +3783,14 @@ function App() {
                                               ? 'label label-warning'
                                               : 'label'}>
                                               {formatEventFieldLabel(field)}
-                                              {panelEditEnabled && panelEditState[eventPanelKey] && (
+                                              {renderFieldBadges(eventPanelKey, field, obj, overrideTargets)}
+                                              {panelEditState[eventPanelKey] && (
                                                 <span className="label-actions">
-                                                  {shouldShowEvalToggle(eventPanelKey, field, obj) && (
-                                                    <button
-                                                      type="button"
-                                                      className={isEvalMode(eventPanelKey, field)
-                                                        ? 'eval-toggle eval-toggle-active'
-                                                        : 'eval-toggle'}
-                                                      onClick={() => setPanelEvalModes((prev) => ({
-                                                        ...prev,
-                                                        [eventPanelKey]: {
-                                                          ...prev[eventPanelKey],
-                                                          [field]: !isEvalMode(eventPanelKey, field),
-                                                        },
-                                                      }))}
-                                                    >
-                                                      Eval
-                                                    </button>
-                                                  )}
                                                   <button
                                                     type="button"
                                                     className="builder-link"
-                                                    onClick={() => openBuilderForField(eventPanelKey, field)}
+                                                    onClick={() => openBuilderForField(obj, eventPanelKey, field)}
+                                                    disabled={isFieldLockedByBuilder(eventPanelKey, field)}
                                                   >
                                                     Builder
                                                   </button>
@@ -3300,7 +3803,7 @@ function App() {
                                                     title={`Original: ${getBaseEventDisplay(obj, field)}`}
                                                   >
                                                     Override
-                                                    {canEditRules && panelEditEnabled
+                                                    {canEditRules && panelEditState[eventPanelKey]
                                                       && overrideValueMap.has(`$.event.${field}`) && (
                                                         <button
                                                           type="button"
@@ -3338,6 +3841,10 @@ function App() {
                                                   e.target.selectionStart,
                                                   (e.nativeEvent as InputEvent | undefined)?.inputType,
                                                 )}
+                                                disabled={isFieldLockedByBuilder(eventPanelKey, field)}
+                                                title={isFieldLockedByBuilder(eventPanelKey, field)
+                                                  ? 'Finish or cancel the builder to edit other fields'
+                                                  : ''}
                                               />
                                             ) : (
                                               <span className="value">
@@ -3382,22 +3889,48 @@ function App() {
                             })
                           )}
                           </div>
-                          {panelEditEnabled && (
+                          {isAnyPanelEditing && (
                             <aside className={`builder-sidebar${builderOpen ? '' : ' builder-sidebar-collapsed'}`}>
                               <div className="builder-header">
                                 <div>
                                   <h3>Builder</h3>
                                   <div className="builder-target">
-                                    Target: {builderTarget ? `${builderTarget.field}` : 'None'}
+                                    {builderTarget ? (
+                                      <span className="builder-target-badge">
+                                        Editing: {builderTarget.field}
+                                      </span>
+                                    ) : (
+                                      <span className="builder-target-empty">Select a field to begin</span>
+                                    )}
                                   </div>
                                 </div>
-                                <button
-                                  type="button"
-                                  className="builder-toggle"
-                                  onClick={() => setBuilderOpen((prev) => !prev)}
-                                >
-                                  {builderOpen ? 'Hide' : 'Show'}
-                                </button>
+                                <div className="builder-header-actions">
+                                  {builderOpen && (
+                                    <button
+                                      type="button"
+                                      className="builder-help-button"
+                                      onClick={() => setShowBuilderHelpModal(true)}
+                                    >
+                                      Help
+                                    </button>
+                                  )}
+                                  {builderTarget && (
+                                    <button
+                                      type="button"
+                                      className="builder-cancel-button"
+                                      onClick={closeBuilder}
+                                    >
+                                      Cancel
+                                    </button>
+                                  )}
+                                  <button
+                                    type="button"
+                                    className="builder-toggle"
+                                    onClick={() => setBuilderOpen((prev) => !prev)}
+                                  >
+                                    {builderOpen ? 'Hide' : 'Show'}
+                                  </button>
+                                </div>
                               </div>
                               {builderOpen && (
                                 <div className="builder-body">
@@ -3411,14 +3944,41 @@ function App() {
                                     {isBuilderTargetReady && !builderFocus && (
                                       <div className="builder-hint">Choose Eval or Processor to continue.</div>
                                     )}
+                                    {isBuilderTargetReady && builderTarget && (
+                                      <div className="builder-lock-note">
+                                        Other fields are locked while this builder is active.
+                                      </div>
+                                    )}
                                     <div className="builder-focus-row">
+                                      <button
+                                        type="button"
+                                        className={builderFocus === 'literal'
+                                          ? 'builder-card builder-card-selected'
+                                          : 'builder-card'}
+                                        disabled={!isBuilderTargetReady || builderTypeLocked === 'literal'}
+                                        onClick={() => {
+                                          if (builderTypeLocked && builderTypeLocked !== 'literal') {
+                                            setBuilderSwitchModal({ open: true, from: builderTypeLocked, to: 'literal' });
+                                            return;
+                                          }
+                                          applyBuilderTypeSwitch('literal');
+                                        }}
+                                      >
+                                        Literal
+                                      </button>
                                       <button
                                         type="button"
                                         className={builderFocus === 'eval'
                                           ? 'builder-card builder-card-selected'
                                           : 'builder-card'}
-                                        disabled={!isBuilderTargetReady}
-                                        onClick={() => setBuilderFocus('eval')}
+                                        disabled={!isBuilderTargetReady || builderTypeLocked === 'eval'}
+                                        onClick={() => {
+                                          if (builderTypeLocked && builderTypeLocked !== 'eval') {
+                                            setBuilderSwitchModal({ open: true, from: builderTypeLocked, to: 'eval' });
+                                            return;
+                                          }
+                                          applyBuilderTypeSwitch('eval');
+                                        }}
                                       >
                                         Eval
                                       </button>
@@ -3427,13 +3987,47 @@ function App() {
                                         className={builderFocus === 'processor'
                                           ? 'builder-card builder-card-selected'
                                           : 'builder-card'}
-                                        disabled={!isBuilderTargetReady}
-                                        onClick={() => setBuilderFocus('processor')}
+                                        disabled={!isBuilderTargetReady || builderTypeLocked === 'processor'}
+                                        onClick={() => {
+                                          if (builderTypeLocked && builderTypeLocked !== 'processor') {
+                                            setBuilderSwitchModal({ open: true, from: builderTypeLocked, to: 'processor' });
+                                            return;
+                                          }
+                                          applyBuilderTypeSwitch('processor');
+                                        }}
                                       >
                                         Processor
                                       </button>
                                     </div>
                                   </div>
+                                  {builderFocus === 'literal' && (
+                                    <div className="builder-section">
+                                      <div className="builder-section-title">Literal Editor</div>
+                                      <div className="builder-regular-input">
+                                        <textarea
+                                          className="builder-textarea"
+                                          placeholder="Enter literal value"
+                                          value={builderLiteralText}
+                                          onChange={(e) => handleLiteralInputChange(
+                                            e.target.value,
+                                            e.target.selectionStart,
+                                            (e.nativeEvent as InputEvent | undefined)?.inputType,
+                                          )}
+                                          disabled={!isBuilderTargetReady}
+                                        />
+                                      </div>
+                                      <div className="builder-regular-actions">
+                                        <button
+                                          type="button"
+                                          className="builder-card builder-card-primary"
+                                          disabled={!isBuilderTargetReady || !literalDirty}
+                                          onClick={applyLiteralValue}
+                                        >
+                                          Apply
+                                        </button>
+                                      </div>
+                                    </div>
+                                  )}
                                   {builderFocus === 'eval' && (
                                     <div className="builder-section">
                                       <div className="builder-section-title">Eval Builder</div>
@@ -3468,6 +4062,7 @@ function App() {
                                                   onChange={(e) => updateBuilderRow(index, 'left', e.target.value)}
                                                   placeholder="$v1"
                                                   disabled={!isBuilderTargetReady}
+                                                  title={row.left}
                                                 />
                                                 <select
                                                   className="builder-select"
@@ -3488,6 +4083,7 @@ function App() {
                                                   onChange={(e) => updateBuilderRow(index, 'right', e.target.value)}
                                                   placeholder="1"
                                                   disabled={!isBuilderTargetReady}
+                                                  title={row.right}
                                                 />
                                                 <span className="builder-friendly-arrow">→</span>
                                                 <input
@@ -3496,6 +4092,7 @@ function App() {
                                                   onChange={(e) => updateBuilderRow(index, 'result', e.target.value)}
                                                   placeholder="result"
                                                   disabled={!isBuilderTargetReady}
+                                                  title={row.result}
                                                 />
                                                 <button
                                                   type="button"
@@ -3530,18 +4127,33 @@ function App() {
                                           <div className="builder-friendly-actions">
                                             <button
                                               type="button"
-                                              className="builder-card"
+                                              className="builder-card builder-card-primary"
                                               disabled={!isBuilderTargetReady || !friendlyPreview}
                                               onClick={applyFriendlyEval}
                                             >
-                                              Apply Friendly Eval
+                                              Apply
                                             </button>
                                           </div>
+                                          {isBuilderTargetReady && !friendlyPreview && (
+                                            <div className="builder-hint builder-hint-warning">
+                                              Complete each condition and the Else value to enable Apply.
+                                            </div>
+                                          )}
                                           <div className="builder-preview">
                                             <div className="builder-preview-label">Preview</div>
                                             <div className="builder-preview-value">
                                               {friendlyPreview || '—'}
                                             </div>
+                                            {friendlyPreview && (
+                                              <details className="builder-preview-details">
+                                                <summary>Expanded view</summary>
+                                                <div className="builder-preview-lines">
+                                                  {formatEvalReadableList(friendlyPreview).map((line, idx) => (
+                                                    <span key={`${line}-${idx}`}>{line}</span>
+                                                  ))}
+                                                </div>
+                                              </details>
+                                            )}
                                           </div>
                                         </div>
                                       ) : (
@@ -3568,13 +4180,18 @@ function App() {
                                           <div className="builder-regular-actions">
                                             <button
                                               type="button"
-                                              className="builder-card"
+                                              className="builder-card builder-card-primary"
                                               disabled={!isBuilderTargetReady || !builderRegularText.trim()}
                                               onClick={applyRegularEval}
                                             >
-                                              Apply Regular Eval
+                                              Apply
                                             </button>
                                           </div>
+                                          {isBuilderTargetReady && !builderRegularText.trim() && (
+                                            <div className="builder-hint builder-hint-warning">
+                                              Enter an expression to enable Apply.
+                                            </div>
+                                          )}
                                           <div className="builder-regular-templates">
                                             <div className="builder-example-title">Templates</div>
                                             <button
@@ -3607,55 +4224,370 @@ function App() {
                                     </div>
                                   )}
                                   {builderFocus === 'processor' && (
-                                    <div className="builder-section">
+                                    <div className="builder-section processor-builder">
                                       <div className="builder-section-title">Processor Builder</div>
-                                      <button type="button" className="builder-card">Set</button>
-                                      <button type="button" className="builder-card">Copy</button>
-                                      <button type="button" className="builder-card">Regex</button>
+                                      {!isBuilderTargetReady && (
+                                        <div className="builder-hint">Select a field in Edit mode.</div>
+                                      )}
+                                      {isBuilderTargetReady && (
+                                        <>
+                                          <div className="processor-steps">
+                                            {['select', 'configure', 'review'].map((step) => (
+                                              <button
+                                                key={step}
+                                                type="button"
+                                                className={processorStep === step
+                                                  ? 'processor-step processor-step-active'
+                                                  : 'processor-step'}
+                                                disabled={
+                                                  (step === 'configure' && !processorType)
+                                                  || (step === 'review' && !buildProcessorPayload())
+                                                }
+                                                title={
+                                                  step === 'configure' && !processorType
+                                                    ? 'Select a processor to enable.'
+                                                    : step === 'review' && !buildProcessorPayload()
+                                                      ? 'Complete configuration to enable.'
+                                                      : ''
+                                                }
+                                                onClick={() => {
+                                                  if (step === 'configure' && !processorType) {
+                                                    return;
+                                                  }
+                                                  if (step === 'review' && !buildProcessorPayload()) {
+                                                    return;
+                                                  }
+                                                  setProcessorStep(step as typeof processorStep);
+                                                }}
+                                              >
+                                                {step}
+                                              </button>
+                                            ))}
+                                          </div>
+                                          {processorStep === 'select' && (
+                                            <div className="processor-grid">
+                                              <div className="processor-card">
+                                                <button
+                                                  type="button"
+                                                  className={processorType === 'set'
+                                                    ? 'builder-card builder-card-selected'
+                                                    : 'builder-card'}
+                                                  onClick={() => {
+                                                    setProcessorType('set');
+                                                    setProcessorStep('configure');
+                                                    setProcessorDraft((prev) => ({
+                                                      ...prev,
+                                                      sourceType: 'literal',
+                                                      source: '',
+                                                      pattern: '',
+                                                      group: '1',
+                                                      targetField: builderTarget
+                                                        ? `$.event.${builderTarget.field}`
+                                                        : prev.targetField,
+                                                    }));
+                                                  }}
+                                                >
+                                                  Set
+                                                </button>
+                                                {renderProcessorHelp('set')}
+                                              </div>
+                                              <div className="processor-card">
+                                                <button
+                                                  type="button"
+                                                  className={processorType === 'regex'
+                                                    ? 'builder-card builder-card-selected'
+                                                    : 'builder-card'}
+                                                  onClick={() => {
+                                                    setProcessorType('regex');
+                                                    setProcessorStep('configure');
+                                                    setProcessorDraft((prev) => ({
+                                                      ...prev,
+                                                      sourceType: 'path',
+                                                      source: '$.event.Summary',
+                                                      pattern: '',
+                                                      group: '1',
+                                                      targetField: builderTarget
+                                                        ? `$.event.${builderTarget.field}`
+                                                        : prev.targetField,
+                                                    }));
+                                                  }}
+                                                >
+                                                  Regex
+                                                </button>
+                                                {renderProcessorHelp('regex')}
+                                              </div>
+                                              <div className="processor-card">
+                                                <button type="button" className="builder-card" disabled>
+                                                  Convert (soon)
+                                                </button>
+                                                {renderProcessorHelp('convert')}
+                                              </div>
+                                              <div className="processor-card">
+                                                <button type="button" className="builder-card" disabled>
+                                                  Math (soon)
+                                                </button>
+                                                {renderProcessorHelp('math')}
+                                              </div>
+                                              <div className="processor-card">
+                                                <button type="button" className="builder-card" disabled>
+                                                  Append (soon)
+                                                </button>
+                                                {renderProcessorHelp('append')}
+                                              </div>
+                                              <div className="processor-card">
+                                                <button type="button" className="builder-card" disabled>
+                                                  Map/Lookup (soon)
+                                                </button>
+                                                {renderProcessorHelp('map')}
+                                              </div>
+                                            </div>
+                                          )}
+                                          {processorStep === 'configure' && processorType === 'set' && (
+                                            <div className="processor-form">
+                                              <div className="processor-row">
+                                                <label className="builder-label">Source type</label>
+                                                <div className="builder-mode-toggle">
+                                                  <button
+                                                    type="button"
+                                                    className={processorDraft.sourceType === 'literal'
+                                                      ? 'builder-mode-button builder-mode-button-active'
+                                                      : 'builder-mode-button'}
+                                                    onClick={() => setProcessorDraft((prev) => ({
+                                                      ...prev,
+                                                      sourceType: 'literal',
+                                                    }))}
+                                                  >
+                                                    Literal
+                                                  </button>
+                                                  <button
+                                                    type="button"
+                                                    className={processorDraft.sourceType === 'path'
+                                                      ? 'builder-mode-button builder-mode-button-active'
+                                                      : 'builder-mode-button'}
+                                                    onClick={() => setProcessorDraft((prev) => ({
+                                                      ...prev,
+                                                      sourceType: 'path',
+                                                    }))}
+                                                  >
+                                                    Path
+                                                  </button>
+                                                </div>
+                                              </div>
+                                              <div className="processor-row">
+                                                <label className="builder-label">Source</label>
+                                                <div className="builder-inline-input">
+                                                  <input
+                                                    className="builder-input"
+                                                    value={processorDraft.source}
+                                                    placeholder={processorDraft.sourceType === 'path'
+                                                      ? '$.event.Summary or $v1'
+                                                      : 'Literal value or $v1'}
+                                                    onChange={(e) => handleProcessorSourceChange(
+                                                      e.target.value,
+                                                      e.target.selectionStart,
+                                                    )}
+                                                  />
+                                                  <button
+                                                    type="button"
+                                                    className="builder-link builder-var-button"
+                                                    title="Insert variable"
+                                                    onClick={() => {
+                                                      if (!builderTarget) {
+                                                        return;
+                                                      }
+                                                      const obj = getObjectByPanelKey(builderTarget.panelKey);
+                                                      const trapVars = obj?.trap?.variables || [];
+                                                      setVarModalVars(Array.isArray(trapVars) ? trapVars : []);
+                                                      openVarInsertModal(
+                                                        builderTarget.panelKey,
+                                                        'processorSource',
+                                                        processorDraft.source,
+                                                      );
+                                                    }}
+                                                  >
+                                                    ⋯
+                                                  </button>
+                                                </div>
+                                              </div>
+                                              <div className="processor-row">
+                                                <label className="builder-label">Target</label>
+                                                <input
+                                                  className="builder-input"
+                                                  value={processorDraft.targetField}
+                                                  placeholder="$.event.EventType"
+                                                  onChange={(e) => setProcessorDraft((prev) => ({
+                                                    ...prev,
+                                                    targetField: e.target.value,
+                                                  }))}
+                                                />
+                                              </div>
+                                              <div className="processor-actions">
+                                                <button
+                                                  type="button"
+                                                  className="builder-card"
+                                                  onClick={() => setProcessorStep('review')}
+                                                >
+                                                  Review
+                                                </button>
+                                              </div>
+                                            </div>
+                                          )}
+                                          {processorStep === 'configure' && processorType === 'regex' && (
+                                            <div className="processor-form">
+                                              <div className="processor-row">
+                                                <label className="builder-label">Source type</label>
+                                                <div className="builder-mode-toggle">
+                                                  <button
+                                                    type="button"
+                                                    className={processorDraft.sourceType === 'literal'
+                                                      ? 'builder-mode-button builder-mode-button-active'
+                                                      : 'builder-mode-button'}
+                                                    onClick={() => setProcessorDraft((prev) => ({
+                                                      ...prev,
+                                                      sourceType: 'literal',
+                                                    }))}
+                                                  >
+                                                    Literal
+                                                  </button>
+                                                  <button
+                                                    type="button"
+                                                    className={processorDraft.sourceType === 'path'
+                                                      ? 'builder-mode-button builder-mode-button-active'
+                                                      : 'builder-mode-button'}
+                                                    onClick={() => setProcessorDraft((prev) => ({
+                                                      ...prev,
+                                                      sourceType: 'path',
+                                                    }))}
+                                                  >
+                                                    Path
+                                                  </button>
+                                                </div>
+                                              </div>
+                                              <div className="processor-row">
+                                                <label className="builder-label">Source</label>
+                                                <div className="builder-inline-input">
+                                                  <input
+                                                    className="builder-input"
+                                                    value={processorDraft.source}
+                                                    placeholder={processorDraft.sourceType === 'path'
+                                                      ? '$.event.Summary or $v1'
+                                                      : 'Literal value or $v1'}
+                                                    onChange={(e) => handleProcessorSourceChange(
+                                                      e.target.value,
+                                                      e.target.selectionStart,
+                                                    )}
+                                                  />
+                                                  <button
+                                                    type="button"
+                                                    className="builder-link builder-var-button"
+                                                    title="Insert variable"
+                                                    onClick={() => {
+                                                      if (!builderTarget) {
+                                                        return;
+                                                      }
+                                                      const obj = getObjectByPanelKey(builderTarget.panelKey);
+                                                      const trapVars = obj?.trap?.variables || [];
+                                                      setVarModalVars(Array.isArray(trapVars) ? trapVars : []);
+                                                      openVarInsertModal(
+                                                        builderTarget.panelKey,
+                                                        'processorSource',
+                                                        processorDraft.source,
+                                                      );
+                                                    }}
+                                                  >
+                                                    ⋯
+                                                  </button>
+                                                </div>
+                                              </div>
+                                              <div className="processor-row">
+                                                <label className="builder-label">Pattern</label>
+                                                <input
+                                                  className="builder-input"
+                                                  value={processorDraft.pattern}
+                                                  placeholder="type=(\\w+)"
+                                                  onChange={(e) => setProcessorDraft((prev) => ({
+                                                    ...prev,
+                                                    pattern: e.target.value,
+                                                  }))}
+                                                />
+                                              </div>
+                                              <div className="processor-row">
+                                                <label className="builder-label">Group</label>
+                                                <input
+                                                  className="builder-input"
+                                                  value={processorDraft.group}
+                                                  placeholder="1"
+                                                  onChange={(e) => setProcessorDraft((prev) => ({
+                                                    ...prev,
+                                                    group: e.target.value,
+                                                  }))}
+                                                />
+                                              </div>
+                                              <div className="processor-row">
+                                                <label className="builder-label">Target</label>
+                                                <input
+                                                  className="builder-input"
+                                                  value={processorDraft.targetField}
+                                                  placeholder="$.event.EventType"
+                                                  onChange={(e) => setProcessorDraft((prev) => ({
+                                                    ...prev,
+                                                    targetField: e.target.value,
+                                                  }))}
+                                                />
+                                              </div>
+                                              <div className="processor-actions">
+                                                <button
+                                                  type="button"
+                                                  className="builder-card"
+                                                  onClick={() => setProcessorStep('review')}
+                                                >
+                                                  Review
+                                                </button>
+                                              </div>
+                                            </div>
+                                          )}
+                                          {processorStep === 'review' && (
+                                            <div className="processor-review">
+                                              <div className="builder-preview">
+                                                <div className="builder-preview-header">
+                                                  <div className="builder-preview-label">Preview</div>
+                                                  <button
+                                                    type="button"
+                                                    className="builder-link"
+                                                    onClick={() => setShowProcessorJson((prev) => !prev)}
+                                                  >
+                                                    {showProcessorJson ? 'Hide JSON' : 'Show JSON'}
+                                                  </button>
+                                                </div>
+                                                {showProcessorJson && (
+                                                  <div className="builder-preview-value">
+                                                    {JSON.stringify(buildProcessorPayload(), null, 2) || '—'}
+                                                  </div>
+                                                )}
+                                              </div>
+                                              <div className="processor-actions">
+                                                <button
+                                                  type="button"
+                                                  className="ghost-button"
+                                                  onClick={() => setProcessorStep('configure')}
+                                                >
+                                                  Back
+                                                </button>
+                                                <button
+                                                  type="button"
+                                                  className="builder-card builder-card-primary"
+                                                  onClick={applyProcessor}
+                                                  disabled={!buildProcessorPayload()}
+                                                >
+                                                  Apply
+                                                </button>
+                                              </div>
+                                            </div>
+                                          )}
+                                        </>
+                                      )}
                                     </div>
                                   )}
-                                  <div className="builder-section">
-                                    <div className="builder-section-title">Examples</div>
-                                    <div className="builder-example-group">
-                                      <div className="builder-example-title">Eval examples</div>
-                                      <div className="builder-example">
-                                        ($v3==1) ? 3600 : 86400
-                                      </div>
-                                      <div className="builder-example">
-                                        ($v5==1) ? 0 : (($v5==2) ? 1 : 3)
-                                      </div>
-                                    </div>
-                                    <div className="builder-example-group">
-                                      <div className="builder-example-title">Processor examples</div>
-                                      <div className="builder-example-block">
-                                        <div className="builder-example-header">Set</div>
-                                        <div className="builder-example-friendly">
-                                          Set Description to Summary
-                                        </div>
-                                        <div className="builder-example">
-                                          {'{"set": {"source": "$.event.Summary", "targetField": "$.event.Description"}}'}
-                                        </div>
-                                      </div>
-                                      <div className="builder-example-block">
-                                        <div className="builder-example-header">Copy</div>
-                                        <div className="builder-example-friendly">
-                                          Copy trap OID into event OID
-                                        </div>
-                                        <div className="builder-example">
-                                          {'{"copy": {"source": "$.trap.oid", "targetField": "$.event.OID"}}'}
-                                        </div>
-                                      </div>
-                                      <div className="builder-example-block">
-                                        <div className="builder-example-header">Regex</div>
-                                        <div className="builder-example-friendly">
-                                          Extract event type from Summary using a pattern
-                                        </div>
-                                        <div className="builder-example">
-                                          {'{"regex": {"source": "$.event.Summary", "pattern": "type=(\\w+)", "group": 1, "targetField": "$.event.EventType"}}'}
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
                                 </div>
                               )}
                             </aside>
@@ -3696,6 +4628,66 @@ function App() {
                             disabled={saveLoading}
                           >
                             {saveLoading ? 'Saving…' : 'Save'}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  {showBuilderHelpModal && (
+                    <div className="modal-overlay" role="dialog" aria-modal="true">
+                      <div className="modal modal-wide">
+                        <h3>Builder Help</h3>
+                        <div className="builder-help-section">
+                          <h4>Processor Builder</h4>
+                          <p>
+                            Use processors to transform or set event fields after a match. Select a processor,
+                            configure inputs, and review the generated JSON before applying.
+                          </p>
+                          <ul>
+                            <li><strong>Set</strong>: assign a literal or copy from a field path.</li>
+                            <li><strong>Regex</strong>: extract a value using a capture group.</li>
+                          </ul>
+                        </div>
+                        <div className="builder-help-section">
+                          <h4>Eval Builder</h4>
+                          <p>
+                            Use Friendly for guided conditions or Regular for raw expressions. Click $v tokens to
+                            see trap variable details.
+                          </p>
+                        </div>
+                        <div className="builder-help-section">
+                          <h4>References</h4>
+                          <p>Docs: architecture/FCOM_Curation_UI_Plan.md</p>
+                          <p>UA REST/processor docs (internal UA documentation).</p>
+                        </div>
+                        <div className="modal-actions">
+                          <button type="button" onClick={() => setShowBuilderHelpModal(false)}>Close</button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  {builderSwitchModal.open && (
+                    <div className="modal-overlay" role="dialog" aria-modal="true">
+                      <div className="modal">
+                        <h3>Switch builder type</h3>
+                        <p>
+                          Switch from {builderSwitchModal.from} to {builderSwitchModal.to}? This will replace the
+                          current configuration.
+                        </p>
+                        <div className="modal-actions">
+                          <button type="button" onClick={() => setBuilderSwitchModal({ open: false })}>
+                            Cancel
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (builderSwitchModal.to) {
+                                applyBuilderTypeSwitch(builderSwitchModal.to);
+                              }
+                              setBuilderSwitchModal({ open: false });
+                            }}
+                          >
+                            Switch
                           </button>
                         </div>
                       </div>
