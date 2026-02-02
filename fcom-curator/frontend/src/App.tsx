@@ -996,6 +996,144 @@ export default function App() {
   const [advancedFlowFocusOnly, setAdvancedFlowFocusOnly] = useState(false);
   const advancedFlowHighlightRef = useRef<HTMLSpanElement | null>(null);
   const buildFlowProcessors = (nodes: FlowNode[]) => nodes.map(buildFlowProcessor);
+  type FlowValidationResult = {
+    fieldErrors: Record<string, string[]>;
+    nodeErrors: string[];
+  };
+  type FlowNodeErrorMap = Record<string, string[]>;
+  const hasEventPath = (value: any): boolean => {
+    if (value == null) {
+      return false;
+    }
+    if (typeof value === 'string') {
+      return value.includes('$.event');
+    }
+    if (Array.isArray(value)) {
+      return value.some((entry) => hasEventPath(entry));
+    }
+    if (typeof value === 'object') {
+      return Object.values(value).some((entry) => hasEventPath(entry));
+    }
+    return false;
+  };
+  const isFieldOptional = (label?: string) => Boolean(label && /optional/i.test(label));
+  const getProcessorRequiredFields = (processorType: string) => {
+    const specs = processorConfigSpecs[processorType] || [];
+    return specs
+      .filter((spec) => !isFieldOptional(spec.label))
+      .map((spec) => spec.key);
+  };
+  const validateProcessorConfig = (
+    processorType: string,
+    config: Record<string, any>,
+    lane: 'object' | 'pre' | 'post',
+  ): FlowValidationResult => {
+    const requiredKeys = new Set(getProcessorRequiredFields(processorType));
+    const fieldErrors: Record<string, string[]> = {};
+    const nodeErrors: string[] = [];
+    (processorConfigSpecs[processorType] || []).forEach((spec) => {
+      const isJsonField = spec.type === 'json';
+      const valueKey = isJsonField ? `${spec.key}Text` : spec.key;
+      const rawValue = config?.[valueKey];
+      const stringValue = typeof rawValue === 'string' ? rawValue.trim() : rawValue;
+      const isRequired = requiredKeys.has(spec.key);
+      if (isRequired) {
+        if (stringValue === '' || stringValue === undefined || stringValue === null) {
+          fieldErrors[spec.key] = [...(fieldErrors[spec.key] || []), `${spec.label} is required.`];
+        }
+      }
+      if (isJsonField && typeof rawValue === 'string' && rawValue.trim()) {
+        try {
+          const parsed = JSON.parse(rawValue);
+          if (lane === 'pre' && hasEventPath(parsed)) {
+            fieldErrors[spec.key] = [...(fieldErrors[spec.key] || []), 'Pre scope cannot reference $.event.*.'];
+          }
+        } catch {
+          fieldErrors[spec.key] = [...(fieldErrors[spec.key] || []), `${spec.label} must be valid JSON.`];
+        }
+      }
+      if (lane === 'pre' && !isJsonField && typeof rawValue === 'string' && rawValue.includes('$.event')) {
+        fieldErrors[spec.key] = [...(fieldErrors[spec.key] || []), 'Pre scope cannot reference $.event.*.'];
+      }
+    });
+    if (processorType === 'switch') {
+      const cases = Array.isArray(config.cases) ? config.cases : [];
+      if (cases.length === 0) {
+        nodeErrors.push('Switch must include at least one case.');
+      }
+      if (cases.some((entry: any) => !String(entry.match ?? '').trim())) {
+        nodeErrors.push('All switch cases must include a match value.');
+      }
+    }
+    if (processorType === 'foreach' && !String(config.source ?? '').trim()) {
+      fieldErrors.source = [...(fieldErrors.source || []), 'Source is required.'];
+    }
+    if (processorType === 'if') {
+      if (!String(config.source ?? '').trim()) {
+        fieldErrors.source = [...(fieldErrors.source || []), 'Source is required.'];
+      }
+      if (!String(config.value ?? '').trim()) {
+        fieldErrors.value = [...(fieldErrors.value || []), 'Value is required.'];
+      }
+    }
+    return { fieldErrors, nodeErrors };
+  };
+  const validateFlowNode = (
+    node: FlowNode,
+    lane: 'object' | 'pre' | 'post',
+    map: FlowNodeErrorMap,
+  ) => {
+    if (node.kind === 'if') {
+      const errors: string[] = [];
+      if (!String(node.condition.property || '').trim()) {
+        errors.push('Condition property is required.');
+      }
+      if (!String(node.condition.value || '').trim()) {
+        errors.push('Condition value is required.');
+      }
+      if (lane === 'pre' && (node.condition.property || '').includes('$.event')) {
+        errors.push('Pre scope cannot reference $.event.* in condition property.');
+      }
+      if (lane === 'pre' && (node.condition.value || '').includes('$.event')) {
+        errors.push('Pre scope cannot reference $.event.* in condition value.');
+      }
+      if (errors.length > 0) {
+        map[node.id] = errors;
+      }
+      node.then.forEach((child) => validateFlowNode(child, lane, map));
+      node.else.forEach((child) => validateFlowNode(child, lane, map));
+      return;
+    }
+    const { fieldErrors, nodeErrors } = validateProcessorConfig(node.processorType, node.config || {}, lane);
+    const flatErrors = [
+      ...Object.values(fieldErrors).flat(),
+      ...nodeErrors,
+    ];
+    if (flatErrors.length > 0) {
+      map[node.id] = flatErrors;
+    }
+    if (node.processorType === 'foreach') {
+      const processors = Array.isArray(node.config?.processors) ? node.config.processors : [];
+      processors.forEach((child: FlowNode) => validateFlowNode(child, lane, map));
+    }
+    if (node.processorType === 'switch') {
+      const cases = Array.isArray(node.config?.cases) ? node.config.cases : [];
+      cases.forEach((entry: any) => {
+        const processors = Array.isArray(entry.processors) ? entry.processors : [];
+        processors.forEach((child: FlowNode) => validateFlowNode(child, lane, map));
+      });
+      const defaults = Array.isArray(node.config?.defaultProcessors) ? node.config.defaultProcessors : [];
+      defaults.forEach((child: FlowNode) => validateFlowNode(child, lane, map));
+    }
+  };
+  const validateFlowNodes = (
+    nodes: FlowNode[],
+    lane: 'object' | 'pre' | 'post',
+  ): FlowNodeErrorMap => {
+    const map: FlowNodeErrorMap = {};
+    nodes.forEach((node) => validateFlowNode(node, lane, map));
+    return map;
+  };
     type FocusMatch = { lane: 'object' | 'pre' | 'post'; processor: any };
     const collectFocusMatches = (
       payloads: any[],
@@ -3802,6 +3940,7 @@ export default function App() {
     config: Record<string, any>,
     onConfigChange: (key: string, value: string | boolean) => void,
     context: 'flow' | 'builder',
+    fieldErrors?: Record<string, string[]>,
   ) => (
     (processorConfigSpecs[processorType] || []).map((field) => {
       const isJsonField = field.type === 'json';
@@ -3841,6 +3980,7 @@ export default function App() {
         }
         onConfigChange(valueKey, nextValue);
       };
+      const errors = fieldErrors?.[field.key] || (jsonError ? [jsonError] : []);
       return (
         <div key={field.key} className="processor-row">
           <label className="builder-label">{field.label}</label>
@@ -3931,8 +4071,12 @@ export default function App() {
               </button>
             </div>
           )}
-          {jsonError && (
-            <div className="builder-hint builder-hint-warning">{jsonError}</div>
+          {errors.length > 0 && (
+            <div className="builder-hint builder-hint-warning">
+              {errors.map((message) => (
+                <div key={`${field.key}-${message}`}>{message}</div>
+              ))}
+            </div>
           )}
         </div>
       );
@@ -4776,6 +4920,7 @@ export default function App() {
     setNodes: React.Dispatch<React.SetStateAction<FlowNode[]>>,
     scope: 'object' | 'global',
     lane: 'object' | 'pre' | 'post',
+    nodeErrorsMap?: FlowNodeErrorMap,
   ) => (
     <div
       className="flow-lane"
@@ -4788,7 +4933,7 @@ export default function App() {
       {nodes.map((node) => (
         <div
           key={node.id}
-          className={node.kind === 'if' ? 'flow-node flow-node-if' : 'flow-node'}
+          className={`${node.kind === 'if' ? 'flow-node flow-node-if' : 'flow-node'}${nodeErrorsMap?.[node.id]?.length ? ' flow-node-error' : ''}`}
           draggable
           onDragStart={(event) => {
             const payload = JSON.stringify({
@@ -4802,6 +4947,11 @@ export default function App() {
           <div className="flow-node-header">
             <div className="flow-node-title">{getFlowNodeLabel(node)}</div>
             <div className="flow-node-actions">
+              {nodeErrorsMap?.[node.id]?.length ? (
+                <span className="flow-node-error-badge" title={nodeErrorsMap[node.id].join(' ')}>
+                  {nodeErrorsMap[node.id].length}
+                </span>
+              ) : null}
               <button
                 type="button"
                 className="flow-node-edit"
@@ -4822,11 +4972,25 @@ export default function App() {
             <div className="flow-branches">
               <div className="flow-branch">
                 <div className="flow-branch-title">Then</div>
-                {renderFlowList(node.then, { kind: 'if', id: node.id, branch: 'then' }, setNodes, scope, lane)}
+                {renderFlowList(
+                  node.then,
+                  { kind: 'if', id: node.id, branch: 'then' },
+                  setNodes,
+                  scope,
+                  lane,
+                  nodeErrorsMap,
+                )}
               </div>
               <div className="flow-branch">
                 <div className="flow-branch-title">Else</div>
-                {renderFlowList(node.else, { kind: 'if', id: node.id, branch: 'else' }, setNodes, scope, lane)}
+                {renderFlowList(
+                  node.else,
+                  { kind: 'if', id: node.id, branch: 'else' },
+                  setNodes,
+                  scope,
+                  lane,
+                  nodeErrorsMap,
+                )}
               </div>
             </div>
           )}
@@ -4842,6 +5006,7 @@ export default function App() {
                   setNodes,
                   scope,
                   lane,
+                  nodeErrorsMap,
                 )}
               </div>
             </div>
@@ -4859,6 +5024,7 @@ export default function App() {
                       setNodes,
                       scope,
                       lane,
+                      nodeErrorsMap,
                     )}
                   </div>
                 ))}
@@ -4873,6 +5039,7 @@ export default function App() {
                   setNodes,
                   scope,
                   lane,
+                  nodeErrorsMap,
                 )}
               </div>
             </div>
@@ -5157,6 +5324,25 @@ export default function App() {
     const objectPayloads = buildFlowProcessors(advancedFlow);
     return collectFocusMatches(objectPayloads, advancedFlowFocusTarget, 'object');
   }, [advancedFlowFocusTarget, advancedProcessorScope, advancedFlow, globalPreFlow, globalPostFlow]);
+
+  const flowValidation = useMemo(() => {
+    if (advancedProcessorScope === 'global') {
+      return {
+        pre: validateFlowNodes(globalPreFlow, 'pre'),
+        post: validateFlowNodes(globalPostFlow, 'post'),
+        object: {} as FlowNodeErrorMap,
+      };
+    }
+    return {
+      pre: {} as FlowNodeErrorMap,
+      post: {} as FlowNodeErrorMap,
+      object: validateFlowNodes(advancedFlow, 'object'),
+    };
+  }, [advancedProcessorScope, globalPreFlow, globalPostFlow, advancedFlow]);
+
+  const flowErrorCount = Object.keys(flowValidation.pre).length
+    + Object.keys(flowValidation.post).length
+    + Object.keys(flowValidation.object).length;
 
   const focusedFlowMatch = focusedFlowMatches[advancedFlowFocusIndex] || null;
 
@@ -6185,8 +6371,19 @@ export default function App() {
   const builderTrapVars = builderTarget
     ? (getObjectByPanelKey(builderTarget.panelKey)?.trap?.variables || [])
     : [];
-  const flowEditorJsonErrors = getFlowEditorJsonErrors(flowEditorDraft);
-  const flowEditorArgsError = flowEditorJsonErrors.find((item) => item.field === 'args')?.message || '';
+  const flowEditorLane = flowEditor?.lane || 'object';
+  const flowEditorValidation = flowEditorDraft?.kind === 'processor'
+    ? validateProcessorConfig(flowEditorDraft.processorType, flowEditorDraft.config || {}, flowEditorLane)
+    : flowEditorDraft?.kind === 'if'
+      ? {
+        fieldErrors: {},
+        nodeErrors: validateFlowNodes([flowEditorDraft], flowEditorLane)[flowEditorDraft.id] || [],
+      }
+      : { fieldErrors: {}, nodeErrors: [] };
+  const flowEditorFieldErrors = flowEditorValidation.fieldErrors;
+  const flowEditorNodeErrors = flowEditorValidation.nodeErrors;
+  const flowEditorHasErrors = flowEditorNodeErrors.length > 0
+    || Object.keys(flowEditorFieldErrors).length > 0;
   const focusedFlowJson = focusedFlowMatch
     ? JSON.stringify(focusedFlowMatch.processor, null, 2)
     : '';
@@ -8574,9 +8771,11 @@ export default function App() {
                             ? 'Wireframe: configure global pre/post processors for the file. Drag from the palette into the lanes.'
                             : 'Wireframe: configure object processors. Drag from the palette into the flow lanes.'}
                         </div>
-                        {advancedFlowDirty && (
+                        {(advancedFlowDirty || flowErrorCount > 0) && (
                           <div className="builder-hint builder-hint-warning">
-                            Pending Advanced Flow changes. Save to stage.
+                            {flowErrorCount > 0
+                              ? `Resolve ${flowErrorCount} validation issue(s) before saving.`
+                              : 'Pending Advanced Flow changes. Save to stage.'}
                           </div>
                         )}
                         <div className="flow-modal-body">
@@ -8639,11 +8838,25 @@ export default function App() {
                                 <div className="flow-global-sections">
                                   <div className="flow-global-section">
                                     <div className="flow-global-title">Pre</div>
-                                    {renderFlowList(globalPreFlow, { kind: 'root' }, setGlobalPreFlow, 'global', 'pre')}
+                                    {renderFlowList(
+                                      globalPreFlow,
+                                      { kind: 'root' },
+                                      setGlobalPreFlow,
+                                      'global',
+                                      'pre',
+                                      flowValidation.pre,
+                                    )}
                                   </div>
                                   <div className="flow-global-section">
                                     <div className="flow-global-title">Post</div>
-                                    {renderFlowList(globalPostFlow, { kind: 'root' }, setGlobalPostFlow, 'global', 'post')}
+                                    {renderFlowList(
+                                      globalPostFlow,
+                                      { kind: 'root' },
+                                      setGlobalPostFlow,
+                                      'global',
+                                      'post',
+                                      flowValidation.post,
+                                    )}
                                   </div>
                                 </div>
                                 {renderFlowJsonPreview(JSON.stringify({
@@ -8654,7 +8867,14 @@ export default function App() {
                             ) : (
                               <>
                                 <div className="flow-canvas-title">Flow</div>
-                                {renderFlowList(advancedFlow, { kind: 'root' }, setAdvancedFlow, 'object', 'object')}
+                                {renderFlowList(
+                                  advancedFlow,
+                                  { kind: 'root' },
+                                  setAdvancedFlow,
+                                  'object',
+                                  'object',
+                                  flowValidation.object,
+                                )}
                                 {renderFlowJsonPreview(JSON.stringify(buildFlowProcessors(advancedFlow), null, 2))}
                               </>
                             )}
@@ -8670,7 +8890,7 @@ export default function App() {
                           <button
                             type="button"
                             className="builder-card builder-card-primary"
-                            disabled={!advancedFlowDirty}
+                            disabled={!advancedFlowDirty || flowErrorCount > 0}
                             onClick={saveAdvancedFlow}
                           >
                             Save Changes
@@ -8731,9 +8951,7 @@ export default function App() {
                                   }
                                   : prev)),
                                 'flow',
-                              )}
-                              {flowEditorArgsError && (
-                                <div className="builder-hint builder-hint-warning">{flowEditorArgsError}</div>
+                                flowEditorFieldErrors,
                               )}
                             </div>
                           )}
@@ -8872,6 +9090,12 @@ export default function App() {
                                   },
                                   flowEditor?.scope || 'object',
                                   flowEditor?.lane || 'object',
+                                  validateFlowNodes(
+                                    Array.isArray(flowEditorDraft.config?.processors)
+                                      ? (flowEditorDraft.config?.processors as FlowNode[])
+                                      : [],
+                                    flowEditor?.lane || 'object',
+                                  ),
                                 )}
                               </div>
                             </div>
@@ -9058,16 +9282,11 @@ export default function App() {
                               )}
                             </div>
                           )}
-                        {flowEditorJsonErrors.length > 0 && (
+                        {flowEditorNodeErrors.length > 0 && (
                           <div className="builder-hint builder-hint-warning">
-                            {flowEditorJsonErrors.map((item) => (
-                              <div key={item.field}>{item.message}</div>
+                            {flowEditorNodeErrors.map((item) => (
+                              <div key={item}>{item}</div>
                             ))}
-                          </div>
-                        )}
-                        {isPreGlobalFlow && hasPreScopeEventUsage(flowEditorDraft) && (
-                          <div className="builder-hint builder-hint-warning">
-                            Pre scope cannot reference $.event.*. Remove those paths or move this processor to post.
                           </div>
                         )}
                         <div className="modal-actions">
@@ -9082,18 +9301,12 @@ export default function App() {
                           </button>
                           <button
                             type="button"
-                            disabled={
-                              (isPreGlobalFlow && hasPreScopeEventUsage(flowEditorDraft))
-                              || flowEditorJsonErrors.length > 0
-                            }
+                            disabled={flowEditorHasErrors}
                             onClick={() => {
                               if (!flowEditor || !flowEditorDraft) {
                                 return;
                               }
-                              if (isPreGlobalFlow && hasPreScopeEventUsage(flowEditorDraft)) {
-                                return;
-                              }
-                              if (flowEditorJsonErrors.length > 0) {
+                              if (flowEditorHasErrors) {
                                 return;
                               }
                               const setNodes = flowEditor.setNodesOverride

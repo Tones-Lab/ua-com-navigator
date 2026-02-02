@@ -92,7 +92,7 @@
 	11) date
 - ✅ Processor builder coverage expansion + validation/examples:
 	- Doc: architecture/backlog-processor-builder-coverage.md
-- Advanced Flow validation improvements (lane rules + error hints):
+- ✅ Advanced Flow validation improvements (lane rules + error hints):
 	- Doc: architecture/backlog-advanced-flow-validation.md
 - Staged review usability improvements (object collapse + expand originals):
 	- Doc: architecture/backlog-staged-review-improvements.md
@@ -119,3 +119,6 @@
 - Bulk operations.
 - MIB browser + stub generation.
 - Integrate UA Mib2FCOM tools (MIB browser, stub generation, conversion workflows).
+
+
+Tony Manual Edit - need to add details MIB browser ASAP, that integrates with FCOM and PCOM (to be created).

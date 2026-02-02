@@ -48,3 +48,26 @@ Expand the Processor Builder beyond `set` and `regex` to include additional proc
 ## Risks / Notes
 - Ensure per‑processor config doesn’t conflict with advanced flow builder behavior.
 - Avoid overloading `processorDraft` with fields for unrelated processors; consider per‑type sections.
+
+## Implementation Details (Completed)
+### Shared processor config registry
+- Introduced a shared processor config schema for all processors.
+- Both inline builder and advanced flow editor render from the same config spec.
+
+### Builder coverage expansion
+- Enabled all processors in the builder palette (set/regex + core processors).
+- Added shared payload builder so builder and advanced flow produce identical JSON.
+
+### Nested processors parity
+- Inline builder now supports `foreach` and `switch` nested processors with add/remove and ordering.
+- Nested payloads are built using the same flow serializer as Advanced Flow.
+
+### Review/Save consistency
+- Unified Review/Save UX and summary preview across processors.
+
+## Files Updated
+- [fcom-curator/frontend/src/App.tsx](../fcom-curator/frontend/src/App.tsx)
+- [fcom-curator/frontend/src/App.css](../fcom-curator/frontend/src/App.css)
+
+## Status
+- ✅ Completed in current iteration.

@@ -14,6 +14,28 @@ Add validation for advanced flow lanes (global pre/post, object flows) and clear
   - `hasPreScopeEventUsage()` and pre‑scope detection
 - Styling in [fcom-curator/frontend/src/App.css](../fcom-curator/frontend/src/App.css)
 
+## Implementation Details (Completed)
+### Validation engine
+- Added shared validators that:
+  - Enforce required fields per processor (based on config specs and optional labels).
+  - Validate JSON fields for parse errors.
+  - Block `$.event.*` paths in **global pre** scope across all config values (including JSON blobs).
+  - Validate `switch` cases and require at least one case.
+- Validation walks nested processors in `if`, `foreach`, and `switch` branches.
+
+### UI feedback
+- Flow nodes now render with an error outline and an inline error-count badge.
+- The Advanced Flow modal shows a summary warning and blocks Save when errors exist.
+- The Flow editor modal shows inline field errors and top-level validation hints.
+
+### Shared parity
+- Validation logic and UI state are shared across **object** and **global** advanced flow modals.
+- Only lane context (`pre`/`post`/`object`) changes behavior.
+
+## Files Updated
+- [fcom-curator/frontend/src/App.tsx](../fcom-curator/frontend/src/App.tsx)
+- [fcom-curator/frontend/src/App.css](../fcom-curator/frontend/src/App.css)
+
 ## Recommended Changes
 ### 1) Lane‑specific validation
 - **Files:** [fcom-curator/frontend/src/App.tsx](../fcom-curator/frontend/src/App.tsx)
@@ -36,3 +58,6 @@ Add validation for advanced flow lanes (global pre/post, object flows) and clear
 ## Risks / Notes
 - Avoid breaking existing flows by validating missing optional fields.
 - Keep error list actionable; do not over‑block for optional settings.
+
+## Status
+- ✅ Completed in current iteration.
