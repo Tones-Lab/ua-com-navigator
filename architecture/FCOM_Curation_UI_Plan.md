@@ -69,6 +69,16 @@
         11) date
     *   **UI concept:** Use a right-side Processor drawer (similar to Builder) with Select → Configure → Review steps to avoid crowding the Event panel.
 
+4.  **Advanced Flow (Global + Object) — Persistence & Visibility**
+    *   **Persistence:** Advanced flows are stored as override processors (global pre/post or object-level processors). They are not applied to a field unless explicitly added via Builder → Apply.
+    *   **Commit Flow:** Advanced flow changes create a pending override update and trigger the commit modal. SVN commits only happen after a user confirms a commit message.
+    *   **Visibility in Friendly View:**
+        - Object header shows **Override** and **Advanced Flow** pills when object-level flows exist.
+        - File header shows a **Global Advanced Flow** badge when global pre/post flows exist.
+        - A “Pending Advanced Flow changes” banner appears when edits haven’t been committed.
+    *   **Processor Summary UI:** Field-level processor overrides show a summary tooltip/card (type + key params), with a “View in Advanced Flow” link and optional JSON toggle.
+    *   **Raw JSON Access:** The Advanced Flow modal keeps a JSON preview for power users. Friendly view avoids raw JSON unless explicitly requested.
+
 ---
 
 ## Phase 4: Cross-Environment Management

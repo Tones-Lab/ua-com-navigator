@@ -39,7 +39,7 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { has
   }
 }
 
-function App() {
+export default function App() {
   const { session, isAuthenticated, setSession, setServers, servers, clearSession } = useSessionStore();
   const [serverId, setServerId] = useState<string>('');
   const [authType, setAuthType] = useState<'basic' | 'certificate'>('basic');
@@ -82,20 +82,51 @@ function App() {
     const maxItems = 6;
     const visible = fields.slice(0, maxItems);
     const remaining = fields.length - visible.length;
+    const overrideHoverProps = {
+      onMouseEnter: () => {
+        setSuppressVarTooltip(true);
+        setSuppressEvalTooltip(true);
+      },
+      onMouseLeave: () => {
+        setSuppressVarTooltip(false);
+        setSuppressEvalTooltip(false);
+      },
+      onFocus: () => {
+        setSuppressVarTooltip(true);
+        setSuppressEvalTooltip(true);
+      },
+      onBlur: () => {
+        setSuppressVarTooltip(false);
+        setSuppressEvalTooltip(false);
+      },
+    };
     return (
-      <div className="override-summary-card" role="tooltip">
+      <div className="override-summary-card" role="tooltip" {...overrideHoverProps}>
         <div className="override-summary-title">
           {title}
         </div>
         <ul className="override-summary-list">
           {visible.map((field) => (
             <li key={field} className="override-summary-item">
-              <span className="override-summary-field">{formatEventFieldLabel(field)}</span>
+              <span className="override-summary-field">Original: {formatEventFieldLabel(field)}</span>
               <span className="override-summary-value">
-                {renderValue(
-                  overrideValueMap.get(`$.event.${field}`),
-                  obj?.trap?.variables,
-                )}
+                {(() => {
+                  const originalValue = obj?.event?.[field];
+                  if (originalValue == null) {
+                    return '—';
+                  }
+                  if (typeof originalValue === 'object' && typeof originalValue.eval === 'string') {
+                    return renderHighlightedText(originalValue.eval);
+                  }
+                  if (typeof originalValue === 'string' || typeof originalValue === 'number' || typeof originalValue === 'boolean') {
+                    return renderHighlightedText(String(originalValue));
+                  }
+                  try {
+                    return renderHighlightedText(JSON.stringify(originalValue));
+                  } catch {
+                    return '—';
+                  }
+                })()}
               </span>
             </li>
           ))}
@@ -186,6 +217,16 @@ function App() {
   const [viewMode, setViewMode] = useState<'friendly' | 'preview'>('preview');
   const [originalText, setOriginalText] = useState('');
   const [showCommitModal, setShowCommitModal] = useState(false);
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [reviewStep, setReviewStep] = useState<'review' | 'commit'>('review');
+  const [suppressVarTooltip, setSuppressVarTooltip] = useState(false);
+  const [suppressEvalTooltip, setSuppressEvalTooltip] = useState(false);
+  const [stagedToast, setStagedToast] = useState<string | null>(null);
+  const [reviewCtaPulse, setReviewCtaPulse] = useState(false);
+  const [toastPulseAfter, setToastPulseAfter] = useState(false);
+  const [expandedOriginals, setExpandedOriginals] = useState<Record<string, boolean>>({});
+  const toastTimeoutRef = useRef<number | null>(null);
+  const pulseTimeoutRef = useRef<number | null>(null);
   const [saveElapsed, setSaveElapsed] = useState(0);
   const [pendingNav, setPendingNav] = useState<null | (() => void)>(null);
   const [showSchemaModal, setShowSchemaModal] = useState(false);
@@ -244,12 +285,25 @@ function App() {
   const [builderTypeLocked, setBuilderTypeLocked] = useState<'eval' | 'processor' | 'literal' | null>(null);
   const [builderMode, setBuilderMode] = useState<'friendly' | 'regular'>('friendly');
   const [showBuilderHelpModal, setShowBuilderHelpModal] = useState(false);
+  const [pendingCancel, setPendingCancel] = useState<null | { type: 'panel' | 'builder'; panelKey?: string }>(null);
   const [processorStep, setProcessorStep] = useState<'select' | 'configure' | 'review'>('select');
   const [processorType, setProcessorType] = useState<string | null>(null);
   const [showProcessorJson, setShowProcessorJson] = useState(true);
   const [showAdvancedProcessorModal, setShowAdvancedProcessorModal] = useState(false);
   const [advancedProcessorSearch, setAdvancedProcessorSearch] = useState('');
   const [advancedProcessorScope, setAdvancedProcessorScope] = useState<'object' | 'global'>('object');
+  const [advancedFlowTarget, setAdvancedFlowTarget] = useState<{
+    scope: 'object' | 'global';
+    objectName?: string;
+    method?: string;
+  } | null>(null);
+  const [advancedFlowBaseline, setAdvancedFlowBaseline] = useState<{
+    scope: 'object' | 'global';
+    objectName?: string;
+    pre?: string;
+    post?: string;
+    object?: string;
+  } | null>(null);
   const [processorTooltip, setProcessorTooltip] = useState<{
     title: string;
     description: string;
@@ -307,12 +361,15 @@ function App() {
     | { kind: 'if'; id: string; branch: 'then' | 'else' }
     | { kind: 'foreach'; id: string; branch: 'processors' }
     | { kind: 'switch'; id: string; branch: 'case' | 'default'; caseId?: string };
-  const [processorDraft, setProcessorDraft] = useState({
-    sourceType: 'literal' as 'literal' | 'path',
+  const [builderProcessorConfig, setBuilderProcessorConfig] = useState<Record<string, any>>({
+    sourceType: 'literal',
     source: '',
     pattern: '',
     targetField: '',
   });
+  const [builderNestedAddType, setBuilderNestedAddType] = useState('set');
+  const [builderSwitchCaseAddType, setBuilderSwitchCaseAddType] = useState<Record<string, string>>({});
+  const [builderSwitchDefaultAddType, setBuilderSwitchDefaultAddType] = useState('set');
   const builderIdRef = useRef(0);
   const switchCaseIdRef = useRef(0);
   const nextBuilderId = () => {
@@ -341,306 +398,19 @@ function App() {
         },
       };
     }
-    if (payload.processorType === 'set') {
+    if (payload.processorType) {
       return {
         id: nextFlowId(),
         kind: 'processor',
-        processorType: 'set',
-        config: {
-          sourceType: 'literal',
-          source: '',
-          targetField: '$.event.Field',
-        },
-      };
-    }
-    if (payload.processorType === 'regex') {
-      return {
-        id: nextFlowId(),
-        kind: 'processor',
-        processorType: 'regex',
-        config: {
-          source: '$.event.Summary',
-          pattern: '',
-          targetField: '$.event.Field',
-        },
-      };
-    }
-    if (payload.processorType === 'append') {
-      return {
-        id: nextFlowId(),
-        kind: 'processor',
-        processorType: 'append',
-        config: {
-          source: 'Example Value',
-          arrayText: '[]',
-          targetField: '$.event.NewArray',
-        },
-      };
-    }
-    if (payload.processorType === 'appendToOutputStream') {
-      return {
-        id: nextFlowId(),
-        kind: 'processor',
-        processorType: 'appendToOutputStream',
-        config: {
-          source: '$.trap',
-          output: 'pulsar+ssl:///assure1/event/sink',
-        },
-      };
-    }
-    if (payload.processorType === 'break') {
-      return {
-        id: nextFlowId(),
-        kind: 'processor',
-        processorType: 'break',
-        config: {},
-      };
-    }
-    if (payload.processorType === 'convert') {
-      return {
-        id: nextFlowId(),
-        kind: 'processor',
-        processorType: 'convert',
-        config: {
-          source: '$.event.Count',
-          type: 'inttostring',
-          targetField: '$.event.CountString',
-        },
-      };
-    }
-    if (payload.processorType === 'copy') {
-      return {
-        id: nextFlowId(),
-        kind: 'processor',
-        processorType: 'copy',
-        config: {
-          source: '$.event.Count',
-          targetField: '$.event.CopiedCount',
-        },
-      };
-    }
-    if (payload.processorType === 'discard') {
-      return {
-        id: nextFlowId(),
-        kind: 'processor',
-        processorType: 'discard',
-        config: {},
-      };
-    }
-    if (payload.processorType === 'eval') {
-      return {
-        id: nextFlowId(),
-        kind: 'processor',
-        processorType: 'eval',
-        config: {
-          source: '$.event.Count',
-          targetField: '$.localmem.evalResult',
-        },
-      };
-    }
-    if (payload.processorType === 'foreach') {
-      return {
-        id: nextFlowId(),
-        kind: 'processor',
-        processorType: 'foreach',
-        config: {
-          source: '$.event.Details.trap.variables',
-          keyVal: 'i',
-          valField: 'v',
-          processors: [],
-        },
-      };
-    }
-    if (payload.processorType === 'grok') {
-      return {
-        id: nextFlowId(),
-        kind: 'processor',
-        processorType: 'grok',
-        config: {
-          source: '$.syslog.datagram',
-          pattern: '%LINK-5-CHANGED: Interface %{VALUE:interface}, changed state to %{VALUE:status}',
-          targetField: '$.syslog.variables',
-        },
-      };
-    }
-    if (payload.processorType === 'json') {
-      return {
-        id: nextFlowId(),
-        kind: 'processor',
-        processorType: 'json',
-        config: {
-          source: '{"key":"value"}',
-          targetField: '$.localmem.json',
-        },
-      };
-    }
-    if (payload.processorType === 'log') {
-      return {
-        id: nextFlowId(),
-        kind: 'processor',
-        processorType: 'log',
-        config: {
-          type: 'info',
-          source: 'Log message',
-        },
-      };
-    }
-    if (payload.processorType === 'lookup') {
-      return {
-        id: nextFlowId(),
-        kind: 'processor',
-        processorType: 'lookup',
-        config: {
-          source: 'db',
-          propertiesText: '{}',
-          fallbackText: '{}',
-          targetField: '$.localmem.results',
-        },
-      };
-    }
-    if (payload.processorType === 'math') {
-      return {
-        id: nextFlowId(),
-        kind: 'processor',
-        processorType: 'math',
-        config: {
-          source: '$.event.Count',
-          operation: '*',
-          value: '2',
-          targetField: '$.localmem.CountTimesTwo',
-        },
-      };
-    }
-    if (payload.processorType === 'remove') {
-      return {
-        id: nextFlowId(),
-        kind: 'processor',
-        processorType: 'remove',
-        config: {
-          source: '$.trap.timeTicks',
-        },
-      };
-    }
-    if (payload.processorType === 'rename') {
-      return {
-        id: nextFlowId(),
-        kind: 'processor',
-        processorType: 'rename',
-        config: {
-          source: '$.event.Details',
-          targetField: '$.event.DetailsOld',
-        },
-      };
-    }
-    if (payload.processorType === 'replace') {
-      return {
-        id: nextFlowId(),
-        kind: 'processor',
-        processorType: 'replace',
-        config: {
-          source: 'This is a test',
-          pattern: 'a test',
-          replacement: 'not a test',
-          targetField: '$.localmem.example',
-          regex: false,
-        },
-      };
-    }
-    if (payload.processorType === 'setOutputStream') {
-      return {
-        id: nextFlowId(),
-        kind: 'processor',
-        processorType: 'setOutputStream',
-        config: {
-          output: 'pulsar+ssl:///assure1/event/sink',
-        },
-      };
-    }
-    if (payload.processorType === 'sort') {
-      return {
-        id: nextFlowId(),
-        kind: 'processor',
-        processorType: 'sort',
-        config: {
-          source: '$.trap.variables[0]',
-          targetField: '$.trap.sortedVariables',
-        },
-      };
-    }
-    if (payload.processorType === 'split') {
-      return {
-        id: nextFlowId(),
-        kind: 'processor',
-        processorType: 'split',
-        config: {
-          source: '1,2,3,4',
-          delimiter: ',',
-          targetField: '$.localmem.splitarr',
-        },
-      };
-    }
-    if (payload.processorType === 'strcase') {
-      return {
-        id: nextFlowId(),
-        kind: 'processor',
-        processorType: 'strcase',
-        config: {
-          source: 'HELLO, WORLD',
-          type: 'lower',
-          targetField: '$.localmem.lowercase',
-        },
-      };
-    }
-    if (payload.processorType === 'substr') {
-      return {
-        id: nextFlowId(),
-        kind: 'processor',
-        processorType: 'substr',
-        config: {
-          source: 'Hello',
-          start: '1',
-          end: '',
-          targetField: '$.localmem.substr',
-        },
-      };
-    }
-    if (payload.processorType === 'switch') {
-      return {
-        id: nextFlowId(),
-        kind: 'processor',
-        processorType: 'switch',
-        config: {
-          source: '$.localmem.val1',
-          operator: '!=',
-          cases: [
-            {
-              id: nextSwitchCaseId(),
-              match: '2',
-              operator: '!=',
-              processors: [],
-            },
-          ],
-          defaultProcessors: [],
-        },
-      };
-    }
-    if (payload.processorType === 'trim') {
-      return {
-        id: nextFlowId(),
-        kind: 'processor',
-        processorType: 'trim',
-        config: {
-          source: 'Hello',
-          cutset: 'H',
-          targetField: '$.localmem.trim',
-        },
+        processorType: payload.processorType,
+        config: getDefaultProcessorConfig(payload.processorType, '$.event.Field'),
       };
     }
     return {
       id: nextFlowId(),
       kind: 'processor',
-      processorType: payload.processorType || 'set',
-      config: {},
+      processorType: 'set',
+      config: getDefaultProcessorConfig('set', '$.event.Field'),
     };
   };
   const updateBranchInFlow = (
@@ -951,6 +721,258 @@ function App() {
     }
   };
 
+  const buildProcessorPayloadFromConfig = (
+    processorType: string,
+    config: Record<string, any>,
+    buildNested?: (nodes: FlowNode[]) => any[],
+  ): any => {
+    if (processorType === 'set') {
+      const sourceValue = config.sourceType === 'path'
+        ? normalizeSourcePath(String(config.source || ''))
+        : config.source;
+      let argsValue: any[] | undefined;
+      if (typeof config.argsText === 'string' && config.argsText.trim()) {
+        try {
+          const parsed = JSON.parse(config.argsText);
+          if (Array.isArray(parsed)) {
+            argsValue = parsed;
+          }
+        } catch {
+          argsValue = undefined;
+        }
+      }
+      return {
+        set: {
+          source: sourceValue,
+          ...(argsValue ? { args: argsValue } : {}),
+          targetField: config.targetField || '',
+        },
+      };
+    }
+    if (processorType === 'regex') {
+      const sourceValue = config.sourceType === 'literal'
+        ? String(config.source || '')
+        : normalizeSourcePath(String(config.source || ''));
+      const groupNumber = Number(config.group);
+      const hasGroup = Number.isFinite(groupNumber) && String(config.group).trim() !== '';
+      return {
+        regex: {
+          source: sourceValue,
+          pattern: config.pattern || '',
+          ...(hasGroup ? { group: groupNumber } : {}),
+          targetField: config.targetField || '',
+        },
+      };
+    }
+    if (processorType === 'append') {
+      return {
+        append: {
+          source: config.source ?? '',
+          array: parseJsonValue(config.arrayText, [] as any[]),
+          targetField: config.targetField ?? '',
+        },
+      };
+    }
+    if (processorType === 'appendToOutputStream') {
+      return {
+        appendToOutputStream: {
+          source: config.source ?? '',
+          output: config.output ?? '',
+        },
+      };
+    }
+    if (processorType === 'break') {
+      return { break: {} };
+    }
+    if (processorType === 'convert') {
+      return {
+        convert: {
+          source: config.source ?? '',
+          type: config.type ?? '',
+          targetField: config.targetField ?? '',
+        },
+      };
+    }
+    if (processorType === 'copy') {
+      return {
+        copy: {
+          source: config.source ?? '',
+          targetField: config.targetField ?? '',
+        },
+      };
+    }
+    if (processorType === 'discard') {
+      return { discard: {} };
+    }
+    if (processorType === 'eval') {
+      return {
+        eval: {
+          source: config.source ?? '',
+          ...(config.targetField ? { targetField: config.targetField } : {}),
+        },
+      };
+    }
+    if (processorType === 'foreach') {
+      const nestedNodes = Array.isArray(config.processors)
+        ? config.processors
+        : [];
+      return {
+        foreach: {
+          source: config.source ?? '',
+          ...(config.keyVal ? { keyVal: config.keyVal } : {}),
+          ...(config.valField ? { valField: config.valField } : {}),
+          processors: buildNested ? buildNested(nestedNodes) : nestedNodes,
+        },
+      };
+    }
+    if (processorType === 'grok') {
+      return {
+        grok: {
+          source: config.source ?? '',
+          pattern: config.pattern ?? '',
+          targetField: config.targetField ?? '',
+        },
+      };
+    }
+    if (processorType === 'json') {
+      return {
+        json: {
+          source: config.source ?? '',
+          targetField: config.targetField ?? '',
+        },
+      };
+    }
+    if (processorType === 'log') {
+      return {
+        log: {
+          type: config.type ?? '',
+          source: config.source ?? '',
+        },
+      };
+    }
+    if (processorType === 'lookup') {
+      return {
+        lookup: {
+          source: config.source ?? '',
+          properties: parseJsonValue(config.propertiesText, {}),
+          fallback: parseJsonValue(config.fallbackText, {}),
+          targetField: config.targetField ?? '',
+        },
+      };
+    }
+    if (processorType === 'math') {
+      return {
+        math: {
+          source: config.source ?? '',
+          operation: config.operation ?? '',
+          value: config.value ?? '',
+          targetField: config.targetField ?? '',
+        },
+      };
+    }
+    if (processorType === 'remove') {
+      return {
+        remove: {
+          source: config.source ?? '',
+        },
+      };
+    }
+    if (processorType === 'rename') {
+      return {
+        rename: {
+          source: config.source ?? '',
+          targetField: config.targetField ?? '',
+        },
+      };
+    }
+    if (processorType === 'replace') {
+      return {
+        replace: {
+          source: config.source ?? '',
+          pattern: config.pattern ?? '',
+          replacement: config.replacement ?? '',
+          ...(typeof config.regex === 'boolean' ? { regex: config.regex } : {}),
+          targetField: config.targetField ?? '',
+        },
+      };
+    }
+    if (processorType === 'setOutputStream') {
+      return {
+        setOutputStream: {
+          output: config.output ?? '',
+        },
+      };
+    }
+    if (processorType === 'sort') {
+      return {
+        sort: {
+          source: config.source ?? '',
+          targetField: config.targetField ?? '',
+        },
+      };
+    }
+    if (processorType === 'split') {
+      return {
+        split: {
+          source: config.source ?? '',
+          delimiter: config.delimiter ?? '',
+          targetField: config.targetField ?? '',
+        },
+      };
+    }
+    if (processorType === 'strcase') {
+      return {
+        strcase: {
+          source: config.source ?? '',
+          type: config.type ?? '',
+          targetField: config.targetField ?? '',
+        },
+      };
+    }
+    if (processorType === 'substr') {
+      const startValue = config.start ?? '';
+      const endValue = config.end ?? '';
+      return {
+        substr: {
+          source: config.source ?? '',
+          ...(String(startValue).trim() ? { start: Number(startValue) } : {}),
+          ...(String(endValue).trim() ? { end: Number(endValue) } : {}),
+          targetField: config.targetField ?? '',
+        },
+      };
+    }
+    if (processorType === 'switch') {
+      const cases = Array.isArray(config.cases) ? config.cases : [];
+      const defaultProcessors = Array.isArray(config.defaultProcessors)
+        ? config.defaultProcessors
+        : [];
+      return {
+        switch: {
+          source: config.source ?? '',
+          operator: config.operator ?? '',
+          case: cases.map((item: any) => ({
+            match: item.match ?? '',
+            ...(item.operator ? { operator: item.operator } : {}),
+            then: buildNested ? buildNested(Array.isArray(item.processors) ? item.processors : []) : [],
+          })),
+          default: buildNested ? buildNested(defaultProcessors) : [],
+        },
+      };
+    }
+    if (processorType === 'trim') {
+      return {
+        trim: {
+          source: config.source ?? '',
+          ...(config.cutset ? { cutset: config.cutset } : {}),
+          targetField: config.targetField ?? '',
+        },
+      };
+    }
+    return {
+      [processorType]: config || {},
+    };
+  };
+
   const buildFlowProcessor = (node: FlowNode): any => {
     if (node.kind === 'if') {
       return {
@@ -963,251 +985,68 @@ function App() {
         },
       };
     }
-    if (node.processorType === 'set') {
-      const sourceValue = node.config?.sourceType === 'path'
-        ? normalizeSourcePath(String(node.config?.source || ''))
-        : node.config?.source;
-      let argsValue: any[] | undefined;
-      if (typeof node.config?.argsText === 'string' && node.config.argsText.trim()) {
-        try {
-          const parsed = JSON.parse(node.config.argsText);
-          if (Array.isArray(parsed)) {
-            argsValue = parsed;
-          }
-        } catch {
-          argsValue = undefined;
-        }
-      }
-      return {
-        set: {
-          source: sourceValue,
-          ...(argsValue ? { args: argsValue } : {}),
-          targetField: node.config?.targetField || '',
-        },
-      };
-    }
-    if (node.processorType === 'regex') {
-      const sourceValue = normalizeSourcePath(String(node.config?.source || ''));
-      const groupNumber = Number(node.config?.group);
-      const hasGroup = Number.isFinite(groupNumber) && String(node.config?.group).trim() !== '';
-      return {
-        regex: {
-          source: sourceValue,
-          pattern: node.config?.pattern || '',
-          ...(hasGroup ? { group: groupNumber } : {}),
-          targetField: node.config?.targetField || '',
-        },
-      };
-    }
-    if (node.processorType === 'append') {
-      return {
-        append: {
-          source: node.config?.source ?? '',
-          array: parseJsonValue(node.config?.arrayText, [] as any[]),
-          targetField: node.config?.targetField ?? '',
-        },
-      };
-    }
-    if (node.processorType === 'appendToOutputStream') {
-      return {
-        appendToOutputStream: {
-          source: node.config?.source ?? '',
-          output: node.config?.output ?? '',
-        },
-      };
-    }
-    if (node.processorType === 'break') {
-      return { break: {} };
-    }
-    if (node.processorType === 'convert') {
-      return {
-        convert: {
-          source: node.config?.source ?? '',
-          type: node.config?.type ?? '',
-          targetField: node.config?.targetField ?? '',
-        },
-      };
-    }
-    if (node.processorType === 'copy') {
-      return {
-        copy: {
-          source: node.config?.source ?? '',
-          targetField: node.config?.targetField ?? '',
-        },
-      };
-    }
-    if (node.processorType === 'discard') {
-      return { discard: {} };
-    }
-    if (node.processorType === 'eval') {
-      return {
-        eval: {
-          source: node.config?.source ?? '',
-          ...(node.config?.targetField ? { targetField: node.config?.targetField } : {}),
-        },
-      };
-    }
-    if (node.processorType === 'foreach') {
-      const nestedNodes = Array.isArray(node.config?.processors)
-        ? node.config.processors
-        : [];
-      return {
-        foreach: {
-          source: node.config?.source ?? '',
-          ...(node.config?.keyVal ? { keyVal: node.config.keyVal } : {}),
-          ...(node.config?.valField ? { valField: node.config.valField } : {}),
-          processors: buildFlowProcessors(nestedNodes),
-        },
-      };
-    }
-    if (node.processorType === 'grok') {
-      return {
-        grok: {
-          source: node.config?.source ?? '',
-          pattern: node.config?.pattern ?? '',
-          targetField: node.config?.targetField ?? '',
-        },
-      };
-    }
-    if (node.processorType === 'json') {
-      return {
-        json: {
-          source: node.config?.source ?? '',
-          targetField: node.config?.targetField ?? '',
-        },
-      };
-    }
-    if (node.processorType === 'log') {
-      return {
-        log: {
-          type: node.config?.type ?? '',
-          source: node.config?.source ?? '',
-        },
-      };
-    }
-    if (node.processorType === 'lookup') {
-      return {
-        lookup: {
-          source: node.config?.source ?? '',
-          properties: parseJsonValue(node.config?.propertiesText, {}),
-          fallback: parseJsonValue(node.config?.fallbackText, {}),
-          targetField: node.config?.targetField ?? '',
-        },
-      };
-    }
-    if (node.processorType === 'math') {
-      return {
-        math: {
-          source: node.config?.source ?? '',
-          operation: node.config?.operation ?? '',
-          value: node.config?.value ?? '',
-          targetField: node.config?.targetField ?? '',
-        },
-      };
-    }
-    if (node.processorType === 'remove') {
-      return {
-        remove: {
-          source: node.config?.source ?? '',
-        },
-      };
-    }
-    if (node.processorType === 'rename') {
-      return {
-        rename: {
-          source: node.config?.source ?? '',
-          targetField: node.config?.targetField ?? '',
-        },
-      };
-    }
-    if (node.processorType === 'replace') {
-      return {
-        replace: {
-          source: node.config?.source ?? '',
-          pattern: node.config?.pattern ?? '',
-          replacement: node.config?.replacement ?? '',
-          ...(typeof node.config?.regex === 'boolean' ? { regex: node.config.regex } : {}),
-          targetField: node.config?.targetField ?? '',
-        },
-      };
-    }
-    if (node.processorType === 'setOutputStream') {
-      return {
-        setOutputStream: {
-          output: node.config?.output ?? '',
-        },
-      };
-    }
-    if (node.processorType === 'sort') {
-      return {
-        sort: {
-          source: node.config?.source ?? '',
-          targetField: node.config?.targetField ?? '',
-        },
-      };
-    }
-    if (node.processorType === 'split') {
-      return {
-        split: {
-          source: node.config?.source ?? '',
-          delimiter: node.config?.delimiter ?? '',
-          targetField: node.config?.targetField ?? '',
-        },
-      };
-    }
-    if (node.processorType === 'strcase') {
-      return {
-        strcase: {
-          source: node.config?.source ?? '',
-          type: node.config?.type ?? '',
-          targetField: node.config?.targetField ?? '',
-        },
-      };
-    }
-    if (node.processorType === 'substr') {
-      const startValue = node.config?.start ?? '';
-      const endValue = node.config?.end ?? '';
-      return {
-        substr: {
-          source: node.config?.source ?? '',
-          ...(String(startValue).trim() ? { start: Number(startValue) } : {}),
-          ...(String(endValue).trim() ? { end: Number(endValue) } : {}),
-          targetField: node.config?.targetField ?? '',
-        },
-      };
-    }
-    if (node.processorType === 'switch') {
-      const cases = Array.isArray(node.config?.cases) ? node.config.cases : [];
-      const defaultProcessors = Array.isArray(node.config?.defaultProcessors)
-        ? node.config.defaultProcessors
-        : [];
-      return {
-        switch: {
-          source: node.config?.source ?? '',
-          operator: node.config?.operator ?? '',
-          case: cases.map((item: any) => ({
-            match: item.match ?? '',
-            ...(item.operator ? { operator: item.operator } : {}),
-            then: buildFlowProcessors(Array.isArray(item.processors) ? item.processors : []),
-          })),
-          default: buildFlowProcessors(defaultProcessors),
-        },
-      };
-    }
-    if (node.processorType === 'trim') {
-      return {
-        trim: {
-          source: node.config?.source ?? '',
-          ...(node.config?.cutset ? { cutset: node.config.cutset } : {}),
-          targetField: node.config?.targetField ?? '',
-        },
-      };
-    }
-    return {
-      [node.processorType]: node.config || {},
-    };
+    return buildProcessorPayloadFromConfig(
+      node.processorType,
+      node.config || {},
+      buildFlowProcessors,
+    );
   };
+  const [advancedFlowFocusTarget, setAdvancedFlowFocusTarget] = useState<string | null>(null);
+  const [advancedFlowFocusIndex, setAdvancedFlowFocusIndex] = useState(0);
+  const [advancedFlowFocusOnly, setAdvancedFlowFocusOnly] = useState(false);
+  const advancedFlowHighlightRef = useRef<HTMLSpanElement | null>(null);
   const buildFlowProcessors = (nodes: FlowNode[]) => nodes.map(buildFlowProcessor);
+    type FocusMatch = { lane: 'object' | 'pre' | 'post'; processor: any };
+    const collectFocusMatches = (
+      payloads: any[],
+      targetField: string,
+      lane: FocusMatch['lane'],
+    ) => {
+      const matches: FocusMatch[] = [];
+      const walk = (items: any[]) => {
+        (items || []).forEach((item) => {
+          if (!item || typeof item !== 'object') {
+            return;
+          }
+          if (item.if) {
+            walk(Array.isArray(item.if.processors) ? item.if.processors : []);
+            walk(Array.isArray(item.if.else) ? item.if.else : []);
+            return;
+          }
+          if (item.foreach?.processors) {
+            walk(Array.isArray(item.foreach.processors) ? item.foreach.processors : []);
+          }
+          if (Array.isArray(item.switch?.case)) {
+            item.switch.case.forEach((entry: any) => (
+              walk(Array.isArray(entry.then) ? entry.then : [])
+            ));
+          }
+          if (Array.isArray(item.switch?.default)) {
+            walk(item.switch.default);
+          }
+          if (getProcessorTargetField(item) === targetField) {
+            matches.push({ lane, processor: item });
+          }
+        });
+      };
+      walk(payloads);
+      return matches;
+    };
+    const renderJsonWithFocus = (jsonString: string, focusJson?: string) => {
+      if (!focusJson || !jsonString.includes(focusJson)) {
+        return <pre className="code-block">{jsonString}</pre>;
+      }
+      const index = jsonString.indexOf(focusJson);
+      const before = jsonString.slice(0, index);
+      const after = jsonString.slice(index + focusJson.length);
+      return (
+        <pre className="code-block">
+          {before}
+          <span ref={advancedFlowHighlightRef} className="code-highlight">{focusJson}</span>
+          {after}
+        </pre>
+      );
+    };
   const createConditionNode = (): ConditionNode => ({
     id: nextBuilderId(),
     type: 'condition',
@@ -1342,12 +1181,42 @@ function App() {
     'permissions.rule.Rules.update',
   ];
 
-  const flowProcessorConfigSpecs: Record<string, Array<{
+  const processorConfigSpecs: Record<string, Array<{
     key: string;
     label: string;
-    type: 'text' | 'json' | 'boolean';
+    type: 'text' | 'json' | 'boolean' | 'select';
     placeholder?: string;
+    options?: Array<{ label: string; value: string }>;
   }>> = {
+    set: [
+      {
+        key: 'sourceType',
+        label: 'Interpret as',
+        type: 'select',
+        options: [
+          { label: 'Literal', value: 'literal' },
+          { label: 'Path', value: 'path' },
+        ],
+      },
+      { key: 'source', label: 'Source', type: 'text', placeholder: '$.event.Node' },
+      { key: 'targetField', label: 'Target', type: 'text', placeholder: '$.event.NewField' },
+      { key: 'args', label: 'Args (JSON array, optional)', type: 'json', placeholder: '[]' },
+    ],
+    regex: [
+      {
+        key: 'sourceType',
+        label: 'Interpret as',
+        type: 'select',
+        options: [
+          { label: 'Literal', value: 'literal' },
+          { label: 'Path', value: 'path' },
+        ],
+      },
+      { key: 'source', label: 'Source', type: 'text', placeholder: '$.event.Summary' },
+      { key: 'pattern', label: 'Pattern', type: 'text', placeholder: '(.*)' },
+      { key: 'group', label: 'Group (optional)', type: 'text', placeholder: '1' },
+      { key: 'targetField', label: 'Target', type: 'text', placeholder: '$.event.Matched' },
+    ],
     append: [
       { key: 'source', label: 'Source', type: 'text', placeholder: 'Example Value' },
       { key: 'array', label: 'Array (JSON)', type: 'json', placeholder: '[]' },
@@ -1455,7 +1324,7 @@ function App() {
       return [] as Array<{ field: string; message: string }>;
     }
     const errors: Array<{ field: string; message: string }> = [];
-    const specs = flowProcessorConfigSpecs[draft.processorType] || [];
+    const specs = processorConfigSpecs[draft.processorType] || [];
     specs.forEach((spec) => {
       if (spec.type !== 'json') {
         return;
@@ -1608,11 +1477,42 @@ function App() {
     return () => window.clearInterval(interval);
   }, [saveLoading]);
   useEffect(() => {
+    if (!stagedToast) {
+      return;
+    }
+    if (toastTimeoutRef.current) {
+      window.clearTimeout(toastTimeoutRef.current);
+    }
+    if (pulseTimeoutRef.current) {
+      window.clearTimeout(pulseTimeoutRef.current);
+    }
+    toastTimeoutRef.current = window.setTimeout(() => {
+      setStagedToast(null);
+      if (toastPulseAfter) {
+        setReviewCtaPulse(true);
+        pulseTimeoutRef.current = window.setTimeout(() => {
+          setReviewCtaPulse(false);
+        }, 1400);
+        setToastPulseAfter(false);
+      }
+    }, 4500);
+    return () => {
+      if (toastTimeoutRef.current) {
+        window.clearTimeout(toastTimeoutRef.current);
+      }
+    };
+  }, [stagedToast, toastPulseAfter]);
+  useEffect(() => {
     if (showFieldReferenceModal || eventFieldPickerOpen) {
       ensureEventsSchema();
     }
   }, [showFieldReferenceModal, eventFieldPickerOpen]);
   const isAnyPanelEditing = Object.values(panelEditState).some(Boolean);
+
+  const triggerToast = (message: string, pulse = false) => {
+    setStagedToast(message);
+    setToastPulseAfter(pulse);
+  };
 
   const togglePanelEdit = (key: string) => {
     setPanelEditState((prev) => ({
@@ -1623,15 +1523,21 @@ function App() {
 
   const updateBuilderDraftField = (field: string, value: string) => {
     if (field === 'processorSource') {
-      setProcessorDraft((prev) => ({
+      setBuilderProcessorConfig((prev) => ({
         ...prev,
         source: value,
       }));
     }
     if (field === 'processorTarget') {
-      setProcessorDraft((prev) => ({
+      setBuilderProcessorConfig((prev) => ({
         ...prev,
         targetField: value,
+      }));
+    }
+    if (field === 'processorPattern') {
+      setBuilderProcessorConfig((prev) => ({
+        ...prev,
+        pattern: value,
       }));
     }
   };
@@ -1641,9 +1547,13 @@ function App() {
     cursorIndex: number | null,
     inputType?: string,
   ) => {
-    setProcessorDraft((prev) => ({
+    const inferredType = value.trim().startsWith('$.') ? 'path' : 'literal';
+    setBuilderProcessorConfig((prev) => ({
       ...prev,
       source: value,
+      ...(processorType && ['set', 'regex'].includes(processorType)
+        ? { sourceType: inferredType }
+        : {}),
     }));
     if (!builderTarget) {
       return;
@@ -1688,7 +1598,7 @@ function App() {
     cursorIndex: number | null,
     inputType?: string,
   ) => {
-    setProcessorDraft((prev) => ({
+    setBuilderProcessorConfig((prev) => ({
       ...prev,
       targetField: value,
     }));
@@ -2104,6 +2014,10 @@ function App() {
       setPanelNavWarning({ open: true, fields: dirtyMap });
       return false;
     }
+    if (hasStagedChanges) {
+      setPendingNav(() => action);
+      return false;
+    }
     action();
     return true;
   };
@@ -2481,6 +2395,7 @@ function App() {
       const commit = message.trim();
       const resp = await api.saveFile(selectedFile.PathID, content, etag, commit);
       setSaveSuccess('Saved successfully');
+      triggerToast(`File saved: ${formatDisplayPath(selectedFile.PathID)}`);
       setOriginalText(editorText);
       const refreshed = await api.readFile(selectedFile.PathID);
       setFileData(refreshed.data);
@@ -2520,6 +2435,7 @@ function App() {
       const resp = await api.saveOverrides(selectedFile.PathID, pendingOverrideSave, message.trim());
       setOverrideInfo(resp.data);
       setSaveSuccess('Overrides saved. Restart FCOM Processor required.');
+      triggerToast(`Overrides committed for ${formatDisplayPath(selectedFile.PathID)} (restart required)`);
       setPanelEditState({});
       setPanelDrafts({});
       setPanelOverrideRemovals({});
@@ -2555,8 +2471,16 @@ function App() {
     return [];
   };
 
+  const getBaseOverrides = () => (
+    Array.isArray(overrideInfo?.overrides) ? overrideInfo.overrides : []
+  );
+
+  const getWorkingOverrides = () => (
+    pendingOverrideSave || getBaseOverrides()
+  );
+
   const overrideIndex = useMemo(() => {
-    const entries = Array.isArray(overrideInfo?.overrides) ? overrideInfo.overrides : [];
+    const entries = getWorkingOverrides();
     const map = new Map<string, any[]>();
     entries.forEach((overrideEntry: any) => {
       const name = overrideEntry?.['@objectName'];
@@ -2568,7 +2492,109 @@ function App() {
       map.set(name, list);
     });
     return map;
-  }, [overrideInfo]);
+  }, [overrideInfo, pendingOverrideSave]);
+
+  const getOverrideMethod = () => (
+    overrideInfo?.method
+    || (String(selectedFile?.PathID || '').includes('/syslog/') ? 'syslog' : 'trap')
+  );
+
+  const getOverrideEntries = () => getWorkingOverrides();
+
+  const getOverrideEntry = (params: { objectName?: string; scope: 'pre' | 'post'; method: string }) => (
+    getOverrideEntries().find((entry: any) => (
+      entry?.scope === params.scope
+      && entry?.method === params.method
+      && (params.objectName
+        ? entry?.['@objectName'] === params.objectName
+        : !entry?.['@objectName'])
+    ))
+  );
+
+  const buildFlowNodesFromProcessors = (processors: any[]): FlowNode[] => {
+    const parseProcessor = (processor: any): FlowNode | null => {
+      if (!processor || typeof processor !== 'object') {
+        return null;
+      }
+      const type = Object.keys(processor || {})[0];
+      const payload = (processor as any)[type] || {};
+      if (type === 'if') {
+        return {
+          id: nextFlowId(),
+          kind: 'if',
+          condition: {
+            property: String(payload.source ?? ''),
+            operator: String(payload.operator ?? '=='),
+            value: String(payload.value ?? ''),
+          },
+          then: buildFlowNodesFromProcessors(Array.isArray(payload.processors) ? payload.processors : []),
+          else: buildFlowNodesFromProcessors(Array.isArray(payload.else) ? payload.else : []),
+        } as FlowIfNode;
+      }
+      if (type === 'foreach') {
+        return {
+          id: nextFlowId(),
+          kind: 'processor',
+          processorType: 'foreach',
+          config: {
+            source: payload.source ?? '',
+            keyVal: payload.key ?? '',
+            valField: payload.value ?? '',
+            processors: buildFlowNodesFromProcessors(Array.isArray(payload.processors) ? payload.processors : []),
+          },
+        } as FlowProcessorNode;
+      }
+      if (type === 'switch') {
+        const cases = Array.isArray(payload.case) ? payload.case : [];
+        return {
+          id: nextFlowId(),
+          kind: 'processor',
+          processorType: 'switch',
+          config: {
+            source: payload.source ?? '',
+            operator: payload.operator ?? '',
+            cases: cases.map((item: any) => ({
+              id: nextSwitchCaseId(),
+              match: item.match ?? '',
+              operator: item.operator ?? '',
+              processors: buildFlowNodesFromProcessors(Array.isArray(item.then) ? item.then : []),
+            })),
+            defaultProcessors: buildFlowNodesFromProcessors(
+              Array.isArray(payload.default) ? payload.default : [],
+            ),
+          },
+        } as FlowProcessorNode;
+      }
+      const config: Record<string, any> = { ...(payload || {}) };
+      if (type === 'set') {
+        const sourceValue = payload.source;
+        config.sourceType = typeof sourceValue === 'string' && sourceValue.startsWith('$.')
+          ? 'path'
+          : 'literal';
+        if (Array.isArray(payload.args)) {
+          config.argsText = JSON.stringify(payload.args, null, 2);
+        }
+      }
+      if (type === 'append' && Array.isArray(payload.array)) {
+        config.arrayText = JSON.stringify(payload.array, null, 2);
+      }
+      if (type === 'lookup' && payload.properties && typeof payload.properties === 'object') {
+        config.propertiesText = JSON.stringify(payload.properties, null, 2);
+      }
+      if (type === 'lookup' && payload.fallback && typeof payload.fallback === 'object') {
+        config.fallbackText = JSON.stringify(payload.fallback, null, 2);
+      }
+      return {
+        id: nextFlowId(),
+        kind: 'processor',
+        processorType: type,
+        config,
+      } as FlowProcessorNode;
+    };
+    return (processors || [])
+      .map(parseProcessor)
+      .filter((node): node is FlowNode => Boolean(node));
+  };
 
   const getProcessorTargetField = (processor: any) => {
     if (!processor || typeof processor !== 'object') {
@@ -2600,6 +2626,172 @@ function App() {
       }
     }
     return null;
+  };
+
+  const getProcessorType = (processor: any) => (
+    processor && typeof processor === 'object'
+      ? Object.keys(processor || {})[0]
+      : null
+  );
+
+  const getProcessorSummaryLines = (processor: any) => {
+    const type = getProcessorType(processor);
+    if (!type) {
+      return [] as string[];
+    }
+    const payload = processor[type] || {};
+    const lines: string[] = [`Type: ${type}`];
+    if (payload.source !== undefined) {
+      lines.push(`Source: ${payload.source}`);
+    }
+    if (payload.pattern !== undefined) {
+      lines.push(`Pattern: ${payload.pattern}`);
+    }
+    if (payload.targetField !== undefined) {
+      lines.push(`Target: ${payload.targetField}`);
+    }
+    if (payload.operator !== undefined) {
+      lines.push(`Operator: ${payload.operator}`);
+    }
+    if (payload.match !== undefined) {
+      lines.push(`Match: ${payload.match}`);
+    }
+    if (payload.key !== undefined) {
+      lines.push(`Key: ${payload.key}`);
+    }
+    if (payload.value !== undefined) {
+      lines.push(`Value: ${payload.value}`);
+    }
+    if (type === 'if') {
+      const thenCount = Array.isArray(payload.processors) ? payload.processors.length : 0;
+      const elseCount = Array.isArray(payload.else) ? payload.else.length : 0;
+      lines.push(`Then: ${thenCount} step(s)`);
+      lines.push(`Else: ${elseCount} step(s)`);
+    }
+    if (type === 'switch') {
+      const caseCount = Array.isArray(payload.case) ? payload.case.length : 0;
+      const defaultCount = Array.isArray(payload.default) ? payload.default.length : 0;
+      lines.push(`Cases: ${caseCount}`);
+      lines.push(`Default: ${defaultCount} step(s)`);
+    }
+    if (type === 'foreach') {
+      const procCount = Array.isArray(payload.processors) ? payload.processors.length : 0;
+      lines.push(`Processors: ${procCount}`);
+    }
+    return lines;
+  };
+
+  const stringifyProcessor = (processor: any) => {
+    try {
+      return JSON.stringify(processor || {});
+    } catch {
+      return '';
+    }
+  };
+
+  const diffOverrides = (baseOverrides: any[], stagedOverrides: any[]) => {
+    const indexOverrides = (overrides: any[]) => {
+      const map = new Map<string, { entry: any; objectName?: string; scope?: string; method?: string }>();
+      overrides.forEach((entry: any) => {
+        const objectName = entry?.['@objectName'];
+        const scope = entry?.scope || 'post';
+        const method = entry?.method || '';
+        const key = `${method}:${scope}:${objectName || '__global__'}`;
+        map.set(key, { entry, objectName, scope, method });
+      });
+      return map;
+    };
+
+    const splitProcessors = (processors: any[]) => {
+      const targeted = new Map<string, any>();
+      const untargeted = new Map<string, any>();
+      processors.forEach((proc: any, index: number) => {
+        const target = getProcessorTargetField(proc);
+        if (target) {
+          if (!targeted.has(target)) {
+            targeted.set(target, proc);
+          }
+          return;
+        }
+        const key = stringifyProcessor(proc) || `${getProcessorType(proc) || 'processor'}:${index}`;
+        untargeted.set(key, proc);
+      });
+      return { targeted, untargeted };
+    };
+
+    const baseMap = indexOverrides(baseOverrides);
+    const stagedMap = indexOverrides(stagedOverrides);
+    const allKeys = new Set<string>([...baseMap.keys(), ...stagedMap.keys()]);
+    const sections: Array<{
+      title: string;
+      objectName?: string;
+      scope?: string;
+      fieldChanges: Array<{ target: string; action: 'added' | 'updated' | 'removed'; before?: any; after?: any }>;
+      processorChanges: Array<{ action: 'added' | 'removed'; processor: any }>;
+    }> = [];
+
+    allKeys.forEach((key) => {
+      const baseEntry = baseMap.get(key);
+      const stagedEntry = stagedMap.get(key);
+      const objectName = stagedEntry?.objectName || baseEntry?.objectName;
+      const scope = stagedEntry?.scope || baseEntry?.scope;
+      const baseProcessors = Array.isArray(baseEntry?.entry?.processors) ? baseEntry?.entry?.processors : [];
+      const stagedProcessors = Array.isArray(stagedEntry?.entry?.processors) ? stagedEntry?.entry?.processors : [];
+      const { targeted: baseTargeted, untargeted: baseUntargeted } = splitProcessors(baseProcessors);
+      const { targeted: stagedTargeted, untargeted: stagedUntargeted } = splitProcessors(stagedProcessors);
+      const targets = new Set<string>([...baseTargeted.keys(), ...stagedTargeted.keys()]);
+      const fieldChanges: Array<{ target: string; action: 'added' | 'updated' | 'removed'; before?: any; after?: any }> = [];
+      targets.forEach((target) => {
+        const before = baseTargeted.get(target);
+        const after = stagedTargeted.get(target);
+        if (before && after) {
+          if (stringifyProcessor(before) !== stringifyProcessor(after)) {
+            fieldChanges.push({ target, action: 'updated', before, after });
+          }
+          return;
+        }
+        if (before) {
+          fieldChanges.push({ target, action: 'removed', before });
+        } else if (after) {
+          fieldChanges.push({ target, action: 'added', after });
+        }
+      });
+
+      const procKeys = new Set<string>([...baseUntargeted.keys(), ...stagedUntargeted.keys()]);
+      const processorChanges: Array<{ action: 'added' | 'removed'; processor: any }> = [];
+      procKeys.forEach((procKey) => {
+        const before = baseUntargeted.get(procKey);
+        const after = stagedUntargeted.get(procKey);
+        if (before && !after) {
+          processorChanges.push({ action: 'removed', processor: before });
+        } else if (!before && after) {
+          processorChanges.push({ action: 'added', processor: after });
+        }
+      });
+
+      if (fieldChanges.length === 0 && processorChanges.length === 0) {
+        return;
+      }
+      const title = objectName
+        ? `${objectName} (Object ${scope || 'post'})`
+        : `Global ${String(scope || 'post').toUpperCase()}`;
+      sections.push({
+        title,
+        objectName,
+        scope,
+        fieldChanges,
+        processorChanges,
+      });
+    });
+
+    const totalChanges = sections.reduce((count, section) => (
+      count + section.fieldChanges.length + section.processorChanges.length
+    ), 0);
+    const editedObjects = sections
+      .filter((section) => Boolean(section.objectName))
+      .map((section) => section.objectName as string);
+
+    return { sections, totalChanges, editedObjects };
   };
 
   const getOverrideFlags = (obj: any) => {
@@ -2656,6 +2848,18 @@ function App() {
       }
     });
     return map;
+  };
+
+  const getBaseObjectValue = (objectName: string | undefined, target: string) => {
+    if (!objectName || !target) {
+      return undefined;
+    }
+    const obj = getFriendlyObjects(fileData).find((item: any) => item?.['@objectName'] === objectName);
+    if (!obj) {
+      return undefined;
+    }
+    const cleanedPath = target.replace(/^\$\./, '');
+    return getNestedValue(obj, cleanedPath);
   };
 
   const getEffectiveEventValue = (obj: any, field: string) => {
@@ -2743,12 +2947,88 @@ function App() {
     if (!evalFlag && !processorFlag) {
       return null;
     }
+    const objectName = obj?.['@objectName'];
+    const processors = objectName
+      ? (overrideIndex.get(objectName) || []).flatMap((entry: any) => (
+        Array.isArray(entry?.processors) ? entry.processors : []
+      ))
+      : [];
+    const processor = processors.find((proc: any) => (
+      getProcessorTargetField(proc) === `$.event.${field}`
+    ));
+    const processorSummary = processor ? getProcessorSummaryLines(processor) : [];
+    const overrideHoverProps = {
+      onMouseEnter: () => {
+        setSuppressVarTooltip(true);
+        setSuppressEvalTooltip(true);
+      },
+      onMouseLeave: () => {
+        setSuppressVarTooltip(false);
+        setSuppressEvalTooltip(false);
+      },
+      onFocus: () => {
+        setSuppressVarTooltip(true);
+        setSuppressEvalTooltip(true);
+      },
+      onBlur: () => {
+        setSuppressVarTooltip(false);
+        setSuppressEvalTooltip(false);
+      },
+    };
     return (
       <span className="field-badges">
         {evalFlag && <span className="pill status-pill status-pill-eval">Eval</span>}
-        {processorFlag && <span className="pill status-pill status-pill-processor">Processor</span>}
+        {processorFlag && (
+          <span className="override-summary" tabIndex={0} {...overrideHoverProps}>
+            <span className="pill status-pill status-pill-processor">Processor</span>
+            {processorSummary.length > 0 && (
+              <div className="override-summary-card" role="tooltip">
+                <div className="override-summary-title">Processor Summary</div>
+                <ul className="override-summary-list">
+                  {processorSummary.map((line, idx) => (
+                    <li key={`${line}-${idx}`} className="override-summary-item">
+                      <span className="override-summary-value">{line}</span>
+                    </li>
+                  ))}
+                </ul>
+                {objectName && (
+                  <button
+                    type="button"
+                    className="builder-link"
+                    onClick={() => openAdvancedFlowModal(
+                      'object',
+                      objectName,
+                      `$.event.${field}`,
+                    )}
+                  >
+                    View in Advanced Flow
+                  </button>
+                )}
+              </div>
+            )}
+          </span>
+        )}
       </span>
     );
+  };
+
+  const overrideTooltipHoverProps = {
+    onMouseEnter: () => {
+      setSuppressVarTooltip(true);
+      setSuppressEvalTooltip(true);
+    },
+    onMouseLeave: () => {
+      setSuppressVarTooltip(false);
+      setSuppressEvalTooltip(false);
+    },
+    onFocus: () => {
+      setSuppressVarTooltip(true);
+      setSuppressEvalTooltip(true);
+    },
+    onBlur: () => {
+      setSuppressVarTooltip(false);
+      setSuppressEvalTooltip(false);
+    },
   };
 
   const reservedEventFields = new Set(['EventID', 'EventKey', 'Method']);
@@ -2889,6 +3169,7 @@ function App() {
   };
 
   const startEventEdit = (obj: any, key: string) => {
+    const baseKey = key.includes(':') ? key.slice(0, key.lastIndexOf(':')) : key;
     const draft: Record<string, any> = {};
     const evalModes: Record<string, boolean> = {};
     getEventFieldList(obj, key).forEach((field) => {
@@ -2906,10 +3187,17 @@ function App() {
       [key]: evalModes,
     }));
     setPanelEditState((prev) => ({ ...prev, [key]: true }));
-    setBuilderOpen(true);
+    setBuilderOpen(false);
+    window.setTimeout(() => {
+      const target = objectRowRefs.current?.[baseKey];
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 0);
   };
 
   const cancelEventEdit = (key: string) => {
+    const baseKey = key.includes(':') ? key.slice(0, key.lastIndexOf(':')) : key;
     setPanelDrafts((prev) => {
       const next = { ...prev };
       delete next[key];
@@ -2934,9 +3222,23 @@ function App() {
       delete nextFields[key];
       return { ...prev, fields: nextFields };
     });
+    window.setTimeout(() => {
+      const target = objectRowRefs.current?.[baseKey];
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 0);
     if (builderTarget?.panelKey === key) {
       closeBuilder();
     }
+  };
+
+  const requestCancelEventEdit = (obj: any, key: string) => {
+    if (getPanelDirtyFields(obj, key).length > 0) {
+      setPendingCancel({ type: 'panel', panelKey: key });
+      return;
+    }
+    cancelEventEdit(key);
   };
 
   const buildOverrideSetProcessor = (field: string, value: any) => ({
@@ -2981,14 +3283,17 @@ function App() {
     }
 
     const existingOverrides = Array.isArray(overrideInfo?.overrides) ? [...overrideInfo.overrides] : [];
+    const baseOverrides = pendingOverrideSave
+      ? [...pendingOverrideSave]
+      : existingOverrides;
     const method = overrideInfo?.method || (String(selectedFile.PathID || '').includes('/syslog/') ? 'syslog' : 'trap');
     const scope = 'post';
-    const matchIndex = existingOverrides.findIndex((entry: any) => (
+    const matchIndex = baseOverrides.findIndex((entry: any) => (
       entry?.['@objectName'] === objectName && entry?.method === method && entry?.scope === scope
     ));
 
     const overrideEntry = matchIndex >= 0
-      ? { ...existingOverrides[matchIndex] }
+      ? { ...baseOverrides[matchIndex] }
       : {
         name: `${objectName} Override`,
         description: `Overrides for ${objectName}`,
@@ -3032,20 +3337,23 @@ function App() {
 
     if (processors.length === 0) {
       if (matchIndex >= 0) {
-        existingOverrides.splice(matchIndex, 1);
+        baseOverrides.splice(matchIndex, 1);
       }
     } else {
       overrideEntry.processors = processors;
       if (matchIndex >= 0) {
-        existingOverrides[matchIndex] = overrideEntry;
+        baseOverrides[matchIndex] = overrideEntry;
       } else {
-        existingOverrides.push(overrideEntry);
+        baseOverrides.push(overrideEntry);
       }
     }
 
-    setPendingOverrideSave(existingOverrides);
-    setCommitMessage('');
-    setShowCommitModal(true);
+    const stagedCount = updates.length + removalFields.size;
+    setPendingOverrideSave(baseOverrides);
+    triggerToast(`Staged ${stagedCount} event override change(s) for ${objectName}`, true);
+    if (builderTarget?.panelKey === key) {
+      closeBuilder();
+    }
     setPanelNavWarning((prev) => {
       if (!prev.fields[key]) {
         return prev;
@@ -3054,6 +3362,7 @@ function App() {
       delete nextFields[key];
       return { ...prev, fields: nextFields };
     });
+    cancelEventEdit(key);
   };
 
   const openRemoveOverrideModal = (obj: any, field: string, panelKey: string) => {
@@ -3230,7 +3539,11 @@ function App() {
     return parts;
   };
 
-  const renderValue = (value: any, trapVars?: any[]) => {
+  const renderValue = (
+    value: any,
+    trapVars?: any[],
+    options?: { suppressEvalTooltip?: boolean },
+  ) => {
     if (value === null || value === undefined) {
       return '—';
     }
@@ -3242,7 +3555,7 @@ function App() {
       return renderHighlightedText(text);
     }
     if (value && typeof value === 'object' && typeof value.eval === 'string') {
-      return renderEvalDisplay(value.eval, trapVars);
+      return renderEvalDisplay(value.eval, trapVars, !options?.suppressEvalTooltip);
     }
     try {
       return renderHighlightedText(JSON.stringify(value));
@@ -3459,6 +3772,173 @@ function App() {
     setEventFieldInsertContext(null);
   };
 
+  const handleBuilderProcessorInputChange = (
+    fieldKey: 'source' | 'targetField' | 'pattern',
+    value: string,
+    cursorIndex: number | null,
+    inputType?: string,
+  ) => {
+    if (fieldKey === 'source') {
+      handleProcessorSourceChange(value, cursorIndex, inputType);
+      return;
+    }
+    if (fieldKey === 'targetField') {
+      handleProcessorTargetChange(value, cursorIndex, inputType);
+      return;
+    }
+    updateBuilderDraftField('processorPattern', value);
+  };
+
+  const createFlowNodeFromPaletteValue = (value: string) => (
+    createFlowNode(
+      value === 'if'
+        ? { nodeKind: 'if' }
+        : { nodeKind: 'processor', processorType: value },
+    )
+  );
+
+  const renderProcessorConfigFields = (
+    processorType: string,
+    config: Record<string, any>,
+    onConfigChange: (key: string, value: string | boolean) => void,
+    context: 'flow' | 'builder',
+  ) => (
+    (processorConfigSpecs[processorType] || []).map((field) => {
+      const isJsonField = field.type === 'json';
+      const valueKey = isJsonField ? `${field.key}Text` : field.key;
+      const value = (config?.[valueKey] ?? '') as string | boolean;
+      const jsonError = isJsonField && String(value).trim()
+        ? (() => {
+          try {
+            JSON.parse(String(value));
+            return '';
+          } catch {
+            return `${field.label} must be valid JSON.`;
+          }
+        })()
+        : '';
+      const handleTextChange = (
+        nextValue: string,
+        cursorIndex: number | null,
+        inputType?: string,
+      ) => {
+        if (field.key === 'source' || field.key === 'targetField' || field.key === 'pattern') {
+          if (context === 'flow') {
+            handleFlowEditorInputChange(
+              field.key === 'source'
+                ? 'flowEditor.source'
+                : field.key === 'targetField'
+                  ? 'flowEditor.targetField'
+                  : 'flowEditor.pattern',
+              nextValue,
+              cursorIndex,
+              inputType,
+            );
+            return;
+          }
+          handleBuilderProcessorInputChange(field.key, nextValue, cursorIndex, inputType);
+          return;
+        }
+        onConfigChange(valueKey, nextValue);
+      };
+      return (
+        <div key={field.key} className="processor-row">
+          <label className="builder-label">{field.label}</label>
+          {field.type === 'boolean' ? (
+            <select
+              className="builder-select"
+              value={value ? 'true' : 'false'}
+              onChange={(e) => onConfigChange(field.key, e.target.value === 'true')}
+            >
+              <option value="false">false</option>
+              <option value="true">true</option>
+            </select>
+          ) : field.type === 'select' && field.key === 'sourceType' ? (
+            <div className="builder-source-toggle">
+              <div className="builder-toggle-group" role="group" aria-label="Source interpretation">
+                {(
+                  field.options || [
+                    { label: 'Literal', value: 'literal' },
+                    { label: 'Path', value: 'path' },
+                  ]
+                ).map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    className={`builder-toggle${String(value || (processorType === 'regex' ? 'path' : 'literal')) === option.value
+                      ? ' builder-toggle-active'
+                      : ''}`}
+                    onClick={() => onConfigChange(field.key, option.value)}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+              <div className="builder-hint">
+                Auto-detects from $. prefix. Toggle to override.
+              </div>
+            </div>
+          ) : field.type === 'select' ? (
+            <select
+              className="builder-select"
+              value={String(value || '')}
+              onChange={(e) => onConfigChange(field.key, e.target.value)}
+            >
+              {(field.options || []).map((option) => (
+                <option key={option.value} value={option.value}>{option.label}</option>
+              ))}
+            </select>
+          ) : isJsonField ? (
+            <textarea
+              className="builder-textarea"
+              placeholder={field.placeholder}
+              value={value as string}
+              onChange={(e) => handleTextChange(
+                e.target.value,
+                e.target.selectionStart,
+                (e.nativeEvent as InputEvent | undefined)?.inputType,
+              )}
+            />
+          ) : (
+            <input
+              className="builder-input"
+              placeholder={field.placeholder}
+              value={value as string}
+              onChange={(e) => handleTextChange(
+                e.target.value,
+                e.target.selectionStart,
+                (e.nativeEvent as InputEvent | undefined)?.inputType,
+              )}
+            />
+          )}
+          {context === 'builder' && field.key === 'source' && builderTarget && (
+            <div className="builder-inline-actions">
+              <button
+                type="button"
+                className="builder-link builder-var-button"
+                title={`Insert variable (${builderTrapVars.length})`}
+                onClick={() => {
+                  openVarInsertModal(
+                    builderTarget.panelKey,
+                    'processorSource',
+                    String(value || ''),
+                    Array.isArray(builderTrapVars) ? builderTrapVars : [],
+                  );
+                }}
+                disabled={builderTrapVars.length === 0}
+              >
+                Variables ({builderTrapVars.length})
+              </button>
+            </div>
+          )}
+          {jsonError && (
+            <div className="builder-hint builder-hint-warning">{jsonError}</div>
+          )}
+        </div>
+      );
+    })
+  );
+
   const handleFlowEditorInputChange = (
     fieldKey: 'flowEditor.source' | 'flowEditor.targetField' | 'flowEditor.pattern'
     | 'flowEditor.condition.property' | 'flowEditor.condition.value',
@@ -3471,11 +3951,15 @@ function App() {
         return prev;
       }
       if (fieldKey === 'flowEditor.source') {
+        const inferredType = value.trim().startsWith('$.') ? 'path' : 'literal';
         return {
           ...prev,
           config: {
             ...(prev as FlowProcessorNode).config,
             source: value,
+            ...(prev.kind === 'processor' && ['set', 'regex'].includes(prev.processorType)
+              ? { sourceType: inferredType }
+              : {}),
           },
         } as FlowNode;
       }
@@ -3660,8 +4144,8 @@ function App() {
       if (!objectName) {
         return [];
       }
-      const overrides = Array.isArray(overrideInfo?.overrides) ? overrideInfo.overrides : [];
-      const method = overrideInfo?.method || (String(selectedFile?.PathID || '').includes('/syslog/') ? 'syslog' : 'trap');
+      const overrides = getOverrideEntries();
+      const method = getOverrideMethod();
       const scope = 'post';
       const entry = overrides.find((item: any) => (
         item?.['@objectName'] === objectName && item?.method === method && item?.scope === scope
@@ -3670,44 +4154,26 @@ function App() {
     })();
     const targetPath = `$.event.${field}`;
     const existingProcessor = overrideProcessors.find((proc: any) => getProcessorTargetField(proc) === targetPath);
+    const draftValue = panelDrafts?.[panelKey]?.event?.[field];
+    const evalSource = existingProcessor?.set?.source;
+    const evalTextFromOverride = typeof evalSource === 'object' && typeof evalSource.eval === 'string'
+      ? evalSource.eval
+      : null;
     const evalValue = getEffectiveEventValue(obj, field);
-    const evalText = typeof evalValue === 'object' && typeof evalValue.eval === 'string'
+    const evalTextFromValue = typeof evalValue === 'object' && typeof evalValue.eval === 'string'
       ? evalValue.eval
       : typeof evalValue === 'string'
         ? evalValue.trim()
         : '';
+    const evalEnabled = isEvalMode(panelKey, field) || Boolean(evalTextFromOverride)
+      || (typeof evalValue === 'object' && typeof evalValue.eval === 'string');
+    const evalText = evalEnabled
+      ? (typeof draftValue === 'string' && draftValue.trim() ? draftValue.trim() : (evalTextFromOverride || evalTextFromValue))
+      : '';
 
     setBuilderTarget({ panelKey, field });
     setBuilderOpen(true);
     setShowProcessorJson(true);
-    if (existingProcessor?.regex) {
-      setBuilderFocus('processor');
-      setBuilderTypeLocked('processor');
-      setProcessorType('regex');
-      setProcessorStep('configure');
-      setProcessorDraft({
-        sourceType: existingProcessor.regex?.source?.startsWith('$.') ? 'path' : 'literal',
-        source: String(existingProcessor.regex?.source ?? ''),
-        pattern: String(existingProcessor.regex?.pattern ?? ''),
-        targetField: existingProcessor.regex?.targetField ?? targetPath,
-      });
-      return;
-    }
-    if (existingProcessor?.set) {
-      setBuilderFocus('processor');
-      setBuilderTypeLocked('processor');
-      setProcessorType('set');
-      setProcessorStep('configure');
-      setProcessorDraft({
-        sourceType: existingProcessor.set?.source?.startsWith('$.') ? 'path' : 'literal',
-        source: String(existingProcessor.set?.source ?? ''),
-        pattern: '',
-        targetField: existingProcessor.set?.targetField ?? targetPath,
-      });
-      return;
-    }
-    const evalEnabled = isEvalMode(panelKey, field)
-      || (typeof evalValue === 'object' && typeof evalValue.eval === 'string');
     if (evalEnabled && evalText) {
       const parsed = parseEvalToRows(evalText);
       setBuilderFocus('eval');
@@ -3722,6 +4188,36 @@ function App() {
       setBuilderRegularText(evalText);
       return;
     }
+    if (existingProcessor?.regex) {
+      setBuilderFocus('processor');
+      setBuilderTypeLocked('processor');
+      setProcessorType('regex');
+      setProcessorStep('configure');
+      setBuilderProcessorConfig({
+        sourceType: existingProcessor.regex?.source?.startsWith('$.') ? 'path' : 'literal',
+        source: String(existingProcessor.regex?.source ?? ''),
+        pattern: String(existingProcessor.regex?.pattern ?? ''),
+        group: existingProcessor.regex?.group ? String(existingProcessor.regex?.group) : '',
+        targetField: existingProcessor.regex?.targetField ?? targetPath,
+      });
+      return;
+    }
+    if (existingProcessor?.set) {
+      setBuilderFocus('processor');
+      setBuilderTypeLocked('processor');
+      setProcessorType('set');
+      setProcessorStep('configure');
+      setBuilderProcessorConfig({
+        sourceType: existingProcessor.set?.source?.startsWith('$.') ? 'path' : 'literal',
+        source: String(existingProcessor.set?.source ?? ''),
+        pattern: '',
+        argsText: Array.isArray(existingProcessor.set?.args)
+          ? JSON.stringify(existingProcessor.set?.args, null, 2)
+          : '',
+        targetField: existingProcessor.set?.targetField ?? targetPath,
+      });
+      return;
+    }
     if (!evalEnabled) {
       setBuilderFocus('literal');
       setBuilderTypeLocked('literal');
@@ -3731,7 +4227,7 @@ function App() {
     setBuilderFocus(null);
     setProcessorStep('select');
     setProcessorType(null);
-    setProcessorDraft({
+    setBuilderProcessorConfig({
       sourceType: 'literal',
       source: '',
       pattern: '',
@@ -3795,6 +4291,48 @@ function App() {
       && (typeof original === 'string' || typeof original === 'number' || original == null);
     return { eligible, value: String(display ?? '') };
   };
+
+  const hasBuilderUnsavedChanges = () => {
+    if (!builderTarget) {
+      return false;
+    }
+    const obj = getObjectByPanelKey(builderTarget.panelKey);
+    if (!obj) {
+      return false;
+    }
+    if (builderFocus === 'literal') {
+      return getCurrentFieldValue(obj, builderTarget.panelKey, builderTarget.field) !== builderLiteralText;
+    }
+    if (builderFocus === 'eval') {
+      const currentValue = getCurrentFieldValue(obj, builderTarget.panelKey, builderTarget.field);
+      const candidate = builderMode === 'regular'
+        ? builderRegularText.trim()
+        : friendlyPreview.trim();
+      if (!candidate) {
+        return false;
+      }
+      return String(currentValue).trim() !== candidate;
+    }
+    if (builderFocus === 'processor') {
+      if (processorType) {
+        return true;
+      }
+      return Boolean(
+        builderProcessorConfig.source
+        || builderProcessorConfig.pattern
+        || builderProcessorConfig.targetField,
+      );
+    }
+    return false;
+  };
+
+  const requestCancelBuilder = () => {
+    if (hasBuilderUnsavedChanges()) {
+      setPendingCancel({ type: 'builder' });
+      return;
+    }
+    closeBuilder();
+  };
   const closeBuilder = () => {
     setBuilderTarget(null);
     setBuilderFocus(null);
@@ -3803,6 +4341,7 @@ function App() {
     setBuilderLiteralText('');
     setBuilderTypeLocked(null);
     setBuilderSwitchModal({ open: false });
+    setBuilderOpen(false);
   };
 
   const applyBuilderTypeSwitch = (target: 'eval' | 'processor' | 'literal') => {
@@ -3866,35 +4405,45 @@ function App() {
     return `$.event.${trimmed}`;
   };
 
+  const getBuilderProcessorConfig = () => {
+    const targetField = normalizeTargetField(builderProcessorConfig.targetField || '', builderTarget?.field);
+    return {
+      ...builderProcessorConfig,
+      targetField,
+    };
+  };
+
+  const getDefaultProcessorConfig = (processorType: string, fallbackTarget?: string) => {
+    const specs = processorConfigSpecs[processorType] || [];
+    const defaults: Record<string, any> = {};
+    specs.forEach((spec) => {
+      if (spec.type === 'select') {
+        defaults[spec.key] = spec.options?.[0]?.value ?? '';
+        return;
+      }
+      defaults[spec.key] = '';
+    });
+    if (processorType === 'regex') {
+      defaults.sourceType = 'path';
+    }
+    if (processorType === 'set') {
+      defaults.sourceType = 'literal';
+    }
+    if (fallbackTarget && specs.some((spec) => spec.key === 'targetField')) {
+      defaults.targetField = fallbackTarget;
+    }
+    return defaults;
+  };
+
   const buildProcessorPayload = () => {
     if (!processorType || !builderTarget) {
       return null;
     }
-    const targetField = normalizeTargetField(processorDraft.targetField, builderTarget.field);
-    if (processorType === 'set') {
-      const sourceValue = processorDraft.sourceType === 'path'
-        ? normalizeSourcePath(processorDraft.source)
-        : processorDraft.source;
-      return {
-        set: {
-          source: sourceValue,
-          targetField,
-        },
-      };
-    }
-    if (processorType === 'regex') {
-      const sourceValue = processorDraft.sourceType === 'path'
-        ? normalizeSourcePath(processorDraft.source)
-        : processorDraft.source;
-      return {
-        regex: {
-          source: sourceValue,
-          pattern: processorDraft.pattern,
-          targetField,
-        },
-      };
-    }
-    return null;
+    return buildProcessorPayloadFromConfig(
+      processorType,
+      getBuilderProcessorConfig(),
+      buildFlowProcessors,
+    );
   };
 
   type ProcessorCatalogItem = {
@@ -3938,7 +4487,7 @@ function App() {
       label: 'Append',
       nodeKind: 'processor',
       status: 'testing',
-      builderEnabled: false,
+      builderEnabled: true,
       helpKey: 'append',
     },
     {
@@ -3946,7 +4495,7 @@ function App() {
       label: 'Append to Output Stream',
       nodeKind: 'processor',
       status: 'testing',
-      builderEnabled: false,
+      builderEnabled: true,
       helpKey: 'appendToOutputStream',
     },
     {
@@ -3954,7 +4503,7 @@ function App() {
       label: 'Break',
       nodeKind: 'processor',
       status: 'testing',
-      builderEnabled: false,
+      builderEnabled: true,
       helpKey: 'break',
     },
     {
@@ -3962,7 +4511,7 @@ function App() {
       label: 'Convert',
       nodeKind: 'processor',
       status: 'testing',
-      builderEnabled: false,
+      builderEnabled: true,
       helpKey: 'convert',
     },
     {
@@ -3970,7 +4519,7 @@ function App() {
       label: 'Copy',
       nodeKind: 'processor',
       status: 'testing',
-      builderEnabled: false,
+      builderEnabled: true,
       helpKey: 'copy',
     },
     {
@@ -3978,7 +4527,7 @@ function App() {
       label: 'Discard',
       nodeKind: 'processor',
       status: 'testing',
-      builderEnabled: false,
+      builderEnabled: true,
       helpKey: 'discard',
     },
     {
@@ -3986,7 +4535,7 @@ function App() {
       label: 'Eval',
       nodeKind: 'processor',
       status: 'testing',
-      builderEnabled: false,
+      builderEnabled: true,
       helpKey: 'eval',
     },
     {
@@ -3994,7 +4543,7 @@ function App() {
       label: 'Foreach',
       nodeKind: 'processor',
       status: 'testing',
-      builderEnabled: false,
+      builderEnabled: true,
       helpKey: 'foreach',
     },
     {
@@ -4002,7 +4551,7 @@ function App() {
       label: 'Grok',
       nodeKind: 'processor',
       status: 'testing',
-      builderEnabled: false,
+      builderEnabled: true,
       helpKey: 'grok',
     },
     {
@@ -4010,7 +4559,7 @@ function App() {
       label: 'JSON',
       nodeKind: 'processor',
       status: 'testing',
-      builderEnabled: false,
+      builderEnabled: true,
       helpKey: 'json',
     },
     {
@@ -4018,7 +4567,7 @@ function App() {
       label: 'Log',
       nodeKind: 'processor',
       status: 'testing',
-      builderEnabled: false,
+      builderEnabled: true,
       helpKey: 'log',
     },
     {
@@ -4026,7 +4575,7 @@ function App() {
       label: 'Lookup',
       nodeKind: 'processor',
       status: 'testing',
-      builderEnabled: false,
+      builderEnabled: true,
       helpKey: 'lookup',
     },
     {
@@ -4034,7 +4583,7 @@ function App() {
       label: 'Math',
       nodeKind: 'processor',
       status: 'testing',
-      builderEnabled: false,
+      builderEnabled: true,
       helpKey: 'math',
     },
     {
@@ -4042,7 +4591,7 @@ function App() {
       label: 'Remove',
       nodeKind: 'processor',
       status: 'testing',
-      builderEnabled: false,
+      builderEnabled: true,
       helpKey: 'remove',
     },
     {
@@ -4050,7 +4599,7 @@ function App() {
       label: 'Rename',
       nodeKind: 'processor',
       status: 'testing',
-      builderEnabled: false,
+      builderEnabled: true,
       helpKey: 'rename',
     },
     {
@@ -4058,7 +4607,7 @@ function App() {
       label: 'Replace',
       nodeKind: 'processor',
       status: 'testing',
-      builderEnabled: false,
+      builderEnabled: true,
       helpKey: 'replace',
     },
     {
@@ -4066,7 +4615,7 @@ function App() {
       label: 'Set Output Stream',
       nodeKind: 'processor',
       status: 'testing',
-      builderEnabled: false,
+      builderEnabled: true,
       helpKey: 'setOutputStream',
     },
     {
@@ -4074,7 +4623,7 @@ function App() {
       label: 'Sort',
       nodeKind: 'processor',
       status: 'testing',
-      builderEnabled: false,
+      builderEnabled: true,
       helpKey: 'sort',
     },
     {
@@ -4082,7 +4631,7 @@ function App() {
       label: 'Split',
       nodeKind: 'processor',
       status: 'testing',
-      builderEnabled: false,
+      builderEnabled: true,
       helpKey: 'split',
     },
     {
@@ -4090,7 +4639,7 @@ function App() {
       label: 'String Case',
       nodeKind: 'processor',
       status: 'testing',
-      builderEnabled: false,
+      builderEnabled: true,
       helpKey: 'strcase',
     },
     {
@@ -4098,7 +4647,7 @@ function App() {
       label: 'Substring',
       nodeKind: 'processor',
       status: 'testing',
-      builderEnabled: false,
+      builderEnabled: true,
       helpKey: 'substr',
     },
     {
@@ -4106,7 +4655,7 @@ function App() {
       label: 'Switch',
       nodeKind: 'processor',
       status: 'testing',
-      builderEnabled: false,
+      builderEnabled: true,
       helpKey: 'switch',
     },
     {
@@ -4114,7 +4663,7 @@ function App() {
       label: 'Trim',
       nodeKind: 'processor',
       status: 'testing',
-      builderEnabled: false,
+      builderEnabled: true,
       helpKey: 'trim',
     },
   ];
@@ -4142,13 +4691,40 @@ function App() {
     ...section,
     items: filteredFlowPalette.filter((item) => item.status === section.status),
   }));
+  const builderPaletteItems = flowPalette.filter((item) => item.status !== 'planned');
 
   const getFlowNodeLabel = (node: FlowNode) => {
     if (node.kind === 'if') {
       return 'If';
     }
     const item = flowPalette.find((entry) => entry.processorType === node.processorType);
-    return item?.label || node.processorType;
+    const baseLabel = item?.label || node.processorType;
+    const processorPayload = buildProcessorPayloadFromConfig(
+      node.processorType,
+      node.config || {},
+      buildFlowProcessors,
+    );
+    const targetField = getProcessorTargetField(processorPayload);
+    if (!targetField) {
+      return `${baseLabel} (no target)`;
+    }
+    const trimmed = String(targetField).trim();
+    const label = trimmed.startsWith('$.event.')
+      ? trimmed.replace('$.event.', '')
+      : trimmed.startsWith('$.localmem.')
+        ? trimmed.replace('$.localmem.', 'localmem.')
+        : trimmed.startsWith('$.globalmem.')
+          ? trimmed.replace('$.globalmem.', 'globalmem.')
+          : trimmed.replace('$.', '');
+    return `${baseLabel} (${label || 'no target'})`;
+  };
+
+  const getProcessorCatalogLabel = (id: string | null) => {
+    if (!id) {
+      return '';
+    }
+    const item = processorCatalog.find((entry) => entry.id === id);
+    return item?.label || id;
   };
 
   const handleFlowDragOver = (event: React.DragEvent<HTMLElement>) => {
@@ -4325,11 +4901,11 @@ function App() {
     const existingOverrides = Array.isArray(overrideInfo?.overrides) ? [...overrideInfo.overrides] : [];
     const method = overrideInfo?.method || (String(selectedFile.PathID || '').includes('/syslog/') ? 'syslog' : 'trap');
     const scope = 'post';
-    const matchIndex = existingOverrides.findIndex((entry: any) => (
+    const matchIndex = baseOverrides.findIndex((entry: any) => (
       entry?.['@objectName'] === objectName && entry?.method === method && entry?.scope === scope
     ));
     const overrideEntry = matchIndex >= 0
-      ? { ...existingOverrides[matchIndex] }
+      ? { ...baseOverrides[matchIndex] }
       : {
         name: `${objectName} Override`,
         description: `Overrides for ${objectName}`,
@@ -4358,13 +4934,12 @@ function App() {
     }
     overrideEntry.processors = processors;
     if (matchIndex >= 0) {
-      existingOverrides[matchIndex] = overrideEntry;
+      baseOverrides[matchIndex] = overrideEntry;
     } else {
-      existingOverrides.push(overrideEntry);
+      baseOverrides.push(overrideEntry);
     }
-    setPendingOverrideSave(existingOverrides);
-    setCommitMessage('');
-    setShowCommitModal(true);
+    setPendingOverrideSave(baseOverrides);
+    triggerToast(`Staged 1 processor override for ${objectName}`, true);
     setProcessorStep('review');
     closeBuilder();
   };
@@ -4544,11 +5119,246 @@ function App() {
     setBuilderRegularText(template);
   };
 
+  const hasGlobalAdvancedFlow = (() => {
+    const method = getOverrideMethod();
+    const preEntry = getOverrideEntry({ scope: 'pre', method });
+    const postEntry = getOverrideEntry({ scope: 'post', method });
+    const preCount = Array.isArray(preEntry?.processors) ? preEntry.processors.length : 0;
+    const postCount = Array.isArray(postEntry?.processors) ? postEntry.processors.length : 0;
+    return preCount + postCount > 0;
+  })();
+
+  const advancedFlowDirty = (() => {
+    if (!advancedFlowBaseline) {
+      return false;
+    }
+    if (advancedFlowBaseline.scope === 'global') {
+      const pre = JSON.stringify(buildFlowProcessors(globalPreFlow));
+      const post = JSON.stringify(buildFlowProcessors(globalPostFlow));
+      return pre !== (advancedFlowBaseline.pre || '')
+        || post !== (advancedFlowBaseline.post || '');
+    }
+    const object = JSON.stringify(buildFlowProcessors(advancedFlow));
+    return object !== (advancedFlowBaseline.object || '');
+  })();
+
+  const focusedFlowMatches = useMemo(() => {
+    if (!advancedFlowFocusTarget) {
+      return [] as FocusMatch[];
+    }
+    if (advancedProcessorScope === 'global') {
+      const prePayloads = buildFlowProcessors(globalPreFlow);
+      const postPayloads = buildFlowProcessors(globalPostFlow);
+      return [
+        ...collectFocusMatches(prePayloads, advancedFlowFocusTarget, 'pre'),
+        ...collectFocusMatches(postPayloads, advancedFlowFocusTarget, 'post'),
+      ];
+    }
+    const objectPayloads = buildFlowProcessors(advancedFlow);
+    return collectFocusMatches(objectPayloads, advancedFlowFocusTarget, 'object');
+  }, [advancedFlowFocusTarget, advancedProcessorScope, advancedFlow, globalPreFlow, globalPostFlow]);
+
+  const focusedFlowMatch = focusedFlowMatches[advancedFlowFocusIndex] || null;
+
+  useEffect(() => {
+    if (advancedFlowFocusIndex >= focusedFlowMatches.length) {
+      setAdvancedFlowFocusIndex(0);
+    }
+  }, [advancedFlowFocusIndex, focusedFlowMatches.length]);
+
+  useEffect(() => {
+    if (!showAdvancedProcessorModal || !focusedFlowMatch) {
+      return;
+    }
+    window.setTimeout(() => {
+      advancedFlowHighlightRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 80);
+  }, [showAdvancedProcessorModal, focusedFlowMatch, advancedFlowFocusIndex]);
+
+  const baseOverrides = getBaseOverrides();
+  const workingOverrides = getWorkingOverrides();
+  const stagedDiff = diffOverrides(baseOverrides, workingOverrides);
+  const hasStagedChanges = stagedDiff.totalChanges > 0;
+
+  const openAdvancedFlowModal = (
+    scope: 'object' | 'global',
+    objectNameOverride?: string,
+    focusTargetField?: string | null,
+  ) => {
+    const method = getOverrideMethod();
+    if (scope === 'global') {
+      const preEntry = getOverrideEntry({ scope: 'pre', method });
+      const postEntry = getOverrideEntry({ scope: 'post', method });
+      const preProcessors = Array.isArray(preEntry?.processors) ? preEntry.processors : [];
+      const postProcessors = Array.isArray(postEntry?.processors) ? postEntry.processors : [];
+      setGlobalPreFlow(buildFlowNodesFromProcessors(preProcessors));
+      setGlobalPostFlow(buildFlowNodesFromProcessors(postProcessors));
+      setAdvancedFlowBaseline({
+        scope: 'global',
+        pre: JSON.stringify(preProcessors),
+        post: JSON.stringify(postProcessors),
+      });
+      setAdvancedFlowTarget({ scope: 'global', method });
+      setAdvancedProcessorScope('global');
+      setAdvancedFlowFocusTarget(focusTargetField || null);
+      setAdvancedFlowFocusIndex(0);
+      setAdvancedFlowFocusOnly(false);
+      setShowAdvancedProcessorModal(true);
+      return;
+    }
+    const objectName = objectNameOverride || (() => {
+      if (!builderTarget) {
+        return null;
+      }
+      const obj = getObjectByPanelKey(builderTarget.panelKey);
+      return obj?.['@objectName'] || null;
+    })();
+    if (!objectName) {
+      return;
+    }
+    const entry = getOverrideEntry({ objectName, scope: 'post', method });
+    const processors = Array.isArray(entry?.processors) ? entry.processors : [];
+    setAdvancedFlow(buildFlowNodesFromProcessors(processors));
+    setAdvancedFlowBaseline({
+      scope: 'object',
+      objectName,
+      object: JSON.stringify(processors),
+    });
+    setAdvancedFlowTarget({ scope: 'object', objectName, method });
+    setAdvancedProcessorScope('object');
+    setAdvancedFlowFocusTarget(focusTargetField || null);
+    setAdvancedFlowFocusIndex(0);
+    setAdvancedFlowFocusOnly(false);
+    setShowAdvancedProcessorModal(true);
+  };
+
+  const saveAdvancedFlow = () => {
+    if (!selectedFile || !advancedFlowTarget) {
+      return;
+    }
+    const method = advancedFlowTarget.method || getOverrideMethod();
+    const existingOverrides = getOverrideEntries().slice();
+    const baseOverrides = pendingOverrideSave
+      ? [...pendingOverrideSave]
+      : existingOverrides;
+    const beforeOverrides = JSON.parse(JSON.stringify(baseOverrides));
+    if (advancedFlowTarget.scope === 'global') {
+      const preProcessors = buildFlowProcessors(globalPreFlow);
+      const postProcessors = buildFlowProcessors(globalPostFlow);
+      const updateEntry = (scope: 'pre' | 'post', processors: any[]) => {
+        const matchIndex = baseOverrides.findIndex((entry: any) => (
+          entry?.scope === scope
+          && entry?.method === method
+          && !entry?.['@objectName']
+        ));
+        if (processors.length === 0) {
+          if (matchIndex >= 0) {
+            baseOverrides.splice(matchIndex, 1);
+          }
+          return;
+        }
+        const nextEntry = matchIndex >= 0
+          ? { ...baseOverrides[matchIndex] }
+          : {
+            name: `Global ${scope} Override`,
+            description: `Global ${scope} processors`,
+            domain: 'fault',
+            method,
+            scope,
+            _type: 'override',
+            processors: [],
+          };
+        nextEntry.processors = processors;
+        if (matchIndex >= 0) {
+          baseOverrides[matchIndex] = nextEntry;
+        } else {
+          baseOverrides.push(nextEntry);
+        }
+      };
+      updateEntry('pre', preProcessors);
+      updateEntry('post', postProcessors);
+      setAdvancedFlowBaseline({
+        scope: 'global',
+        pre: JSON.stringify(preProcessors),
+        post: JSON.stringify(postProcessors),
+      });
+    } else {
+      const objectName = advancedFlowTarget.objectName;
+      if (!objectName) {
+        return;
+      }
+      const processors = buildFlowProcessors(advancedFlow);
+      const matchIndex = baseOverrides.findIndex((entry: any) => (
+        entry?.['@objectName'] === objectName
+        && entry?.method === method
+        && entry?.scope === 'post'
+      ));
+      if (processors.length === 0) {
+        if (matchIndex >= 0) {
+          baseOverrides.splice(matchIndex, 1);
+        }
+      } else {
+        const overrideEntry = matchIndex >= 0
+          ? { ...baseOverrides[matchIndex] }
+          : {
+            name: `${objectName} Override`,
+            description: `Overrides for ${objectName}`,
+            domain: 'fault',
+            method,
+            scope: 'post',
+            '@objectName': objectName,
+            _type: 'override',
+            processors: [],
+          };
+        overrideEntry.processors = processors;
+        if (matchIndex >= 0) {
+          baseOverrides[matchIndex] = overrideEntry;
+        } else {
+          baseOverrides.push(overrideEntry);
+        }
+      }
+      setAdvancedFlowBaseline({
+        scope: 'object',
+        objectName,
+        object: JSON.stringify(processors),
+      });
+    }
+    setPendingOverrideSave(baseOverrides);
+    const diff = diffOverrides(beforeOverrides, baseOverrides);
+    if (diff.totalChanges > 0) {
+      if (advancedFlowTarget.scope === 'global') {
+        triggerToast(`Staged ${diff.totalChanges} global advanced flow change(s)`, true);
+      } else {
+        const targetLabel = advancedFlowTarget.objectName || 'Object';
+        triggerToast(`Staged ${diff.totalChanges} advanced flow change(s) for ${targetLabel}`, true);
+      }
+    }
+    setShowAdvancedProcessorModal(false);
+  };
+
   const handleBuilderSelect = (item: ProcessorCatalogItem, isEnabled: boolean) => {
     if (!isEnabled) {
       return;
     }
     if (item.id === 'if') {
+      if (!builderTarget) {
+        return;
+      }
+      const obj = getObjectByPanelKey(builderTarget.panelKey);
+      const objectName = obj?.['@objectName'];
+      if (!objectName) {
+        return;
+      }
+      const method = getOverrideMethod();
+      const entry = getOverrideEntry({ objectName, scope: 'post', method });
+      const processors = Array.isArray(entry?.processors) ? entry.processors : [];
+      setAdvancedFlow(buildFlowNodesFromProcessors(processors));
+      setAdvancedFlowBaseline({
+        scope: 'object',
+        objectName,
+        object: JSON.stringify(processors),
+      });
+      setAdvancedFlowTarget({ scope: 'object', objectName, method });
       setAdvancedProcessorScope('object');
       setShowAdvancedProcessorModal(true);
       return;
@@ -4556,33 +5366,52 @@ function App() {
     if (item.id === 'set') {
       setProcessorType('set');
       setProcessorStep('configure');
-      setProcessorDraft((prev) => ({
+      setBuilderProcessorConfig((prev) => ({
         ...prev,
-        sourceType: 'literal',
-        source: '',
-        pattern: '',
-        targetField: builderTarget
-          ? `$.event.${builderTarget.field}`
-          : prev.targetField,
+        ...getDefaultProcessorConfig(
+          'set',
+          builderTarget ? `$.event.${builderTarget.field}` : prev.targetField,
+        ),
       }));
       return;
     }
     if (item.id === 'regex') {
       setProcessorType('regex');
       setProcessorStep('configure');
-      setProcessorDraft((prev) => ({
+      setBuilderProcessorConfig((prev) => ({
         ...prev,
-        sourceType: 'path',
-        source: '$.event.Summary',
-        pattern: '',
-        targetField: builderTarget
-          ? `$.event.${builderTarget.field}`
-          : prev.targetField,
+        ...getDefaultProcessorConfig(
+          'regex',
+          builderTarget ? `$.event.${builderTarget.field}` : prev.targetField,
+        ),
       }));
       return;
     }
     setProcessorType(item.id);
     setProcessorStep('configure');
+    setBuilderProcessorConfig((prev) => ({
+      ...prev,
+      ...getDefaultProcessorConfig(
+        item.id,
+        builderTarget ? `$.event.${builderTarget.field}` : prev.targetField,
+      ),
+      ...(item.id === 'foreach'
+        ? { processors: [] }
+        : {}),
+      ...(item.id === 'switch'
+        ? {
+          cases: [
+            {
+              id: nextSwitchCaseId(),
+              match: '',
+              operator: '',
+              processors: [],
+            },
+          ],
+          defaultProcessors: [],
+        }
+        : {}),
+    }));
   };
 
   useEffect(() => {
@@ -4982,7 +5811,7 @@ function App() {
         >
           {token}
         </button>
-        {variable && (
+        {variable && !suppressVarTooltip && (
           <div className="override-summary-card" role="tooltip">
             <div className="override-summary-title">Variable {token}</div>
             <ul className="override-summary-list">
@@ -5007,7 +5836,14 @@ function App() {
     );
   };
 
-  const openVarInsertModal = (panelKey: string, field: string, currentValue: string, replaceStart?: number, replaceEnd?: number) => {
+  const openVarInsertModal = (
+    panelKey: string,
+    field: string,
+    currentValue: string,
+    trapVars: any[],
+    replaceStart?: number,
+    replaceEnd?: number,
+  ) => {
     const start = replaceStart ?? currentValue.length;
     const end = replaceEnd ?? currentValue.length;
     setVarInsertContext({
@@ -5019,13 +5855,13 @@ function App() {
     });
     setVarModalToken(null);
     setVarModalMode('insert');
-    setVarModalVars(Array.isArray(varModalVars) ? varModalVars : []);
+    setVarModalVars(Array.isArray(trapVars) ? trapVars : []);
     setVarModalOpen(true);
   };
 
-  const renderSummary = (value: any, trapVars: any[]) => {
+  const renderSummary = (value: any, trapVars: any[], options?: { suppressEvalTooltip?: boolean }) => {
     if (value && typeof value === 'object' && typeof value.eval === 'string') {
-      return renderEvalDisplay(value.eval, trapVars);
+      return renderEvalDisplay(value.eval, trapVars, !options?.suppressEvalTooltip);
     }
     const text = typeof value === 'string' ? value : '—';
     if (!text || text === '—') {
@@ -5033,7 +5869,7 @@ function App() {
     }
     const isEvalLike = Boolean(splitTernary(unwrapOuterParens(text.trim())));
     if (isEvalLike) {
-      return renderEvalDisplay(text, trapVars);
+      return renderEvalDisplay(text, trapVars, !options?.suppressEvalTooltip);
     }
     const parts = text.split(/(\$v\d+)/g);
     return (
@@ -5152,38 +5988,21 @@ function App() {
     if (!Array.isArray(variables) || variables.length === 0) {
       return '—';
     }
+    const count = variables.length;
     return (
-      <details className="trap-vars">
-        <summary>{variables.length} variable(s)</summary>
-        <div className="trap-vars-list">
-          {variables.map((variable: any, index: number) => (
-            <div className="trap-var" key={variable?.name || variable?.oid || index}>
-              <div className="trap-var-title">
-                <span className="trap-var-name">{renderValue(variable?.name)}</span>
-                <span className="pill">$v{index + 1}</span>
-                {variable?.valueType && <span className="pill">{variable.valueType}</span>}
-              </div>
-              <div className="trap-var-grid">
-                <div className="trap-var-col">
-                  <div className="trap-var-row">
-                    <span className="label">OID</span>
-                    <span className="value monospace">{renderValue(variable?.oid)}</span>
-                  </div>
-                  <div className="trap-var-row">
-                    <span className="label">Description</span>
-                    <span className="value">{formatDescription(variable?.description)}</span>
-                  </div>
-                </div>
-                <div className="trap-var-col">
-                  {renderEnums(variable?.enums) || (
-                    <span className="muted">No enums</span>
-                  )}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </details>
+      <button
+        type="button"
+        className="builder-link"
+        onClick={() => {
+          setVarModalToken(null);
+          setVarModalVars(variables);
+          setVarModalMode('view');
+          setVarInsertContext(null);
+          setVarModalOpen(true);
+        }}
+      >
+        {count} available variable{count === 1 ? '' : 's'}
+      </button>
     );
   };
 
@@ -5301,18 +6120,39 @@ function App() {
     walk(cleaned, true);
     return lines;
   };
-  const renderEvalDisplay = (evalText: string, trapVars?: any[]) => {
+  const renderEvalDisplay = (evalText: string, trapVars?: any[], showTooltip = true) => {
     try {
       const lines = formatEvalReadableList(evalText);
       return (
         <div className="eval-display">
-          <span className="eval-label eval-label-hover override-summary" tabIndex={0}>
+          <span
+            className="eval-label eval-label-hover override-summary"
+            tabIndex={0}
+            onMouseEnter={() => {
+              setSuppressVarTooltip(true);
+              setSuppressEvalTooltip(false);
+            }}
+            onMouseLeave={() => {
+              setSuppressVarTooltip(false);
+              setSuppressEvalTooltip(false);
+            }}
+            onFocus={() => {
+              setSuppressVarTooltip(true);
+              setSuppressEvalTooltip(false);
+            }}
+            onBlur={() => {
+              setSuppressVarTooltip(false);
+              setSuppressEvalTooltip(false);
+            }}
+          >
             <span className="eval-label-icon">ⓘ</span>
             Eval
-            <div className="override-summary-card eval-summary-card" role="tooltip">
-              <div className="override-summary-title">Eval (Raw)</div>
-              <div className="override-summary-value monospace">{evalText}</div>
-            </div>
+            {!suppressEvalTooltip && showTooltip && (
+              <div className="override-summary-card eval-summary-card" role="tooltip">
+                <div className="override-summary-title">Eval (Raw)</div>
+                <div className="override-summary-value monospace">{evalText}</div>
+              </div>
+            )}
           </span>
           <div className="eval-demo eval-demo-lines">
             {lines.map((line, index) => (
@@ -5341,8 +6181,91 @@ function App() {
       ) !== builderLiteralText;
     })()
     : false;
+  const processorPayload = buildProcessorPayload();
+  const builderTrapVars = builderTarget
+    ? (getObjectByPanelKey(builderTarget.panelKey)?.trap?.variables || [])
+    : [];
   const flowEditorJsonErrors = getFlowEditorJsonErrors(flowEditorDraft);
   const flowEditorArgsError = flowEditorJsonErrors.find((item) => item.field === 'args')?.message || '';
+  const focusedFlowJson = focusedFlowMatch
+    ? JSON.stringify(focusedFlowMatch.processor, null, 2)
+    : '';
+  const focusedLaneLabel = focusedFlowMatch
+    ? (focusedFlowMatch.lane === 'pre'
+      ? 'Pre'
+      : focusedFlowMatch.lane === 'post'
+        ? 'Post'
+        : 'Object')
+    : '';
+  const renderFlowJsonPreview = (fullJson: string) => (
+    <div className="flow-preview">
+      <div className="flow-preview-title-row">
+        <div className="flow-preview-title">JSON Preview</div>
+        {advancedFlowFocusTarget && (
+          <div className="flow-focus-actions">
+            <button
+              type="button"
+              className="builder-link"
+              onClick={() => setAdvancedFlowFocusOnly((prev) => !prev)}
+              disabled={!focusedFlowMatch}
+            >
+              {advancedFlowFocusOnly ? 'Show full JSON' : 'Focus only'}
+            </button>
+            <button
+              type="button"
+              className="builder-link"
+              onClick={() => {
+                setAdvancedFlowFocusTarget(null);
+                setAdvancedFlowFocusIndex(0);
+                setAdvancedFlowFocusOnly(false);
+              }}
+            >
+              Clear focus
+            </button>
+          </div>
+        )}
+      </div>
+      {advancedFlowFocusTarget && (
+        <div className="flow-focus-card">
+          <div className="flow-focus-row">
+            <div className="flow-focus-title">
+              Focused target: <span className="monospace">{advancedFlowFocusTarget}</span>
+            </div>
+            <div className="flow-focus-count">
+              {focusedFlowMatches.length > 0
+                ? `Match ${advancedFlowFocusIndex + 1} of ${focusedFlowMatches.length} (${focusedLaneLabel})`
+                : 'No matching processors found'}
+            </div>
+          </div>
+          {focusedFlowMatches.length > 1 && (
+            <div className="flow-focus-controls">
+              <button
+                type="button"
+                className="builder-link"
+                onClick={() => setAdvancedFlowFocusIndex((prev) => (
+                  prev <= 0 ? focusedFlowMatches.length - 1 : prev - 1
+                ))}
+              >
+                Previous
+              </button>
+              <button
+                type="button"
+                className="builder-link"
+                onClick={() => setAdvancedFlowFocusIndex((prev) => (
+                  prev >= focusedFlowMatches.length - 1 ? 0 : prev + 1
+                ))}
+              >
+                Next
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+      {advancedFlowFocusOnly && focusedFlowMatch
+        ? renderJsonWithFocus(focusedFlowJson, focusedFlowJson)
+        : renderJsonWithFocus(fullJson, focusedFlowJson)}
+    </div>
+  );
 
   return (
     <ErrorBoundary>
@@ -5758,16 +6681,45 @@ function App() {
                       type="button"
                       className="action-link"
                       onClick={() => {
-                        setAdvancedProcessorScope('global');
-                        setShowAdvancedProcessorModal(true);
+                        openAdvancedFlowModal('global');
                       }}
                     >
                       Advanced Processors (Global)
                     </button>
+                    <button
+                      type="button"
+                      className={`action-link${reviewCtaPulse ? ' action-link-pulse' : ''}`}
+                      onClick={() => {
+                        setReviewStep('review');
+                        setShowReviewModal(true);
+                      }}
+                      disabled={!hasStagedChanges}
+                      title={hasStagedChanges
+                        ? `${stagedDiff.totalChanges} staged change(s)`
+                        : 'No staged changes'}
+                    >
+                      Review & Save{hasStagedChanges ? ` (${stagedDiff.totalChanges})` : ''}
+                    </button>
+                    {hasGlobalAdvancedFlow && (
+                      <span className="pill" title="Global Advanced Flow configured">
+                        Advanced Flow
+                      </span>
+                    )}
+                    {stagedDiff.editedObjects.length > 0 && (
+                      <span
+                        className="pill"
+                        title={`Edited objects: ${stagedDiff.editedObjects.slice(0, 6).join(', ')}${
+                          stagedDiff.editedObjects.length > 6 ? '…' : ''
+                        }`}
+                      >
+                        Edited objects: {stagedDiff.editedObjects.length}
+                      </span>
+                    )}
                   </div>
                   {fileError && <div className="error">{fileError}</div>}
                   {saveError && <div className="error">{saveError}</div>}
                   {saveSuccess && <div className="success">{saveSuccess}</div>}
+                  {stagedToast && <div className="staged-toast">{stagedToast}</div>}
                   <div className="file-preview">
                     {fileLoading ? (
                       <div>Loading preview…</div>
@@ -5839,15 +6791,9 @@ function App() {
                                     <div className="panel-title-group">
                                       <span className="object-panel-title">Event</span>
                                       {eventOverrideFields.length > 0 && (
-                                        <div className="override-summary" tabIndex={0}>
-                                          <span className="pill override-pill">Override</span>
-                                          {renderOverrideSummaryCard(
-                                            obj,
-                                            overrideValueMap,
-                                            eventOverrideFields,
-                                            `Overrides (${eventOverrideFields.length})`,
-                                          )}
-                                        </div>
+                                        <span className="pill override-pill">
+                                          Overrides ({eventOverrideFields.length})
+                                        </span>
                                       )}
                                     </div>
                                     {canEditRules && !panelEditState[eventPanelKey] && (
@@ -5895,7 +6841,7 @@ function App() {
                                         <button
                                           type="button"
                                           className="panel-edit-button"
-                                          onClick={() => cancelEventEdit(eventPanelKey)}
+                                          onClick={() => requestCancelEventEdit(obj, eventPanelKey)}
                                         >
                                           Cancel
                                         </button>
@@ -5930,10 +6876,13 @@ function App() {
                                               </span>
                                             )}
                                             {overrideTargets.has('$.event.Summary') && (
-                                              <div className="override-summary" tabIndex={0}>
+                                              <div
+                                                className="override-summary"
+                                                tabIndex={0}
+                                                {...overrideTooltipHoverProps}
+                                              >
                                                 <span
                                                   className="pill override-pill pill-inline pill-action"
-                                                  title={`Original: ${getBaseEventDisplay(obj, 'Summary')}`}
                                                 >
                                                   Override
                                                   {canEditRules && panelEditState[eventPanelKey] && overrideValueMap.has('$.event.Summary') && (
@@ -6018,10 +6967,13 @@ function App() {
                                               </span>
                                             )}
                                             {overrideTargets.has('$.event.Severity') && (
-                                              <div className="override-summary" tabIndex={0}>
+                                              <div
+                                                className="override-summary"
+                                                tabIndex={0}
+                                                {...overrideTooltipHoverProps}
+                                              >
                                                 <span
                                                   className="pill override-pill pill-inline pill-action"
-                                                  title={`Original: ${getBaseEventDisplay(obj, 'Severity')}`}
                                                 >
                                                   Override
                                                   {canEditRules && panelEditState[eventPanelKey] && overrideValueMap.has('$.event.Severity') && (
@@ -6098,10 +7050,13 @@ function App() {
                                               </span>
                                             )}
                                             {overrideTargets.has('$.event.EventType') && (
-                                              <div className="override-summary" tabIndex={0}>
+                                              <div
+                                                className="override-summary"
+                                                tabIndex={0}
+                                                {...overrideTooltipHoverProps}
+                                              >
                                                 <span
                                                   className="pill override-pill pill-inline pill-action"
-                                                  title={`Original: ${getBaseEventDisplay(obj, 'EventType')}`}
                                                 >
                                                   Override
                                                   {canEditRules && panelEditState[eventPanelKey] && overrideValueMap.has('$.event.EventType') && (
@@ -6176,10 +7131,13 @@ function App() {
                                               </span>
                                             )}
                                             {overrideTargets.has('$.event.ExpireTime') && (
-                                              <div className="override-summary" tabIndex={0}>
+                                              <div
+                                                className="override-summary"
+                                                tabIndex={0}
+                                                {...overrideTooltipHoverProps}
+                                              >
                                                 <span
                                                   className="pill override-pill pill-inline pill-action"
-                                                  title={`Original: ${getBaseEventDisplay(obj, 'ExpireTime')}`}
                                                 >
                                                   Override
                                                   {canEditRules && panelEditState[eventPanelKey] && overrideValueMap.has('$.event.ExpireTime') && (
@@ -6254,10 +7212,13 @@ function App() {
                                               </span>
                                             )}
                                             {overrideTargets.has('$.event.EventCategory') && (
-                                              <div className="override-summary" tabIndex={0}>
+                                              <div
+                                                className="override-summary"
+                                                tabIndex={0}
+                                                {...overrideTooltipHoverProps}
+                                              >
                                                 <span
                                                   className="pill override-pill pill-inline pill-action"
-                                                  title={`Original: ${getBaseEventDisplay(obj, 'EventCategory')}`}
                                                 >
                                                   Override
                                                   {canEditRules && panelEditState[eventPanelKey] && overrideValueMap.has('$.event.EventCategory') && (
@@ -6341,7 +7302,26 @@ function App() {
                                                 </span>
                                               )}
                                               {overrideTargets.has(`$.event.${field}`) && (
-                                                <div className="override-summary" tabIndex={0}>
+                                                <div
+                                                  className="override-summary"
+                                                  tabIndex={0}
+                                                  onMouseEnter={() => {
+                                                    setSuppressVarTooltip(true);
+                                                    setSuppressEvalTooltip(true);
+                                                  }}
+                                                  onMouseLeave={() => {
+                                                    setSuppressVarTooltip(false);
+                                                    setSuppressEvalTooltip(false);
+                                                  }}
+                                                  onFocus={() => {
+                                                    setSuppressVarTooltip(true);
+                                                    setSuppressEvalTooltip(true);
+                                                  }}
+                                                  onBlur={() => {
+                                                    setSuppressVarTooltip(false);
+                                                    setSuppressEvalTooltip(false);
+                                                  }}
+                                                >
                                                   <span
                                                     className="pill override-pill pill-inline pill-action"
                                                     title={`Original: ${getBaseEventDisplay(obj, field)}`}
@@ -6462,7 +7442,7 @@ function App() {
                                     <button
                                       type="button"
                                       className="builder-cancel-button"
-                                      onClick={closeBuilder}
+                                      onClick={requestCancelBuilder}
                                     >
                                       Cancel
                                     </button>
@@ -6884,8 +7864,11 @@ function App() {
                                           type="button"
                                           className="builder-link"
                                           onClick={() => {
-                                            setAdvancedProcessorScope('object');
-                                            setShowAdvancedProcessorModal(true);
+                                            openAdvancedFlowModal(
+                                              'object',
+                                              undefined,
+                                              builderTarget ? `$.event.${builderTarget.field}` : null,
+                                            );
                                           }}
                                         >
                                           Advanced Flow
@@ -6897,37 +7880,48 @@ function App() {
                                       {isBuilderTargetReady && (
                                         <>
                                           <div className="processor-steps">
-                                            {['select', 'configure', 'review'].map((step) => (
-                                              <button
-                                                key={step}
-                                                type="button"
-                                                className={processorStep === step
-                                                  ? 'processor-step processor-step-active'
-                                                  : 'processor-step'}
-                                                disabled={
-                                                  (step === 'configure' && !processorType)
-                                                  || (step === 'review' && !buildProcessorPayload())
-                                                }
-                                                title={
-                                                  step === 'configure' && !processorType
-                                                    ? 'Select a processor to enable.'
-                                                    : step === 'review' && !buildProcessorPayload()
-                                                      ? 'Complete configuration to enable.'
-                                                      : ''
-                                                }
-                                                onClick={() => {
-                                                  if (step === 'configure' && !processorType) {
-                                                    return;
-                                                  }
-                                                  if (step === 'review' && !buildProcessorPayload()) {
-                                                    return;
-                                                  }
-                                                  setProcessorStep(step as typeof processorStep);
-                                                }}
-                                              >
-                                                {step}
-                                              </button>
-                                            ))}
+                                            {[
+                                              { key: 'select', label: 'Select' },
+                                              { key: 'configure', label: 'Configure' },
+                                              { key: 'review', label: 'Review/Save' },
+                                            ].map((stepItem, index) => {
+                                              const isActive = processorStep === stepItem.key;
+                                              const isConfigureReady = Boolean(processorType);
+                                              const isReviewReady = Boolean(processorPayload);
+                                              const isEnabled = stepItem.key === 'select'
+                                                || (stepItem.key === 'configure' && isConfigureReady)
+                                                || (stepItem.key === 'review' && isReviewReady);
+                                              const isComplete = stepItem.key === 'select'
+                                                ? isConfigureReady
+                                                : stepItem.key === 'configure'
+                                                  ? isReviewReady
+                                                  : false;
+                                              const title = stepItem.key === 'configure' && !isConfigureReady
+                                                ? 'Select a processor to enable.'
+                                                : stepItem.key === 'review' && !isReviewReady
+                                                  ? 'Complete configuration to enable.'
+                                                  : '';
+                                              return (
+                                                <button
+                                                  key={stepItem.key}
+                                                  type="button"
+                                                  className={`processor-step${isActive ? ' processor-step-active' : ''}${isComplete ? ' processor-step-complete' : ''}`}
+                                                  disabled={!isEnabled}
+                                                  title={title}
+                                                  onClick={() => {
+                                                    if (!isEnabled) {
+                                                      return;
+                                                    }
+                                                    setProcessorStep(stepItem.key as typeof processorStep);
+                                                  }}
+                                                >
+                                                  <span className="processor-step-index">
+                                                    {isComplete ? '✓' : index + 1}
+                                                  </span>
+                                                  {stepItem.label}
+                                                </button>
+                                              );
+                                            })}
                                           </div>
                                           {processorStep === 'select' && (
                                             <div className="processor-grid">
@@ -6953,229 +7947,348 @@ function App() {
                                               })}
                                             </div>
                                           )}
-                                          {processorStep === 'configure' && processorType === 'set' && (
+                                          {processorStep === 'configure' && (
                                             <div className="processor-form">
-                                              <div className="builder-section-title">Processor: Set</div>
-                                              <div className="processor-row">
-                                                <label className="builder-label">Source type</label>
-                                                <div className="builder-mode-toggle">
-                                                  <button
-                                                    type="button"
-                                                    className={processorDraft.sourceType === 'literal'
-                                                      ? 'builder-mode-button builder-mode-button-active'
-                                                      : 'builder-mode-button'}
-                                                    onClick={() => setProcessorDraft((prev) => ({
-                                                      ...prev,
-                                                      sourceType: 'literal',
-                                                    }))}
-                                                  >
-                                                    Literal
-                                                  </button>
-                                                  <button
-                                                    type="button"
-                                                    className={processorDraft.sourceType === 'path'
-                                                      ? 'builder-mode-button builder-mode-button-active'
-                                                      : 'builder-mode-button'}
-                                                    onClick={() => setProcessorDraft((prev) => ({
-                                                      ...prev,
-                                                      sourceType: 'path',
-                                                    }))}
-                                                  >
-                                                    Path
-                                                  </button>
-                                                </div>
+                                              <div className="builder-section-title">
+                                                Processor: {processorType ? getProcessorCatalogLabel(processorType) : '—'}
                                               </div>
-                                              <div className="processor-row">
-                                                <label className="builder-label">Source</label>
-                                                <div className="builder-inline-input">
-                                                  <input
-                                                    className="builder-input"
-                                                    value={processorDraft.source}
-                                                    placeholder={processorDraft.sourceType === 'path'
-                                                      ? '$.event.Summary or $v1'
-                                                      : 'Literal value or $v1'}
-                                                    onChange={(e) => handleProcessorSourceChange(
-                                                      e.target.value,
-                                                      e.target.selectionStart,
-                                                      (e.nativeEvent as InputEvent | undefined)?.inputType,
-                                                    )}
-                                                  />
-                                                  <button
-                                                    type="button"
-                                                    className="builder-link builder-var-button"
-                                                    title="Insert variable"
-                                                    onClick={() => {
-                                                      if (!builderTarget) {
-                                                        return;
-                                                      }
-                                                      const obj = getObjectByPanelKey(builderTarget.panelKey);
-                                                      const trapVars = obj?.trap?.variables || [];
-                                                      setVarModalVars(Array.isArray(trapVars) ? trapVars : []);
-                                                      openVarInsertModal(
-                                                        builderTarget.panelKey,
-                                                        'processorSource',
-                                                        processorDraft.source,
-                                                      );
-                                                    }}
-                                                  >
-                                                    ⋯
-                                                  </button>
-                                                </div>
-                                              </div>
-                                              <div className="processor-row">
-                                                <label className="builder-label">Target</label>
-                                                <input
-                                                  className="builder-input"
-                                                  value={processorDraft.targetField}
-                                                  placeholder="$.event.EventType"
-                                                  onChange={(e) => handleProcessorTargetChange(
-                                                    e.target.value,
-                                                    e.target.selectionStart,
-                                                    (e.nativeEvent as InputEvent | undefined)?.inputType,
+                                              {!processorType && (
+                                                <div className="builder-hint">Select a processor to configure.</div>
+                                              )}
+                                              {processorType && (
+                                                <>
+                                                  {renderProcessorConfigFields(
+                                                    processorType,
+                                                    builderProcessorConfig,
+                                                    (key, value) => setBuilderProcessorConfig((prev) => ({
+                                                      ...prev,
+                                                      [key]: value,
+                                                    })),
+                                                    'builder',
                                                   )}
-                                                />
-                                              </div>
-                                              <div className="processor-actions">
-                                                <button
-                                                  type="button"
-                                                  className="builder-card"
-                                                  onClick={() => setProcessorStep('review')}
-                                                >
-                                                  Review
-                                                </button>
-                                              </div>
+                                                  {processorType === 'foreach' && (
+                                                    <div className="processor-row">
+                                                      <label className="builder-label">Per-item processors</label>
+                                                      <div className="builder-hint">
+                                                        Add processors to run for each item.
+                                                      </div>
+                                                      <div className="builder-inline-actions">
+                                                        <select
+                                                          className="builder-select"
+                                                          value={builderNestedAddType}
+                                                          onChange={(e) => setBuilderNestedAddType(e.target.value)}
+                                                        >
+                                                          {builderPaletteItems.map((item) => (
+                                                            <option
+                                                              key={`${item.nodeKind}-${item.processorType || 'if'}`}
+                                                              value={item.nodeKind === 'if' ? 'if' : (item.processorType as string)}
+                                                            >
+                                                              {item.label}
+                                                            </option>
+                                                          ))}
+                                                        </select>
+                                                        <button
+                                                          type="button"
+                                                          className="builder-card"
+                                                          onClick={() => {
+                                                            const node = createFlowNodeFromPaletteValue(builderNestedAddType);
+                                                            setBuilderProcessorConfig((prev) => {
+                                                              const current = Array.isArray(prev.processors)
+                                                                ? prev.processors
+                                                                : [];
+                                                              return {
+                                                                ...prev,
+                                                                processors: [...current, node],
+                                                              };
+                                                            });
+                                                          }}
+                                                        >
+                                                          Add processor
+                                                        </button>
+                                                      </div>
+                                                      {renderFlowList(
+                                                        Array.isArray(builderProcessorConfig.processors)
+                                                          ? (builderProcessorConfig.processors as FlowNode[])
+                                                          : [],
+                                                        { kind: 'root' },
+                                                        (updater) => {
+                                                          setBuilderProcessorConfig((prev) => {
+                                                            const current = Array.isArray(prev.processors)
+                                                              ? prev.processors
+                                                              : [];
+                                                            const next = typeof updater === 'function'
+                                                              ? (updater as (items: FlowNode[]) => FlowNode[])(current)
+                                                              : updater;
+                                                            return {
+                                                              ...prev,
+                                                              processors: next,
+                                                            };
+                                                          });
+                                                        },
+                                                        'object',
+                                                        'object',
+                                                      )}
+                                                    </div>
+                                                  )}
+                                                  {processorType === 'switch' && (
+                                                    <div className="processor-row">
+                                                      <label className="builder-label">Cases</label>
+                                                      <div className="flow-switch-cases">
+                                                        {(Array.isArray(builderProcessorConfig.cases)
+                                                          ? builderProcessorConfig.cases
+                                                          : []).map((item: any) => (
+                                                            <div key={item.id} className="flow-switch-case">
+                                                              <div className="flow-switch-case-row">
+                                                                <label className="builder-label">Match</label>
+                                                                <input
+                                                                  className="builder-input"
+                                                                  value={item.match ?? ''}
+                                                                  onChange={(e) => setBuilderProcessorConfig((prev) => {
+                                                                    const cases = Array.isArray(prev.cases)
+                                                                      ? prev.cases
+                                                                      : [];
+                                                                    return {
+                                                                      ...prev,
+                                                                      cases: cases.map((entry: any) => (
+                                                                        entry.id === item.id
+                                                                          ? { ...entry, match: e.target.value }
+                                                                          : entry
+                                                                      )),
+                                                                    };
+                                                                  })}
+                                                                />
+                                                              </div>
+                                                              <div className="flow-switch-case-row">
+                                                                <label className="builder-label">Operator (optional)</label>
+                                                                <input
+                                                                  className="builder-input"
+                                                                  value={item.operator ?? ''}
+                                                                  onChange={(e) => setBuilderProcessorConfig((prev) => {
+                                                                    const cases = Array.isArray(prev.cases)
+                                                                      ? prev.cases
+                                                                      : [];
+                                                                    return {
+                                                                      ...prev,
+                                                                      cases: cases.map((entry: any) => (
+                                                                        entry.id === item.id
+                                                                          ? { ...entry, operator: e.target.value }
+                                                                          : entry
+                                                                      )),
+                                                                    };
+                                                                  })}
+                                                                />
+                                                              </div>
+                                                              <div className="flow-switch-case-row">
+                                                                <label className="builder-label">Processors</label>
+                                                                <div className="builder-inline-actions">
+                                                                  <select
+                                                                    className="builder-select"
+                                                                    value={builderSwitchCaseAddType[item.id] || builderNestedAddType}
+                                                                    onChange={(e) => setBuilderSwitchCaseAddType((prev) => ({
+                                                                      ...prev,
+                                                                      [item.id]: e.target.value,
+                                                                    }))}
+                                                                  >
+                                                                    {builderPaletteItems.map((paletteItem) => (
+                                                                      <option
+                                                                        key={`${paletteItem.nodeKind}-${paletteItem.processorType || 'if'}`}
+                                                                        value={paletteItem.nodeKind === 'if'
+                                                                          ? 'if'
+                                                                          : (paletteItem.processorType as string)}
+                                                                      >
+                                                                        {paletteItem.label}
+                                                                      </option>
+                                                                    ))}
+                                                                  </select>
+                                                                  <button
+                                                                    type="button"
+                                                                    className="builder-card"
+                                                                    onClick={() => {
+                                                                      const choice = builderSwitchCaseAddType[item.id] || builderNestedAddType;
+                                                                      const node = createFlowNodeFromPaletteValue(choice);
+                                                                      setBuilderProcessorConfig((prev) => {
+                                                                        const cases = Array.isArray(prev.cases)
+                                                                          ? prev.cases
+                                                                          : [];
+                                                                        return {
+                                                                          ...prev,
+                                                                          cases: cases.map((entry: any) => (
+                                                                            entry.id === item.id
+                                                                              ? {
+                                                                                ...entry,
+                                                                                processors: [
+                                                                                  ...(Array.isArray(entry.processors) ? entry.processors : []),
+                                                                                  node,
+                                                                                ],
+                                                                              }
+                                                                              : entry
+                                                                          )),
+                                                                        };
+                                                                      });
+                                                                    }}
+                                                                  >
+                                                                    Add processor
+                                                                  </button>
+                                                                </div>
+                                                                {renderFlowList(
+                                                                  Array.isArray(item.processors) ? item.processors : [],
+                                                                  { kind: 'root' },
+                                                                  (updater) => {
+                                                                    setBuilderProcessorConfig((prev) => {
+                                                                      const cases = Array.isArray(prev.cases)
+                                                                        ? prev.cases
+                                                                        : [];
+                                                                      return {
+                                                                        ...prev,
+                                                                        cases: cases.map((entry: any) => {
+                                                                          if (entry.id !== item.id) {
+                                                                            return entry;
+                                                                          }
+                                                                          const current = Array.isArray(entry.processors)
+                                                                            ? entry.processors
+                                                                            : [];
+                                                                          const next = typeof updater === 'function'
+                                                                            ? (updater as (items: FlowNode[]) => FlowNode[])(current)
+                                                                            : updater;
+                                                                          return {
+                                                                            ...entry,
+                                                                            processors: next,
+                                                                          };
+                                                                        }),
+                                                                      };
+                                                                    });
+                                                                  },
+                                                                  'object',
+                                                                  'object',
+                                                                )}
+                                                              </div>
+                                                              <div className="flow-switch-case-row">
+                                                                <button
+                                                                  type="button"
+                                                                  className="builder-link"
+                                                                  onClick={() => {
+                                                                    setBuilderProcessorConfig((prev) => {
+                                                                      const cases = Array.isArray(prev.cases)
+                                                                        ? prev.cases
+                                                                        : [];
+                                                                      return {
+                                                                        ...prev,
+                                                                        cases: cases.filter((entry: any) => entry.id !== item.id),
+                                                                      };
+                                                                    });
+                                                                    setBuilderSwitchCaseAddType((prev) => {
+                                                                      const next = { ...prev };
+                                                                      delete next[item.id];
+                                                                      return next;
+                                                                    });
+                                                                  }}
+                                                                >
+                                                                  Remove case
+                                                                </button>
+                                                              </div>
+                                                            </div>
+                                                          ))}
+                                                        <button
+                                                          type="button"
+                                                          className="builder-link"
+                                                          onClick={() => setBuilderProcessorConfig((prev) => {
+                                                            const cases = Array.isArray(prev.cases)
+                                                              ? prev.cases
+                                                              : [];
+                                                            return {
+                                                              ...prev,
+                                                              cases: [
+                                                                ...cases,
+                                                                {
+                                                                  id: nextSwitchCaseId(),
+                                                                  match: '',
+                                                                  operator: '',
+                                                                  processors: [],
+                                                                },
+                                                              ],
+                                                            };
+                                                          })}
+                                                        >
+                                                          Add case
+                                                        </button>
+                                                      </div>
+                                                      <div className="builder-hint">
+                                                        Drag processors to reorder cases or nested processors.
+                                                      </div>
+                                                      <label className="builder-label">Default processors</label>
+                                                      <div className="builder-inline-actions">
+                                                        <select
+                                                          className="builder-select"
+                                                          value={builderSwitchDefaultAddType}
+                                                          onChange={(e) => setBuilderSwitchDefaultAddType(e.target.value)}
+                                                        >
+                                                          {builderPaletteItems.map((paletteItem) => (
+                                                            <option
+                                                              key={`${paletteItem.nodeKind}-${paletteItem.processorType || 'if'}`}
+                                                              value={paletteItem.nodeKind === 'if'
+                                                                ? 'if'
+                                                                : (paletteItem.processorType as string)}
+                                                            >
+                                                              {paletteItem.label}
+                                                            </option>
+                                                          ))}
+                                                        </select>
+                                                        <button
+                                                          type="button"
+                                                          className="builder-card"
+                                                          onClick={() => {
+                                                            const node = createFlowNodeFromPaletteValue(builderSwitchDefaultAddType);
+                                                            setBuilderProcessorConfig((prev) => {
+                                                              const current = Array.isArray(prev.defaultProcessors)
+                                                                ? prev.defaultProcessors
+                                                                : [];
+                                                              return {
+                                                                ...prev,
+                                                                defaultProcessors: [...current, node],
+                                                              };
+                                                            });
+                                                          }}
+                                                        >
+                                                          Add processor
+                                                        </button>
+                                                      </div>
+                                                      {renderFlowList(
+                                                        Array.isArray(builderProcessorConfig.defaultProcessors)
+                                                          ? (builderProcessorConfig.defaultProcessors as FlowNode[])
+                                                          : [],
+                                                        { kind: 'root' },
+                                                        (updater) => {
+                                                          setBuilderProcessorConfig((prev) => {
+                                                            const current = Array.isArray(prev.defaultProcessors)
+                                                              ? prev.defaultProcessors
+                                                              : [];
+                                                            const next = typeof updater === 'function'
+                                                              ? (updater as (items: FlowNode[]) => FlowNode[])(current)
+                                                              : updater;
+                                                            return {
+                                                              ...prev,
+                                                              defaultProcessors: next,
+                                                            };
+                                                          });
+                                                        },
+                                                        'object',
+                                                        'object',
+                                                      )}
+                                                    </div>
+                                                  )}
+                                                  <div className="processor-actions">
+                                                    <button
+                                                      type="button"
+                                                      className="builder-card"
+                                                      onClick={() => setProcessorStep('review')}
+                                                    >
+                                                      Next: Review/Save
+                                                    </button>
+                                                  </div>
+                                                </>
+                                              )}
                                             </div>
                                           )}
-                                          {processorStep === 'configure' && processorType === 'regex' && (
-                                            <div className="processor-form">
-                                              <div className="builder-section-title">Processor: Regex</div>
-                                              <div className="processor-row">
-                                                <label className="builder-label">Source type</label>
-                                                <div className="builder-mode-toggle">
-                                                  <button
-                                                    type="button"
-                                                    className={processorDraft.sourceType === 'literal'
-                                                      ? 'builder-mode-button builder-mode-button-active'
-                                                      : 'builder-mode-button'}
-                                                    onClick={() => setProcessorDraft((prev) => ({
-                                                      ...prev,
-                                                      sourceType: 'literal',
-                                                    }))}
-                                                  >
-                                                    Literal
-                                                  </button>
-                                                  <button
-                                                    type="button"
-                                                    className={processorDraft.sourceType === 'path'
-                                                      ? 'builder-mode-button builder-mode-button-active'
-                                                      : 'builder-mode-button'}
-                                                    onClick={() => setProcessorDraft((prev) => ({
-                                                      ...prev,
-                                                      sourceType: 'path',
-                                                    }))}
-                                                  >
-                                                    Path
-                                                  </button>
-                                                </div>
-                                              </div>
-                                              <div className="processor-row">
-                                                <label className="builder-label">Source</label>
-                                                <div className="builder-inline-input">
-                                                  <input
-                                                    className="builder-input"
-                                                    value={processorDraft.source}
-                                                    placeholder={processorDraft.sourceType === 'path'
-                                                      ? '$.event.Summary or $v1'
-                                                      : 'Literal value or $v1'}
-                                                    onChange={(e) => handleProcessorSourceChange(
-                                                      e.target.value,
-                                                      e.target.selectionStart,
-                                                      (e.nativeEvent as InputEvent | undefined)?.inputType,
-                                                    )}
-                                                  />
-                                                  <button
-                                                    type="button"
-                                                    className="builder-link builder-var-button"
-                                                    title="Insert variable"
-                                                    onClick={() => {
-                                                      if (!builderTarget) {
-                                                        return;
-                                                      }
-                                                      const obj = getObjectByPanelKey(builderTarget.panelKey);
-                                                      const trapVars = obj?.trap?.variables || [];
-                                                      setVarModalVars(Array.isArray(trapVars) ? trapVars : []);
-                                                      openVarInsertModal(
-                                                        builderTarget.panelKey,
-                                                        'processorSource',
-                                                        processorDraft.source,
-                                                      );
-                                                    }}
-                                                  >
-                                                    ⋯
-                                                  </button>
-                                                </div>
-                                              </div>
-                                              <div className="processor-row">
-                                                <label className="builder-label">Pattern</label>
-                                                <input
-                                                  className="builder-input"
-                                                  value={processorDraft.pattern}
-                                                  placeholder="type=(\\w+)"
-                                                  onChange={(e) => setProcessorDraft((prev) => ({
-                                                    ...prev,
-                                                    pattern: e.target.value,
-                                                  }))}
-                                                />
-                                              </div>
-                                              <div className="processor-row">
-                                                <label className="builder-label">Target</label>
-                                                <input
-                                                  className="builder-input"
-                                                  value={processorDraft.targetField}
-                                                  placeholder="$.event.EventType"
-                                                  onChange={(e) => handleProcessorTargetChange(
-                                                    e.target.value,
-                                                    e.target.selectionStart,
-                                                    (e.nativeEvent as InputEvent | undefined)?.inputType,
-                                                  )}
-                                                />
-                                              </div>
-                                              <div className="processor-actions">
-                                                <button
-                                                  type="button"
-                                                  className="builder-card"
-                                                  onClick={() => setProcessorStep('review')}
-                                                >
-                                                  Review
-                                                </button>
-                                              </div>
-                                            </div>
-                                          )}
-                                          {processorStep === 'configure'
-                                            && processorType
-                                            && !['set', 'regex'].includes(processorType)
-                                            && (
-                                              <div className="processor-form">
-                                                <div className="builder-section-title">
-                                                  Processor: {formatEventFieldLabel(processorType)}
-                                                </div>
-                                                <div className="builder-hint">
-                                                  Configure this processor in Advanced Flow.
-                                                </div>
-                                                <div className="processor-actions">
-                                                  <button
-                                                    type="button"
-                                                    className="builder-card"
-                                                    onClick={() => {
-                                                      setAdvancedProcessorScope('object');
-                                                      setShowAdvancedProcessorModal(true);
-                                                    }}
-                                                  >
-                                                    Open Advanced Flow
-                                                  </button>
-                                                </div>
-                                              </div>
-                                            )}
                                           {processorStep === 'review' && (
                                             <div className="processor-review">
                                               <div className="builder-preview">
@@ -7189,25 +8302,30 @@ function App() {
                                                     {showProcessorJson ? 'Hide JSON' : 'Show JSON'}
                                                   </button>
                                                 </div>
+                                                <div className="builder-preview-lines">
+                                                  {(getProcessorSummaryLines(processorPayload) || []).map((line, idx) => (
+                                                    <span key={`${line}-${idx}`}>{line}</span>
+                                                  ))}
+                                                </div>
                                                 {showProcessorJson && (
-                                                  <div className="builder-preview-value">
-                                                    {JSON.stringify(buildProcessorPayload(), null, 2) || '—'}
-                                                  </div>
+                                                  <pre className="code-block">
+                                                    {JSON.stringify(processorPayload, null, 2) || '—'}
+                                                  </pre>
                                                 )}
                                               </div>
-                                              <div className="processor-actions">
+                                              <div className="processor-review-actions">
                                                 <button
                                                   type="button"
                                                   className="ghost-button"
                                                   onClick={() => setProcessorStep('configure')}
                                                 >
-                                                  Back
+                                                  Back to Configure
                                                 </button>
                                                 <button
                                                   type="button"
                                                   className="builder-card builder-card-primary"
                                                   onClick={applyProcessor}
-                                                  disabled={!buildProcessorPayload()}
+                                                  disabled={!processorPayload}
                                                 >
                                                   Apply
                                                 </button>
@@ -7228,38 +8346,176 @@ function App() {
                       )
                     )}
                   </div>
-                  {showCommitModal && (
+                  {showReviewModal && (
                     <div className="modal-overlay" role="dialog" aria-modal="true">
-                      <div className="modal">
-                        <h3>Commit message</h3>
-                        <input
-                          type="text"
-                          placeholder="Enter commit message here"
-                          value={commitMessage}
-                          onChange={(e) => setCommitMessage(e.target.value)}
-                        />
-                        <div className="modal-actions">
-                          <button type="button" onClick={() => {
-                            setPendingOverrideSave(null);
-                            setShowCommitModal(false);
-                          }}>
-                            Cancel
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              if (pendingOverrideSave) {
-                                handleSaveOverrides(commitMessage);
-                              } else {
-                                handleSaveFile(commitMessage);
-                              }
-                              setShowCommitModal(false);
-                            }}
-                            disabled={saveLoading}
-                          >
-                            {saveLoading ? 'Saving…' : 'Save'}
-                          </button>
-                        </div>
+                      <div className="modal modal-wide">
+                        {reviewStep === 'review' ? (
+                          <>
+                            <h3>Review staged changes</h3>
+                            {stagedDiff.totalChanges === 0 ? (
+                              <div className="empty-state">No staged changes.</div>
+                            ) : (
+                              <div className="staged-changes">
+                                {stagedDiff.sections.map((section) => (
+                                  <div key={section.title} className="staged-section">
+                                    <div className="staged-section-title">{section.title}</div>
+                                    {section.fieldChanges.length > 0 && (
+                                      <div className="staged-group">
+                                        <div className="staged-group-title">Field changes</div>
+                                        {section.fieldChanges.map((change) => (
+                                          <div key={`${section.title}-${change.target}-${change.action}`} className="staged-change">
+                                            <div className="staged-change-header">
+                                              <span className="staged-change-label">{change.target}</span>
+                                              <span className={`pill change-pill change-pill-${change.action}`}>
+                                                {change.action}
+                                              </span>
+                                            </div>
+                                            <div className="staged-change-body">
+                                              {change.after && (
+                                                <div className="staged-change-column">
+                                                  <div className="staged-change-subtitle">After</div>
+                                                  <pre className="code-block">
+                                                    {JSON.stringify(change.after, null, 2)}
+                                                  </pre>
+                                                </div>
+                                              )}
+                                              {(() => {
+                                                const changeKey = `${section.title}-${change.target}-${change.action}`;
+                                                const hasOverrideOriginal = change.before !== undefined;
+                                                const baseOriginal = getBaseObjectValue(section.objectName, change.target);
+                                                const originalValue = hasOverrideOriginal ? change.before : baseOriginal;
+                                                const hasOriginal = hasOverrideOriginal || baseOriginal !== undefined;
+                                                if (!hasOriginal) {
+                                                  return null;
+                                                }
+                                                const isExpanded = Boolean(expandedOriginals[changeKey]);
+                                                const originalLabel = hasOverrideOriginal
+                                                  ? 'Original (override)'
+                                                  : 'Original (base value)';
+                                                return (
+                                                  <div className="staged-change-column">
+                                                    <button
+                                                      type="button"
+                                                      className="staged-change-toggle"
+                                                      onClick={() => {
+                                                        setExpandedOriginals((prev) => ({
+                                                          ...prev,
+                                                          [changeKey]: !prev[changeKey],
+                                                        }));
+                                                      }}
+                                                    >
+                                                      {isExpanded ? 'Hide original' : 'Show original'}
+                                                    </button>
+                                                    {isExpanded && (
+                                                      <>
+                                                        <div className="staged-change-subtitle">{originalLabel}</div>
+                                                        {originalValue === undefined ? (
+                                                          <div className="staged-change-empty">Not set</div>
+                                                        ) : (
+                                                          <pre className="code-block">
+                                                            {JSON.stringify(originalValue, null, 2)}
+                                                          </pre>
+                                                        )}
+                                                      </>
+                                                    )}
+                                                  </div>
+                                                );
+                                              })()}
+                                            </div>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    )}
+                                    {section.processorChanges.length > 0 && (
+                                      <div className="staged-group">
+                                        <div className="staged-group-title">Processor flow changes</div>
+                                        {section.processorChanges.map((change, idx) => (
+                                          <div key={`${section.title}-proc-${idx}-${change.action}`} className="staged-change">
+                                            <div className="staged-change-header">
+                                              <span className="staged-change-label">
+                                                {getProcessorType(change.processor) || 'processor'}
+                                              </span>
+                                              <span className={`pill change-pill change-pill-${change.action}`}>
+                                                {change.action}
+                                              </span>
+                                            </div>
+                                            <div className="staged-change-body">
+                                              <div className="staged-change-column">
+                                                <div className="staged-change-subtitle">Summary</div>
+                                                <div className="builder-preview-lines">
+                                                  {getProcessorSummaryLines(change.processor).map((line, lineIdx) => (
+                                                    <span key={`${line}-${lineIdx}`}>{line}</span>
+                                                  ))}
+                                                </div>
+                                                <pre className="code-block">
+                                                  {JSON.stringify(change.processor, null, 2)}
+                                                </pre>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                            <div className="modal-actions">
+                              <button type="button" onClick={() => setShowReviewModal(false)}>
+                                Close
+                              </button>
+                              <button
+                                type="button"
+                                className="ghost-button"
+                                onClick={() => {
+                                  setPendingOverrideSave(null);
+                                  setShowReviewModal(false);
+                                }}
+                                disabled={saveLoading}
+                              >
+                                Discard changes
+                              </button>
+                              <button
+                                type="button"
+                                className="builder-card builder-card-primary"
+                                onClick={() => setReviewStep('commit')}
+                                disabled={stagedDiff.totalChanges === 0}
+                              >
+                                Continue to Commit
+                              </button>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <h3>Commit message</h3>
+                            <input
+                              type="text"
+                              placeholder="Enter commit message here"
+                              value={commitMessage}
+                              onChange={(e) => setCommitMessage(e.target.value)}
+                            />
+                            <div className="modal-actions">
+                              <button
+                                type="button"
+                                onClick={() => setReviewStep('review')}
+                              >
+                                Back to Review
+                              </button>
+                              <button
+                                type="button"
+                                className="builder-card builder-card-primary"
+                                onClick={() => {
+                                  handleSaveOverrides(commitMessage);
+                                  setShowReviewModal(false);
+                                  setReviewStep('review');
+                                }}
+                                disabled={saveLoading}
+                              >
+                                {saveLoading ? 'Saving…' : 'Commit Changes'}
+                              </button>
+                            </div>
+                          </>
+                        )}
                       </div>
                     </div>
                   )}
@@ -7318,6 +8574,11 @@ function App() {
                             ? 'Wireframe: configure global pre/post processors for the file. Drag from the palette into the lanes.'
                             : 'Wireframe: configure object processors. Drag from the palette into the flow lanes.'}
                         </div>
+                        {advancedFlowDirty && (
+                          <div className="builder-hint builder-hint-warning">
+                            Pending Advanced Flow changes. Save to stage.
+                          </div>
+                        )}
                         <div className="flow-modal-body">
                           <div className="flow-palette">
                             <div className="flow-palette-title">Palette</div>
@@ -7385,29 +8646,35 @@ function App() {
                                     {renderFlowList(globalPostFlow, { kind: 'root' }, setGlobalPostFlow, 'global', 'post')}
                                   </div>
                                 </div>
-                                <div className="flow-preview">
-                                  <div className="flow-preview-title">JSON Preview</div>
-                                  <pre className="flow-preview-code">
-                                    {JSON.stringify({
-                                      pre: buildFlowProcessors(globalPreFlow),
-                                      post: buildFlowProcessors(globalPostFlow),
-                                    }, null, 2)}
-                                  </pre>
-                                </div>
+                                {renderFlowJsonPreview(JSON.stringify({
+                                  pre: buildFlowProcessors(globalPreFlow),
+                                  post: buildFlowProcessors(globalPostFlow),
+                                }, null, 2))}
                               </>
                             ) : (
                               <>
                                 <div className="flow-canvas-title">Flow</div>
                                 {renderFlowList(advancedFlow, { kind: 'root' }, setAdvancedFlow, 'object', 'object')}
-                                <div className="flow-preview">
-                                  <div className="flow-preview-title">JSON Preview</div>
-                                  <pre className="flow-preview-code">
-                                    {JSON.stringify(buildFlowProcessors(advancedFlow), null, 2)}
-                                  </pre>
-                                </div>
+                                {renderFlowJsonPreview(JSON.stringify(buildFlowProcessors(advancedFlow), null, 2))}
                               </>
                             )}
                           </div>
+                        </div>
+                        <div className="modal-actions">
+                          <button
+                            type="button"
+                            onClick={() => setShowAdvancedProcessorModal(false)}
+                          >
+                            Close
+                          </button>
+                          <button
+                            type="button"
+                            className="builder-card builder-card-primary"
+                            disabled={!advancedFlowDirty}
+                            onClick={saveAdvancedFlow}
+                          >
+                            Save Changes
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -7447,138 +8714,29 @@ function App() {
                             </div>
                           </div>
                         )}
-                        {flowEditorDraft.kind === 'processor' && flowEditorDraft.processorType === 'set' && (
-                          <div className="processor-form">
-                            <div className="processor-row">
-                              <label className="builder-label">Source type</label>
-                              <div className="builder-mode-toggle">
-                                <button
-                                  type="button"
-                                  className={(flowEditorDraft.config?.sourceType || 'literal') === 'literal'
-                                    ? 'builder-mode-button builder-mode-button-active'
-                                    : 'builder-mode-button'}
-                                  onClick={() => setFlowEditorDraft((prev) => (prev
-                                    ? {
-                                      ...prev,
-                                      config: {
-                                        ...(prev as FlowProcessorNode).config,
-                                        sourceType: 'literal',
-                                      },
-                                    }
-                                    : prev))}
-                                >
-                                  Literal
-                                </button>
-                                <button
-                                  type="button"
-                                  className={(flowEditorDraft.config?.sourceType || 'literal') === 'path'
-                                    ? 'builder-mode-button builder-mode-button-active'
-                                    : 'builder-mode-button'}
-                                  onClick={() => setFlowEditorDraft((prev) => (prev
-                                    ? {
-                                      ...prev,
-                                      config: {
-                                        ...(prev as FlowProcessorNode).config,
-                                        sourceType: 'path',
-                                      },
-                                    }
-                                    : prev))}
-                                >
-                                  Path
-                                </button>
-                              </div>
-                            </div>
-                            <div className="processor-row">
-                              <label className="builder-label">Source</label>
-                              <input
-                                className="builder-input"
-                                value={flowEditorDraft.config?.source || ''}
-                                onChange={(e) => handleFlowEditorInputChange(
-                                  'flowEditor.source',
-                                  e.target.value,
-                                  e.target.selectionStart,
-                                  (e.nativeEvent as InputEvent | undefined)?.inputType,
-                                )}
-                              />
-                            </div>
-                            <div className="processor-row">
-                              <label className="builder-label">Target</label>
-                              <input
-                                className="builder-input"
-                                value={flowEditorDraft.config?.targetField || ''}
-                                onChange={(e) => handleFlowEditorInputChange(
-                                  'flowEditor.targetField',
-                                  e.target.value,
-                                  e.target.selectionStart,
-                                  (e.nativeEvent as InputEvent | undefined)?.inputType,
-                                )}
-                              />
-                            </div>
-                            <div className="processor-row">
-                              <label className="builder-label">Args (optional JSON array)</label>
-                              <input
-                                className="builder-input"
-                                placeholder='["$.event.Node", "$.event.EventType"]'
-                                value={flowEditorDraft.config?.argsText || ''}
-                                onChange={(e) => setFlowEditorDraft((prev) => (prev
+                        {flowEditorDraft.kind === 'processor'
+                          && ['set', 'regex'].includes(flowEditorDraft.processorType)
+                          && (
+                            <div className="processor-form">
+                              {renderProcessorConfigFields(
+                                flowEditorDraft.processorType,
+                                flowEditorDraft.config || {},
+                                (key, value) => setFlowEditorDraft((prev) => (prev
                                   ? {
                                     ...prev,
                                     config: {
                                       ...(prev as FlowProcessorNode).config,
-                                      argsText: e.target.value,
+                                      [key]: value,
                                     },
                                   }
-                                  : prev))}
-                              />
+                                  : prev)),
+                                'flow',
+                              )}
                               {flowEditorArgsError && (
                                 <div className="builder-hint builder-hint-warning">{flowEditorArgsError}</div>
                               )}
                             </div>
-                          </div>
-                        )}
-                        {flowEditorDraft.kind === 'processor' && flowEditorDraft.processorType === 'regex' && (
-                          <div className="processor-form">
-                            <div className="processor-row">
-                              <label className="builder-label">Source</label>
-                              <input
-                                className="builder-input"
-                                value={flowEditorDraft.config?.source || ''}
-                                onChange={(e) => handleFlowEditorInputChange(
-                                  'flowEditor.source',
-                                  e.target.value,
-                                  e.target.selectionStart,
-                                  (e.nativeEvent as InputEvent | undefined)?.inputType,
-                                )}
-                              />
-                            </div>
-                            <div className="processor-row">
-                              <label className="builder-label">Pattern</label>
-                              <input
-                                className="builder-input"
-                                value={flowEditorDraft.config?.pattern || ''}
-                                onChange={(e) => handleFlowEditorInputChange(
-                                  'flowEditor.pattern',
-                                  e.target.value,
-                                  e.target.selectionStart,
-                                  (e.nativeEvent as InputEvent | undefined)?.inputType,
-                                )}
-                              />
-                            </div>
-                            <div className="processor-row">
-                              <label className="builder-label">Target</label>
-                              <input
-                                className="builder-input"
-                                value={flowEditorDraft.config?.targetField || ''}
-                                onChange={(e) => handleFlowEditorInputChange(
-                                  'flowEditor.targetField',
-                                  e.target.value,
-                                  e.target.selectionStart,
-                                  (e.nativeEvent as InputEvent | undefined)?.inputType,
-                                )}
-                              />
-                            </div>
-                          </div>
-                        )}
+                          )}
                         {flowEditorDraft.kind === 'if' && (
                           <div className="processor-form">
                             <div className="processor-row">
@@ -7878,82 +9036,25 @@ function App() {
                           && !['set', 'regex', 'foreach', 'switch'].includes(flowEditorDraft.processorType)
                           && (
                             <div className="processor-form">
-                              {(flowProcessorConfigSpecs[flowEditorDraft.processorType] || []).length === 0 ? (
+                              {(processorConfigSpecs[flowEditorDraft.processorType] || []).length === 0 ? (
                                 <div className="builder-hint">
                                   No configuration required for this processor.
                                 </div>
                               ) : (
-                                flowProcessorConfigSpecs[flowEditorDraft.processorType].map((field) => {
-                                  const isJsonField = field.type === 'json';
-                                  const valueKey = isJsonField ? `${field.key}Text` : field.key;
-                                  const value = (flowEditorDraft.config?.[valueKey] ?? '') as string | boolean;
-                                  const jsonError = isJsonField && String(value).trim()
-                                    ? (() => {
-                                      try {
-                                        JSON.parse(String(value));
-                                        return '';
-                                      } catch {
-                                        return `${field.label} must be valid JSON.`;
-                                      }
-                                    })()
-                                    : '';
-                                  return (
-                                    <div key={field.key} className="processor-row">
-                                      <label className="builder-label">{field.label}</label>
-                                      {field.type === 'boolean' ? (
-                                        <select
-                                          className="builder-select"
-                                          value={value ? 'true' : 'false'}
-                                          onChange={(e) => setFlowEditorDraft((prev) => (prev
-                                            ? {
-                                              ...prev,
-                                              config: {
-                                                ...(prev as FlowProcessorNode).config,
-                                                [field.key]: e.target.value === 'true',
-                                              },
-                                            }
-                                            : prev))}
-                                        >
-                                          <option value="false">false</option>
-                                          <option value="true">true</option>
-                                        </select>
-                                      ) : isJsonField ? (
-                                        <textarea
-                                          className="builder-textarea"
-                                          placeholder={field.placeholder}
-                                          value={value as string}
-                                          onChange={(e) => setFlowEditorDraft((prev) => (prev
-                                            ? {
-                                              ...prev,
-                                              config: {
-                                                ...(prev as FlowProcessorNode).config,
-                                                [valueKey]: e.target.value,
-                                              },
-                                            }
-                                            : prev))}
-                                        />
-                                      ) : (
-                                        <input
-                                          className="builder-input"
-                                          placeholder={field.placeholder}
-                                          value={value as string}
-                                          onChange={(e) => setFlowEditorDraft((prev) => (prev
-                                            ? {
-                                              ...prev,
-                                              config: {
-                                                ...(prev as FlowProcessorNode).config,
-                                                [field.key]: e.target.value,
-                                              },
-                                            }
-                                            : prev))}
-                                        />
-                                      )}
-                                      {jsonError && (
-                                        <div className="builder-hint builder-hint-warning">{jsonError}</div>
-                                      )}
-                                    </div>
-                                  );
-                                })
+                                renderProcessorConfigFields(
+                                  flowEditorDraft.processorType,
+                                  flowEditorDraft.config || {},
+                                  (key, value) => setFlowEditorDraft((prev) => (prev
+                                    ? {
+                                      ...prev,
+                                      config: {
+                                        ...(prev as FlowProcessorNode).config,
+                                        [key]: value,
+                                      },
+                                    }
+                                    : prev)),
+                                  'flow',
+                                )
                               )}
                             </div>
                           )}
@@ -8193,6 +9294,38 @@ function App() {
                       </div>
                     </div>
                   )}
+                  {pendingCancel && (
+                    <div className="modal-overlay" role="dialog" aria-modal="true">
+                      <div className="modal">
+                        <h3>Discard changes?</h3>
+                        <p>You have unsaved changes. Discard them?</p>
+                        <div className="modal-actions">
+                          <button type="button" onClick={() => setPendingCancel(null)}>
+                            Cancel
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const next = pendingCancel;
+                              setPendingCancel(null);
+                              if (!next) {
+                                return;
+                              }
+                              if (next.type === 'builder') {
+                                closeBuilder();
+                                return;
+                              }
+                              if (next.type === 'panel' && next.panelKey) {
+                                cancelEventEdit(next.panelKey);
+                              }
+                            }}
+                          >
+                            Discard
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                   {saveLoading && (
                     <div className="save-overlay" aria-live="polite" aria-busy="true">
                       <div className="save-overlay-card">
@@ -8342,7 +9475,10 @@ function App() {
             {varModalOpen && (
               <div className="modal-overlay" role="dialog" aria-modal="true">
                 <div className="modal modal-wide">
-                  <h3>Trap variables {varModalToken ? `for ${varModalToken}` : ''}</h3>
+                  <h3>
+                    Trap variables ({varModalVars.length})
+                    {varModalToken ? ` for ${varModalToken}` : ''}
+                  </h3>
                   {varModalMode === 'insert' && (
                     <p className="muted">Select a variable to insert.</p>
                   )}
@@ -8555,5 +9691,3 @@ function App() {
     </ErrorBoundary>
   );
 }
-
-export default App;

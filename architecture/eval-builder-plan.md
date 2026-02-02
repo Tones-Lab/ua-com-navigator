@@ -197,6 +197,39 @@ This is a **visual flow** for power users, separate from field-scoped edits.
 - No linking to specific event panel fields.
 - No JSON output or “apply” to overrides yet.
 
+---
+
+## Advanced Flow: Persistence + Visibility (Design Update)
+
+### Source-of-Truth
+- Advanced flows (global pre/post or object flows) are stored as **override processors**.
+- Field-scoped processors (via Builder → Apply) are also stored as override processors, but they target a specific field.
+
+### Save + Commit Flow
+1) User edits Advanced Flow (global or object) in the modal.
+2) UI marks the flow as **pending changes** (visual badge/banner) until saved.
+3) On save, the pending flow updates the override payload and opens the **commit modal**.
+4) SVN commit occurs only after the user confirms the commit message.
+
+### How Users Know Changes Exist
+- **Object header pills:**
+  - **Override**: any override exists for the object.
+  - **Advanced Flow**: object has processors not tied to a single field (or untargeted processors).
+- **Global indicator:**
+  - A persistent badge or pill in the file header showing **Global Advanced Flow** active.
+- **Pending change banner:**
+  - When the Advanced Flow modal has unsaved edits, show a “Pending Advanced Flow changes” banner.
+
+### Friendly Summary for Processor Overrides
+- For field-level processors, add a **summary tooltip/card** similar to Eval’s friendly view.
+- Summary should include processor type + key parameters (e.g., source, pattern, target).
+- A “View in Advanced Flow” link jumps to the flow modal.
+
+### Raw JSON Exposure
+- Keep JSON preview inside Advanced Flow modal (for advanced users).
+- In Friendly view, avoid raw JSON in field rows unless explicitly requested.
+- Provide a “Show JSON” toggle in the tooltip/card for processor overrides.
+
 ### Processor-Specific Forms (MVP details)
 Below is the **minimum form** for each processor type. Optional fields are shown and may be collapsed under “Advanced”.
 

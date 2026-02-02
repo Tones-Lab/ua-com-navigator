@@ -3,6 +3,14 @@
 ## Now (P0)
 - 🔥 Unify Global/Object processor palettes using a single registry source-of-truth.
   - Plan: architecture/processor-palette-unification-plan.md
+- 🔥 Advanced Flow visibility + commit flow:
+	- Object header pills: Override + Advanced Flow when object processors exist.
+	- Global Advanced Flow badge in file header when pre/post flows exist.
+	- Pending Advanced Flow banner until commit is confirmed.
+	- Ensure Advanced Flow edits route through commit modal (SVN commit gate).
+- 🔥 Processor override summaries in Friendly view:
+	- Tooltip/card summary for field-level processors (type + key params).
+	- “View in Advanced Flow” link + optional JSON toggle.
 - RBAC gating for edit/execute:
 	- Call UA roles/permissions API on login.
 	- Verify user has edit + execute permissions on rules ACL.
@@ -82,6 +90,16 @@
 	9) strcase
 	10) length
 	11) date
+- ✅ Processor builder coverage expansion + validation/examples:
+	- Doc: architecture/backlog-processor-builder-coverage.md
+- Advanced Flow validation improvements (lane rules + error hints):
+	- Doc: architecture/backlog-advanced-flow-validation.md
+- Staged review usability improvements (object collapse + expand originals):
+	- Doc: architecture/backlog-staged-review-improvements.md
+- Search/navigation enhancements (jump-to-object, persist filters):
+	- Doc: architecture/backlog-search-navigation.md
+- Edit safety enhancements (dirty indicators + builder undo/redo):
+	- Doc: architecture/backlog-edit-safety.md
 - Documentation refresh (post-processor rollout):
 	- Update install/prereqs, admin/backend notes, and UI workflow.
 

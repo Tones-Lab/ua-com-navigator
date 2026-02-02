@@ -69,6 +69,7 @@ Prefer descriptive, multi-line commit messages that include what changed and why
 - Keep default ports consistent unless explicitly changed:
   - Backend: 3001
   - Frontend: 5173
+- **Hard rule (UI parity):** Object and Global Advanced Flow override modals must match feature/functionality and share core code. Differences must be minor and implemented as overrides on top of shared core logic, not separate forks.
 
 ## Why this exists
 
