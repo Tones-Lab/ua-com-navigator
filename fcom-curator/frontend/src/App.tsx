@@ -6475,6 +6475,15 @@ export default function App() {
         : renderJsonWithFocus(fullJson, focusedFlowJson)}
     </div>
   );
+  const getFieldChangeLabel = (change: { before?: any; after?: any; action: string }) => {
+    if (change.after && change.before) {
+      return 'Processor updated';
+    }
+    if (change.after) {
+      return 'Processor added';
+    }
+    return 'Processor removed';
+  };
 
   return (
     <ErrorBoundary>
@@ -8625,7 +8634,7 @@ export default function App() {
                                                 {section.fieldChanges.slice(0, 4).map((change) => (
                                                   <div key={`${sectionKey}-${change.target}-${change.action}`} className="staged-summary-item">
                                                     <span className={`pill change-pill change-pill-${change.action}`}>
-                                                      {change.action}
+                                                      {getFieldChangeLabel(change)}
                                                     </span>
                                                     <span className="staged-summary-label">{change.target}</span>
                                                   </div>
@@ -8658,7 +8667,7 @@ export default function App() {
                                                       <div className="staged-change-header">
                                                         <span className="staged-change-label">{change.target}</span>
                                                         <span className={`pill change-pill change-pill-${change.action}`}>
-                                                          {change.action}
+                                                          {getFieldChangeLabel(change)}
                                                         </span>
                                                       </div>
                                                       <div className="staged-change-body">
