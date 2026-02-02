@@ -109,8 +109,17 @@
 1.  **Rudimentary MIB Browser & Initial File Generation:**
     *   **Goal:** Streamline the creation of new **FCOM (Fault) and PCOM (Performance)** files directly from vendor MIBs, expanding the tool from a pure editor to a foundational rules-creation assistant.
     *   **MIB Upload & Parsing:** Implement a feature to upload one or more MIB files. The backend will parse them and make their structure browsable.
+        *   **Design decision:** Use `snmptranslate` (Net-SNMP) as the source of truth for MIB parsing/metadata extraction to keep UI data consistent and accurate.
     *   **MIB Tree Viewer:** Add a new UI view that presents a classic MIB tree, allowing users to navigate OIDs.
     *   **FCOM/PCOM Stub Generation:** Allow users to select a `NOTIFICATION-TYPE` (for FCOM) or other OIDs (for PCOM) from the MIB tree and click a "Generate Stub" button. This action will trigger a backend process, similar to Oracle's `MIB2FCOM` utility, to create a basic, un-curated `.json` file. This new file can then be saved to the server and opened in the main editor for full curation.
+    *   **Entity Definitions & UI Expectations:**
+        - **Notification (Fault/FCOM):** `NOTIFICATION-TYPE` or `TRAP-TYPE` definitions. These map to FCOM objects.
+        - **Metric (Performance/PCOM):** `OBJECT-TYPE` with numeric/measurement syntax (e.g., Counter32/Counter64, Gauge32, Integer32, Unsigned32, TimeTicks). These map to PCOM items.
+        - **Primary actions:**
+            - If a matching FCOM object exists: show **View FCOM**.
+            - If no FCOM exists: show **Create FCOM Override** (new content should be override-first).
+            - If metric: show **PCOM (Coming soon)** placeholder.
+        - **Matching logic:** resolve by object name and OID using `snmptranslate` to avoid mismatches.
 
 2.  **LLM Assistant (Server-Side, Suggestions-Only):**
     *   **Near-term scope:** Assist with discrete edits on existing FCOM files (e.g., recommend a processor or draft a processor configuration).

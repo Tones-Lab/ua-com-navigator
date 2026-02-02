@@ -2,7 +2,7 @@ import { Router, Request, Response } from 'express';
 import crypto from 'crypto';
 import logger from '../utils/logger';
 import UAClient from '../services/ua';
-import { getCredentials, getServer } from '../services/sessionStore';
+import { getCredentials, getServer, getSession } from '../services/sessionStore';
 
 const router = Router();
 
@@ -30,6 +30,24 @@ const getUaClientFromSession = (req: Request): UAClient => {
     ca_cert_path: auth.ca_cert_path,
     insecure_tls: insecureTls,
   });
+};
+
+const requireEditPermission = (req: Request, res: Response): boolean => {
+  const sessionId = req.cookies.FCOM_SESSION_ID;
+  if (!sessionId) {
+    res.status(401).json({ error: 'No active session' });
+    return false;
+  }
+  const session = getSession(sessionId);
+  if (!session) {
+    res.status(401).json({ error: 'Session not found or expired' });
+    return false;
+  }
+  if (!session.can_edit_rules) {
+    res.status(403).json({ error: 'Read-only access' });
+    return false;
+  }
+  return true;
 };
 
 const normalizePath = (pathValue: string) => pathValue.replace(/^\/+/, '').replace(/\/+$/, '');
@@ -226,6 +244,9 @@ router.get('/', async (req: Request, res: Response) => {
 
 router.post('/save', async (req: Request, res: Response) => {
   try {
+    if (!requireEditPermission(req, res)) {
+      return;
+    }
     const { file_id, overrides, commit_message } = req.body;
     if (!file_id || !Array.isArray(overrides) || commit_message === undefined) {
       return res.status(400).json({ error: 'Missing file_id, overrides, or commit_message' });

@@ -2,7 +2,7 @@ import { Router, Request, Response } from 'express';
 import crypto from 'crypto';
 import logger from '../utils/logger';
 import UAClient from '../services/ua';
-import { getCredentials, getServer } from '../services/sessionStore';
+import { getCredentials, getServer, getSession } from '../services/sessionStore';
 import { searchIndex } from '../services/searchIndex';
 
 const router = Router();
@@ -31,6 +31,24 @@ const getUaClientFromSession = (req: Request): UAClient => {
     ca_cert_path: auth.ca_cert_path,
     insecure_tls: insecureTls,
   });
+};
+
+const requireEditPermission = (req: Request, res: Response): boolean => {
+  const sessionId = req.cookies.FCOM_SESSION_ID;
+  if (!sessionId) {
+    res.status(401).json({ error: 'No active session' });
+    return false;
+  }
+  const session = getSession(sessionId);
+  if (!session) {
+    res.status(401).json({ error: 'Session not found or expired' });
+    return false;
+  }
+  if (!session.can_edit_rules) {
+    res.status(403).json({ error: 'Read-only access' });
+    return false;
+  }
+  return true;
 };
 
 /**
@@ -105,6 +123,9 @@ router.get('/:file_id/read', (req: Request, res: Response) => {
  */
 router.post('/save', async (req: Request, res: Response) => {
   try {
+    if (!requireEditPermission(req, res)) {
+      return;
+    }
     const { file_id, content, etag, commit_message } = req.body;
 
     if (!file_id || !content || !etag || commit_message === undefined) {
@@ -145,6 +166,9 @@ router.post('/save', async (req: Request, res: Response) => {
  */
 router.post('/:file_id/save', async (req: Request, res: Response) => {
   try {
+    if (!requireEditPermission(req, res)) {
+      return;
+    }
     const { file_id } = req.params;
     const { content, etag, commit_message } = req.body;
 

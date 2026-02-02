@@ -20,7 +20,11 @@ import foldersRoutes from './routes/folders';
 import eventsSchemaRoutes from './routes/eventsSchema';
 import searchRoutes from './routes/search';
 import overridesRoutes from './routes/overrides';
+import brokerRoutes from './routes/broker';
+import mibRoutes from './routes/mibs';
+import overviewRoutes from './routes/overview';
 import { startSearchIndexing } from './services/searchIndex';
+import { startOverviewIndexing } from './services/overviewIndex';
 
 dotenv.config();
 
@@ -83,6 +87,9 @@ app.use('/api/v1/folders', foldersRoutes);
 app.use('/api/v1/events/schema', eventsSchemaRoutes);
 app.use('/api/v1/search', searchRoutes);
 app.use('/api/v1/overrides', overridesRoutes);
+app.use('/api/v1/broker', brokerRoutes);
+app.use('/api/v1/mibs', mibRoutes);
+app.use('/api/v1/overview', overviewRoutes);
 
 // Health check
 app.get('/health', (req: Request, res: Response) => {
@@ -111,5 +118,6 @@ if (useHttps) {
 }
 
 startSearchIndexing();
+startOverviewIndexing();
 
 export default app;

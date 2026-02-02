@@ -7,8 +7,8 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 5173,
-    host: true,
-    allowedHosts: ['lab-ua-tony02.tony.lab'],
+    host: '192.168.3.42',
+    allowedHosts: ['lab-ua-tony02.tony.lab', 'localhost', '192.168.3.42'],
     https: {
       key: fs.readFileSync('/opt/assure1/etc/ssl/Web.key'),
       cert: fs.readFileSync('/opt/assure1/etc/ssl/Web.crt'),

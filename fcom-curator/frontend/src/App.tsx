@@ -50,8 +50,14 @@ export default function App() {
   const [caPath, setCaPath] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [activeApp, setActiveApp] = useState<'overview' | 'fcom' | 'pcom' | 'mib'>('overview');
   const [browsePath, setBrowsePath] = useState('/');
   const [showPathModal, setShowPathModal] = useState(false);
+  const [overviewData, setOverviewData] = useState<any | null>(null);
+  const [overviewStatus, setOverviewStatus] = useState<any | null>(null);
+  const [overviewLoading, setOverviewLoading] = useState(false);
+  const [overviewError, setOverviewError] = useState<string | null>(null);
+  const [overviewTopN, setOverviewTopN] = useState(10);
   const formatDisplayPath = (rawPath: string) => {
     const cleaned = rawPath.replace(/^\/+/, '');
     if (!cleaned) {
@@ -162,8 +168,46 @@ export default function App() {
   const objectRowRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const matchStateByFileRef = useRef<Record<string, { index: number; key?: string }>>({});
   const scrollStateByFileRef = useRef<Record<string, number>>({});
+  const lastSelectedFileRef = useRef<string | null>(null);
   const friendlyViewRef = useRef<HTMLDivElement | null>(null);
   const friendlyMainRef = useRef<HTMLDivElement | null>(null);
+  const [mibPath, setMibPath] = useState('/');
+  const [mibEntries, setMibEntries] = useState<any[]>([]);
+  const [mibLoading, setMibLoading] = useState(false);
+  const [mibError, setMibError] = useState<string | null>(null);
+  const [mibSearch, setMibSearch] = useState('');
+  const [mibSearchScope, setMibSearchScope] = useState<'folder' | 'all'>('folder');
+  const [mibSearchMode, setMibSearchMode] = useState<'browse' | 'search'>('browse');
+  const [mibLimit] = useState(30);
+  const [mibOffset, setMibOffset] = useState(0);
+  const [mibHasMore, setMibHasMore] = useState(false);
+  const [mibTotal, setMibTotal] = useState<number | null>(null);
+  const [mibFilteredTotal, setMibFilteredTotal] = useState<number | null>(null);
+  const [mibSelectedFile, setMibSelectedFile] = useState<string | null>(null);
+  const [mibDefinitions, setMibDefinitions] = useState<any[]>([]);
+  const [mibDefinitionSearch, setMibDefinitionSearch] = useState('');
+  const [mibSelectedDefinition, setMibSelectedDefinition] = useState<any | null>(null);
+  const [mibOutput, setMibOutput] = useState('');
+  const [mibOutputName, setMibOutputName] = useState('');
+  const [mib2FcomLoading, setMib2FcomLoading] = useState(false);
+  const [mib2FcomError, setMib2FcomError] = useState<string | null>(null);
+  const [mibUseParent, setMibUseParent] = useState(true);
+  const [trapModalOpen, setTrapModalOpen] = useState(false);
+  const [trapSource, setTrapSource] = useState<'mib' | 'fcom'>('mib');
+  const [trapObjectName, setTrapObjectName] = useState('');
+  const [trapHost, setTrapHost] = useState('');
+  const [trapPort, setTrapPort] = useState(162);
+  const [trapCommunity, setTrapCommunity] = useState('public');
+  const [trapVersion, setTrapVersion] = useState('2c');
+  const [trapOid, setTrapOid] = useState('');
+  const [trapMibModule, setTrapMibModule] = useState('');
+  const [trapVarbinds, setTrapVarbinds] = useState<Array<{ oid: string; type: string; value: string }>>([]);
+  const [trapServerList, setTrapServerList] = useState<any[]>([]);
+  const [trapServerError, setTrapServerError] = useState<string | null>(null);
+  const [trapManualOpen, setTrapManualOpen] = useState(false);
+  const [trapSending, setTrapSending] = useState(false);
+  const [trapError, setTrapError] = useState<string | null>(null);
+  const [recentTargets, setRecentTargets] = useState<string[]>([]);
 
   useEffect(() => {
     const savedQuery = sessionStorage.getItem('fcom.search.query');
@@ -180,6 +224,77 @@ export default function App() {
     sessionStorage.setItem('fcom.search.query', searchQuery);
     sessionStorage.setItem('fcom.search.scope', searchScope);
   }, [searchQuery, searchScope]);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem('mib.recentTargets');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) {
+          setRecentTargets(parsed.map(String));
+        }
+      }
+    } catch {
+      // ignore storage errors
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('mib.recentTargets', JSON.stringify(recentTargets.slice(0, 8)));
+    } catch {
+      // ignore storage errors
+    }
+  }, [recentTargets]);
+
+  const formatOverviewNumber = (value: number) => new Intl.NumberFormat().format(value);
+
+  const loadOverview = async (options?: { forceRebuild?: boolean }) => {
+    if (!isAuthenticated) {
+      return;
+    }
+    setOverviewLoading(true);
+    setOverviewError(null);
+    try {
+      if (options?.forceRebuild) {
+        await api.rebuildOverviewIndex();
+      }
+      const [statusRes, dataRes] = await Promise.all([
+        api.getOverviewStatus(),
+        api.getOverview(),
+      ]);
+      setOverviewStatus(statusRes.data);
+      setOverviewData(dataRes.data?.data ?? null);
+    } catch (err: any) {
+      const message = err?.response?.data?.error || err?.message || 'Failed to load overview';
+      setOverviewError(message);
+    } finally {
+      setOverviewLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!isAuthenticated || activeApp !== 'overview') {
+      return;
+    }
+    void loadOverview();
+  }, [isAuthenticated, activeApp]);
+
+  const overviewProtocols = useMemo(() => {
+    if (!overviewData?.protocols) {
+      return [] as Array<{ name: string; counts: any; vendors: any[] }>;
+    }
+    return overviewData.protocols.map((protocol: any) => {
+      const sortedVendors = [...(protocol.vendors || [])].sort(
+        (a: any, b: any) => (b?.counts?.objects || 0) - (a?.counts?.objects || 0),
+      );
+      const limit = overviewTopN === 0 ? sortedVendors.length : overviewTopN;
+      return {
+        ...protocol,
+        vendors: sortedVendors.slice(0, limit),
+      };
+    });
+  }, [overviewData, overviewTopN]);
 
   const getRawPath = () => {
     if (selectedFile?.PathID) {
@@ -1110,7 +1225,35 @@ export default function App() {
     return false;
   };
   const isFieldOptional = (label?: string) => Boolean(label && /optional/i.test(label));
+  const processorRequiredFields: Record<string, string[]> = {
+    set: ['sourceType', 'source', 'targetField'],
+    regex: ['sourceType', 'source', 'pattern', 'targetField'],
+    append: ['source', 'array', 'targetField'],
+    appendToOutputStream: ['source', 'output'],
+    convert: ['source', 'type', 'targetField'],
+    copy: ['source', 'targetField'],
+    eval: ['source'],
+    foreach: ['source', 'keyVal', 'valField'],
+    grok: ['source', 'pattern', 'targetField'],
+    json: ['source', 'targetField'],
+    log: ['type', 'source'],
+    lookup: ['source', 'properties', 'targetField'],
+    math: ['source', 'operation', 'value', 'targetField'],
+    remove: ['source'],
+    rename: ['source', 'targetField'],
+    replace: ['source', 'pattern', 'replacement', 'targetField'],
+    setOutputStream: ['output'],
+    sort: ['source', 'targetField'],
+    split: ['source', 'delimiter', 'targetField'],
+    strcase: ['source', 'type', 'targetField'],
+    substr: ['source', 'targetField'],
+    switch: ['source', 'operator'],
+    trim: ['source', 'targetField'],
+  };
   const getProcessorRequiredFields = (processorType: string) => {
+    if (processorRequiredFields[processorType]) {
+      return processorRequiredFields[processorType];
+    }
     const specs = processorConfigSpecs[processorType] || [];
     return specs
       .filter((spec) => !isFieldOptional(spec.label))
@@ -1183,6 +1326,9 @@ export default function App() {
       }
       if (!String(node.condition.value || '').trim()) {
         errors.push('Condition value is required.');
+      }
+      if (node.then.length === 0 && node.else.length === 0) {
+        errors.push('If must include at least one processor in Then or Else.');
       }
       if (lane === 'pre' && (node.condition.property || '').includes('$.event')) {
         errors.push('Pre scope cannot reference $.event.* in condition property.');
@@ -1668,6 +1814,14 @@ export default function App() {
   const canEditRules = typeof session?.can_edit_rules === 'boolean'
     ? session.can_edit_rules
     : derivedEditRules;
+  const hasEditPermission = Boolean(canEditRules);
+  const ensureEditPermission = () => {
+    if (hasEditPermission) {
+      return true;
+    }
+    setSaveError('Read-only access. You do not have permission to edit rules.');
+    return false;
+  };
 
   useEffect(() => {
     if (viewMode === 'friendly') {
@@ -1679,6 +1833,19 @@ export default function App() {
     setPanelOverrideRemovals({});
     setPanelNavWarning({ open: false, fields: {} });
   }, [viewMode]);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      return;
+    }
+    if (activeApp !== 'mib') {
+      return;
+    }
+    if (mibEntries.length > 0 || mibLoading) {
+      return;
+    }
+    void loadMibPath('/');
+  }, [activeApp, isAuthenticated, mibEntries.length, mibLoading]);
 
   const ensureEventsSchema = async () => {
     if (eventsSchemaLoading || eventsSchemaFields.length > 0) {
@@ -2511,6 +2678,15 @@ export default function App() {
     setSelectedFolder(null);
     setFolderOverview(null);
     setSelectedFile(entry);
+    if (entry?.PathID) {
+      scrollStateByFileRef.current[entry.PathID] = 0;
+    }
+    if (friendlyViewRef.current) {
+      friendlyViewRef.current.scrollTop = 0;
+    }
+    if (friendlyMainRef.current) {
+      friendlyMainRef.current.scrollTop = 0;
+    }
     setFileError(null);
     setSaveError(null);
     setSaveSuccess(null);
@@ -2617,11 +2793,423 @@ export default function App() {
     }
   };
 
+  const splitCommandLine = (input: string) => {
+    const tokens: string[] = [];
+    let current = '';
+    let inSingle = false;
+    let inDouble = false;
+    let escaping = false;
+
+    for (let i = 0; i < input.length; i += 1) {
+      const char = input[i];
+      if (escaping) {
+        current += char;
+        escaping = false;
+        continue;
+      }
+      if (char === '\\') {
+        escaping = true;
+        continue;
+      }
+      if (char === '"' && !inSingle) {
+        inDouble = !inDouble;
+        continue;
+      }
+      if (char === '\'' && !inDouble) {
+        inSingle = !inSingle;
+        continue;
+      }
+      if (!inSingle && !inDouble && /\s/.test(char)) {
+        if (current) {
+          tokens.push(current);
+          current = '';
+        }
+        continue;
+      }
+      current += char;
+    }
+    if (current) {
+      tokens.push(current);
+    }
+    return tokens;
+  };
+
+  const normalizeTrapType = (value: string) => {
+    const raw = value.trim().toLowerCase();
+    if (!raw) {
+      return 's';
+    }
+    if (['s', 'i', 'u', 't', 'o'].includes(raw)) {
+      return raw;
+    }
+    if (raw.startsWith('str')) {
+      return 's';
+    }
+    if (raw.startsWith('int')) {
+      return 'i';
+    }
+    if (raw.startsWith('tim')) {
+      return 't';
+    }
+    if (raw.startsWith('oid')) {
+      return 'o';
+    }
+    if (raw.startsWith('u')) {
+      return 'u';
+    }
+    return 's';
+  };
+
+  const stripQuotes = (value: string) => value.replace(/^(['"])(.*)\1$/, '$2');
+
+  const extractModuleFromOid = (value: string) => {
+    const parts = value.split('::');
+    return parts.length > 1 ? parts[0] : '';
+  };
+
+  const parseTrapTestCommand = (command: string) => {
+    const tokens = splitCommandLine(command);
+    const cleaned = tokens.filter((token) => token && token !== '$SNMPTRAPCMD');
+    if (cleaned[0] === 'snmptrap') {
+      cleaned.shift();
+    }
+
+    let version: string | undefined;
+    let community: string | undefined;
+    let mibModule: string | undefined;
+    let host: string | undefined;
+    let trapOid: string | undefined;
+    const varbinds: Array<{ oid: string; type: string; value: string }> = [];
+
+    let index = 0;
+    while (index < cleaned.length) {
+      const token = cleaned[index];
+      if (token === '-v' && cleaned[index + 1]) {
+        version = cleaned[index + 1];
+        index += 2;
+        continue;
+      }
+      if (token === '-c' && cleaned[index + 1]) {
+        community = cleaned[index + 1];
+        index += 2;
+        continue;
+      }
+      if (token === '-m' && cleaned[index + 1]) {
+        mibModule = cleaned[index + 1];
+        index += 2;
+        continue;
+      }
+      if (token === '-M' && cleaned[index + 1]) {
+        index += 2;
+        continue;
+      }
+      if (token.startsWith('-')) {
+        index += 1;
+        continue;
+      }
+      break;
+    }
+
+    const remaining = cleaned.slice(index);
+    let cursor = 0;
+    if (remaining.length >= 3 && remaining[1] === '0') {
+      host = remaining[0];
+      trapOid = remaining[2];
+      cursor = 3;
+    } else if (remaining[0] === '0' && remaining[1]) {
+      trapOid = remaining[1];
+      cursor = 2;
+    } else if (remaining[0]) {
+      trapOid = remaining[0];
+      cursor = 1;
+    }
+
+    for (let i = cursor; i + 2 < remaining.length; i += 3) {
+      const oid = remaining[i];
+      const type = normalizeTrapType(remaining[i + 1]);
+      const value = stripQuotes(remaining[i + 2]);
+      if (oid) {
+        varbinds.push({ oid, type, value });
+      }
+    }
+
+    const inferredModule = trapOid ? extractModuleFromOid(trapOid) : '';
+    if (!mibModule && inferredModule) {
+      mibModule = inferredModule;
+    }
+
+    return {
+      version,
+      community,
+      host,
+      trapOid,
+      mibModule,
+      varbinds,
+    };
+  };
+
+  const openTrapComposerFromTest = async (obj: any) => {
+    const testCommand = obj?.test;
+    if (!testCommand || typeof testCommand !== 'string') {
+      triggerToast('No test trap command found for this object.', false);
+      return;
+    }
+    const parsed = parseTrapTestCommand(testCommand);
+    if (!parsed.trapOid) {
+      triggerToast('Test trap command did not include a trap OID.', false);
+      return;
+    }
+    setTrapSource('fcom');
+    setTrapError(null);
+    setTrapObjectName(String(obj?.['@objectName'] || obj?.name || ''));
+    setTrapHost('');
+    setTrapPort(162);
+    if (parsed.version) {
+      setTrapVersion(parsed.version);
+    }
+    if (parsed.community) {
+      setTrapCommunity(parsed.community);
+    }
+    if (parsed.host) {
+      const [hostValue, portValue] = parsed.host.split(':');
+      setTrapHost(hostValue || parsed.host);
+      if (portValue && Number(portValue)) {
+        setTrapPort(Number(portValue));
+      }
+    }
+    setTrapOid(parsed.trapOid ? String(parsed.trapOid) : '');
+    setTrapMibModule(parsed.mibModule || '');
+    setTrapVarbinds(parsed.varbinds.length > 0 ? parsed.varbinds : [{ oid: '', type: 's', value: '' }]);
+    setTrapManualOpen(false);
+    setTrapModalOpen(true);
+    await loadBrokerServers();
+  };
+
+  const loadMibPath = async (nextPath?: string, options?: { append?: boolean }) => {
+    const append = options?.append ?? false;
+    const targetPath = (nextPath ?? mibPath ?? '/') || '/';
+    const offset = append ? mibOffset : 0;
+    const searchParam = mibSearchScope === 'folder' && mibSearch.trim()
+      ? mibSearch.trim()
+      : undefined;
+
+    setMibLoading(true);
+    setMibError(null);
+    try {
+      const resp = await api.browseMibs(targetPath !== '/' ? targetPath : undefined, {
+        search: searchParam,
+        limit: mibLimit,
+        offset,
+      });
+      const entries = Array.isArray(resp.data?.entries) ? resp.data.entries : [];
+      setMibEntries((prev) => (append ? [...prev, ...entries] : entries));
+      setMibOffset(offset + entries.length);
+      setMibHasMore(Boolean(resp.data?.hasMore));
+      setMibTotal(typeof resp.data?.total === 'number' ? resp.data.total : null);
+      setMibFilteredTotal(typeof resp.data?.filtered_total === 'number' ? resp.data.filtered_total : null);
+      setMibPath(resp.data?.path || '/');
+      setMibSearchMode('browse');
+    } catch (err: any) {
+      setMibError(err?.response?.data?.error || 'Failed to load MIB folder');
+    } finally {
+      setMibLoading(false);
+    }
+  };
+
+  const loadMibSearch = async (options?: { append?: boolean }) => {
+    const query = mibSearch.trim();
+    if (!query) {
+      await loadMibPath(mibPath, { append: false });
+      return;
+    }
+    const append = options?.append ?? false;
+    const offset = append ? mibOffset : 0;
+    setMibLoading(true);
+    setMibError(null);
+    try {
+      const resp = await api.searchMibs(query, { limit: mibLimit, offset });
+      const entries = Array.isArray(resp.data?.entries) ? resp.data.entries : [];
+      setMibEntries((prev) => (append ? [...prev, ...entries] : entries));
+      setMibOffset(offset + entries.length);
+      setMibHasMore(Boolean(resp.data?.hasMore));
+      setMibTotal(typeof resp.data?.matches === 'number' ? resp.data.matches : null);
+      setMibFilteredTotal(null);
+      setMibPath('/');
+      setMibSearchMode('search');
+    } catch (err: any) {
+      setMibError(err?.response?.data?.error || 'Failed to search MIBs');
+    } finally {
+      setMibLoading(false);
+    }
+  };
+
+  const handleMibSearchSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setMibSelectedFile(null);
+    setMibDefinitions([]);
+    setMibSelectedDefinition(null);
+    setMibOffset(0);
+    if (mibSearchScope === 'all') {
+      await loadMibSearch({ append: false });
+      return;
+    }
+    await loadMibPath(mibPath, { append: false });
+  };
+
+  const handleMibClearSearch = async () => {
+    setMibSearch('');
+    setMibOffset(0);
+    await loadMibPath(mibPath, { append: false });
+  };
+
+  const loadMibDefinitions = async (filePath: string) => {
+    setMibLoading(true);
+    setMibError(null);
+    try {
+      const resp = await api.parseMib(filePath);
+      const defs = Array.isArray(resp.data?.definitions) ? resp.data.definitions : [];
+      setMibDefinitions(defs);
+      setMibSelectedDefinition(null);
+    } catch (err: any) {
+      setMibError(err?.response?.data?.error || 'Failed to parse MIB');
+    } finally {
+      setMibLoading(false);
+    }
+  };
+
+  const handleOpenMibEntry = async (entry: any) => {
+    if (entry?.isDir) {
+      setMibSelectedFile(null);
+      setMibDefinitions([]);
+      setMibSelectedDefinition(null);
+      setMibOffset(0);
+      await loadMibPath(entry.path, { append: false });
+      return;
+    }
+    if (!entry?.path) {
+      return;
+    }
+    setMibSelectedFile(entry.path);
+    setMibDefinitionSearch('');
+    setMibOutput('');
+    setMibOutputName('');
+    setMib2FcomError(null);
+    await loadMibDefinitions(entry.path);
+  };
+
+  const runMib2Fcom = async () => {
+    if (!mibSelectedFile || !hasEditPermission) {
+      return;
+    }
+    setMib2FcomLoading(true);
+    setMib2FcomError(null);
+    try {
+      const resp = await api.runMib2Fcom(mibSelectedFile, undefined, mibUseParent);
+      setMibOutput(resp.data?.content || '');
+      setMibOutputName(resp.data?.outputName || '');
+    } catch (err: any) {
+      setMib2FcomError(err?.response?.data?.error || 'Failed to run MIB2FCOM');
+    } finally {
+      setMib2FcomLoading(false);
+    }
+  };
+
+  const loadBrokerServers = async () => {
+    setTrapServerError(null);
+    try {
+      const resp = await api.getBrokerServers();
+      const data = Array.isArray(resp.data?.data) ? resp.data.data : [];
+      setTrapServerList(data);
+      if (data.length === 0) {
+        setTrapManualOpen(true);
+      }
+    } catch (err: any) {
+      setTrapServerError(err?.response?.data?.error || 'Failed to load servers');
+      setTrapManualOpen(true);
+    }
+  };
+
+  const openTrapComposer = async (definition: any, sourcePath?: string | null) => {
+    setTrapError(null);
+    setTrapSource('mib');
+    setTrapObjectName('');
+    setTrapOid(definition?.oid ? String(definition.oid) : '');
+    setTrapVarbinds([{ oid: '', type: 's', value: '' }]);
+    setTrapHost('');
+    setTrapManualOpen(false);
+    if (sourcePath) {
+      const base = sourcePath.split('/').pop() || '';
+      setTrapMibModule(base.replace(/\.(mib|txt)$/i, ''));
+    } else {
+      setTrapMibModule('');
+    }
+    setTrapModalOpen(true);
+    await loadBrokerServers();
+  };
+
+  const addRecentTarget = (hostValue: string) => {
+    if (!hostValue) {
+      return;
+    }
+    setRecentTargets((prev) => {
+      const next = [hostValue, ...prev.filter((item) => item !== hostValue)];
+      return next.slice(0, 8);
+    });
+  };
+
+  const sendTrap = async () => {
+    if (!trapHost || !trapOid) {
+      setTrapError('Trap destination and OID are required.');
+      return;
+    }
+    setTrapSending(true);
+    setTrapError(null);
+    try {
+      await api.sendTrap({
+        host: trapHost,
+        port: trapPort,
+        community: trapCommunity,
+        version: trapVersion,
+        trapOid,
+        mibModule: trapMibModule || undefined,
+        varbinds: trapVarbinds,
+      });
+      addRecentTarget(trapHost);
+      if (trapSource === 'fcom') {
+        const server = trapServerList.find((item) => (
+          item?.ServerHostFQDN === trapHost
+          || item?.ServerName === trapHost
+        ));
+        const destination = server?.ServerName || server?.ServerHostFQDN || trapHost;
+        const label = trapObjectName || 'Object';
+        triggerToast(`Test Trap: ${label} sent to ${destination}`, true);
+      }
+      setTrapModalOpen(false);
+    } catch (err: any) {
+      const message = err?.response?.data?.error || 'Failed to send trap';
+      setTrapError(message);
+      if (trapSource === 'fcom') {
+        const label = trapObjectName || 'Object';
+        triggerToast(`Test Trap failed: ${label} (${message})`, false);
+      }
+    } finally {
+      setTrapSending(false);
+    }
+  };
+
   const favoritesFiles = favorites.filter((fav) => fav.type === 'file');
   const favoritesFolders = favorites.filter((fav) => fav.type === 'folder');
+  const filteredMibDefinitions = useMemo(() => (
+    mibDefinitions.filter((entry) => (
+      String(entry?.name || '').toLowerCase().includes(mibDefinitionSearch.trim().toLowerCase())
+    ))
+  ), [mibDefinitions, mibDefinitionSearch]);
 
   const saveWithContent = async (content: any, message: string) => {
     if (!selectedFile) {
+      return null;
+    }
+    if (!ensureEditPermission()) {
       return null;
     }
     setSaveError(null);
@@ -2663,6 +3251,9 @@ export default function App() {
 
   const handleSaveOverrides = async (message: string) => {
     if (!selectedFile || !pendingOverrideSave) {
+      return;
+    }
+    if (!ensureEditPermission()) {
       return;
     }
     setSaveError(null);
@@ -3229,17 +3820,19 @@ export default function App() {
                   ))}
                 </ul>
                 {objectName && (
-                  <button
-                    type="button"
-                    className="builder-link"
-                    onClick={() => openAdvancedFlowModal(
-                      'object',
-                      objectName,
-                      `$.event.${field}`,
-                    )}
-                  >
-                    View in Advanced Flow
-                  </button>
+                  hasEditPermission && (
+                    <button
+                      type="button"
+                      className="builder-link"
+                      onClick={() => openAdvancedFlowModal(
+                        'object',
+                        objectName,
+                        `$.event.${field}`,
+                      )}
+                    >
+                      View in Advanced Flow
+                    </button>
+                  )
                 )}
               </div>
             )}
@@ -3339,6 +3932,9 @@ export default function App() {
   const getEventFieldDescription = (field: string) => eventFieldDescriptions[field] || '';
 
   const openAddFieldModal = (panelKey: string, obj: any) => {
+    if (!hasEditPermission) {
+      return;
+    }
     setAddFieldContext({ panelKey, obj });
     setShowAddFieldModal(true);
     setAddFieldSearch('');
@@ -3406,6 +4002,9 @@ export default function App() {
   };
 
   const startEventEdit = (obj: any, key: string) => {
+    if (!hasEditPermission) {
+      return;
+    }
     const baseKey = key.includes(':') ? key.slice(0, key.lastIndexOf(':')) : key;
     const draft: Record<string, any> = {};
     const evalModes: Record<string, boolean> = {};
@@ -3487,6 +4086,9 @@ export default function App() {
 
   const saveEventEdit = async (obj: any, key: string) => {
     if (!selectedFile) {
+      return;
+    }
+    if (!ensureEditPermission()) {
       return;
     }
     const draft = panelDrafts?.[key]?.event || {};
@@ -3603,6 +4205,9 @@ export default function App() {
   };
 
   const openRemoveOverrideModal = (obj: any, field: string, panelKey: string) => {
+    if (!hasEditPermission) {
+      return;
+    }
     const original = obj?.event?.[field];
     const { display } = getEditableValue(original);
     setRemoveOverrideModal({
@@ -3615,6 +4220,10 @@ export default function App() {
   };
 
   const confirmRemoveOverride = () => {
+    if (!ensureEditPermission()) {
+      setRemoveOverrideModal({ open: false });
+      return;
+    }
     if (!removeOverrideModal.objectName || !removeOverrideModal.field || !removeOverrideModal.panelKey) {
       setRemoveOverrideModal({ open: false });
       return;
@@ -3657,6 +4266,9 @@ export default function App() {
   };
 
   const openRemoveAllOverridesModal = (obj: any, panelKey: string) => {
+    if (!hasEditPermission) {
+      return;
+    }
     const fields = getEventOverrideFields(obj);
     if (fields.length === 0) {
       return;
@@ -3676,6 +4288,10 @@ export default function App() {
   };
 
   const confirmRemoveAllOverrides = () => {
+    if (!ensureEditPermission()) {
+      setRemoveAllOverridesModal({ open: false });
+      return;
+    }
     if (!removeAllOverridesModal.panelKey || !removeAllOverridesModal.fields) {
       setRemoveAllOverridesModal({ open: false });
       return;
@@ -4393,6 +5009,9 @@ export default function App() {
   };
 
   const openBuilderForField = (obj: any, panelKey: string, field: string) => {
+    if (!hasEditPermission) {
+      return;
+    }
     if (!panelEditState[panelKey]) {
       startEventEdit(obj, panelKey);
     }
@@ -5280,6 +5899,7 @@ export default function App() {
           )}
         </div>
       ))}
+      <div className="flow-drop-gap" aria-hidden="true" />
     </div>
   );
 
@@ -5711,6 +6331,9 @@ export default function App() {
     objectNameOverride?: string,
     focusTargetField?: string | null,
   ) => {
+    if (!hasEditPermission) {
+      return;
+    }
     const method = getOverrideMethod();
     if (scope === 'global') {
       const preEntry = getOverrideEntry({ scope: 'pre', method });
@@ -5760,6 +6383,9 @@ export default function App() {
 
   const saveAdvancedFlow = () => {
     if (!selectedFile || !advancedFlowTarget) {
+      return;
+    }
+    if (!ensureEditPermission()) {
       return;
     }
     const method = advancedFlowTarget.method || getOverrideMethod();
@@ -6432,6 +7058,17 @@ export default function App() {
     );
   };
 
+  const getObjectDescription = (obj: any) => {
+    const raw = obj?.description;
+    if (Array.isArray(raw)) {
+      return raw.map(String).join(' ');
+    }
+    if (typeof raw === 'string') {
+      return raw;
+    }
+    return '';
+  };
+
   useEffect(() => {
     if (!varModalOpen || !varModalToken) {
       return;
@@ -6552,11 +7189,19 @@ export default function App() {
     if (!selectedFile?.PathID) {
       return;
     }
-    const saved = scrollStateByFileRef.current[selectedFile.PathID];
     const container = getActiveScrollContainer();
-    if (container && typeof saved === 'number') {
-      container.scrollTop = saved;
+    if (!container) {
+      return;
     }
+    const currentId = selectedFile.PathID;
+    const lastId = lastSelectedFileRef.current;
+    if (lastId && lastId !== currentId) {
+      container.scrollTop = 0;
+    } else {
+      const saved = scrollStateByFileRef.current[currentId];
+      container.scrollTop = typeof saved === 'number' ? saved : 0;
+    }
+    lastSelectedFileRef.current = currentId;
   }, [selectedFile, fileData, viewMode, isAnyPanelEditing]);
 
   useEffect(() => {
@@ -6976,6 +7621,46 @@ export default function App() {
         <header className="app-header">
           <h1>COM Curation &amp; Management</h1>
           {isAuthenticated && (
+            <div className="app-nav" role="tablist" aria-label="Application navigation">
+              <button
+                type="button"
+                className={activeApp === 'overview' ? 'app-nav-button app-nav-button-active' : 'app-nav-button'}
+                onClick={() => setActiveApp('overview')}
+                role="tab"
+                aria-selected={activeApp === 'overview'}
+              >
+                Overview
+              </button>
+              <button
+                type="button"
+                className={activeApp === 'fcom' ? 'app-nav-button app-nav-button-active' : 'app-nav-button'}
+                onClick={() => setActiveApp('fcom')}
+                role="tab"
+                aria-selected={activeApp === 'fcom'}
+              >
+                FCOM
+              </button>
+              <button
+                type="button"
+                className={activeApp === 'pcom' ? 'app-nav-button app-nav-button-active' : 'app-nav-button'}
+                onClick={() => setActiveApp('pcom')}
+                role="tab"
+                aria-selected={activeApp === 'pcom'}
+              >
+                PCOM
+              </button>
+              <button
+                type="button"
+                className={activeApp === 'mib' ? 'app-nav-button app-nav-button-active' : 'app-nav-button'}
+                onClick={() => setActiveApp('mib')}
+                role="tab"
+                aria-selected={activeApp === 'mib'}
+              >
+                MIB Browser
+              </button>
+            </div>
+          )}
+          {isAuthenticated && (
             <div className="header-actions">
               <p>Welcome, {session?.user}</p>
               <button type="button" className="search-button logout-button" onClick={handleLogout}>
@@ -6987,6 +7672,164 @@ export default function App() {
         </header>
         <main className="app-main">
         {isAuthenticated ? (
+          <>
+          {activeApp === 'overview' ? (
+            <div className="overview-layout">
+              <div className="overview-columns">
+                <section className="overview-card overview-card-fcom">
+                  <div className="overview-card-header">
+                    <div>
+                      <h2>FCOM Overview</h2>
+                      <p className="overview-subtitle">File, object, and vendor rollups from FCOM folders.</p>
+                    </div>
+                    <div className="overview-actions">
+                      <div className="overview-topn">
+                        <label htmlFor="overview-topn">Top N</label>
+                        <select
+                          id="overview-topn"
+                          value={overviewTopN}
+                          onChange={(event) => setOverviewTopN(Number(event.target.value))}
+                        >
+                          <option value={10}>10</option>
+                          <option value={25}>25</option>
+                          <option value={50}>50</option>
+                          <option value={100}>100</option>
+                          <option value={0}>All</option>
+                        </select>
+                      </div>
+                      <button
+                        type="button"
+                        className="save-button"
+                        onClick={() => loadOverview({ forceRebuild: true })}
+                        disabled={overviewLoading}
+                      >
+                        Refresh
+                      </button>
+                    </div>
+                  </div>
+
+                  {overviewError && <p className="error">{overviewError}</p>}
+                  {overviewLoading && !overviewData && (
+                    <div className="overview-empty">Loading overview…</div>
+                  )}
+
+                  {overviewData && (
+                    <>
+                      <div className="overview-stat-grid">
+                        <div className="overview-stat">
+                          <span className="overview-stat-label">Original FCOM files</span>
+                          <span className="overview-stat-value">
+                            {formatOverviewNumber(overviewData.totals?.files || 0)}
+                          </span>
+                        </div>
+                        <div className="overview-stat">
+                          <span className="overview-stat-label">Overrides</span>
+                          <span className="overview-stat-value">
+                            {formatOverviewNumber(overviewData.totals?.overrides || 0)}
+                          </span>
+                        </div>
+                        <div className="overview-stat">
+                          <span className="overview-stat-label">Objects</span>
+                          <span className="overview-stat-value">
+                            {formatOverviewNumber(overviewData.totals?.objects || 0)}
+                          </span>
+                        </div>
+                        <div className="overview-stat">
+                          <span className="overview-stat-label">Trap variables</span>
+                          <span className="overview-stat-value">
+                            {formatOverviewNumber(overviewData.totals?.variables || 0)}
+                          </span>
+                        </div>
+                        <div className="overview-stat">
+                          <span className="overview-stat-label">Eval objects</span>
+                          <span className="overview-stat-value">
+                            {formatOverviewNumber(overviewData.totals?.evalObjects || 0)}
+                          </span>
+                        </div>
+                        <div className="overview-stat">
+                          <span className="overview-stat-label">Processor objects</span>
+                          <span className="overview-stat-value">
+                            {formatOverviewNumber(overviewData.totals?.processorObjects || 0)}
+                          </span>
+                        </div>
+                        <div className="overview-stat">
+                          <span className="overview-stat-label">Literal objects</span>
+                          <span className="overview-stat-value">
+                            {formatOverviewNumber(overviewData.totals?.literalObjects || 0)}
+                          </span>
+                        </div>
+                      </div>
+
+                      {overviewProtocols.length === 0 ? (
+                        <div className="overview-empty">No protocol data found.</div>
+                      ) : (
+                        <div className="overview-protocols">
+                          {overviewProtocols.map((protocol: any) => (
+                            <div key={protocol.name} className="overview-protocol">
+                              <div className="overview-protocol-header">
+                                <h3>{protocol.name}</h3>
+                                <div className="overview-protocol-meta">
+                                  <span>Files {formatOverviewNumber(protocol.counts?.files || 0)}</span>
+                                  <span>Objects {formatOverviewNumber(protocol.counts?.objects || 0)}</span>
+                                  <span>Overrides {formatOverviewNumber(protocol.counts?.overrides || 0)}</span>
+                                </div>
+                              </div>
+                              <div className="overview-table-wrapper">
+                                <table className="overview-table">
+                                  <thead>
+                                    <tr>
+                                      <th>Vendor</th>
+                                      <th>Files</th>
+                                      <th>Overrides</th>
+                                      <th>Objects</th>
+                                      <th>Variables</th>
+                                      <th>Eval</th>
+                                      <th>Processor</th>
+                                      <th>Literal</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {(protocol.vendors || []).map((vendor: any) => (
+                                      <tr key={`${protocol.name}-${vendor.name}`}>
+                                        <td>{vendor.name}</td>
+                                        <td>{formatOverviewNumber(vendor.counts?.files || 0)}</td>
+                                        <td>{formatOverviewNumber(vendor.counts?.overrides || 0)}</td>
+                                        <td>{formatOverviewNumber(vendor.counts?.objects || 0)}</td>
+                                        <td>{formatOverviewNumber(vendor.counts?.variables || 0)}</td>
+                                        <td>{formatOverviewNumber(vendor.counts?.evalObjects || 0)}</td>
+                                        <td>{formatOverviewNumber(vendor.counts?.processorObjects || 0)}</td>
+                                        <td>{formatOverviewNumber(vendor.counts?.literalObjects || 0)}</td>
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  )}
+
+                  {!overviewLoading && !overviewData && !overviewError && (
+                    <div className="overview-empty">Overview data is not available yet.</div>
+                  )}
+                </section>
+
+                <section className="overview-card overview-card-pcom">
+                  <div className="overview-card-header">
+                    <div>
+                      <h2>PCOM Overview</h2>
+                      <p className="overview-subtitle">Work in progress.</p>
+                    </div>
+                  </div>
+                  <div className="overview-empty">
+                    PCOM reporting is coming soon.
+                  </div>
+                </section>
+              </div>
+            </div>
+          ) : activeApp === 'fcom' ? (
           <div className="split-layout">
             <div className="panel">
               <div className="panel-scroll">
@@ -7003,7 +7846,7 @@ export default function App() {
                       ?
                     </button>
                   </div>
-                  {!canEditRules && (
+                  {!hasEditPermission && (
                     <div className="panel-flag-row">
                       <span className="read-only-flag" title="You do not have permission to edit rules.">
                         Read-only access
@@ -7126,45 +7969,19 @@ export default function App() {
                     {!searchLoading && !searchError && searchResults.length === 0 && (
                       <div className="empty-state">No matches found.</div>
                     )}
-                    {searchResults.length > 0 && (
+                    {!searchLoading && !searchError && searchResults.length > 0 && (
                       <ul className="search-results-list">
-                        {searchResults.map((result: any) => (
-                          <li key={`${result.pathId}-${result.source}`}>
+                        {searchResults.map((result, idx) => (
+                          <li key={`${result?.pathId || result?.name || 'result'}-${idx}`}>
                             <button
                               type="button"
                               className="search-result-link"
-                              onClick={() => {
-                                highlightNextOpenRef.current = true;
-                                setHighlightQuery(searchQuery.trim());
-                                setHighlightPathId(result.pathId);
-                                setSearchHighlightActive(true);
-                                if (result.type === 'folder') {
-                                  void handleOpenFolder({
-                                    PathID: result.pathId,
-                                    PathName: getSearchResultName(result),
-                                  });
-                                } else {
-                                  void openFileFromUrl(result.pathId);
-                                }
-                              }}
+                              onClick={() => openFileFromUrl(result.pathId || result.path || '')}
                             >
-                              <span className="search-icon" aria-hidden="true">
-                                {result.type === 'folder' ? '📁' : '📄'}
-                              </span>
                               {getSearchResultName(result)}
                             </button>
-                            <div className="search-result-meta">
-                              <span className="search-result-path">{formatDisplayPath(result.pathId)}</span>
-                              {result.matchCount && (
-                                <span className="pill">{result.matchCount} hit{result.matchCount > 1 ? 's' : ''}</span>
-                              )}
-                              <span className="pill">{result.source}</span>
-                            </div>
-                            {result.matches?.length > 0 && (
-                              <div className="search-snippet">
-                                <span className="muted">L{result.matches[0].line}:</span> {result.matches[0].preview}
-                              </div>
-                            )}
+                            {result?.pathId && <div className="search-result-path">{result.pathId}</div>}
+                            {result?.snippet && <div className="search-snippet">{result.snippet}</div>}
                           </li>
                         ))}
                       </ul>
@@ -7172,148 +7989,131 @@ export default function App() {
                   </div>
                 )}
                 {browseError && <div className="error">{browseError}</div>}
-                {browseData && (
+                {browseLoading ? (
+                  <div className="browse-loading">Loading folders…</div>
+                ) : (
                   <div className="browse-results">
-                    {entries.length > 0 ? (
-                      <ul className="browse-list">
-                        {entries.map((entry: any) => (
-                          <li key={entry.PathID || entry.PathName}>
-                            {isFolder(entry) ? (
-                              <button
-                                type="button"
-                                className="browse-link"
-                                onClick={() => handleOpenFolder(entry)}
-                              >
-                                <span className="browse-icon" aria-hidden="true">📁</span>
-                                {entry.PathName}
-                              </button>
-                            ) : (
-                              <button
-                                type="button"
-                                className="browse-link file-link"
-                                onClick={() => handleOpenFile(entry)}
-                              >
-                                <span className="browse-icon" aria-hidden="true">📄</span>
-                                {entry.PathName}
-                              </button>
-                            )}
-                            <span className="browse-meta">
-                              {entry.Info || ''}
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
+                    {entries.length === 0 ? (
+                      <div className="empty-state">No files or folders found.</div>
                     ) : (
-                      <pre>{JSON.stringify(browseData, null, 2)}</pre>
+                      <ul className="browse-list">
+                        {entries.map((entry) => {
+                          const folder = isFolder(entry);
+                          return (
+                            <li key={entry.PathID || entry.PathName}>
+                              <button
+                                type="button"
+                                className={folder ? 'browse-link' : 'browse-link file-link'}
+                                onClick={() => (folder ? handleOpenFolder(entry) : handleOpenFile(entry))}
+                              >
+                                <span className="browse-icon" aria-hidden="true">
+                                  {folder ? '📁' : '📄'}
+                                </span>
+                                {entry.PathName || entry.PathID}
+                              </button>
+                            </li>
+                          );
+                        })}
+                      </ul>
                     )}
                   </div>
                 )}
               </div>
             </div>
             <div className="panel">
-              <div className="panel-header">
-                <h2>File Details</h2>
-              </div>
-              {!selectedFile && !selectedFolder ? (
-                <div className="empty-state">Select a file to preview.</div>
-              ) : selectedFolder && !selectedFile ? (
+              <div className="panel-scroll">
                 <div className="file-details">
-                  <div className="file-title">
-                    <strong>
-                      {selectedFolder.PathName}
-                      <button
-                        type="button"
-                        className={`star-button ${isFavorite(selectedFolder.PathID, 'folder') ? 'star-active' : ''}`}
-                        onClick={() => toggleFavorite({
-                          type: 'folder',
-                          pathId: selectedFolder.PathID,
-                          label: selectedFolder.PathName,
-                          node: selectedFolder.PathID,
-                        })}
-                        aria-label="Toggle favorite folder"
-                        title="Toggle favorite folder"
-                      >
-                        ★
-                      </button>
-                    </strong>
-                  </div>
-                  {folderLoading ? (
-                    <div>Loading folder overview…</div>
-                  ) : folderOverview ? (
-                    <div className="folder-overview">
-                      {folderOverview.fileCount > 0 ? (
-                        <>
-                          <div className="folder-summary">
-                            <div>
-                              <span className="label">Files</span>
-                              <span className="value">{folderOverview.fileCount}</span>
+                  {selectedFolder && !selectedFile && (
+                    <div className="panel-section">
+                      <div className="panel-section-title">Folder Overview</div>
+                      <div className="file-title">
+                        <strong>{selectedFolder.PathName || selectedFolder.PathID}</strong>
+                        {selectedFolder.PathID && (
+                          <span className="file-path">{formatDisplayPath(selectedFolder.PathID)}</span>
+                        )}
+                      </div>
+                      {folderLoading && <div className="muted">Loading overview…</div>}
+                      {!folderLoading && folderOverview && (
+                        <div className="folder-overview">
+                          <div className="overview-stat-grid">
+                            <div className="overview-stat">
+                              <span className="overview-stat-label">Files</span>
+                              <span className="overview-stat-value">
+                                {formatOverviewNumber(folderOverview.fileCount || 0)}
+                              </span>
                             </div>
-                            <div>
-                              <span className="label">Objects</span>
-                              <span className="value">{folderOverview.objectCount}</span>
+                            <div className="overview-stat">
+                              <span className="overview-stat-label">Objects</span>
+                              <span className="overview-stat-value">
+                                {formatOverviewNumber(folderOverview.objectCount || 0)}
+                              </span>
                             </div>
-                            <div>
-                              <span className="label">Schema Errors</span>
-                              <span className="value">{folderOverview.schemaErrorCount}</span>
+                            <div className="overview-stat">
+                              <span className="overview-stat-label">Schema issues</span>
+                              <span className="overview-stat-value">
+                                {formatOverviewNumber(folderOverview.schemaErrorCount || 0)}
+                              </span>
                             </div>
-                            <div>
-                              <span className="label">Unknown Fields</span>
-                              <span className="value">{folderOverview.unknownFieldCount}</span>
+                            <div className="overview-stat">
+                              <span className="overview-stat-label">Unknown fields</span>
+                              <span className="overview-stat-value">
+                                {formatOverviewNumber(folderOverview.unknownFieldCount || 0)}
+                              </span>
                             </div>
                           </div>
-                          <div className="folder-table">
-                            <div className="folder-table-header">
-                              <span>File</span>
-                              <span>Schema Errors</span>
-                              <span>Unknown Fields</span>
+                          {Array.isArray(folderOverview.topFiles) && folderOverview.topFiles.length > 0 ? (
+                            <div className="overview-table-wrapper">
+                              <table className="overview-table">
+                                <thead>
+                                  <tr>
+                                    <th>File</th>
+                                    <th>Objects</th>
+                                    <th>Schema</th>
+                                    <th>Unknown</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {folderOverview.topFiles.map((row: any) => (
+                                    <tr key={row.pathId || row.file}>
+                                      <td>{row.file}</td>
+                                      <td>{formatOverviewNumber(row.objects || 0)}</td>
+                                      <td>{formatOverviewNumber(row.schemaErrors || 0)}</td>
+                                      <td>{formatOverviewNumber(row.unknownFields || 0)}</td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
                             </div>
-                            {folderOverview.topFiles?.length ? (
-                              folderOverview.topFiles.map((row: any) => (
-                                <div className="folder-table-row" key={row.pathId}>
-                                  <button
-                                    type="button"
-                                    className="folder-link"
-                                    onClick={() => openFileFromUrl(row.pathId)}
-                                  >
-                                    {row.file}
-                                  </button>
-                                  <span>{row.schemaErrors}</span>
-                                  <span>{row.unknownFields}</span>
-                                </div>
-                              ))
-                            ) : (
-                              <div className="empty-state">No files with issues.</div>
-                            )}
-                          </div>
-                        </>
-                      ) : (
-                        <div className="empty-state">No JSON files in this folder.</div>
+                          ) : (
+                            <div className="overview-empty">No overview rows available.</div>
+                          )}
+                        </div>
                       )}
                     </div>
-                  ) : (
-                    <div className="empty-state">No overview available.</div>
                   )}
-                </div>
-              ) : (
-                <div className="file-details">
                   <div className="file-title">
                     <strong>
-                      {selectedFile.PathName}
-                      <button
-                        type="button"
-                        className={`star-button ${isFavorite(selectedFile.PathID, 'file') ? 'star-active' : ''}`}
-                        onClick={() => toggleFavorite({
-                          type: 'file',
-                          pathId: selectedFile.PathID,
-                          label: selectedFile.PathName,
-                          node: browseNode || undefined,
-                        })}
-                        aria-label="Toggle favorite file"
-                        title="Toggle favorite file"
-                      >
-                        ★
-                      </button>
+                      {selectedFile?.PathName || 'Select a file'}
+                      {selectedFile && (
+                        <button
+                          type="button"
+                          className={isFavorite('file', selectedFile.PathID) ? 'favorite-button active' : 'favorite-button'}
+                          onClick={() => toggleFavorite({
+                            type: 'file',
+                            pathId: selectedFile.PathID,
+                            label: selectedFile.PathName,
+                            node: browseNode || undefined,
+                          })}
+                          aria-label="Toggle favorite file"
+                          title="Toggle favorite file"
+                        >
+                          ★
+                        </button>
+                      )}
                     </strong>
+                    {selectedFile?.PathID && (
+                      <span className="file-path">{formatDisplayPath(selectedFile.PathID)}</span>
+                    )}
                   </div>
                   <div className="file-meta-row">
                     <span className="schema-status">
@@ -7386,6 +8186,8 @@ export default function App() {
                       onClick={() => {
                         openAdvancedFlowModal('global');
                       }}
+                      disabled={!hasEditPermission}
+                      title={hasEditPermission ? '' : 'Read-only access'}
                     >
                       Advanced Processors (Global)
                     </button>
@@ -7396,10 +8198,12 @@ export default function App() {
                         setReviewStep('review');
                         setShowReviewModal(true);
                       }}
-                      disabled={!hasStagedChanges}
+                      disabled={!hasStagedChanges || !hasEditPermission}
                       title={hasStagedChanges
                         ? `${stagedDiff.totalChanges} staged change(s)`
-                        : 'No staged changes'}
+                        : hasEditPermission
+                          ? 'No staged changes'
+                          : 'Read-only access'}
                     >
                       Review & Save{hasStagedChanges ? ` (${stagedDiff.totalChanges})` : ''}
                     </button>
@@ -7496,20 +8300,33 @@ export default function App() {
                                 }}
                               >
                                 <div className="object-header">
-                                  <div className="object-title">
-                                    <span className="object-name">{obj?.['@objectName'] || `Object ${idx + 1}`}</span>
-                                    {obj?.certification && <span className="pill">{obj.certification}</span>}
-                                    {overrideFlags.any && <span className="pill override-pill">Override</span>}
-                                    {overrideFlags.advancedFlow && (
-                                      <span className="pill" title="Advanced Flow configured for this object">
-                                        Advanced Flow
-                                      </span>
-                                    )}
-                                    {highlightObjectKeys.includes(getObjectKey(obj, idx)) && (
-                                      <span className="pill match-pill">Match</span>
+                                  <div className="object-header-main">
+                                    <div className="object-title">
+                                      <span className="object-name">{obj?.['@objectName'] || `Object ${idx + 1}`}</span>
+                                      {obj?.certification && <span className="pill">{obj.certification}</span>}
+                                      {overrideFlags.any && <span className="pill override-pill">Override</span>}
+                                      {overrideFlags.advancedFlow && (
+                                        <span className="pill" title="Advanced Flow configured for this object">
+                                          Advanced Flow
+                                        </span>
+                                      )}
+                                      {highlightObjectKeys.includes(getObjectKey(obj, idx)) && (
+                                        <span className="pill match-pill">Match</span>
+                                      )}
+                                    </div>
+                                    {getObjectDescription(obj) && (
+                                      <div className="object-description">{getObjectDescription(obj)}</div>
                                     )}
                                   </div>
-                                  {obj?.description && <div className="object-description">{obj.description}</div>}
+                                  <div className="object-actions">
+                                    <button
+                                      type="button"
+                                      className="panel-edit-button"
+                                      onClick={() => openTrapComposerFromTest(obj)}
+                                    >
+                                      Test trap
+                                    </button>
+                                  </div>
                                 </div>
                                 <div
                                   className={`object-panel${panelEditState[eventPanelKey]
@@ -7530,7 +8347,7 @@ export default function App() {
                                         </span>
                                       )}
                                     </div>
-                                    {canEditRules && !panelEditState[eventPanelKey] && (
+                                    {hasEditPermission && !panelEditState[eventPanelKey] && (
                                       <button
                                         type="button"
                                         className="panel-edit-button"
@@ -7539,7 +8356,7 @@ export default function App() {
                                         Edit
                                       </button>
                                     )}
-                                    {canEditRules && panelEditState[eventPanelKey] && (
+                                    {hasEditPermission && panelEditState[eventPanelKey] && (
                                       <div className="panel-edit-actions">
                                         {eventOverrideFields.length > 1 && (
                                           <button
@@ -7610,7 +8427,7 @@ export default function App() {
                                                     className="pill override-pill pill-inline pill-action"
                                                   >
                                                     Override
-                                                    {canEditRules && panelEditState[eventPanelKey] && overrideValueMap.has('$.event.Summary') && (
+                                                    {hasEditPermission && panelEditState[eventPanelKey] && overrideValueMap.has('$.event.Summary') && (
                                                       <button
                                                         type="button"
                                                         className="pill-close"
@@ -7712,7 +8529,7 @@ export default function App() {
                                                     className="pill override-pill pill-inline pill-action"
                                                   >
                                                     Override
-                                                    {canEditRules && panelEditState[eventPanelKey] && overrideValueMap.has('$.event.Severity') && (
+                                                    {hasEditPermission && panelEditState[eventPanelKey] && overrideValueMap.has('$.event.Severity') && (
                                                       <button
                                                         type="button"
                                                         className="pill-close"
@@ -7806,7 +8623,7 @@ export default function App() {
                                                     className="pill override-pill pill-inline pill-action"
                                                   >
                                                     Override
-                                                    {canEditRules && panelEditState[eventPanelKey] && overrideValueMap.has('$.event.EventType') && (
+                                                    {hasEditPermission && panelEditState[eventPanelKey] && overrideValueMap.has('$.event.EventType') && (
                                                       <button
                                                         type="button"
                                                         className="pill-close"
@@ -7898,7 +8715,7 @@ export default function App() {
                                                     className="pill override-pill pill-inline pill-action"
                                                   >
                                                     Override
-                                                    {canEditRules && panelEditState[eventPanelKey] && overrideValueMap.has('$.event.ExpireTime') && (
+                                                    {hasEditPermission && panelEditState[eventPanelKey] && overrideValueMap.has('$.event.ExpireTime') && (
                                                       <button
                                                         type="button"
                                                         className="pill-close"
@@ -7990,7 +8807,7 @@ export default function App() {
                                                     className="pill override-pill pill-inline pill-action"
                                                   >
                                                     Override
-                                                    {canEditRules && panelEditState[eventPanelKey] && overrideValueMap.has('$.event.EventCategory') && (
+                                                    {hasEditPermission && panelEditState[eventPanelKey] && overrideValueMap.has('$.event.EventCategory') && (
                                                       <button
                                                         type="button"
                                                         className="pill-close"
@@ -8107,7 +8924,7 @@ export default function App() {
                                                       title={`Original: ${getBaseEventDisplay(obj, field)}`}
                                                     >
                                                       Override
-                                                      {canEditRules && panelEditState[eventPanelKey]
+                                                      {hasEditPermission && panelEditState[eventPanelKey]
                                                         && overrideValueMap.has(`$.event.${field}`) && (
                                                           <button
                                                             type="button"
@@ -8407,9 +9224,13 @@ export default function App() {
                                           type="button"
                                           className="builder-link"
                                           onClick={() => {
+                                            if (!hasEditPermission) {
+                                              return;
+                                            }
                                             setAdvancedProcessorScope('object');
                                             setShowAdvancedProcessorModal(true);
                                           }}
+                                          disabled={!hasEditPermission}
                                         >
                                           Advanced Processors
                                         </button>
@@ -9409,7 +10230,7 @@ export default function App() {
                                 type="button"
                                 className="builder-card builder-card-primary"
                                 onClick={() => setReviewStep('commit')}
-                                disabled={stagedDiff.totalChanges === 0}
+                                disabled={stagedDiff.totalChanges === 0 || !hasEditPermission}
                               >
                                 Continue to Commit
                               </button>
@@ -9423,6 +10244,7 @@ export default function App() {
                               placeholder="Enter commit message here"
                               value={commitMessage}
                               onChange={(e) => setCommitMessage(e.target.value)}
+                              disabled={!hasEditPermission}
                             />
                             <div className="modal-actions">
                               <button
@@ -9439,7 +10261,7 @@ export default function App() {
                                   setShowReviewModal(false);
                                   setReviewStep('review');
                                 }}
-                                disabled={saveLoading}
+                                disabled={saveLoading || !hasEditPermission}
                               >
                                 {saveLoading ? 'Saving…' : 'Commit Changes'}
                               </button>
@@ -9623,7 +10445,7 @@ export default function App() {
                           <button
                             type="button"
                             className="builder-card builder-card-primary"
-                            disabled={!advancedFlowDirty || flowErrorCount > 0}
+                            disabled={!advancedFlowDirty || flowErrorCount > 0 || !hasEditPermission}
                             onClick={saveAdvancedFlow}
                           >
                             Save Changes
@@ -10344,9 +11166,6 @@ export default function App() {
                       </div>
                     </div>
                   )}
-                </div>
-              )}
-            </div>
             {showPathModal && (
               <div className="modal-overlay" role="dialog" aria-modal="true">
                 <div className="modal">
@@ -10542,7 +11361,431 @@ export default function App() {
                 </div>
               </div>
             )}
+                </div>
+              </div>
+            </div>
           </div>
+          ) : activeApp === 'pcom' ? (
+          <div className="panel pcom-placeholder">
+            <div className="panel-header">
+              <h2>PCOM</h2>
+            </div>
+            <div className="empty-state">
+              PCOM editor coming next. FCOM tooling will be reused for the PCOM flow.
+            </div>
+          </div>
+          ) : (
+          <div className="split-layout">
+            <div className="panel">
+              <div className="panel-scroll">
+                <div className="panel-header">
+                  <div className="panel-title-row">
+                    <h2>MIB Browser</h2>
+                    <button
+                      type="button"
+                      className="ghost-button"
+                      onClick={() => loadMibPath(mibPath)}
+                    >
+                      Refresh
+                    </button>
+                  </div>
+                  <div className="panel-section">
+                    <div className="panel-section-title">Path</div>
+                    <div className="mib-path-row">
+                      <button
+                        type="button"
+                        className="ghost-button"
+                        onClick={() => loadMibPath(getParentPath(mibPath))}
+                        disabled={mibPath === '/'}
+                      >
+                        Up
+                      </button>
+                      <span className="mib-path">{mibPath}</span>
+                    </div>
+                  </div>
+                  <div className="panel-section">
+                    <div className="panel-section-title">Search</div>
+                    <form className="mib-search" onSubmit={handleMibSearchSubmit}>
+                      <div className="mib-search-row">
+                        <input
+                          type="text"
+                          placeholder="Search MIBs"
+                          value={mibSearch}
+                          onChange={(e) => setMibSearch(e.target.value)}
+                        />
+                        <select
+                          value={mibSearchScope}
+                          onChange={(e) => setMibSearchScope(e.target.value as 'folder' | 'all')}
+                        >
+                          <option value="folder">Current folder</option>
+                          <option value="all">All folders</option>
+                        </select>
+                        <button type="submit" className="search-button">
+                          Search
+                        </button>
+                        <button
+                          type="button"
+                          className="ghost-button"
+                          onClick={handleMibClearSearch}
+                          disabled={!mibSearch}
+                        >
+                          Clear
+                        </button>
+                      </div>
+                      {mibSearchMode === 'search' && mibSearch.trim() && (
+                        <div className="muted">
+                          Searching all MIBs for “{mibSearch.trim()}”.
+                        </div>
+                      )}
+                      {mibSearchMode !== 'search' && mibSearch.trim() && (
+                        <div className="muted">
+                          Filtering current folder for “{mibSearch.trim()}”.
+                        </div>
+                      )}
+                    </form>
+                  </div>
+                </div>
+                {mibError && <div className="error">{mibError}</div>}
+                {mibLoading ? (
+                  <div>Loading MIBs…</div>
+                ) : (
+                  <div className="browse-results">
+                    {mibEntries.length === 0 ? (
+                      <div className="empty-state">No MIB files found.</div>
+                    ) : (
+                      <ul className="browse-list">
+                        {mibEntries.map((entry) => (
+                          <li key={entry.path || entry.name}>
+                            <button
+                              type="button"
+                              className={entry.isDir ? 'browse-link' : 'browse-link file-link'}
+                              onClick={() => handleOpenMibEntry(entry)}
+                            >
+                              <span className="browse-icon" aria-hidden="true">
+                                {entry.isDir ? '📁' : '📄'}
+                              </span>
+                              {entry.name}
+                            </button>
+                            {!entry.isDir && (
+                              <span className="browse-meta">
+                                {entry.size ? `${Math.round(entry.size / 1024)} KB` : ''}
+                              </span>
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    {(mibTotal !== null || mibFilteredTotal !== null) && (
+                      <div className="muted">
+                        Showing {mibEntries.length} of {mibFilteredTotal ?? mibTotal ?? mibEntries.length}
+                        {mibSearch.trim() ? ' matches' : ' items'}.
+                        {mibSearchMode === 'search' && mibHasMore && ' (more matches available)'}
+                      </div>
+                    )}
+                    {mibHasMore && (
+                      <button
+                        type="button"
+                        className="ghost-button"
+                        onClick={() => {
+                          if (mibSearchScope === 'all' && mibSearch.trim()) {
+                            void loadMibSearch({ append: true });
+                          } else {
+                            void loadMibPath(mibPath, { append: true });
+                          }
+                        }}
+                        disabled={mibLoading}
+                      >
+                        Load more
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className="panel">
+              <div className="panel-scroll">
+                <div className="panel-header">
+                  <h2>MIB Details</h2>
+                </div>
+                {!mibSelectedFile ? (
+                  <div className="empty-state">Select a MIB file to inspect.</div>
+                ) : (
+                  <div className="mib-details">
+                    <div className="file-title">
+                      <strong>{mibSelectedFile}</strong>
+                    </div>
+                    <div className="mib-actions">
+                      <button
+                        type="button"
+                        className="action-link"
+                        onClick={runMib2Fcom}
+                        disabled={!hasEditPermission || mib2FcomLoading}
+                        title={hasEditPermission ? '' : 'Read-only access'}
+                      >
+                        {mib2FcomLoading ? 'Running…' : 'Run MIB2FCOM'}
+                      </button>
+                      <label className="mib-checkbox">
+                        <input
+                          type="checkbox"
+                          checked={mibUseParent}
+                          onChange={(e) => setMibUseParent(e.target.checked)}
+                          disabled={!hasEditPermission}
+                        />
+                        Use parent MIBs
+                      </label>
+                    </div>
+                    {mib2FcomError && <div className="error">{mib2FcomError}</div>}
+                    {mibOutput && (
+                      <div className="panel-section">
+                        <div className="panel-section-title">
+                          MIB2FCOM Output{mibOutputName ? ` (${mibOutputName})` : ''}
+                        </div>
+                        <textarea
+                          className="mib-output"
+                          value={mibOutput}
+                          onChange={(e) => setMibOutput(e.target.value)}
+                          disabled={!hasEditPermission}
+                        />
+                      </div>
+                    )}
+                    <div className="panel-section">
+                      <div className="panel-section-title">Definitions</div>
+                      <input
+                        type="text"
+                        placeholder="Search definitions"
+                        value={mibDefinitionSearch}
+                        onChange={(e) => setMibDefinitionSearch(e.target.value)}
+                      />
+                      <div className="mib-definition-list">
+                        {filteredMibDefinitions.length === 0 ? (
+                          <div className="empty-state">No definitions found.</div>
+                        ) : (
+                          filteredMibDefinitions.map((definition) => (
+                            <button
+                              key={`${definition.name}-${definition.oid || definition.kind}`}
+                              type="button"
+                              className={mibSelectedDefinition?.name === definition.name
+                                ? 'mib-definition-item mib-definition-item-active'
+                                : 'mib-definition-item'}
+                              onClick={() => setMibSelectedDefinition(definition)}
+                            >
+                              <span className="mib-definition-name">{definition.name}</span>
+                              <span className="mib-definition-kind">{definition.kind}</span>
+                            </button>
+                          ))
+                        )}
+                      </div>
+                    </div>
+                    {mibSelectedDefinition && (
+                      <div className="mib-definition-details">
+                        <div className="mib-definition-title">{mibSelectedDefinition.name}</div>
+                        <div className="mib-definition-meta">
+                          <span>Kind: {mibSelectedDefinition.kind}</span>
+                          <span>OID: {mibSelectedDefinition.oid || '—'}</span>
+                        </div>
+                        <div className="mib-definition-meta">
+                          {mibSelectedDefinition.module && <span>Module: {mibSelectedDefinition.module}</span>}
+                          {mibSelectedDefinition.syntax && <span>Syntax: {mibSelectedDefinition.syntax}</span>}
+                          {mibSelectedDefinition.access && <span>Access: {mibSelectedDefinition.access}</span>}
+                          {mibSelectedDefinition.status && <span>Status: {mibSelectedDefinition.status}</span>}
+                          {mibSelectedDefinition.defval && <span>Default: {mibSelectedDefinition.defval}</span>}
+                          {mibSelectedDefinition.index && <span>Index: {mibSelectedDefinition.index}</span>}
+                        </div>
+                        {mibSelectedDefinition.description && (
+                          <div className="mib-definition-description">{mibSelectedDefinition.description}</div>
+                        )}
+                        <button
+                          type="button"
+                          className="action-link"
+                          onClick={() => openTrapComposer(mibSelectedDefinition, mibSelectedFile)}
+                        >
+                          Compose Trap
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+          )}
+          {trapModalOpen && (
+            <div className="modal-overlay" role="dialog" aria-modal="true">
+              <div className="modal modal-wide">
+                <h3>Send SNMP Trap</h3>
+                {trapSource === 'fcom' && (
+                  <div className="muted">Prefilled from FCOM test command.</div>
+                )}
+                <div className="panel-section">
+                  <div className="panel-section-title">Destination</div>
+                  {trapServerError && <div className="error">{trapServerError}</div>}
+                  {trapServerList.length > 0 && (
+                    <label className="mib-field">
+                      Server list
+                      <select
+                        value={trapHost}
+                        onChange={(e) => {
+                          setTrapHost(e.target.value);
+                          if (e.target.value) {
+                            setTrapManualOpen(false);
+                          }
+                        }}
+                      >
+                        <option value="">Select a server</option>
+                        {trapServerList.map((server) => (
+                          <option
+                            key={server.ServerID || server.ServerName}
+                            value={server.ServerHostFQDN || server.ServerName}
+                          >
+                            {server.ServerName || server.ServerHostFQDN}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                  )}
+                  <button
+                    type="button"
+                    className="ghost-button"
+                    onClick={() => setTrapManualOpen((prev) => !prev)}
+                  >
+                    {trapManualOpen ? 'Hide manual entry' : 'Manual destination'}
+                  </button>
+                  {trapManualOpen && (
+                    <div className="mib-manual-entry">
+                      <label className="mib-field">
+                        Host or IP
+                        <input
+                          type="text"
+                          placeholder="10.0.0.10"
+                          value={trapHost}
+                          onChange={(e) => setTrapHost(e.target.value)}
+                        />
+                      </label>
+                      <label className="mib-field">
+                        Port
+                        <input
+                          type="number"
+                          value={trapPort}
+                          onChange={(e) => setTrapPort(Number(e.target.value))}
+                        />
+                      </label>
+                    </div>
+                  )}
+                  {recentTargets.length > 0 && (
+                    <label className="mib-field">
+                      Recent destinations
+                      <select
+                        value=""
+                        onChange={(e) => setTrapHost(e.target.value)}
+                      >
+                        <option value="">Select recent</option>
+                        {recentTargets.map((target) => (
+                          <option key={target} value={target}>{target}</option>
+                        ))}
+                      </select>
+                    </label>
+                  )}
+                </div>
+                <div className="panel-section">
+                  <div className="panel-section-title">Trap</div>
+                  <div className="mib-trap-grid">
+                    <label className="mib-field">
+                      Version
+                      <select value={trapVersion} onChange={(e) => setTrapVersion(e.target.value)}>
+                        <option value="2c">v2c</option>
+                      </select>
+                    </label>
+                    <label className="mib-field">
+                      Community
+                      <input
+                        type="text"
+                        value={trapCommunity}
+                        onChange={(e) => setTrapCommunity(e.target.value)}
+                      />
+                    </label>
+                    <label className="mib-field mib-field-wide">
+                      Trap OID
+                      <input
+                        type="text"
+                        value={trapOid}
+                        onChange={(e) => setTrapOid(e.target.value)}
+                      />
+                    </label>
+                  </div>
+                  <div className="panel-section-title">Varbinds</div>
+                  <div className="mib-varbinds">
+                    {trapVarbinds.length === 0 && (
+                      <div className="empty-state">No varbinds yet.</div>
+                    )}
+                    {trapVarbinds.map((binding, index) => (
+                      <div key={`${binding.oid}-${index}`} className="mib-varbind-row">
+                        <input
+                          type="text"
+                          placeholder="OID"
+                          value={binding.oid}
+                          onChange={(e) => setTrapVarbinds((prev) => prev.map((item, idx) => (
+                            idx === index ? { ...item, oid: e.target.value } : item
+                          )))}
+                        />
+                        <select
+                          value={binding.type}
+                          onChange={(e) => setTrapVarbinds((prev) => prev.map((item, idx) => (
+                            idx === index ? { ...item, type: e.target.value } : item
+                          )))}
+                        >
+                          <option value="s">string</option>
+                          <option value="i">integer</option>
+                          <option value="u">unsigned</option>
+                          <option value="t">timeticks</option>
+                          <option value="o">oid</option>
+                        </select>
+                        <input
+                          type="text"
+                          placeholder="Value"
+                          value={binding.value}
+                          onChange={(e) => setTrapVarbinds((prev) => prev.map((item, idx) => (
+                            idx === index ? { ...item, value: e.target.value } : item
+                          )))}
+                        />
+                        <button
+                          type="button"
+                          className="builder-link"
+                          onClick={() => setTrapVarbinds((prev) => prev.filter((_item, idx) => idx !== index))}
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    ))}
+                    <button
+                      type="button"
+                      className="builder-link"
+                      onClick={() => setTrapVarbinds((prev) => ([
+                        ...prev,
+                        { oid: '', type: 's', value: '' },
+                      ]))}
+                    >
+                      Add varbind
+                    </button>
+                  </div>
+                </div>
+                {trapError && <div className="error">{trapError}</div>}
+                <div className="modal-actions">
+                  <button type="button" onClick={() => setTrapModalOpen(false)}>
+                    Close
+                  </button>
+                  <button
+                    type="button"
+                    className="builder-card builder-card-primary"
+                    onClick={sendTrap}
+                    disabled={trapSending}
+                  >
+                    {trapSending ? 'Sending…' : 'Send Trap'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+          </>
         ) : (
           <div className="auth-screen">
           <div className="login-card">

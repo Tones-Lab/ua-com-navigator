@@ -115,6 +115,61 @@ class ApiClient {
     return this.client.post(`/files/${fileId}/test-all`);
   }
 
+  // Broker servers
+  async getBrokerServers() {
+    return this.client.get('/broker/servers');
+  }
+
+  // MIB Browser
+  async browseMibs(path?: string, options?: { search?: string; limit?: number; offset?: number }) {
+    return this.client.get('/mibs/browse', {
+      params: {
+        path,
+        search: options?.search,
+        limit: options?.limit,
+        offset: options?.offset,
+      },
+    });
+  }
+
+  async searchMibs(query: string, options?: { limit?: number; offset?: number }) {
+    return this.client.get('/mibs/search', {
+      params: {
+        q: query,
+        limit: options?.limit,
+        offset: options?.offset,
+      },
+    });
+  }
+
+  async readMib(path: string) {
+    return this.client.get('/mibs/read', { params: { path } });
+  }
+
+  async parseMib(path: string) {
+    return this.client.get('/mibs/parse', { params: { path } });
+  }
+
+  async runMib2Fcom(inputPath: string, outputName?: string, useParentMibs?: boolean) {
+    return this.client.post('/mibs/mib2fcom', {
+      inputPath,
+      outputName,
+      useParentMibs,
+    });
+  }
+
+  async sendTrap(payload: {
+    host: string;
+    port?: number;
+    community?: string;
+    version?: string;
+    trapOid: string;
+    mibModule?: string;
+    varbinds?: Array<{ oid: string; type?: string; value?: string }>;
+  }) {
+    return this.client.post('/mibs/trap/send', payload);
+  }
+
   // Schema
   async getSchema() {
     return this.client.get('/schema');
@@ -157,6 +212,19 @@ class ApiClient {
 
   async rebuildSearchIndex() {
     return this.client.post('/search/rebuild');
+  }
+
+  // Overview
+  async getOverview() {
+    return this.client.get('/overview');
+  }
+
+  async getOverviewStatus() {
+    return this.client.get('/overview/status');
+  }
+
+  async rebuildOverviewIndex() {
+    return this.client.post('/overview/rebuild');
   }
 }
 

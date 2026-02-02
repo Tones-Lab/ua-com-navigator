@@ -15,6 +15,9 @@
 	- Call UA roles/permissions API on login.
 	- Verify user has edit + execute permissions on rules ACL.
 	- Enable UI edit mode only when permissions allow (including field-level edits and new fields).
+- Processor required fields audit:
+	- Review required field rules per processor (including if/else).
+	- Enforce required inputs in builder + validation messaging.
 - Validate UA REST API endpoints and parameters against a real UA server.
 - Confirm auth flows (basic + certificate) and session handling.
 - Derive initial FCOM JSON Schema from representative /coms/trap files.
@@ -92,6 +95,9 @@
 	11) date
 - ✅ Processor builder coverage expansion + validation/examples:
 	- Doc: architecture/backlog-processor-builder-coverage.md
+- FCOM test trap fallback when `test` is missing:
+	- Best-effort MIB match (OID/variables) via MIB browser data.
+	- Prefill trap modal defaults from MIB definitions.
 - ✅ Advanced Flow validation improvements (lane rules + error hints):
 	- Doc: architecture/backlog-advanced-flow-validation.md
 - ✅ Staged review usability improvements (object collapse + expand originals):
@@ -124,7 +130,24 @@
 - Promotion workflow (file/folder).
 - Bulk operations.
 - MIB browser + stub generation.
+	- allow MIB updloads - individually, or even a zip, and unpack the zip as necessary to /distrib/mibs directory. 
+	- need a way to sort / filter - user may add folders under that folder, or add other folders with mibs - need way to add 'folder' to make it viewable in the MIB browser
+- MIB browser (requirements):
+	- Load MIBs from /opt/assure1/distrib/mibs/ on UA presentation server; document install assumption.
+	- Use `snmptranslate` (Net-SNMP) for MIB metadata extraction to ensure accurate OIDs/types/access/status.
+	- Entity tags + filters: All | Notifications (Fault) | Metrics (Performance).
+	- Map Notifications to FCOM (match by object name + OID via snmptranslate).
+	- Map Metrics to PCOM placeholders (numeric OBJECT-TYPE: Counter32/64, Gauge32, Integer32, Unsigned32, TimeTicks).
+	- Primary action button logic:
+		- If FCOM exists: View FCOM.
+		- If not: Create FCOM Override (override-first for new content).
+		- Metrics: PCOM (Coming soon).
+	- Trap send defaults: SNMP v2c + community "public" (make configurable later).
+	- Future: pull SNMP profile definitions from UA for v2/v3 testing and config.
+	- Recent targets: show recent/manual destinations alongside server list results.
 - Integrate UA Mib2FCOM tools (MIB browser, stub generation, conversion workflows).
 
 
 Tony Manual Edit - need to add details MIB browser ASAP, that integrates with FCOM and PCOM (to be created).
+
+Advanced - Guided edit mode with 'highlight' section, and explain. this passes code into AI etc using the FCOM and documentation as reference. Then helps provide guidance and best action/steps$A1BASEDIR/bin/sdk/MIB2FCOM --in=<MIB_name>.mib --out=<MIB_name>-FCOM.json --use_parent_mibs

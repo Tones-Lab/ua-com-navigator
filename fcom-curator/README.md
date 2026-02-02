@@ -116,6 +116,17 @@ cd frontend && npm run preview
   - Save + commit message flow
   - Real-time validation against FCOM JSON schema
 
+## MIB Browser Definitions (Design)
+
+- **Notification (Fault/FCOM):** `NOTIFICATION-TYPE` or `TRAP-TYPE` definitions. These map to FCOM objects.
+- **Metric (Performance/PCOM):** `OBJECT-TYPE` with numeric/measurement syntax (e.g., Counter32/Counter64, Gauge32, Integer32, Unsigned32, TimeTicks). These map to PCOM items.
+- **Primary action logic (UI):**
+  - If matching FCOM exists (object name/OID via snmptranslate): **View FCOM**.
+  - If missing: **Create FCOM Override** (override-first for new content).
+  - Metrics: **PCOM (Coming soon)** placeholder.
+
+**Design decision:** Use `snmptranslate` (Net-SNMP) for MIB parsing/metadata extraction to ensure consistency and accuracy in the UI.
+
 ## Authentication
 
 ### Basic Authentication

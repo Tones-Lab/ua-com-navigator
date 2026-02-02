@@ -370,6 +370,20 @@ export class UAClient {
       throw error;
     }
   }
+
+  /**
+   * Get UA broker server inventory.
+   */
+  async getBrokerServers(): Promise<any> {
+    try {
+      logger.info('[UA] Fetching broker servers');
+      const response = await this.client.get('/broker/servers');
+      return response.data;
+    } catch (error: any) {
+      logger.error(`[UA] Error fetching broker servers: ${error.message}`);
+      throw error;
+    }
+  }
 }
 
 export default UAClient;
