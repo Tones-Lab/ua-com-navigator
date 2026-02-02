@@ -96,7 +96,7 @@
 	- Doc: architecture/backlog-advanced-flow-validation.md
 - ✅ Staged review usability improvements (object collapse + expand originals):
 	- Doc: architecture/backlog-staged-review-improvements.md
-- Search/navigation enhancements (jump-to-object, persist filters):
+- ✅ Search/navigation enhancements (jump-to-object, persist filters):
 	- Doc: architecture/backlog-search-navigation.md
 - Edit safety enhancements (dirty indicators + builder undo/redo):
 	- Doc: architecture/backlog-edit-safety.md

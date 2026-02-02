@@ -72,7 +72,7 @@ export class UAClient {
   /**
    * List rules files from the FCOM repository
    */
-  async listRules(path: string = '/', limit: number = 100, node?: string): Promise<any> {
+  async listRules(path: string = '/', limit: number = 100, node?: string, includeMetadata: boolean = false): Promise<any> {
     try {
       logger.info(`[UA] Listing rules at path: ${path}${node ? `, node: ${node}` : ''}`);
       const params = new URLSearchParams();
@@ -81,7 +81,7 @@ export class UAClient {
       } else {
         params.set('path', path);
       }
-      params.set('excludeMetadata', 'true');
+      params.set('excludeMetadata', includeMetadata ? 'false' : 'true');
       params.set('page', '1');
       params.set('start', '0');
       params.set('limit', String(limit));
@@ -206,6 +206,22 @@ export class UAClient {
       return response.data;
     } catch (error: any) {
       logger.error(`[UA] Error getting rule history: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
+   * Get revision history for a rules file using node parameter
+   */
+  async getHistoryByNode(node: string, limit: number = 20, offset: number = 0): Promise<any> {
+    try {
+      logger.info(`[UA] Getting history for rule node: ${node}`);
+      const response = await this.client.get('/rule/Rules/readRevisionHistory', {
+        params: { node, limit, offset },
+      });
+      return response.data;
+    } catch (error: any) {
+      logger.error(`[UA] Error getting rule history (node): ${error.message}`);
       throw error;
     }
   }

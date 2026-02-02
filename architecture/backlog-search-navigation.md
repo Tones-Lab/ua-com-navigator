@@ -3,6 +3,9 @@
 ## Summary
 Add jump‑to‑object navigation and persist search filters across file switches.
 
+## Status
+- ✅ Completed (2026‑02‑02)
+
 ## Why
 - Users editing deep lists lose context.
 - Persisted filters reduce repetitive setup.
@@ -12,22 +15,24 @@ Add jump‑to‑object navigation and persist search filters across file switche
   - `searchQuery`, `searchScope`, `highlightObjectKeys`, `handleNextMatch`
 - Object list rendering and scroll refs `objectRowRefs`
 
-## Recommended Changes
+## Implemented Changes
 ### 1) Jump‑to‑object list
-- **Files:** [fcom-curator/frontend/src/App.tsx](../fcom-curator/frontend/src/App.tsx)
-- **Changes:**
-  - Add a dropdown/list of matched objects with quick jump.
-  - Reuse `objectRowRefs` for smooth scroll.
+- **Files:** [fcom-curator/frontend/src/App.tsx](../fcom-curator/frontend/src/App.tsx), [fcom-curator/frontend/src/App.css](../fcom-curator/frontend/src/App.css)
+- **Details:**
+  - Added a match jump dropdown in the match bar.
+  - Uses matched object keys + labels to jump to specific objects.
 
 ### 2) Persist filters
 - **Files:** [fcom-curator/frontend/src/App.tsx](../fcom-curator/frontend/src/App.tsx)
-- **Changes:**
-  - Store `searchQuery`, `searchScope` in `sessionStorage` and restore on file switch.
+- **Details:**
+  - Persist `searchQuery` and `searchScope` in `sessionStorage`.
+  - “Clear Search” clears query only; “Reset Navigation” clears query + scope.
 
-### 3) Highlight retention
+### 3) Highlight retention + scroll restore
 - **Files:** [fcom-curator/frontend/src/App.tsx](../fcom-curator/frontend/src/App.tsx)
-- **Changes:**
-  - Keep `highlightObjectKeys` when moving between objects in the same file.
+- **Details:**
+  - Per‑file match index retained when switching files.
+  - Scroll position restored for the friendly view.
 
 ## Risks / Notes
 - Don’t restore highlights across different files unless explicitly desired.

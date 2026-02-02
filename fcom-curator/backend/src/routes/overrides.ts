@@ -90,6 +90,55 @@ const parseOverridePayload = (ruleText: string) => {
   throw new Error('Override file must be a JSON array or object at the root');
 };
 
+const parseRevisionName = (revisionName: string) => {
+  const revisionMatch = revisionName.match(/r(\d+)/i);
+  const bracketMatches = revisionName.match(/\[([^\]]+)\]/g) || [];
+  const bracketValues = bracketMatches.map((entry) => entry.replace(/[\[\]]/g, '').trim());
+  return {
+    revision: revisionMatch ? revisionMatch[1] : undefined,
+    date: bracketValues.length > 0 ? bracketValues[0] : undefined,
+    user: bracketValues.length > 1 ? bracketValues[1] : undefined,
+  };
+};
+
+const extractHistoryEntries = (history: any) => {
+  if (Array.isArray(history?.data)) {
+    return history.data;
+  }
+  if (Array.isArray(history?.history)) {
+    return history.history;
+  }
+  if (Array.isArray(history?.entries)) {
+    return history.entries;
+  }
+  if (Array.isArray(history)) {
+    return history;
+  }
+  return [];
+};
+
+const buildOverrideMetaFromHistory = (history: any, resolved: any) => {
+  const entries = extractHistoryEntries(history);
+  const latest = entries[0];
+  if (!latest) {
+    return null;
+  }
+  return {
+    pathId: resolved.overridePath,
+    pathName: resolved.overrideFileName,
+    revision: latest.LastRevision ?? latest.Revision ?? latest.Rev ?? latest.revision ?? latest.commit_id,
+    modified: latest.ModificationTime ?? latest.LastModified ?? latest.Modified ?? latest.Date ?? latest.date ?? latest.timestamp,
+    modifiedBy: latest.ModifiedBy
+      ?? latest.LastModifiedBy
+      ?? latest.Modifier
+      ?? latest.User
+      ?? latest.Author
+      ?? latest.author
+      ?? latest.username
+      ?? latest.user,
+  };
+};
+
 router.get('/', async (req: Request, res: Response) => {
   try {
     const { file_id } = req.query;
@@ -108,7 +157,7 @@ router.get('/', async (req: Request, res: Response) => {
       const etag = crypto.createHash('md5').update(ruleText).digest('hex');
       let overrideMeta: any = null;
       try {
-        const listing = await uaClient.listRules('/', 500, resolved.overrideRoot);
+        const listing = await uaClient.listRules('/', 500, resolved.overrideRoot, true);
         const entries = Array.isArray(listing?.data) ? listing.data : [];
         const entry = entries.find((item: any) => (
           item?.PathName === resolved.overrideFileName
@@ -117,12 +166,36 @@ router.get('/', async (req: Request, res: Response) => {
         ));
         if (entry) {
           overrideMeta = {
-            pathId: entry.PathID,
-            pathName: entry.PathName,
-            revision: entry.LastRevision ?? entry.Revision ?? entry.Rev,
-            modified: entry.ModificationTime ?? entry.LastModified ?? entry.Modified,
-            modifiedBy: entry.ModifiedBy ?? entry.LastModifiedBy ?? entry.Modifier ?? entry.User,
+            ...(overrideMeta || {}),
+            pathId: entry.PathID ?? overrideMeta?.pathId,
+            pathName: entry.PathName ?? overrideMeta?.pathName,
+            revision: overrideMeta?.revision ?? entry.LastRevision ?? entry.Revision ?? entry.Rev,
+            modified: overrideMeta?.modified ?? entry.ModificationTime ?? entry.LastModified ?? entry.Modified,
+            modifiedBy: overrideMeta?.modifiedBy
+              ?? entry.ModifiedBy
+              ?? entry.LastModifiedBy
+              ?? entry.Modifier
+              ?? entry.User,
           };
+        }
+        if (entry?.PathID) {
+          try {
+            const history = await uaClient.getHistoryByNode(String(entry.PathID), 1, 0);
+            const entriesHistory = extractHistoryEntries(history);
+            const latest = entriesHistory[0];
+            const revisionName = latest?.RevisionName ?? latest?.revisionName ?? latest?.RevisionLabel ?? latest?.revisionLabel;
+            if (typeof revisionName === 'string') {
+              const parsed = parseRevisionName(revisionName);
+              if (parsed.user) {
+                overrideMeta = {
+                  ...(overrideMeta || {}),
+                  modifiedBy: parsed.user,
+                };
+              }
+            }
+          } catch (error: any) {
+            logger.warn(`Override history lookup failed for ${entry.PathID}: ${error?.message || 'unknown error'}`);
+          }
         }
       } catch (error: any) {
         logger.warn(`Override meta lookup failed for ${resolved.overrideRoot}: ${error?.message || 'unknown error'}`);
@@ -182,7 +255,7 @@ router.post('/save', async (req: Request, res: Response) => {
     const etag = crypto.createHash('md5').update(payload).digest('hex');
     let overrideMeta: any = null;
     try {
-      const listing = await uaClient.listRules('/', 500, resolved.overrideRoot);
+      const listing = await uaClient.listRules('/', 500, resolved.overrideRoot, true);
       const entries = Array.isArray(listing?.data) ? listing.data : [];
       const entry = entries.find((item: any) => (
         item?.PathName === resolved.overrideFileName
@@ -191,12 +264,36 @@ router.post('/save', async (req: Request, res: Response) => {
       ));
       if (entry) {
         overrideMeta = {
-          pathId: entry.PathID,
-          pathName: entry.PathName,
-          revision: entry.LastRevision ?? entry.Revision ?? entry.Rev,
-          modified: entry.ModificationTime ?? entry.LastModified ?? entry.Modified,
-          modifiedBy: entry.ModifiedBy ?? entry.LastModifiedBy ?? entry.Modifier ?? entry.User,
+          ...(overrideMeta || {}),
+          pathId: entry.PathID ?? overrideMeta?.pathId,
+          pathName: entry.PathName ?? overrideMeta?.pathName,
+          revision: overrideMeta?.revision ?? entry.LastRevision ?? entry.Revision ?? entry.Rev,
+          modified: overrideMeta?.modified ?? entry.ModificationTime ?? entry.LastModified ?? entry.Modified,
+          modifiedBy: overrideMeta?.modifiedBy
+            ?? entry.ModifiedBy
+            ?? entry.LastModifiedBy
+            ?? entry.Modifier
+            ?? entry.User,
         };
+      }
+      if (entry?.PathID) {
+        try {
+          const history = await uaClient.getHistoryByNode(String(entry.PathID), 1, 0);
+          const entriesHistory = extractHistoryEntries(history);
+          const latest = entriesHistory[0];
+          const revisionName = latest?.RevisionName ?? latest?.revisionName ?? latest?.RevisionLabel ?? latest?.revisionLabel;
+          if (typeof revisionName === 'string') {
+            const parsed = parseRevisionName(revisionName);
+            if (parsed.user) {
+              overrideMeta = {
+                ...(overrideMeta || {}),
+                modifiedBy: parsed.user,
+              };
+            }
+          }
+        } catch (error: any) {
+          logger.warn(`Override history lookup failed for ${entry.PathID}: ${error?.message || 'unknown error'}`);
+        }
       }
     } catch (error: any) {
       logger.warn(`Override meta lookup failed for ${resolved.overrideRoot}: ${error?.message || 'unknown error'}`);

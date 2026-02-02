@@ -154,8 +154,29 @@ export default function App() {
   const [highlightPathId, setHighlightPathId] = useState<string | null>(null);
   const [highlightObjectKeys, setHighlightObjectKeys] = useState<string[]>([]);
   const [currentMatchIndex, setCurrentMatchIndex] = useState(0);
+  const [matchObjectOptions, setMatchObjectOptions] = useState<Array<{ key: string; label: string }>>([]);
   const highlightNextOpenRef = useRef(false);
   const objectRowRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const matchStateByFileRef = useRef<Record<string, { index: number; key?: string }>>({});
+  const scrollStateByFileRef = useRef<Record<string, number>>({});
+  const friendlyViewRef = useRef<HTMLDivElement | null>(null);
+  const friendlyMainRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const savedQuery = sessionStorage.getItem('fcom.search.query');
+    const savedScope = sessionStorage.getItem('fcom.search.scope');
+    if (savedQuery && !searchQuery) {
+      setSearchQuery(savedQuery);
+    }
+    if (savedScope === 'all' || savedScope === 'name' || savedScope === 'content') {
+      setSearchScope(savedScope);
+    }
+  }, []);
+
+  useEffect(() => {
+    sessionStorage.setItem('fcom.search.query', searchQuery);
+    sessionStorage.setItem('fcom.search.scope', searchScope);
+  }, [searchQuery, searchScope]);
 
   const getRawPath = () => {
     if (selectedFile?.PathID) {
@@ -2245,10 +2266,15 @@ export default function App() {
     setSearchQuery('');
     setSearchResults([]);
     setSearchError(null);
+    sessionStorage.removeItem('fcom.search.query');
   };
 
   const handleResetNavigation = async () => {
     handleClearSearch();
+    setSearchScope('all');
+    sessionStorage.removeItem('fcom.search.scope');
+    matchStateByFileRef.current = {};
+    scrollStateByFileRef.current = {};
     setSelectedFile(null);
     setSelectedFolder(null);
     setFileData(null);
@@ -2262,6 +2288,7 @@ export default function App() {
     setHighlightPathId(null);
     setHighlightObjectKeys([]);
     setCurrentMatchIndex(0);
+    setMatchObjectOptions([]);
     setSearchHighlightActive(false);
     await loadNodeInternal(null, '/');
   };
@@ -3629,6 +3656,20 @@ export default function App() {
   const scrollToRef = (target?: HTMLDivElement | null) => {
     if (target) {
       target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  };
+
+  const getActiveScrollContainer = () => (
+    isAnyPanelEditing ? friendlyMainRef.current : friendlyViewRef.current
+  );
+
+  const handleFileScroll = () => {
+    if (!selectedFile?.PathID) {
+      return;
+    }
+    const container = getActiveScrollContainer();
+    if (container) {
+      scrollStateByFileRef.current[selectedFile.PathID] = container.scrollTop;
     }
   };
 
@@ -6115,16 +6156,23 @@ export default function App() {
     if (!highlightQuery || !selectedFile || !searchHighlightActive) {
       setHighlightObjectKeys([]);
       setCurrentMatchIndex(0);
+      setMatchObjectOptions([]);
       return;
     }
     const query = highlightQuery.toLowerCase();
     const objects = getFriendlyObjects(fileData);
     const matches: string[] = [];
+    const options: Array<{ key: string; label: string }> = [];
     objects.forEach((obj: any, idx: number) => {
       try {
         const text = JSON.stringify(obj).toLowerCase();
         if (text.includes(query)) {
-          matches.push(getObjectKey(obj, idx));
+          const key = getObjectKey(obj, idx);
+          matches.push(key);
+          options.push({
+            key,
+            label: obj?.['@objectName'] || `Object ${idx + 1}`,
+          });
         }
       } catch {
         // ignore
@@ -6132,7 +6180,8 @@ export default function App() {
     });
     setHighlightObjectKeys(matches);
     setCurrentMatchIndex(matches.length > 0 ? 0 : 0);
-  }, [fileData, highlightQuery, highlightPathId, selectedFile]);
+    setMatchObjectOptions(options);
+  }, [fileData, highlightQuery, highlightPathId, selectedFile, searchHighlightActive]);
 
   useEffect(() => {
     if (highlightObjectKeys.length === 0) {
@@ -6142,11 +6191,54 @@ export default function App() {
   }, [currentMatchIndex, highlightObjectKeys]);
 
   useEffect(() => {
+    if (!selectedFile?.PathID || highlightObjectKeys.length === 0) {
+      return;
+    }
+    const key = highlightObjectKeys[currentMatchIndex];
+    matchStateByFileRef.current[selectedFile.PathID] = {
+      index: currentMatchIndex,
+      key,
+    };
+  }, [currentMatchIndex, highlightObjectKeys, selectedFile]);
+
+  useEffect(() => {
+    if (!selectedFile?.PathID || highlightObjectKeys.length === 0) {
+      return;
+    }
+    const saved = matchStateByFileRef.current[selectedFile.PathID];
+    if (!saved) {
+      return;
+    }
+    if (saved.key && highlightObjectKeys.includes(saved.key)) {
+      const idx = highlightObjectKeys.indexOf(saved.key);
+      if (idx !== currentMatchIndex) {
+        setCurrentMatchIndex(idx);
+      }
+      return;
+    }
+    if (typeof saved.index === 'number' && saved.index < highlightObjectKeys.length && saved.index !== currentMatchIndex) {
+      setCurrentMatchIndex(saved.index);
+    }
+  }, [selectedFile, highlightObjectKeys]);
+
+  useEffect(() => {
+    if (!selectedFile?.PathID) {
+      return;
+    }
+    const saved = scrollStateByFileRef.current[selectedFile.PathID];
+    const container = getActiveScrollContainer();
+    if (container && typeof saved === 'number') {
+      container.scrollTop = saved;
+    }
+  }, [selectedFile, fileData, viewMode, isAnyPanelEditing]);
+
+  useEffect(() => {
     if (!selectedFile) {
       setHighlightQuery(null);
       setHighlightPathId(null);
       setHighlightObjectKeys([]);
       setCurrentMatchIndex(0);
+      setMatchObjectOptions([]);
       setSearchHighlightActive(false);
       return;
     }
@@ -6216,6 +6308,16 @@ export default function App() {
       return;
     }
     setCurrentMatchIndex((prev) => (prev - 1 + highlightObjectKeys.length) % highlightObjectKeys.length);
+  };
+
+  const handleJumpToMatch = (key: string) => {
+    if (!key) {
+      return;
+    }
+    const idx = highlightObjectKeys.indexOf(key);
+    if (idx >= 0) {
+      setCurrentMatchIndex(idx);
+    }
   };
 
   const normalizeEvalText = (value: string) => (
@@ -6944,13 +7046,36 @@ export default function App() {
                       <div>Loading preview…</div>
                     ) : (
                       viewMode === 'friendly' ? (
-                        <div className={isAnyPanelEditing ? 'friendly-layout' : 'friendly-view'}>
-                          <div className={isAnyPanelEditing ? 'friendly-main' : ''}>
+                        <div
+                          className={isAnyPanelEditing ? 'friendly-layout' : 'friendly-view'}
+                          ref={friendlyViewRef}
+                          onScroll={handleFileScroll}
+                        >
+                          <div
+                            className={isAnyPanelEditing ? 'friendly-main' : ''}
+                            ref={friendlyMainRef}
+                            onScroll={handleFileScroll}
+                          >
                           {searchHighlightActive && highlightObjectKeys.length > 0 && (
                             <div className="match-bar">
                               <span className="match-label">
                                 Match {currentMatchIndex + 1} of {highlightObjectKeys.length}
                               </span>
+                              {matchObjectOptions.length > 0 && (
+                                <label className="match-jump">
+                                  <span className="match-jump-label">Jump to</span>
+                                  <select
+                                    value={highlightObjectKeys[currentMatchIndex] || ''}
+                                    onChange={(e) => handleJumpToMatch(e.target.value)}
+                                  >
+                                    {matchObjectOptions.map((option, index) => (
+                                      <option key={option.key} value={option.key}>
+                                        {index + 1}. {option.label}
+                                      </option>
+                                    ))}
+                                  </select>
+                                </label>
+                              )}
                               <div className="match-actions">
                                 <button type="button" className="match-button" onClick={handlePrevMatch}>
                                   Prev
