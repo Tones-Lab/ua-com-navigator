@@ -6379,6 +6379,7 @@ export default function App() {
       ) !== builderLiteralText;
     })()
     : false;
+  const builderDirty = hasBuilderUnsavedChanges();
   const processorPayload = buildProcessorPayload();
   const builderTrapVars = builderTarget
     ? (getObjectByPanelKey(builderTarget.panelKey)?.trap?.variables || [])
@@ -6970,6 +6971,9 @@ export default function App() {
                               const objectKey = getObjectKey(obj, idx);
                               const eventPanelKey = `${objectKey}:event`;
                               const eventOverrideFields = getEventOverrideFields(obj);
+                              const panelDirtyFields = panelEditState[eventPanelKey]
+                                ? getPanelDirtyFields(obj, eventPanelKey)
+                                : [];
                               const baseFields = getBaseEventFields(obj, eventPanelKey);
                               return (
                               <div
@@ -7013,6 +7017,11 @@ export default function App() {
                                           Overrides ({eventOverrideFields.length})
                                         </span>
                                       )}
+                                      {panelDirtyFields.length > 0 && (
+                                        <span className="pill unsaved-pill">
+                                          Unsaved ({panelDirtyFields.length})
+                                        </span>
+                                      )}
                                     </div>
                                     {canEditRules && !panelEditState[eventPanelKey] && (
                                       <button
@@ -7049,8 +7058,8 @@ export default function App() {
                                           type="button"
                                           className="panel-edit-button"
                                           onClick={() => saveEventEdit(obj, eventPanelKey)}
-                                          disabled={getPanelDirtyFields(obj, eventPanelKey).length === 0}
-                                          title={getPanelDirtyFields(obj, eventPanelKey).length === 0
+                                          disabled={panelDirtyFields.length === 0}
+                                          title={panelDirtyFields.length === 0
                                             ? 'No changes to save'
                                             : ''}
                                         >
@@ -7638,9 +7647,14 @@ export default function App() {
                                   <h3>Builder</h3>
                                   <div className="builder-target">
                                     {builderTarget ? (
-                                      <span className="builder-target-badge">
-                                        Editing: {builderTarget.field}
-                                      </span>
+                                      <div className="builder-target-row">
+                                        <span className="builder-target-badge">
+                                          Editing: {builderTarget.field}
+                                        </span>
+                                        {builderDirty && (
+                                          <span className="pill unsaved-pill">Unsaved</span>
+                                        )}
+                                      </div>
                                     ) : (
                                       <span className="builder-target-empty">Select a field to begin</span>
                                     )}
