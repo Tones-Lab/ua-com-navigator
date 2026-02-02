@@ -32,3 +32,24 @@ Improve staged review usability for large diffs: add object‑level expand/colla
 ## Risks / Notes
 - Avoid overwhelming the modal with nested accordions.
 - Keep keyboard accessibility for toggles.
+
+## Implementation Details (Completed)
+### Object-level collapse
+- Added section-level expand/collapse controls for each object/global section.
+- Default behavior: auto-expand when there is only one section; otherwise collapsed.
+- Section headers show counts for field and processor changes.
+
+### Expand/collapse all originals
+- Added a top-level toggle in the review modal to expand or collapse all original-value blocks.
+- Uses the existing `expandedOriginals` map to avoid state duplication.
+
+### Compact summaries in collapsed state
+- Collapsed sections show a compact list of the first few changes and a “+N more” indicator.
+- Keeps scan-ability without losing change context.
+
+## Files Updated
+- [fcom-curator/frontend/src/App.tsx](../fcom-curator/frontend/src/App.tsx)
+- [fcom-curator/frontend/src/App.css](../fcom-curator/frontend/src/App.css)
+
+## Status
+- ✅ Completed in current iteration.

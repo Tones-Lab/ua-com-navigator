@@ -225,6 +225,7 @@ export default function App() {
   const [reviewCtaPulse, setReviewCtaPulse] = useState(false);
   const [toastPulseAfter, setToastPulseAfter] = useState(false);
   const [expandedOriginals, setExpandedOriginals] = useState<Record<string, boolean>>({});
+  const [stagedSectionOpen, setStagedSectionOpen] = useState<Record<string, boolean>>({});
   const toastTimeoutRef = useRef<number | null>(null);
   const pulseTimeoutRef = useRef<number | null>(null);
   const [saveElapsed, setSaveElapsed] = useState(0);
@@ -5365,6 +5366,17 @@ export default function App() {
   const workingOverrides = getWorkingOverrides();
   const stagedDiff = diffOverrides(baseOverrides, workingOverrides);
   const hasStagedChanges = stagedDiff.totalChanges > 0;
+  useEffect(() => {
+    if (!showReviewModal || reviewStep !== 'review') {
+      return;
+    }
+    const openByDefault = stagedDiff.sections.length === 1;
+    const next: Record<string, boolean> = {};
+    stagedDiff.sections.forEach((section) => {
+      next[section.title] = openByDefault;
+    });
+    setStagedSectionOpen(next);
+  }, [showReviewModal, reviewStep, stagedDiff.sections]);
 
   const openAdvancedFlowModal = (
     scope: 'object' | 'global',
@@ -8548,111 +8560,198 @@ export default function App() {
                       <div className="modal modal-wide">
                         {reviewStep === 'review' ? (
                           <>
-                            <h3>Review staged changes</h3>
+                            <div className="staged-review-header">
+                              <h3>Review staged changes</h3>
+                              <div className="staged-review-actions">
+                                <button
+                                  type="button"
+                                  className="builder-link"
+                                  onClick={() => {
+                                    const shouldExpand = Object.values(expandedOriginals).some(Boolean) === false;
+                                    if (!shouldExpand) {
+                                      setExpandedOriginals({});
+                                      return;
+                                    }
+                                    const next: Record<string, boolean> = {};
+                                    stagedDiff.sections.forEach((section) => {
+                                      section.fieldChanges.forEach((change) => {
+                                        const changeKey = `${section.title}-${change.target}-${change.action}`;
+                                        next[changeKey] = true;
+                                      });
+                                    });
+                                    setExpandedOriginals(next);
+                                  }}
+                                  disabled={stagedDiff.totalChanges === 0}
+                                >
+                                  {Object.values(expandedOriginals).some(Boolean)
+                                    ? 'Collapse all originals'
+                                    : 'Expand all originals'}
+                                </button>
+                              </div>
+                            </div>
                             {stagedDiff.totalChanges === 0 ? (
                               <div className="empty-state">No staged changes.</div>
                             ) : (
                               <div className="staged-changes">
                                 {stagedDiff.sections.map((section) => (
                                   <div key={section.title} className="staged-section">
-                                    <div className="staged-section-title">{section.title}</div>
-                                    {section.fieldChanges.length > 0 && (
-                                      <div className="staged-group">
-                                        <div className="staged-group-title">Field changes</div>
-                                        {section.fieldChanges.map((change) => (
-                                          <div key={`${section.title}-${change.target}-${change.action}`} className="staged-change">
-                                            <div className="staged-change-header">
-                                              <span className="staged-change-label">{change.target}</span>
-                                              <span className={`pill change-pill change-pill-${change.action}`}>
-                                                {change.action}
-                                              </span>
+                                    {(() => {
+                                      const sectionKey = section.title;
+                                      const isOpen = stagedSectionOpen[sectionKey] ?? false;
+                                      const fieldCount = section.fieldChanges.length;
+                                      const processorCount = section.processorChanges.length;
+                                      return (
+                                        <>
+                                          <div className="staged-section-header">
+                                            <div className="staged-section-title">{section.title}</div>
+                                            <div className="staged-section-meta">
+                                              <span>{fieldCount} field change{fieldCount === 1 ? '' : 's'}</span>
+                                              <span>{processorCount} processor change{processorCount === 1 ? '' : 's'}</span>
                                             </div>
-                                            <div className="staged-change-body">
-                                              {change.after && (
-                                                <div className="staged-change-column">
-                                                  <div className="staged-change-subtitle">After</div>
-                                                  <pre className="code-block">
-                                                    {JSON.stringify(change.after, null, 2)}
-                                                  </pre>
-                                                </div>
-                                              )}
-                                              {(() => {
-                                                const changeKey = `${section.title}-${change.target}-${change.action}`;
-                                                const hasOverrideOriginal = change.before !== undefined;
-                                                const baseOriginal = getBaseObjectValue(section.objectName, change.target);
-                                                const originalValue = hasOverrideOriginal ? change.before : baseOriginal;
-                                                const hasOriginal = hasOverrideOriginal || baseOriginal !== undefined;
-                                                if (!hasOriginal) {
-                                                  return null;
-                                                }
-                                                const isExpanded = Boolean(expandedOriginals[changeKey]);
-                                                const originalLabel = hasOverrideOriginal
-                                                  ? 'Original (override)'
-                                                  : 'Original (base value)';
-                                                return (
-                                                  <div className="staged-change-column">
-                                                    <button
-                                                      type="button"
-                                                      className="staged-change-toggle"
-                                                      onClick={() => {
-                                                        setExpandedOriginals((prev) => ({
-                                                          ...prev,
-                                                          [changeKey]: !prev[changeKey],
-                                                        }));
-                                                      }}
-                                                    >
-                                                      {isExpanded ? 'Hide original' : 'Show original'}
-                                                    </button>
-                                                    {isExpanded && (
-                                                      <>
-                                                        <div className="staged-change-subtitle">{originalLabel}</div>
-                                                        {originalValue === undefined ? (
-                                                          <div className="staged-change-empty">Not set</div>
-                                                        ) : (
-                                                          <pre className="code-block">
-                                                            {JSON.stringify(originalValue, null, 2)}
-                                                          </pre>
-                                                        )}
-                                                      </>
-                                                    )}
-                                                  </div>
-                                                );
-                                              })()}
-                                            </div>
+                                            <button
+                                              type="button"
+                                              className="builder-link"
+                                              onClick={() => setStagedSectionOpen((prev) => ({
+                                                ...prev,
+                                                [sectionKey]: !isOpen,
+                                              }))}
+                                            >
+                                              {isOpen ? 'Collapse' : 'Expand'}
+                                            </button>
                                           </div>
-                                        ))}
-                                      </div>
-                                    )}
-                                    {section.processorChanges.length > 0 && (
-                                      <div className="staged-group">
-                                        <div className="staged-group-title">Processor flow changes</div>
-                                        {section.processorChanges.map((change, idx) => (
-                                          <div key={`${section.title}-proc-${idx}-${change.action}`} className="staged-change">
-                                            <div className="staged-change-header">
-                                              <span className="staged-change-label">
-                                                {getProcessorType(change.processor) || 'processor'}
-                                              </span>
-                                              <span className={`pill change-pill change-pill-${change.action}`}>
-                                                {change.action}
-                                              </span>
-                                            </div>
-                                            <div className="staged-change-body">
-                                              <div className="staged-change-column">
-                                                <div className="staged-change-subtitle">Summary</div>
-                                                <div className="builder-preview-lines">
-                                                  {getProcessorSummaryLines(change.processor).map((line, lineIdx) => (
-                                                    <span key={`${line}-${lineIdx}`}>{line}</span>
-                                                  ))}
-                                                </div>
-                                                <pre className="code-block">
-                                                  {JSON.stringify(change.processor, null, 2)}
-                                                </pre>
+                                          {!isOpen && (
+                                            <div className="staged-section-summary">
+                                              <div className="staged-summary-list">
+                                                {section.fieldChanges.slice(0, 4).map((change) => (
+                                                  <div key={`${sectionKey}-${change.target}-${change.action}`} className="staged-summary-item">
+                                                    <span className={`pill change-pill change-pill-${change.action}`}>
+                                                      {change.action}
+                                                    </span>
+                                                    <span className="staged-summary-label">{change.target}</span>
+                                                  </div>
+                                                ))}
+                                                {section.processorChanges.slice(0, 2).map((change, idx) => (
+                                                  <div key={`${sectionKey}-proc-${idx}-${change.action}`} className="staged-summary-item">
+                                                    <span className={`pill change-pill change-pill-${change.action}`}>
+                                                      {change.action}
+                                                    </span>
+                                                    <span className="staged-summary-label">
+                                                      {getProcessorType(change.processor) || 'processor'}
+                                                    </span>
+                                                  </div>
+                                                ))}
+                                                {(fieldCount + processorCount) > 6 && (
+                                                  <div className="staged-summary-more">
+                                                    +{(fieldCount + processorCount) - 6} more
+                                                  </div>
+                                                )}
                                               </div>
                                             </div>
-                                          </div>
-                                        ))}
-                                      </div>
-                                    )}
+                                          )}
+                                          {isOpen && (
+                                            <>
+                                              {section.fieldChanges.length > 0 && (
+                                                <div className="staged-group">
+                                                  <div className="staged-group-title">Field changes</div>
+                                                  {section.fieldChanges.map((change) => (
+                                                    <div key={`${section.title}-${change.target}-${change.action}`} className="staged-change">
+                                                      <div className="staged-change-header">
+                                                        <span className="staged-change-label">{change.target}</span>
+                                                        <span className={`pill change-pill change-pill-${change.action}`}>
+                                                          {change.action}
+                                                        </span>
+                                                      </div>
+                                                      <div className="staged-change-body">
+                                                        {change.after && (
+                                                          <div className="staged-change-column">
+                                                            <div className="staged-change-subtitle">After</div>
+                                                            <pre className="code-block">
+                                                              {JSON.stringify(change.after, null, 2)}
+                                                            </pre>
+                                                          </div>
+                                                        )}
+                                                        {(() => {
+                                                          const changeKey = `${section.title}-${change.target}-${change.action}`;
+                                                          const hasOverrideOriginal = change.before !== undefined;
+                                                          const baseOriginal = getBaseObjectValue(section.objectName, change.target);
+                                                          const originalValue = hasOverrideOriginal ? change.before : baseOriginal;
+                                                          const hasOriginal = hasOverrideOriginal || baseOriginal !== undefined;
+                                                          if (!hasOriginal) {
+                                                            return null;
+                                                          }
+                                                          const isExpanded = Boolean(expandedOriginals[changeKey]);
+                                                          const originalLabel = hasOverrideOriginal
+                                                            ? 'Original (override)'
+                                                            : 'Original (base value)';
+                                                          return (
+                                                            <div className="staged-change-column">
+                                                              <button
+                                                                type="button"
+                                                                className="staged-change-toggle"
+                                                                onClick={() => {
+                                                                  setExpandedOriginals((prev) => ({
+                                                                    ...prev,
+                                                                    [changeKey]: !prev[changeKey],
+                                                                  }));
+                                                                }}
+                                                              >
+                                                                {isExpanded ? 'Hide original' : 'Show original'}
+                                                              </button>
+                                                              {isExpanded && (
+                                                                <>
+                                                                  <div className="staged-change-subtitle">{originalLabel}</div>
+                                                                  {originalValue === undefined ? (
+                                                                    <div className="staged-change-empty">Not set</div>
+                                                                  ) : (
+                                                                    <pre className="code-block">
+                                                                      {JSON.stringify(originalValue, null, 2)}
+                                                                    </pre>
+                                                                  )}
+                                                                </>
+                                                              )}
+                                                            </div>
+                                                          );
+                                                        })()}
+                                                      </div>
+                                                    </div>
+                                                  ))}
+                                                </div>
+                                              )}
+                                              {section.processorChanges.length > 0 && (
+                                                <div className="staged-group">
+                                                  <div className="staged-group-title">Processor flow changes</div>
+                                                  {section.processorChanges.map((change, idx) => (
+                                                    <div key={`${section.title}-proc-${idx}-${change.action}`} className="staged-change">
+                                                      <div className="staged-change-header">
+                                                        <span className="staged-change-label">
+                                                          {getProcessorType(change.processor) || 'processor'}
+                                                        </span>
+                                                        <span className={`pill change-pill change-pill-${change.action}`}>
+                                                          {change.action}
+                                                        </span>
+                                                      </div>
+                                                      <div className="staged-change-body">
+                                                        <div className="staged-change-column">
+                                                          <div className="staged-change-subtitle">Summary</div>
+                                                          <div className="builder-preview-lines">
+                                                            {getProcessorSummaryLines(change.processor).map((line, lineIdx) => (
+                                                              <span key={`${line}-${lineIdx}`}>{line}</span>
+                                                            ))}
+                                                          </div>
+                                                          <pre className="code-block">
+                                                            {JSON.stringify(change.processor, null, 2)}
+                                                          </pre>
+                                                        </div>
+                                                      </div>
+                                                    </div>
+                                                  ))}
+                                                </div>
+                                              )}
+                                            </>
+                                          )}
+                                        </>
+                                      );
+                                    })()}
                                   </div>
                                 ))}
                               </div>

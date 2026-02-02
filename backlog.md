@@ -94,7 +94,7 @@
 	- Doc: architecture/backlog-processor-builder-coverage.md
 - ✅ Advanced Flow validation improvements (lane rules + error hints):
 	- Doc: architecture/backlog-advanced-flow-validation.md
-- Staged review usability improvements (object collapse + expand originals):
+- ✅ Staged review usability improvements (object collapse + expand originals):
 	- Doc: architecture/backlog-staged-review-improvements.md
 - Search/navigation enhancements (jump-to-object, persist filters):
 	- Doc: architecture/backlog-search-navigation.md
