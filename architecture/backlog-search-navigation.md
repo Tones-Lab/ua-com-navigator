@@ -34,6 +34,12 @@ Add jump‑to‑object navigation and persist search filters across file switche
   - Per‑file match index retained when switching files.
   - Scroll position restored for the friendly view.
 
+### 4) Raw view content match navigation
+- **Files:** [fcom-curator/frontend/src/App.tsx](../fcom-curator/frontend/src/App.tsx), [fcom-curator/frontend/src/App.css](../fcom-curator/frontend/src/App.css)
+- **Details:**
+  - Raw view now highlights content matches and shows its own match bar.
+  - Prev/Next in raw view scrolls between raw text hits.
+
 ## Risks / Notes
 - Don’t restore highlights across different files unless explicitly desired.
 - Ensure “Reset Navigation” clears persisted state.

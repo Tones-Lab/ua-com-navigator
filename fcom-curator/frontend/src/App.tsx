@@ -155,6 +155,9 @@ export default function App() {
   const [highlightObjectKeys, setHighlightObjectKeys] = useState<string[]>([]);
   const [currentMatchIndex, setCurrentMatchIndex] = useState(0);
   const [matchObjectOptions, setMatchObjectOptions] = useState<Array<{ key: string; label: string }>>([]);
+  const [rawMatchPositions, setRawMatchPositions] = useState<number[]>([]);
+  const [rawMatchIndex, setRawMatchIndex] = useState(0);
+  const rawMatchRefs = useRef<Record<number, HTMLSpanElement | null>>({});
   const highlightNextOpenRef = useRef(false);
   const objectRowRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const matchStateByFileRef = useRef<Record<string, { index: number; key?: string }>>({});
@@ -248,6 +251,8 @@ export default function App() {
   const [expandedOriginals, setExpandedOriginals] = useState<Record<string, boolean>>({});
   const [stagedSectionOpen, setStagedSectionOpen] = useState<Record<string, boolean>>({});
   const toastTimeoutRef = useRef<number | null>(null);
+  const reviewModalOpenRef = useRef(false);
+  const unsavedChangesRef = useRef(false);
   const pulseTimeoutRef = useRef<number | null>(null);
   const [saveElapsed, setSaveElapsed] = useState(0);
   const [pendingNav, setPendingNav] = useState<null | (() => void)>(null);
@@ -306,6 +311,11 @@ export default function App() {
   const [builderFocus, setBuilderFocus] = useState<'eval' | 'processor' | 'literal' | null>(null);
   const [builderTypeLocked, setBuilderTypeLocked] = useState<'eval' | 'processor' | 'literal' | null>(null);
   const [builderMode, setBuilderMode] = useState<'friendly' | 'regular'>('friendly');
+  const [builderUndoStack, setBuilderUndoStack] = useState<BuilderSnapshot[]>([]);
+  const [builderRedoStack, setBuilderRedoStack] = useState<BuilderSnapshot[]>([]);
+  const builderHistoryBusyRef = useRef(false);
+  const builderHistorySigRef = useRef<string | null>(null);
+  const builderHistoryInitRef = useRef(false);
   const [showBuilderHelpModal, setShowBuilderHelpModal] = useState(false);
   const [pendingCancel, setPendingCancel] = useState<null | { type: 'panel' | 'builder'; panelKey?: string }>(null);
   const [processorStep, setProcessorStep] = useState<'select' | 'configure' | 'review'>('select');
@@ -358,6 +368,22 @@ export default function App() {
     condition: ConditionTree;
     result: string;
   };
+  type BuilderSnapshot = {
+    builderFocus: 'eval' | 'processor' | 'literal' | null;
+    builderTypeLocked: 'eval' | 'processor' | 'literal' | null;
+    builderMode: 'friendly' | 'regular';
+    processorStep: 'select' | 'configure' | 'review';
+    processorType: string | null;
+    builderLiteralText: string;
+    builderRegularText: string;
+    builderConditions: BuilderConditionRow[];
+    builderElseResult: string;
+    builderProcessorConfig: Record<string, any>;
+    builderNestedAddType: string;
+    builderSwitchCaseAddType: Record<string, string>;
+    builderSwitchDefaultAddType: string;
+    showProcessorJson: boolean;
+  };
   type FlowNodeBase = {
     id: string;
     kind: 'processor' | 'if';
@@ -392,6 +418,51 @@ export default function App() {
   const [builderNestedAddType, setBuilderNestedAddType] = useState('set');
   const [builderSwitchCaseAddType, setBuilderSwitchCaseAddType] = useState<Record<string, string>>({});
   const [builderSwitchDefaultAddType, setBuilderSwitchDefaultAddType] = useState('set');
+  const BUILDER_HISTORY_LIMIT = 50;
+  const deepClone = <T,>(value: T): T => JSON.parse(JSON.stringify(value));
+  const createBuilderSnapshot = (): BuilderSnapshot => ({
+    builderFocus,
+    builderTypeLocked,
+    builderMode,
+    processorStep,
+    processorType,
+    builderLiteralText,
+    builderRegularText,
+    builderConditions: deepClone(builderConditions),
+    builderElseResult,
+    builderProcessorConfig: deepClone(builderProcessorConfig),
+    builderNestedAddType,
+    builderSwitchCaseAddType: deepClone(builderSwitchCaseAddType),
+    builderSwitchDefaultAddType,
+    showProcessorJson,
+  });
+  const applyBuilderSnapshot = (snapshot: BuilderSnapshot) => {
+    setBuilderFocus(snapshot.builderFocus);
+    setBuilderTypeLocked(snapshot.builderTypeLocked);
+    setBuilderMode(snapshot.builderMode);
+    setProcessorStep(snapshot.processorStep);
+    setProcessorType(snapshot.processorType);
+    setBuilderLiteralText(snapshot.builderLiteralText);
+    setBuilderRegularText(snapshot.builderRegularText);
+    setBuilderConditions(snapshot.builderConditions);
+    setBuilderElseResult(snapshot.builderElseResult);
+    setBuilderProcessorConfig(snapshot.builderProcessorConfig);
+    setBuilderNestedAddType(snapshot.builderNestedAddType);
+    setBuilderSwitchCaseAddType(snapshot.builderSwitchCaseAddType);
+    setBuilderSwitchDefaultAddType(snapshot.builderSwitchDefaultAddType);
+    setShowProcessorJson(snapshot.showProcessorJson);
+  };
+  const resetBuilderHistory = (snapshot?: BuilderSnapshot | null) => {
+    if (!snapshot) {
+      setBuilderUndoStack([]);
+      setBuilderRedoStack([]);
+      builderHistorySigRef.current = null;
+      return;
+    }
+    setBuilderUndoStack([snapshot]);
+    setBuilderRedoStack([]);
+    builderHistorySigRef.current = JSON.stringify(snapshot);
+  };
   const builderIdRef = useRef(0);
   const switchCaseIdRef = useRef(0);
   const nextBuilderId = () => {
@@ -4325,6 +4396,7 @@ export default function App() {
     if (!panelEditState[panelKey]) {
       startEventEdit(obj, panelKey);
     }
+    builderHistoryInitRef.current = true;
     const overrideProcessors = (() => {
       const objectName = obj?.['@objectName'];
       if (!objectName) {
@@ -4528,7 +4600,127 @@ export default function App() {
     setBuilderTypeLocked(null);
     setBuilderSwitchModal({ open: false });
     setBuilderOpen(false);
+    resetBuilderHistory(null);
   };
+
+  const canUndoBuilder = builderUndoStack.length > 1;
+  const canRedoBuilder = builderRedoStack.length > 0;
+
+  const handleBuilderUndo = () => {
+    if (!canUndoBuilder) {
+      return;
+    }
+    builderHistoryBusyRef.current = true;
+    const nextUndo = [...builderUndoStack];
+    const current = nextUndo.pop();
+    const previous = nextUndo[nextUndo.length - 1];
+    setBuilderUndoStack(nextUndo);
+    if (current) {
+      setBuilderRedoStack((prev) => [current, ...prev]);
+    }
+    if (previous) {
+      applyBuilderSnapshot(previous);
+      builderHistorySigRef.current = JSON.stringify(previous);
+    }
+    builderHistoryBusyRef.current = false;
+  };
+
+  const handleBuilderRedo = () => {
+    if (!canRedoBuilder) {
+      return;
+    }
+    builderHistoryBusyRef.current = true;
+    const nextRedo = [...builderRedoStack];
+    const next = nextRedo.shift();
+    setBuilderRedoStack(nextRedo);
+    if (next) {
+      setBuilderUndoStack((prev) => {
+        const updated = [...prev, next];
+        if (updated.length > BUILDER_HISTORY_LIMIT) {
+          updated.shift();
+        }
+        return updated;
+      });
+      applyBuilderSnapshot(next);
+      builderHistorySigRef.current = JSON.stringify(next);
+    }
+    builderHistoryBusyRef.current = false;
+  };
+
+  useEffect(() => {
+    if (!builderTarget) {
+      return;
+    }
+    const handler = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
+      const tag = target?.tagName?.toLowerCase();
+      if (tag === 'input' || tag === 'textarea') {
+        return;
+      }
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'z') {
+        event.preventDefault();
+        if (event.shiftKey) {
+          handleBuilderRedo();
+        } else {
+          handleBuilderUndo();
+        }
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [builderTarget, canUndoBuilder, canRedoBuilder, builderUndoStack, builderRedoStack]);
+
+  useEffect(() => {
+    if (!builderTarget) {
+      resetBuilderHistory(null);
+      return;
+    }
+    if (!builderHistoryInitRef.current) {
+      return;
+    }
+    const snapshot = createBuilderSnapshot();
+    resetBuilderHistory(snapshot);
+    builderHistoryInitRef.current = false;
+  }, [builderTarget, builderFocus, builderMode, processorType, processorStep, builderTypeLocked]);
+
+  useEffect(() => {
+    if (!builderTarget) {
+      return;
+    }
+    if (builderHistoryBusyRef.current || builderHistoryInitRef.current) {
+      return;
+    }
+    const snapshot = createBuilderSnapshot();
+    const sig = JSON.stringify(snapshot);
+    if (sig === builderHistorySigRef.current) {
+      return;
+    }
+    setBuilderUndoStack((prev) => {
+      const next = [...prev, snapshot];
+      if (next.length > BUILDER_HISTORY_LIMIT) {
+        next.shift();
+      }
+      return next;
+    });
+    setBuilderRedoStack([]);
+    builderHistorySigRef.current = sig;
+  }, [
+    builderTarget,
+    builderFocus,
+    builderTypeLocked,
+    builderMode,
+    processorStep,
+    processorType,
+    builderLiteralText,
+    builderRegularText,
+    builderConditions,
+    builderElseResult,
+    builderProcessorConfig,
+    builderNestedAddType,
+    builderSwitchCaseAddType,
+    builderSwitchDefaultAddType,
+    showProcessorJson,
+  ]);
 
   const applyBuilderTypeSwitch = (target: 'eval' | 'processor' | 'literal') => {
     if (!builderTarget) {
@@ -5407,16 +5599,111 @@ export default function App() {
   const workingOverrides = getWorkingOverrides();
   const stagedDiff = diffOverrides(baseOverrides, workingOverrides);
   const hasStagedChanges = stagedDiff.totalChanges > 0;
+  const formatDiffValue = (value: any) => (
+    value === undefined ? '' : JSON.stringify(value, null, 2)
+  );
+
+  const diffLines = (beforeText: string, afterText: string) => {
+    const beforeLines = beforeText === '' ? [] : beforeText.split('\n');
+    const afterLines = afterText === '' ? [] : afterText.split('\n');
+    const beforeCount = beforeLines.length;
+    const afterCount = afterLines.length;
+    const dp: number[][] = Array.from({ length: beforeCount + 1 }, () => (
+      Array(afterCount + 1).fill(0)
+    ));
+
+    for (let i = beforeCount - 1; i >= 0; i -= 1) {
+      for (let j = afterCount - 1; j >= 0; j -= 1) {
+        if (beforeLines[i] === afterLines[j]) {
+          dp[i][j] = dp[i + 1][j + 1] + 1;
+        } else {
+          dp[i][j] = Math.max(dp[i + 1][j], dp[i][j + 1]);
+        }
+      }
+    }
+
+    const output: { type: 'equal' | 'add' | 'remove'; value: string }[] = [];
+    let i = 0;
+    let j = 0;
+    while (i < beforeCount || j < afterCount) {
+      if (i < beforeCount && j < afterCount && beforeLines[i] === afterLines[j]) {
+        output.push({ type: 'equal', value: beforeLines[i] });
+        i += 1;
+        j += 1;
+      } else if (j < afterCount && (i === beforeCount || dp[i][j + 1] >= dp[i + 1][j])) {
+        output.push({ type: 'add', value: afterLines[j] });
+        j += 1;
+      } else if (i < beforeCount) {
+        output.push({ type: 'remove', value: beforeLines[i] });
+        i += 1;
+      }
+    }
+    return output;
+  };
+
+  const renderInlineDiff = (beforeValue: any, afterValue: any, mode: 'after' | 'original') => {
+    const beforeText = formatDiffValue(beforeValue);
+    const afterText = formatDiffValue(afterValue);
+    const lines = diffLines(beforeText, afterText);
+    const filtered = lines.filter((line) => (
+      mode === 'after' ? line.type !== 'remove' : line.type !== 'add'
+    ));
+    return filtered.map((line, idx) => {
+      const prefix = mode === 'after'
+        ? (line.type === 'add' ? '+' : ' ')
+        : (line.type === 'remove' ? '-' : ' ');
+      return (
+        <span
+          key={`${mode}-${idx}-${line.type}`}
+          className={`diff-line diff-line-${line.type}`}
+        >
+          <span className="diff-line-prefix">{prefix}</span>
+          {line.value === '' ? ' ' : line.value}
+        </span>
+      );
+    });
+  };
+
+  useEffect(() => {
+    const dirtyMap = getPanelDirtyMap();
+    unsavedChangesRef.current = Object.keys(dirtyMap).length > 0 || hasStagedChanges;
+  }, [hasStagedChanges, panelEditState, panelDrafts, panelOverrideRemovals, fileData]);
+
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      if (!unsavedChangesRef.current) {
+        return undefined;
+      }
+      event.preventDefault();
+      event.returnValue = '';
+      return '';
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.onbeforeunload = handleBeforeUnload;
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      if (window.onbeforeunload === handleBeforeUnload) {
+        window.onbeforeunload = null;
+      }
+    };
+  }, []);
   useEffect(() => {
     if (!showReviewModal || reviewStep !== 'review') {
+      reviewModalOpenRef.current = false;
       return;
     }
+    if (reviewModalOpenRef.current) {
+      return;
+    }
+    reviewModalOpenRef.current = true;
     const openByDefault = stagedDiff.sections.length === 1;
     const next: Record<string, boolean> = {};
     stagedDiff.sections.forEach((section) => {
       next[section.title] = openByDefault;
     });
     setStagedSectionOpen(next);
+    setExpandedOriginals({});
   }, [showReviewModal, reviewStep, stagedDiff.sections]);
 
   const openAdvancedFlowModal = (
@@ -6157,6 +6444,8 @@ export default function App() {
       setHighlightObjectKeys([]);
       setCurrentMatchIndex(0);
       setMatchObjectOptions([]);
+      setRawMatchPositions([]);
+      setRawMatchIndex(0);
       return;
     }
     const query = highlightQuery.toLowerCase();
@@ -6182,6 +6471,44 @@ export default function App() {
     setCurrentMatchIndex(matches.length > 0 ? 0 : 0);
     setMatchObjectOptions(options);
   }, [fileData, highlightQuery, highlightPathId, selectedFile, searchHighlightActive]);
+
+  useEffect(() => {
+    if (viewMode === 'friendly' || !searchHighlightActive || !highlightQuery) {
+      setRawMatchPositions([]);
+      setRawMatchIndex(0);
+      return;
+    }
+    const text = editorText || JSON.stringify(getPreviewContent(fileData), null, 2);
+    const lower = text.toLowerCase();
+    const lowerQuery = highlightQuery.toLowerCase();
+    if (!lowerQuery || !lower.includes(lowerQuery)) {
+      setRawMatchPositions([]);
+      setRawMatchIndex(0);
+      return;
+    }
+    const positions: number[] = [];
+    let start = 0;
+    while (true) {
+      const idx = lower.indexOf(lowerQuery, start);
+      if (idx === -1) {
+        break;
+      }
+      positions.push(idx);
+      start = idx + lowerQuery.length;
+    }
+    setRawMatchPositions(positions);
+    setRawMatchIndex(positions.length > 0 ? 0 : 0);
+  }, [viewMode, searchHighlightActive, highlightQuery, editorText, fileData]);
+
+  useEffect(() => {
+    if (rawMatchPositions.length === 0) {
+      return;
+    }
+    const target = rawMatchRefs.current[rawMatchIndex];
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, [rawMatchIndex, rawMatchPositions]);
 
   useEffect(() => {
     if (highlightObjectKeys.length === 0) {
@@ -6318,6 +6645,60 @@ export default function App() {
     if (idx >= 0) {
       setCurrentMatchIndex(idx);
     }
+  };
+
+  const handleNextRawMatch = () => {
+    if (rawMatchPositions.length === 0) {
+      return;
+    }
+    setRawMatchIndex((prev) => (prev + 1) % rawMatchPositions.length);
+  };
+
+  const handlePrevRawMatch = () => {
+    if (rawMatchPositions.length === 0) {
+      return;
+    }
+    setRawMatchIndex((prev) => (prev - 1 + rawMatchPositions.length) % rawMatchPositions.length);
+  };
+
+  const renderRawHighlightedText = (text: string, query: string) => {
+    if (!searchHighlightActive || !query) {
+      return text;
+    }
+    const lower = text.toLowerCase();
+    const lowerQuery = query.toLowerCase();
+    if (!lower.includes(lowerQuery)) {
+      return text;
+    }
+    const parts: React.ReactNode[] = [];
+    let start = 0;
+    let matchIndex = 0;
+    while (true) {
+      const idx = lower.indexOf(lowerQuery, start);
+      if (idx === -1) {
+        break;
+      }
+      if (idx > start) {
+        parts.push(text.slice(start, idx));
+      }
+      parts.push(
+        <span
+          key={`raw-match-${idx}`}
+          className={matchIndex === rawMatchIndex ? 'raw-match raw-match-active' : 'raw-match'}
+          ref={(el) => {
+            rawMatchRefs.current[matchIndex] = el;
+          }}
+        >
+          {text.slice(idx, idx + query.length)}
+        </span>,
+      );
+      start = idx + query.length;
+      matchIndex += 1;
+    }
+    if (start < text.length) {
+      parts.push(text.slice(start));
+    }
+    return parts;
   };
 
   const normalizeEvalText = (value: string) => (
@@ -6509,6 +6890,7 @@ export default function App() {
         ? 'Post'
         : 'Object')
     : '';
+  const rawPreviewText = editorText || JSON.stringify(getPreviewContent(fileData), null, 2);
   const renderFlowJsonPreview = (fullJson: string) => (
     <div className="flow-preview">
       <div className="flow-preview-title-row">
@@ -7210,56 +7592,67 @@ export default function App() {
                                       )}
                                       {baseFields.includes('Summary') && (
                                         <div>
-                                          <span className={isFieldHighlighted(eventPanelKey, 'Summary')
-                                            ? 'label label-warning'
-                                            : 'label'}>
-                                            Summary
-                                            {renderFieldBadges(eventPanelKey, 'Summary', obj, overrideTargets)}
-                                            {panelEditState[eventPanelKey] && (
-                                              <span className="label-actions">
-                                                <button
-                                                  type="button"
-                                                  className="builder-link"
-                                                  onClick={() => openBuilderForField(obj, eventPanelKey, 'Summary')}
-                                                  disabled={isFieldLockedByBuilder(eventPanelKey, 'Summary')}
-                                                >
-                                                  Builder
-                                                </button>
+                                          <div className="field-header">
+                                            <div className="field-header-main">
+                                              <span className={isFieldHighlighted(eventPanelKey, 'Summary')
+                                                ? 'label label-warning'
+                                                : 'label'}>
+                                                Summary
                                               </span>
-                                            )}
-                                            {overrideTargets.has('$.event.Summary') && (
-                                              <div
-                                                className="override-summary"
-                                                tabIndex={0}
-                                                {...overrideTooltipHoverProps}
-                                              >
-                                                <span
-                                                  className="pill override-pill pill-inline pill-action"
+                                              {renderFieldBadges(eventPanelKey, 'Summary', obj, overrideTargets)}
+                                              {overrideTargets.has('$.event.Summary') && (
+                                                <div
+                                                  className="override-summary"
+                                                  tabIndex={0}
+                                                  {...overrideTooltipHoverProps}
                                                 >
-                                                  Override
-                                                  {canEditRules && panelEditState[eventPanelKey] && overrideValueMap.has('$.event.Summary') && (
-                                                    <button
-                                                      type="button"
-                                                      className="pill-close"
-                                                      aria-label="Remove Summary override"
-                                                      onClick={() => openRemoveOverrideModal(obj, 'Summary', eventPanelKey)}
-                                                    >
-                                                      ×
-                                                    </button>
+                                                  <span
+                                                    className="pill override-pill pill-inline pill-action"
+                                                  >
+                                                    Override
+                                                    {canEditRules && panelEditState[eventPanelKey] && overrideValueMap.has('$.event.Summary') && (
+                                                      <button
+                                                        type="button"
+                                                        className="pill-close"
+                                                        aria-label="Remove Summary override"
+                                                        onClick={() => openRemoveOverrideModal(obj, 'Summary', eventPanelKey)}
+                                                      >
+                                                        ×
+                                                      </button>
+                                                    )}
+                                                  </span>
+                                                  {renderOverrideSummaryCard(
+                                                    obj,
+                                                    overrideValueMap,
+                                                    ['Summary'],
+                                                    'Override',
                                                   )}
+                                                </div>
+                                              )}
+                                              {panelEditState[eventPanelKey] && isFieldDirty(obj, eventPanelKey, 'Summary') && (
+                                                <span className="dirty-indicator" title="Unsaved change">✎</span>
+                                              )}
+                                            </div>
+                                            {panelEditState[eventPanelKey] && (
+                                              <button
+                                                type="button"
+                                                className="builder-link builder-link-iconic"
+                                                onClick={() => openBuilderForField(obj, eventPanelKey, 'Summary')}
+                                                disabled={isFieldLockedByBuilder(eventPanelKey, 'Summary')}
+                                                aria-label="Open Builder"
+                                              >
+                                                <span className="builder-link-icon" aria-hidden="true">
+                                                  <svg viewBox="0 0 24 24" role="img" aria-hidden="true">
+                                                    <path
+                                                      d="M22.7 19.3 13.7 10.3a6 6 0 0 1-7.6-7.6l3.2 3.2 2.5-2.5L8.6.2a6 6 0 0 1 7.6 7.6l9 9-2.5 2.5zM2 22l6.3-1.3 6.6-6.6-2.5-2.5-6.6 6.6L2 22z"
+                                                      fill="currentColor"
+                                                    />
+                                                  </svg>
                                                 </span>
-                                                {renderOverrideSummaryCard(
-                                                  obj,
-                                                  overrideValueMap,
-                                                  ['Summary'],
-                                                  'Override',
-                                                )}
-                                              </div>
+                                                <span className="builder-link-text">Builder</span>
+                                              </button>
                                             )}
-                                            {panelEditState[eventPanelKey] && isFieldDirty(obj, eventPanelKey, 'Summary') && (
-                                              <span className="dirty-indicator" title="Unsaved change">✎</span>
-                                            )}
-                                          </span>
+                                          </div>
                                           {panelEditState[`${getObjectKey(obj, idx)}:event`] ? (
                                             (() => {
                                               const value = getEffectiveEventValue(obj, 'Summary');
@@ -7301,56 +7694,67 @@ export default function App() {
                                       )}
                                       {baseFields.includes('Severity') && (
                                         <div>
-                                          <span className={isFieldHighlighted(eventPanelKey, 'Severity')
-                                            ? 'label label-warning'
-                                            : 'label'}>
-                                            Severity
-                                            {renderFieldBadges(eventPanelKey, 'Severity', obj, overrideTargets)}
-                                            {panelEditState[eventPanelKey] && (
-                                              <span className="label-actions">
-                                                <button
-                                                  type="button"
-                                                  className="builder-link"
-                                                  onClick={() => openBuilderForField(obj, eventPanelKey, 'Severity')}
-                                                  disabled={isFieldLockedByBuilder(eventPanelKey, 'Severity')}
-                                                >
-                                                  Builder
-                                                </button>
+                                          <div className="field-header">
+                                            <div className="field-header-main">
+                                              <span className={isFieldHighlighted(eventPanelKey, 'Severity')
+                                                ? 'label label-warning'
+                                                : 'label'}>
+                                                Severity
                                               </span>
-                                            )}
-                                            {overrideTargets.has('$.event.Severity') && (
-                                              <div
-                                                className="override-summary"
-                                                tabIndex={0}
-                                                {...overrideTooltipHoverProps}
-                                              >
-                                                <span
-                                                  className="pill override-pill pill-inline pill-action"
+                                              {renderFieldBadges(eventPanelKey, 'Severity', obj, overrideTargets)}
+                                              {overrideTargets.has('$.event.Severity') && (
+                                                <div
+                                                  className="override-summary"
+                                                  tabIndex={0}
+                                                  {...overrideTooltipHoverProps}
                                                 >
-                                                  Override
-                                                  {canEditRules && panelEditState[eventPanelKey] && overrideValueMap.has('$.event.Severity') && (
-                                                    <button
-                                                      type="button"
-                                                      className="pill-close"
-                                                      aria-label="Remove Severity override"
-                                                      onClick={() => openRemoveOverrideModal(obj, 'Severity', eventPanelKey)}
-                                                    >
-                                                      ×
-                                                    </button>
+                                                  <span
+                                                    className="pill override-pill pill-inline pill-action"
+                                                  >
+                                                    Override
+                                                    {canEditRules && panelEditState[eventPanelKey] && overrideValueMap.has('$.event.Severity') && (
+                                                      <button
+                                                        type="button"
+                                                        className="pill-close"
+                                                        aria-label="Remove Severity override"
+                                                        onClick={() => openRemoveOverrideModal(obj, 'Severity', eventPanelKey)}
+                                                      >
+                                                        ×
+                                                      </button>
+                                                    )}
+                                                  </span>
+                                                  {renderOverrideSummaryCard(
+                                                    obj,
+                                                    overrideValueMap,
+                                                    ['Severity'],
+                                                    'Override',
                                                   )}
+                                                </div>
+                                              )}
+                                              {panelEditState[eventPanelKey] && isFieldDirty(obj, eventPanelKey, 'Severity') && (
+                                                <span className="dirty-indicator" title="Unsaved change">✎</span>
+                                              )}
+                                            </div>
+                                            {panelEditState[eventPanelKey] && (
+                                              <button
+                                                type="button"
+                                                className="builder-link builder-link-iconic"
+                                                onClick={() => openBuilderForField(obj, eventPanelKey, 'Severity')}
+                                                disabled={isFieldLockedByBuilder(eventPanelKey, 'Severity')}
+                                                aria-label="Open Builder"
+                                              >
+                                                <span className="builder-link-icon" aria-hidden="true">
+                                                  <svg viewBox="0 0 24 24" role="img" aria-hidden="true">
+                                                    <path
+                                                      d="M22.7 19.3 13.7 10.3a6 6 0 0 1-7.6-7.6l3.2 3.2 2.5-2.5L8.6.2a6 6 0 0 1 7.6 7.6l9 9-2.5 2.5zM2 22l6.3-1.3 6.6-6.6-2.5-2.5-6.6 6.6L2 22z"
+                                                      fill="currentColor"
+                                                    />
+                                                  </svg>
                                                 </span>
-                                                {renderOverrideSummaryCard(
-                                                  obj,
-                                                  overrideValueMap,
-                                                  ['Severity'],
-                                                  'Override',
-                                                )}
-                                              </div>
+                                                <span className="builder-link-text">Builder</span>
+                                              </button>
                                             )}
-                                            {panelEditState[eventPanelKey] && isFieldDirty(obj, eventPanelKey, 'Severity') && (
-                                              <span className="dirty-indicator" title="Unsaved change">✎</span>
-                                            )}
-                                          </span>
+                                          </div>
                                           {panelEditState[`${getObjectKey(obj, idx)}:event`] ? (
                                             <input
                                               className={isFieldHighlighted(eventPanelKey, 'Severity')
@@ -7384,56 +7788,67 @@ export default function App() {
                                     <div className="object-row object-row-secondary">
                                       {baseFields.includes('EventType') && (
                                         <div>
-                                          <span className={isFieldHighlighted(eventPanelKey, 'EventType')
-                                            ? 'label label-warning'
-                                            : 'label'}>
-                                            Event Type
-                                            {renderFieldBadges(eventPanelKey, 'EventType', obj, overrideTargets)}
-                                            {panelEditState[eventPanelKey] && (
-                                              <span className="label-actions">
-                                                <button
-                                                  type="button"
-                                                  className="builder-link"
-                                                  onClick={() => openBuilderForField(obj, eventPanelKey, 'EventType')}
-                                                  disabled={isFieldLockedByBuilder(eventPanelKey, 'EventType')}
-                                                >
-                                                  Builder
-                                                </button>
+                                          <div className="field-header">
+                                            <div className="field-header-main">
+                                              <span className={isFieldHighlighted(eventPanelKey, 'EventType')
+                                                ? 'label label-warning'
+                                                : 'label'}>
+                                                Event Type
                                               </span>
-                                            )}
-                                            {overrideTargets.has('$.event.EventType') && (
-                                              <div
-                                                className="override-summary"
-                                                tabIndex={0}
-                                                {...overrideTooltipHoverProps}
-                                              >
-                                                <span
-                                                  className="pill override-pill pill-inline pill-action"
+                                              {renderFieldBadges(eventPanelKey, 'EventType', obj, overrideTargets)}
+                                              {overrideTargets.has('$.event.EventType') && (
+                                                <div
+                                                  className="override-summary"
+                                                  tabIndex={0}
+                                                  {...overrideTooltipHoverProps}
                                                 >
-                                                  Override
-                                                  {canEditRules && panelEditState[eventPanelKey] && overrideValueMap.has('$.event.EventType') && (
-                                                    <button
-                                                      type="button"
-                                                      className="pill-close"
-                                                      aria-label="Remove EventType override"
-                                                      onClick={() => openRemoveOverrideModal(obj, 'EventType', eventPanelKey)}
-                                                    >
-                                                      ×
-                                                    </button>
+                                                  <span
+                                                    className="pill override-pill pill-inline pill-action"
+                                                  >
+                                                    Override
+                                                    {canEditRules && panelEditState[eventPanelKey] && overrideValueMap.has('$.event.EventType') && (
+                                                      <button
+                                                        type="button"
+                                                        className="pill-close"
+                                                        aria-label="Remove EventType override"
+                                                        onClick={() => openRemoveOverrideModal(obj, 'EventType', eventPanelKey)}
+                                                      >
+                                                        ×
+                                                      </button>
+                                                    )}
+                                                  </span>
+                                                  {renderOverrideSummaryCard(
+                                                    obj,
+                                                    overrideValueMap,
+                                                    ['EventType'],
+                                                    'Override',
                                                   )}
+                                                </div>
+                                              )}
+                                              {panelEditState[eventPanelKey] && isFieldDirty(obj, eventPanelKey, 'EventType') && (
+                                                <span className="dirty-indicator" title="Unsaved change">✎</span>
+                                              )}
+                                            </div>
+                                            {panelEditState[eventPanelKey] && (
+                                              <button
+                                                type="button"
+                                                className="builder-link builder-link-iconic"
+                                                onClick={() => openBuilderForField(obj, eventPanelKey, 'EventType')}
+                                                disabled={isFieldLockedByBuilder(eventPanelKey, 'EventType')}
+                                                aria-label="Open Builder"
+                                              >
+                                                <span className="builder-link-icon" aria-hidden="true">
+                                                  <svg viewBox="0 0 24 24" role="img" aria-hidden="true">
+                                                    <path
+                                                      d="M22.7 19.3 13.7 10.3a6 6 0 0 1-7.6-7.6l3.2 3.2 2.5-2.5L8.6.2a6 6 0 0 1 7.6 7.6l9 9-2.5 2.5zM2 22l6.3-1.3 6.6-6.6-2.5-2.5-6.6 6.6L2 22z"
+                                                      fill="currentColor"
+                                                    />
+                                                  </svg>
                                                 </span>
-                                                {renderOverrideSummaryCard(
-                                                  obj,
-                                                  overrideValueMap,
-                                                  ['EventType'],
-                                                  'Override',
-                                                )}
-                                              </div>
+                                                <span className="builder-link-text">Builder</span>
+                                              </button>
                                             )}
-                                            {panelEditState[eventPanelKey] && isFieldDirty(obj, eventPanelKey, 'EventType') && (
-                                              <span className="dirty-indicator" title="Unsaved change">✎</span>
-                                            )}
-                                          </span>
+                                          </div>
                                           {panelEditState[`${getObjectKey(obj, idx)}:event`] ? (
                                             <input
                                               className={isFieldHighlighted(eventPanelKey, 'EventType')
@@ -7465,56 +7880,67 @@ export default function App() {
                                       )}
                                       {baseFields.includes('ExpireTime') && (
                                         <div>
-                                          <span className={isFieldHighlighted(eventPanelKey, 'ExpireTime')
-                                            ? 'label label-warning'
-                                            : 'label'}>
-                                            Expire Time
-                                            {renderFieldBadges(eventPanelKey, 'ExpireTime', obj, overrideTargets)}
-                                            {panelEditState[eventPanelKey] && (
-                                              <span className="label-actions">
-                                                <button
-                                                  type="button"
-                                                  className="builder-link"
-                                                  onClick={() => openBuilderForField(obj, eventPanelKey, 'ExpireTime')}
-                                                  disabled={isFieldLockedByBuilder(eventPanelKey, 'ExpireTime')}
-                                                >
-                                                  Builder
-                                                </button>
+                                          <div className="field-header">
+                                            <div className="field-header-main">
+                                              <span className={isFieldHighlighted(eventPanelKey, 'ExpireTime')
+                                                ? 'label label-warning'
+                                                : 'label'}>
+                                                Expire Time
                                               </span>
-                                            )}
-                                            {overrideTargets.has('$.event.ExpireTime') && (
-                                              <div
-                                                className="override-summary"
-                                                tabIndex={0}
-                                                {...overrideTooltipHoverProps}
-                                              >
-                                                <span
-                                                  className="pill override-pill pill-inline pill-action"
+                                              {renderFieldBadges(eventPanelKey, 'ExpireTime', obj, overrideTargets)}
+                                              {overrideTargets.has('$.event.ExpireTime') && (
+                                                <div
+                                                  className="override-summary"
+                                                  tabIndex={0}
+                                                  {...overrideTooltipHoverProps}
                                                 >
-                                                  Override
-                                                  {canEditRules && panelEditState[eventPanelKey] && overrideValueMap.has('$.event.ExpireTime') && (
-                                                    <button
-                                                      type="button"
-                                                      className="pill-close"
-                                                      aria-label="Remove ExpireTime override"
-                                                      onClick={() => openRemoveOverrideModal(obj, 'ExpireTime', eventPanelKey)}
-                                                    >
-                                                      ×
-                                                    </button>
+                                                  <span
+                                                    className="pill override-pill pill-inline pill-action"
+                                                  >
+                                                    Override
+                                                    {canEditRules && panelEditState[eventPanelKey] && overrideValueMap.has('$.event.ExpireTime') && (
+                                                      <button
+                                                        type="button"
+                                                        className="pill-close"
+                                                        aria-label="Remove ExpireTime override"
+                                                        onClick={() => openRemoveOverrideModal(obj, 'ExpireTime', eventPanelKey)}
+                                                      >
+                                                        ×
+                                                      </button>
+                                                    )}
+                                                  </span>
+                                                  {renderOverrideSummaryCard(
+                                                    obj,
+                                                    overrideValueMap,
+                                                    ['ExpireTime'],
+                                                    'Override',
                                                   )}
+                                                </div>
+                                              )}
+                                              {panelEditState[eventPanelKey] && isFieldDirty(obj, eventPanelKey, 'ExpireTime') && (
+                                                <span className="dirty-indicator" title="Unsaved change">✎</span>
+                                              )}
+                                            </div>
+                                            {panelEditState[eventPanelKey] && (
+                                              <button
+                                                type="button"
+                                                className="builder-link builder-link-iconic"
+                                                onClick={() => openBuilderForField(obj, eventPanelKey, 'ExpireTime')}
+                                                disabled={isFieldLockedByBuilder(eventPanelKey, 'ExpireTime')}
+                                                aria-label="Open Builder"
+                                              >
+                                                <span className="builder-link-icon" aria-hidden="true">
+                                                  <svg viewBox="0 0 24 24" role="img" aria-hidden="true">
+                                                    <path
+                                                      d="M22.7 19.3 13.7 10.3a6 6 0 0 1-7.6-7.6l3.2 3.2 2.5-2.5L8.6.2a6 6 0 0 1 7.6 7.6l9 9-2.5 2.5zM2 22l6.3-1.3 6.6-6.6-2.5-2.5-6.6 6.6L2 22z"
+                                                      fill="currentColor"
+                                                    />
+                                                  </svg>
                                                 </span>
-                                                {renderOverrideSummaryCard(
-                                                  obj,
-                                                  overrideValueMap,
-                                                  ['ExpireTime'],
-                                                  'Override',
-                                                )}
-                                              </div>
+                                                <span className="builder-link-text">Builder</span>
+                                              </button>
                                             )}
-                                            {panelEditState[eventPanelKey] && isFieldDirty(obj, eventPanelKey, 'ExpireTime') && (
-                                              <span className="dirty-indicator" title="Unsaved change">✎</span>
-                                            )}
-                                          </span>
+                                          </div>
                                           {panelEditState[`${getObjectKey(obj, idx)}:event`] ? (
                                             <input
                                               className={isFieldHighlighted(eventPanelKey, 'ExpireTime')
@@ -7546,56 +7972,67 @@ export default function App() {
                                       )}
                                       {baseFields.includes('EventCategory') && (
                                         <div>
-                                          <span className={isFieldHighlighted(eventPanelKey, 'EventCategory')
-                                            ? 'label label-warning'
-                                            : 'label'}>
-                                            Event Category
-                                            {renderFieldBadges(eventPanelKey, 'EventCategory', obj, overrideTargets)}
-                                            {panelEditState[eventPanelKey] && (
-                                              <span className="label-actions">
-                                                <button
-                                                  type="button"
-                                                  className="builder-link"
-                                                  onClick={() => openBuilderForField(obj, eventPanelKey, 'EventCategory')}
-                                                  disabled={isFieldLockedByBuilder(eventPanelKey, 'EventCategory')}
-                                                >
-                                                  Builder
-                                                </button>
+                                          <div className="field-header">
+                                            <div className="field-header-main">
+                                              <span className={isFieldHighlighted(eventPanelKey, 'EventCategory')
+                                                ? 'label label-warning'
+                                                : 'label'}>
+                                                Event Category
                                               </span>
-                                            )}
-                                            {overrideTargets.has('$.event.EventCategory') && (
-                                              <div
-                                                className="override-summary"
-                                                tabIndex={0}
-                                                {...overrideTooltipHoverProps}
-                                              >
-                                                <span
-                                                  className="pill override-pill pill-inline pill-action"
+                                              {renderFieldBadges(eventPanelKey, 'EventCategory', obj, overrideTargets)}
+                                              {overrideTargets.has('$.event.EventCategory') && (
+                                                <div
+                                                  className="override-summary"
+                                                  tabIndex={0}
+                                                  {...overrideTooltipHoverProps}
                                                 >
-                                                  Override
-                                                  {canEditRules && panelEditState[eventPanelKey] && overrideValueMap.has('$.event.EventCategory') && (
-                                                    <button
-                                                      type="button"
-                                                      className="pill-close"
-                                                      aria-label="Remove EventCategory override"
-                                                      onClick={() => openRemoveOverrideModal(obj, 'EventCategory', eventPanelKey)}
-                                                    >
-                                                      ×
-                                                    </button>
+                                                  <span
+                                                    className="pill override-pill pill-inline pill-action"
+                                                  >
+                                                    Override
+                                                    {canEditRules && panelEditState[eventPanelKey] && overrideValueMap.has('$.event.EventCategory') && (
+                                                      <button
+                                                        type="button"
+                                                        className="pill-close"
+                                                        aria-label="Remove EventCategory override"
+                                                        onClick={() => openRemoveOverrideModal(obj, 'EventCategory', eventPanelKey)}
+                                                      >
+                                                        ×
+                                                      </button>
+                                                    )}
+                                                  </span>
+                                                  {renderOverrideSummaryCard(
+                                                    obj,
+                                                    overrideValueMap,
+                                                    ['EventCategory'],
+                                                    'Override',
                                                   )}
+                                                </div>
+                                              )}
+                                              {panelEditState[eventPanelKey] && isFieldDirty(obj, eventPanelKey, 'EventCategory') && (
+                                                <span className="dirty-indicator" title="Unsaved change">✎</span>
+                                              )}
+                                            </div>
+                                            {panelEditState[eventPanelKey] && (
+                                              <button
+                                                type="button"
+                                                className="builder-link builder-link-iconic"
+                                                onClick={() => openBuilderForField(obj, eventPanelKey, 'EventCategory')}
+                                                disabled={isFieldLockedByBuilder(eventPanelKey, 'EventCategory')}
+                                                aria-label="Open Builder"
+                                              >
+                                                <span className="builder-link-icon" aria-hidden="true">
+                                                  <svg viewBox="0 0 24 24" role="img" aria-hidden="true">
+                                                    <path
+                                                      d="M22.7 19.3 13.7 10.3a6 6 0 0 1-7.6-7.6l3.2 3.2 2.5-2.5L8.6.2a6 6 0 0 1 7.6 7.6l9 9-2.5 2.5zM2 22l6.3-1.3 6.6-6.6-2.5-2.5-6.6 6.6L2 22z"
+                                                      fill="currentColor"
+                                                    />
+                                                  </svg>
                                                 </span>
-                                                {renderOverrideSummaryCard(
-                                                  obj,
-                                                  overrideValueMap,
-                                                  ['EventCategory'],
-                                                  'Override',
-                                                )}
-                                              </div>
+                                                <span className="builder-link-text">Builder</span>
+                                              </button>
                                             )}
-                                            {panelEditState[eventPanelKey] && isFieldDirty(obj, eventPanelKey, 'EventCategory') && (
-                                              <span className="dirty-indicator" title="Unsaved change">✎</span>
-                                            )}
-                                          </span>
+                                          </div>
                                           {panelEditState[`${getObjectKey(obj, idx)}:event`] ? (
                                             <input
                                               className={isFieldHighlighted(eventPanelKey, 'EventCategory')
@@ -7634,75 +8071,86 @@ export default function App() {
                                       <div className="object-row object-row-additional">
                                         {getAdditionalEventFields(obj, eventPanelKey).map((field) => (
                                           <div key={`${eventPanelKey}-${field}`}>
-                                            <span className={isFieldHighlighted(eventPanelKey, field)
-                                              ? 'label label-warning'
-                                              : 'label'}>
-                                              <span title={getEventFieldDescription(field)}>
-                                                {formatEventFieldLabel(field)}
-                                              </span>
-                                              {renderFieldBadges(eventPanelKey, field, obj, overrideTargets)}
-                                              {panelEditState[eventPanelKey] && (
-                                                <span className="label-actions">
-                                                  <button
-                                                    type="button"
-                                                    className="builder-link"
-                                                    onClick={() => openBuilderForField(obj, eventPanelKey, field)}
-                                                    disabled={isFieldLockedByBuilder(eventPanelKey, field)}
-                                                  >
-                                                    Builder
-                                                  </button>
-                                                </span>
-                                              )}
-                                              {overrideTargets.has(`$.event.${field}`) && (
-                                                <div
-                                                  className="override-summary"
-                                                  tabIndex={0}
-                                                  onMouseEnter={() => {
-                                                    setSuppressVarTooltip(true);
-                                                    setSuppressEvalTooltip(true);
-                                                  }}
-                                                  onMouseLeave={() => {
-                                                    setSuppressVarTooltip(false);
-                                                    setSuppressEvalTooltip(false);
-                                                  }}
-                                                  onFocus={() => {
-                                                    setSuppressVarTooltip(true);
-                                                    setSuppressEvalTooltip(true);
-                                                  }}
-                                                  onBlur={() => {
-                                                    setSuppressVarTooltip(false);
-                                                    setSuppressEvalTooltip(false);
-                                                  }}
-                                                >
-                                                  <span
-                                                    className="pill override-pill pill-inline pill-action"
-                                                    title={`Original: ${getBaseEventDisplay(obj, field)}`}
-                                                  >
-                                                    Override
-                                                    {canEditRules && panelEditState[eventPanelKey]
-                                                      && overrideValueMap.has(`$.event.${field}`) && (
-                                                        <button
-                                                          type="button"
-                                                          className="pill-close"
-                                                          aria-label={`Remove ${field} override`}
-                                                          onClick={() => openRemoveOverrideModal(obj, field, eventPanelKey)}
-                                                        >
-                                                          ×
-                                                        </button>
-                                                      )}
+                                            <div className="field-header">
+                                              <div className="field-header-main">
+                                                <span className={isFieldHighlighted(eventPanelKey, field)
+                                                  ? 'label label-warning'
+                                                  : 'label'}>
+                                                  <span title={getEventFieldDescription(field)}>
+                                                    {formatEventFieldLabel(field)}
                                                   </span>
-                                                  {renderOverrideSummaryCard(
-                                                    obj,
-                                                    overrideValueMap,
-                                                    [field],
-                                                    'Override',
-                                                  )}
-                                                </div>
+                                                </span>
+                                                {renderFieldBadges(eventPanelKey, field, obj, overrideTargets)}
+                                                {overrideTargets.has(`$.event.${field}`) && (
+                                                  <div
+                                                    className="override-summary"
+                                                    tabIndex={0}
+                                                    onMouseEnter={() => {
+                                                      setSuppressVarTooltip(true);
+                                                      setSuppressEvalTooltip(true);
+                                                    }}
+                                                    onMouseLeave={() => {
+                                                      setSuppressVarTooltip(false);
+                                                      setSuppressEvalTooltip(false);
+                                                    }}
+                                                    onFocus={() => {
+                                                      setSuppressVarTooltip(true);
+                                                      setSuppressEvalTooltip(true);
+                                                    }}
+                                                    onBlur={() => {
+                                                      setSuppressVarTooltip(false);
+                                                      setSuppressEvalTooltip(false);
+                                                    }}
+                                                  >
+                                                    <span
+                                                      className="pill override-pill pill-inline pill-action"
+                                                      title={`Original: ${getBaseEventDisplay(obj, field)}`}
+                                                    >
+                                                      Override
+                                                      {canEditRules && panelEditState[eventPanelKey]
+                                                        && overrideValueMap.has(`$.event.${field}`) && (
+                                                          <button
+                                                            type="button"
+                                                            className="pill-close"
+                                                            aria-label={`Remove ${field} override`}
+                                                            onClick={() => openRemoveOverrideModal(obj, field, eventPanelKey)}
+                                                          >
+                                                            ×
+                                                          </button>
+                                                        )}
+                                                    </span>
+                                                    {renderOverrideSummaryCard(
+                                                      obj,
+                                                      overrideValueMap,
+                                                      [field],
+                                                      'Override',
+                                                    )}
+                                                  </div>
+                                                )}
+                                                {panelEditState[eventPanelKey] && isFieldDirty(obj, eventPanelKey, field) && (
+                                                  <span className="dirty-indicator" title="Unsaved change">✎</span>
+                                                )}
+                                              </div>
+                                              {panelEditState[eventPanelKey] && (
+                                                <button
+                                                  type="button"
+                                                  className="builder-link builder-link-iconic"
+                                                  onClick={() => openBuilderForField(obj, eventPanelKey, field)}
+                                                  disabled={isFieldLockedByBuilder(eventPanelKey, field)}
+                                                  aria-label="Open Builder"
+                                                >
+                                                  <span className="builder-link-icon" aria-hidden="true">
+                                                    <svg viewBox="0 0 24 24" role="img" aria-hidden="true">
+                                                      <path
+                                                        d="M22.7 19.3 13.7 10.3a6 6 0 0 1-7.6-7.6l3.2 3.2 2.5-2.5L8.6.2a6 6 0 0 1 7.6 7.6l9 9-2.5 2.5zM2 22l6.3-1.3 6.6-6.6-2.5-2.5-6.6 6.6L2 22z"
+                                                        fill="currentColor"
+                                                      />
+                                                    </svg>
+                                                  </span>
+                                                  <span className="builder-link-text">Builder</span>
+                                                </button>
                                               )}
-                                              {panelEditState[eventPanelKey] && isFieldDirty(obj, eventPanelKey, field) && (
-                                                <span className="dirty-indicator" title="Unsaved change">✎</span>
-                                              )}
-                                            </span>
+                                            </div>
                                             {panelEditState[eventPanelKey] ? (
                                               <input
                                                 className={isFieldHighlighted(eventPanelKey, field)
@@ -7786,6 +8234,28 @@ export default function App() {
                                   </div>
                                 </div>
                                 <div className="builder-header-actions">
+                                  {(canUndoBuilder || canRedoBuilder) && (
+                                    <div className="builder-history-actions">
+                                      <button
+                                        type="button"
+                                        className="builder-link"
+                                        onClick={handleBuilderUndo}
+                                        disabled={!canUndoBuilder}
+                                        title="Undo (Ctrl+Z)"
+                                      >
+                                        Undo
+                                      </button>
+                                      <button
+                                        type="button"
+                                        className="builder-link"
+                                        onClick={handleBuilderRedo}
+                                        disabled={!canRedoBuilder}
+                                        title="Redo (Ctrl+Shift+Z)"
+                                      >
+                                        Redo
+                                      </button>
+                                    </div>
+                                  )}
                                   {builderOpen && (
                                     <button
                                       type="button"
@@ -8699,7 +9169,26 @@ export default function App() {
                           )}
                         </div>
                       ) : (
-                        <pre>{JSON.stringify(getPreviewContent(fileData), null, 2)}</pre>
+                        <div className="raw-view">
+                          {searchHighlightActive && highlightQuery && rawMatchPositions.length > 0 && (
+                            <div className="match-bar">
+                              <span className="match-label">
+                                Raw match {rawMatchIndex + 1} of {rawMatchPositions.length}
+                              </span>
+                              <div className="match-actions">
+                                <button type="button" className="match-button" onClick={handlePrevRawMatch}>
+                                  Prev
+                                </button>
+                                <button type="button" className="match-button" onClick={handleNextRawMatch}>
+                                  Next
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                          <pre className="raw-preview">
+                            {renderRawHighlightedText(rawPreviewText, highlightQuery || '')}
+                          </pre>
+                        </div>
                       )
                     )}
                   </div>
@@ -8801,37 +9290,34 @@ export default function App() {
                                               {section.fieldChanges.length > 0 && (
                                                 <div className="staged-group">
                                                   <div className="staged-group-title">Field changes</div>
-                                                  {section.fieldChanges.map((change) => (
-                                                    <div key={`${section.title}-${change.target}-${change.action}`} className="staged-change">
-                                                      <div className="staged-change-header">
-                                                        <span className="staged-change-label">{change.target}</span>
-                                                        <span className={`pill change-pill change-pill-${change.action}`}>
-                                                          {getFieldChangeLabel(change)}
-                                                        </span>
-                                                      </div>
-                                                      <div className="staged-change-body">
-                                                        {change.after && (
-                                                          <div className="staged-change-column">
-                                                            <div className="staged-change-subtitle">After</div>
-                                                            <pre className="code-block">
-                                                              {JSON.stringify(change.after, null, 2)}
-                                                            </pre>
-                                                          </div>
-                                                        )}
-                                                        {(() => {
-                                                          const changeKey = `${section.title}-${change.target}-${change.action}`;
-                                                          const hasOverrideOriginal = change.before !== undefined;
-                                                          const baseOriginal = getBaseObjectValue(section.objectName, change.target);
-                                                          const originalValue = hasOverrideOriginal ? change.before : baseOriginal;
-                                                          const hasOriginal = hasOverrideOriginal || baseOriginal !== undefined;
-                                                          if (!hasOriginal) {
-                                                            return null;
-                                                          }
-                                                          const isExpanded = Boolean(expandedOriginals[changeKey]);
-                                                          const originalLabel = hasOverrideOriginal
-                                                            ? 'Original (override)'
-                                                            : 'Original (base value)';
-                                                          return (
+                                                  {section.fieldChanges.map((change) => {
+                                                    const changeKey = `${section.title}-${change.target}-${change.action}`;
+                                                    const hasOverrideOriginal = change.before !== undefined;
+                                                    const baseOriginal = getBaseObjectValue(section.objectName, change.target);
+                                                    const originalValue = hasOverrideOriginal ? change.before : baseOriginal;
+                                                    const hasOriginal = hasOverrideOriginal || baseOriginal !== undefined;
+                                                    const isExpanded = Boolean(expandedOriginals[changeKey]);
+                                                    const originalLabel = hasOverrideOriginal
+                                                      ? 'Original (override)'
+                                                      : 'Original (base value)';
+                                                    return (
+                                                      <div key={`${section.title}-${change.target}-${change.action}`} className="staged-change">
+                                                        <div className="staged-change-header">
+                                                          <span className="staged-change-label">{change.target}</span>
+                                                          <span className={`pill change-pill change-pill-${change.action}`}>
+                                                            {getFieldChangeLabel(change)}
+                                                          </span>
+                                                        </div>
+                                                        <div className="staged-change-body">
+                                                          {change.after !== undefined && (
+                                                            <div className="staged-change-column">
+                                                              <div className="staged-change-subtitle">After</div>
+                                                              <pre className="code-block diff-block">
+                                                                {renderInlineDiff(originalValue, change.after, 'after')}
+                                                              </pre>
+                                                            </div>
+                                                          )}
+                                                          {hasOriginal && (
                                                             <div className="staged-change-column">
                                                               <button
                                                                 type="button"
@@ -8851,18 +9337,18 @@ export default function App() {
                                                                   {originalValue === undefined ? (
                                                                     <div className="staged-change-empty">Not set</div>
                                                                   ) : (
-                                                                    <pre className="code-block">
-                                                                      {JSON.stringify(originalValue, null, 2)}
+                                                                    <pre className="code-block diff-block">
+                                                                      {renderInlineDiff(originalValue, change.after, 'original')}
                                                                     </pre>
                                                                   )}
                                                                 </>
                                                               )}
                                                             </div>
-                                                          );
-                                                        })()}
+                                                          )}
+                                                        </div>
                                                       </div>
-                                                    </div>
-                                                  ))}
+                                                    );
+                                                  })}
                                                 </div>
                                               )}
                                               {section.processorChanges.length > 0 && (

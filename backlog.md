@@ -96,10 +96,16 @@
 	- Doc: architecture/backlog-advanced-flow-validation.md
 - ✅ Staged review usability improvements (object collapse + expand originals):
 	- Doc: architecture/backlog-staged-review-improvements.md
+- Staged review: add full diff view (side-by-side/inline, richer change visualization).
+- Staged review: user preference to remember expand/collapse state.
 - ✅ Search/navigation enhancements (jump-to-object, persist filters):
 	- Doc: architecture/backlog-search-navigation.md
-- Edit safety enhancements (dirty indicators + builder undo/redo):
+- ✅ Edit safety enhancements (dirty indicators + builder undo/redo):
 	- Doc: architecture/backlog-edit-safety.md
+- Builder link placement in event headers (re-evaluate with user feedback):
+	- ✅ Option 1 (implemented today): right-aligned Builder link; pills remain next to field title.
+	- Option 2: show Builder link only on hover/focus for a cleaner header.
+	- Option 3: move Builder into an actions menu (⋯) alongside “Remove Override”.
 - Documentation refresh (post-processor rollout):
 	- Update install/prereqs, admin/backend notes, and UI workflow.
 
