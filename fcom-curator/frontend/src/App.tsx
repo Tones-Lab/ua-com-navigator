@@ -245,34 +245,1027 @@ function App() {
   const [builderMode, setBuilderMode] = useState<'friendly' | 'regular'>('friendly');
   const [showBuilderHelpModal, setShowBuilderHelpModal] = useState(false);
   const [processorStep, setProcessorStep] = useState<'select' | 'configure' | 'review'>('select');
-  const [processorType, setProcessorType] = useState<'set' | 'regex' | 'convert' | 'math' | null>(null);
+  const [processorType, setProcessorType] = useState<string | null>(null);
   const [showProcessorJson, setShowProcessorJson] = useState(true);
+  const [showAdvancedProcessorModal, setShowAdvancedProcessorModal] = useState(false);
+  const [advancedProcessorSearch, setAdvancedProcessorSearch] = useState('');
+  const [advancedProcessorScope, setAdvancedProcessorScope] = useState<'object' | 'global'>('object');
+  const [processorTooltip, setProcessorTooltip] = useState<{
+    title: string;
+    description: string;
+    example: string;
+    x: number;
+    y: number;
+  } | null>(null);
   const [builderLiteralText, setBuilderLiteralText] = useState('');
   const [builderSwitchModal, setBuilderSwitchModal] = useState<{
     open: boolean;
     from?: 'eval' | 'processor' | 'literal' | null;
     to?: 'eval' | 'processor' | 'literal' | null;
   }>({ open: false });
+  type ConditionNode = {
+    id: string;
+    type: 'condition';
+    left: string;
+    operator: string;
+    right: string;
+  };
+  type ConditionGroup = {
+    id: string;
+    type: 'group';
+    operator: 'AND' | 'OR';
+    children: Array<ConditionTree>;
+  };
+  type ConditionTree = ConditionNode | ConditionGroup;
+  type BuilderConditionRow = {
+    id: string;
+    condition: ConditionTree;
+    result: string;
+  };
+  type FlowNodeBase = {
+    id: string;
+    kind: 'processor' | 'if';
+  };
+  type FlowProcessorNode = FlowNodeBase & {
+    kind: 'processor';
+    processorType: string;
+    config?: Record<string, any>;
+  };
+  type FlowIfNode = FlowNodeBase & {
+    kind: 'if';
+    then: FlowNode[];
+    else: FlowNode[];
+    condition: {
+      property: string;
+      operator: string;
+      value: string;
+    };
+  };
+  type FlowNode = FlowProcessorNode | FlowIfNode;
+  type FlowBranchPath =
+    | { kind: 'root' }
+    | { kind: 'if'; id: string; branch: 'then' | 'else' }
+    | { kind: 'foreach'; id: string; branch: 'processors' }
+    | { kind: 'switch'; id: string; branch: 'case' | 'default'; caseId?: string };
   const [processorDraft, setProcessorDraft] = useState({
     sourceType: 'literal' as 'literal' | 'path',
     source: '',
     pattern: '',
-    group: '1',
     targetField: '',
   });
-  const [builderRows, setBuilderRows] = useState<Array<{
-    left: string;
-    operator: string;
-    right: string;
-    result: string;
-  }>>([
-    { left: '$v1', operator: '==', right: '1', result: '1' },
+  const builderIdRef = useRef(0);
+  const switchCaseIdRef = useRef(0);
+  const nextBuilderId = () => {
+    builderIdRef.current += 1;
+    return `cond-${builderIdRef.current}`;
+  };
+  const nextFlowId = () => {
+    flowIdRef.current += 1;
+    return `flow-${flowIdRef.current}`;
+  };
+  const nextSwitchCaseId = () => {
+    switchCaseIdRef.current += 1;
+    return `case-${switchCaseIdRef.current}`;
+  };
+  const createFlowNode = (payload: { nodeKind: 'processor' | 'if'; processorType?: string }): FlowNode => {
+    if (payload.nodeKind === 'if') {
+      return {
+        id: nextFlowId(),
+        kind: 'if',
+        then: [],
+        else: [],
+        condition: {
+          property: '$.event.Summary',
+          operator: '=~',
+          value: 'pattern',
+        },
+      };
+    }
+    if (payload.processorType === 'set') {
+      return {
+        id: nextFlowId(),
+        kind: 'processor',
+        processorType: 'set',
+        config: {
+          sourceType: 'literal',
+          source: '',
+          targetField: '$.event.Field',
+        },
+      };
+    }
+    if (payload.processorType === 'regex') {
+      return {
+        id: nextFlowId(),
+        kind: 'processor',
+        processorType: 'regex',
+        config: {
+          source: '$.event.Summary',
+          pattern: '',
+          targetField: '$.event.Field',
+        },
+      };
+    }
+    if (payload.processorType === 'append') {
+      return {
+        id: nextFlowId(),
+        kind: 'processor',
+        processorType: 'append',
+        config: {
+          source: 'Example Value',
+          arrayText: '[]',
+          targetField: '$.event.NewArray',
+        },
+      };
+    }
+    if (payload.processorType === 'appendToOutputStream') {
+      return {
+        id: nextFlowId(),
+        kind: 'processor',
+        processorType: 'appendToOutputStream',
+        config: {
+          source: '$.trap',
+          output: 'pulsar+ssl:///assure1/event/sink',
+        },
+      };
+    }
+    if (payload.processorType === 'break') {
+      return {
+        id: nextFlowId(),
+        kind: 'processor',
+        processorType: 'break',
+        config: {},
+      };
+    }
+    if (payload.processorType === 'convert') {
+      return {
+        id: nextFlowId(),
+        kind: 'processor',
+        processorType: 'convert',
+        config: {
+          source: '$.event.Count',
+          type: 'inttostring',
+          targetField: '$.event.CountString',
+        },
+      };
+    }
+    if (payload.processorType === 'copy') {
+      return {
+        id: nextFlowId(),
+        kind: 'processor',
+        processorType: 'copy',
+        config: {
+          source: '$.event.Count',
+          targetField: '$.event.CopiedCount',
+        },
+      };
+    }
+    if (payload.processorType === 'discard') {
+      return {
+        id: nextFlowId(),
+        kind: 'processor',
+        processorType: 'discard',
+        config: {},
+      };
+    }
+    if (payload.processorType === 'eval') {
+      return {
+        id: nextFlowId(),
+        kind: 'processor',
+        processorType: 'eval',
+        config: {
+          source: '$.event.Count',
+          targetField: '$.localmem.evalResult',
+        },
+      };
+    }
+    if (payload.processorType === 'foreach') {
+      return {
+        id: nextFlowId(),
+        kind: 'processor',
+        processorType: 'foreach',
+        config: {
+          source: '$.event.Details.trap.variables',
+          keyVal: 'i',
+          valField: 'v',
+          processors: [],
+        },
+      };
+    }
+    if (payload.processorType === 'grok') {
+      return {
+        id: nextFlowId(),
+        kind: 'processor',
+        processorType: 'grok',
+        config: {
+          source: '$.syslog.datagram',
+          pattern: '%LINK-5-CHANGED: Interface %{VALUE:interface}, changed state to %{VALUE:status}',
+          targetField: '$.syslog.variables',
+        },
+      };
+    }
+    if (payload.processorType === 'json') {
+      return {
+        id: nextFlowId(),
+        kind: 'processor',
+        processorType: 'json',
+        config: {
+          source: '{"key":"value"}',
+          targetField: '$.localmem.json',
+        },
+      };
+    }
+    if (payload.processorType === 'log') {
+      return {
+        id: nextFlowId(),
+        kind: 'processor',
+        processorType: 'log',
+        config: {
+          type: 'info',
+          source: 'Log message',
+        },
+      };
+    }
+    if (payload.processorType === 'lookup') {
+      return {
+        id: nextFlowId(),
+        kind: 'processor',
+        processorType: 'lookup',
+        config: {
+          source: 'db',
+          propertiesText: '{}',
+          fallbackText: '{}',
+          targetField: '$.localmem.results',
+        },
+      };
+    }
+    if (payload.processorType === 'math') {
+      return {
+        id: nextFlowId(),
+        kind: 'processor',
+        processorType: 'math',
+        config: {
+          source: '$.event.Count',
+          operation: '*',
+          value: '2',
+          targetField: '$.localmem.CountTimesTwo',
+        },
+      };
+    }
+    if (payload.processorType === 'remove') {
+      return {
+        id: nextFlowId(),
+        kind: 'processor',
+        processorType: 'remove',
+        config: {
+          source: '$.trap.timeTicks',
+        },
+      };
+    }
+    if (payload.processorType === 'rename') {
+      return {
+        id: nextFlowId(),
+        kind: 'processor',
+        processorType: 'rename',
+        config: {
+          source: '$.event.Details',
+          targetField: '$.event.DetailsOld',
+        },
+      };
+    }
+    if (payload.processorType === 'replace') {
+      return {
+        id: nextFlowId(),
+        kind: 'processor',
+        processorType: 'replace',
+        config: {
+          source: 'This is a test',
+          pattern: 'a test',
+          replacement: 'not a test',
+          targetField: '$.localmem.example',
+          regex: false,
+        },
+      };
+    }
+    if (payload.processorType === 'setOutputStream') {
+      return {
+        id: nextFlowId(),
+        kind: 'processor',
+        processorType: 'setOutputStream',
+        config: {
+          output: 'pulsar+ssl:///assure1/event/sink',
+        },
+      };
+    }
+    if (payload.processorType === 'sort') {
+      return {
+        id: nextFlowId(),
+        kind: 'processor',
+        processorType: 'sort',
+        config: {
+          source: '$.trap.variables[0]',
+          targetField: '$.trap.sortedVariables',
+        },
+      };
+    }
+    if (payload.processorType === 'split') {
+      return {
+        id: nextFlowId(),
+        kind: 'processor',
+        processorType: 'split',
+        config: {
+          source: '1,2,3,4',
+          delimiter: ',',
+          targetField: '$.localmem.splitarr',
+        },
+      };
+    }
+    if (payload.processorType === 'strcase') {
+      return {
+        id: nextFlowId(),
+        kind: 'processor',
+        processorType: 'strcase',
+        config: {
+          source: 'HELLO, WORLD',
+          type: 'lower',
+          targetField: '$.localmem.lowercase',
+        },
+      };
+    }
+    if (payload.processorType === 'substr') {
+      return {
+        id: nextFlowId(),
+        kind: 'processor',
+        processorType: 'substr',
+        config: {
+          source: 'Hello',
+          start: '1',
+          end: '',
+          targetField: '$.localmem.substr',
+        },
+      };
+    }
+    if (payload.processorType === 'switch') {
+      return {
+        id: nextFlowId(),
+        kind: 'processor',
+        processorType: 'switch',
+        config: {
+          source: '$.localmem.val1',
+          operator: '!=',
+          cases: [
+            {
+              id: nextSwitchCaseId(),
+              match: '2',
+              operator: '!=',
+              processors: [],
+            },
+          ],
+          defaultProcessors: [],
+        },
+      };
+    }
+    if (payload.processorType === 'trim') {
+      return {
+        id: nextFlowId(),
+        kind: 'processor',
+        processorType: 'trim',
+        config: {
+          source: 'Hello',
+          cutset: 'H',
+          targetField: '$.localmem.trim',
+        },
+      };
+    }
+    return {
+      id: nextFlowId(),
+      kind: 'processor',
+      processorType: payload.processorType || 'set',
+      config: {},
+    };
+  };
+  const updateBranchInFlow = (
+    nodes: FlowNode[],
+    path: FlowBranchPath,
+    updater: (items: FlowNode[]) => FlowNode[],
+  ): FlowNode[] => {
+    if (path.kind === 'root') {
+      return updater(nodes);
+    }
+    return nodes.map((node) => {
+      if (node.kind === 'if') {
+        if (node.id === path.id) {
+          const branchItems = path.branch === 'then' ? node.then : node.else;
+          const updatedBranch = updater(branchItems);
+          return {
+            ...node,
+            [path.branch]: updatedBranch,
+          } as FlowIfNode;
+        }
+        return {
+          ...node,
+          then: updateBranchInFlow(node.then, path, updater),
+          else: updateBranchInFlow(node.else, path, updater),
+        } as FlowIfNode;
+      }
+      if (node.kind === 'processor' && node.processorType === 'foreach') {
+        const processors = Array.isArray(node.config?.processors)
+          ? node.config.processors
+          : [];
+        if (node.id === path.id) {
+          const updatedBranch = updater(processors);
+          return {
+            ...node,
+            config: {
+              ...(node.config || {}),
+              processors: updatedBranch,
+            },
+          } as FlowProcessorNode;
+        }
+        return {
+          ...node,
+          config: {
+            ...(node.config || {}),
+            processors: updateBranchInFlow(processors, path, updater),
+          },
+        } as FlowProcessorNode;
+      }
+      if (node.kind === 'processor' && node.processorType === 'switch') {
+        const cases = Array.isArray(node.config?.cases) ? node.config.cases : [];
+        const defaultProcessors = Array.isArray(node.config?.defaultProcessors)
+          ? node.config.defaultProcessors
+          : [];
+        if (node.id === path.id) {
+          if (path.branch === 'default') {
+            const updatedBranch = updater(defaultProcessors);
+            return {
+              ...node,
+              config: {
+                ...(node.config || {}),
+                defaultProcessors: updatedBranch,
+              },
+            } as FlowProcessorNode;
+          }
+          if (path.branch === 'case' && path.caseId) {
+            const updatedCases = cases.map((item: any) => (
+              item.id === path.caseId
+                ? { ...item, processors: updater(Array.isArray(item.processors) ? item.processors : []) }
+                : {
+                  ...item,
+                  processors: updateBranchInFlow(
+                    Array.isArray(item.processors) ? item.processors : [],
+                    path,
+                    updater,
+                  ),
+                }
+            ));
+            return {
+              ...node,
+              config: {
+                ...(node.config || {}),
+                cases: updatedCases,
+              },
+            } as FlowProcessorNode;
+          }
+        }
+        const updatedCases = cases.map((item: any) => ({
+          ...item,
+          processors: updateBranchInFlow(
+            Array.isArray(item.processors) ? item.processors : [],
+            path,
+            updater,
+          ),
+        }));
+        return {
+          ...node,
+          config: {
+            ...(node.config || {}),
+            cases: updatedCases,
+            defaultProcessors: updateBranchInFlow(defaultProcessors, path, updater),
+          },
+        } as FlowProcessorNode;
+      }
+      return node;
+    });
+  };
+  const appendNodeAtPath = (nodes: FlowNode[], path: FlowBranchPath, node: FlowNode): FlowNode[] => (
+    updateBranchInFlow(nodes, path, (items) => [...items, node])
+  );
+  const removeNodeById = (nodes: FlowNode[], nodeId: string): { nodes: FlowNode[]; removed: FlowNode | null } => {
+    let removed: FlowNode | null = null;
+    const updated = nodes.reduce<FlowNode[]>((acc, node) => {
+      if (node.id === nodeId) {
+        removed = node;
+        return acc;
+      }
+      if (node.kind === 'if') {
+        const thenResult = removeNodeById(node.then, nodeId);
+        const elseResult = removeNodeById(node.else, nodeId);
+        if (thenResult.removed) {
+          removed = thenResult.removed;
+        }
+        if (elseResult.removed) {
+          removed = elseResult.removed;
+        }
+        acc.push({
+          ...node,
+          then: thenResult.nodes,
+          else: elseResult.nodes,
+        });
+        return acc;
+      }
+      if (node.kind === 'processor' && node.processorType === 'foreach') {
+        const nested = Array.isArray(node.config?.processors)
+          ? node.config.processors
+          : [];
+        const nestedResult = removeNodeById(nested, nodeId);
+        if (nestedResult.removed) {
+          removed = nestedResult.removed;
+        }
+        acc.push({
+          ...node,
+          config: {
+            ...(node.config || {}),
+            processors: nestedResult.nodes,
+          },
+        } as FlowProcessorNode);
+        return acc;
+      }
+      if (node.kind === 'processor' && node.processorType === 'switch') {
+        const cases = Array.isArray(node.config?.cases) ? node.config.cases : [];
+        const updatedCases = cases.map((item: any) => {
+          const result = removeNodeById(Array.isArray(item.processors) ? item.processors : [], nodeId);
+          if (result.removed) {
+            removed = result.removed;
+          }
+          return {
+            ...item,
+            processors: result.nodes,
+          };
+        });
+        const defaults = Array.isArray(node.config?.defaultProcessors)
+          ? node.config.defaultProcessors
+          : [];
+        const defaultResult = removeNodeById(defaults, nodeId);
+        if (defaultResult.removed) {
+          removed = defaultResult.removed;
+        }
+        acc.push({
+          ...node,
+          config: {
+            ...(node.config || {}),
+            cases: updatedCases,
+            defaultProcessors: defaultResult.nodes,
+          },
+        } as FlowProcessorNode);
+        return acc;
+      }
+      acc.push(node);
+      return acc;
+    }, []);
+    return { nodes: updated, removed };
+  };
+  const findNodeById = (nodes: FlowNode[], nodeId: string): FlowNode | null => {
+    for (const node of nodes) {
+      if (node.id === nodeId) {
+        return node;
+      }
+      if (node.kind === 'if') {
+        const foundThen = findNodeById(node.then, nodeId);
+        if (foundThen) {
+          return foundThen;
+        }
+        const foundElse = findNodeById(node.else, nodeId);
+        if (foundElse) {
+          return foundElse;
+        }
+      }
+      if (node.kind === 'processor' && node.processorType === 'foreach') {
+        const nested = Array.isArray(node.config?.processors)
+          ? node.config.processors
+          : [];
+        const foundNested = findNodeById(nested, nodeId);
+        if (foundNested) {
+          return foundNested;
+        }
+      }
+      if (node.kind === 'processor' && node.processorType === 'switch') {
+        const cases = Array.isArray(node.config?.cases) ? node.config.cases : [];
+        for (const item of cases) {
+          const foundCase = findNodeById(Array.isArray(item.processors) ? item.processors : [], nodeId);
+          if (foundCase) {
+            return foundCase;
+          }
+        }
+        const defaults = Array.isArray(node.config?.defaultProcessors)
+          ? node.config.defaultProcessors
+          : [];
+        const foundDefault = findNodeById(defaults, nodeId);
+        if (foundDefault) {
+          return foundDefault;
+        }
+      }
+    }
+    return null;
+  };
+  const replaceNodeById = (nodes: FlowNode[], nodeId: string, nextNode: FlowNode): FlowNode[] => (
+    nodes.map((node) => {
+      if (node.id === nodeId) {
+        return nextNode;
+      }
+      if (node.kind === 'if') {
+        return {
+          ...node,
+          then: replaceNodeById(node.then, nodeId, nextNode),
+          else: replaceNodeById(node.else, nodeId, nextNode),
+        } as FlowIfNode;
+      }
+      if (node.kind === 'processor' && node.processorType === 'foreach') {
+        const nested = Array.isArray(node.config?.processors)
+          ? node.config.processors
+          : [];
+        return {
+          ...node,
+          config: {
+            ...(node.config || {}),
+            processors: replaceNodeById(nested, nodeId, nextNode),
+          },
+        } as FlowProcessorNode;
+      }
+      if (node.kind === 'processor' && node.processorType === 'switch') {
+        const cases = Array.isArray(node.config?.cases) ? node.config.cases : [];
+        const updatedCases = cases.map((item: any) => ({
+          ...item,
+          processors: replaceNodeById(
+            Array.isArray(item.processors) ? item.processors : [],
+            nodeId,
+            nextNode,
+          ),
+        }));
+        const defaults = Array.isArray(node.config?.defaultProcessors)
+          ? node.config.defaultProcessors
+          : [];
+        return {
+          ...node,
+          config: {
+            ...(node.config || {}),
+            cases: updatedCases,
+            defaultProcessors: replaceNodeById(defaults, nodeId, nextNode),
+          },
+        } as FlowProcessorNode;
+      }
+      return node;
+    })
+  );
+  const getFlowStateByLane = (scope: 'object' | 'global', lane: 'object' | 'pre' | 'post') => {
+    if (scope === 'global') {
+      if (lane === 'pre') {
+        return { nodes: globalPreFlow, setNodes: setGlobalPreFlow };
+      }
+      return { nodes: globalPostFlow, setNodes: setGlobalPostFlow };
+    }
+    return { nodes: advancedFlow, setNodes: setAdvancedFlow };
+  };
+  const openFlowEditor = (
+    nodeId: string,
+    scope: 'object' | 'global',
+    lane: 'object' | 'pre' | 'post',
+    nodesOverride?: FlowNode[],
+    setNodesOverride?: React.Dispatch<React.SetStateAction<FlowNode[]>>,
+  ) => {
+    const nodes = nodesOverride || getFlowStateByLane(scope, lane).nodes;
+    const node = findNodeById(nodes, nodeId);
+    if (!node) {
+      return;
+    }
+    setFlowEditor({ scope, lane, nodeId, setNodesOverride });
+    setFlowEditorDraft(JSON.parse(JSON.stringify(node)) as FlowNode);
+  };
+  const parseJsonValue = <T,>(value: string | undefined, fallback: T): T => {
+    if (!value || !value.trim()) {
+      return fallback;
+    }
+    try {
+      return JSON.parse(value) as T;
+    } catch {
+      return fallback;
+    }
+  };
+
+  const buildFlowProcessor = (node: FlowNode): any => {
+    if (node.kind === 'if') {
+      return {
+        if: {
+          source: node.condition.property,
+          operator: node.condition.operator,
+          value: node.condition.value,
+          processors: buildFlowProcessors(node.then),
+          else: buildFlowProcessors(node.else),
+        },
+      };
+    }
+    if (node.processorType === 'set') {
+      const sourceValue = node.config?.sourceType === 'path'
+        ? normalizeSourcePath(String(node.config?.source || ''))
+        : node.config?.source;
+      let argsValue: any[] | undefined;
+      if (typeof node.config?.argsText === 'string' && node.config.argsText.trim()) {
+        try {
+          const parsed = JSON.parse(node.config.argsText);
+          if (Array.isArray(parsed)) {
+            argsValue = parsed;
+          }
+        } catch {
+          argsValue = undefined;
+        }
+      }
+      return {
+        set: {
+          source: sourceValue,
+          ...(argsValue ? { args: argsValue } : {}),
+          targetField: node.config?.targetField || '',
+        },
+      };
+    }
+    if (node.processorType === 'regex') {
+      const sourceValue = normalizeSourcePath(String(node.config?.source || ''));
+      const groupNumber = Number(node.config?.group);
+      const hasGroup = Number.isFinite(groupNumber) && String(node.config?.group).trim() !== '';
+      return {
+        regex: {
+          source: sourceValue,
+          pattern: node.config?.pattern || '',
+          ...(hasGroup ? { group: groupNumber } : {}),
+          targetField: node.config?.targetField || '',
+        },
+      };
+    }
+    if (node.processorType === 'append') {
+      return {
+        append: {
+          source: node.config?.source ?? '',
+          array: parseJsonValue(node.config?.arrayText, [] as any[]),
+          targetField: node.config?.targetField ?? '',
+        },
+      };
+    }
+    if (node.processorType === 'appendToOutputStream') {
+      return {
+        appendToOutputStream: {
+          source: node.config?.source ?? '',
+          output: node.config?.output ?? '',
+        },
+      };
+    }
+    if (node.processorType === 'break') {
+      return { break: {} };
+    }
+    if (node.processorType === 'convert') {
+      return {
+        convert: {
+          source: node.config?.source ?? '',
+          type: node.config?.type ?? '',
+          targetField: node.config?.targetField ?? '',
+        },
+      };
+    }
+    if (node.processorType === 'copy') {
+      return {
+        copy: {
+          source: node.config?.source ?? '',
+          targetField: node.config?.targetField ?? '',
+        },
+      };
+    }
+    if (node.processorType === 'discard') {
+      return { discard: {} };
+    }
+    if (node.processorType === 'eval') {
+      return {
+        eval: {
+          source: node.config?.source ?? '',
+          ...(node.config?.targetField ? { targetField: node.config?.targetField } : {}),
+        },
+      };
+    }
+    if (node.processorType === 'foreach') {
+      const nestedNodes = Array.isArray(node.config?.processors)
+        ? node.config.processors
+        : [];
+      return {
+        foreach: {
+          source: node.config?.source ?? '',
+          ...(node.config?.keyVal ? { keyVal: node.config.keyVal } : {}),
+          ...(node.config?.valField ? { valField: node.config.valField } : {}),
+          processors: buildFlowProcessors(nestedNodes),
+        },
+      };
+    }
+    if (node.processorType === 'grok') {
+      return {
+        grok: {
+          source: node.config?.source ?? '',
+          pattern: node.config?.pattern ?? '',
+          targetField: node.config?.targetField ?? '',
+        },
+      };
+    }
+    if (node.processorType === 'json') {
+      return {
+        json: {
+          source: node.config?.source ?? '',
+          targetField: node.config?.targetField ?? '',
+        },
+      };
+    }
+    if (node.processorType === 'log') {
+      return {
+        log: {
+          type: node.config?.type ?? '',
+          source: node.config?.source ?? '',
+        },
+      };
+    }
+    if (node.processorType === 'lookup') {
+      return {
+        lookup: {
+          source: node.config?.source ?? '',
+          properties: parseJsonValue(node.config?.propertiesText, {}),
+          fallback: parseJsonValue(node.config?.fallbackText, {}),
+          targetField: node.config?.targetField ?? '',
+        },
+      };
+    }
+    if (node.processorType === 'math') {
+      return {
+        math: {
+          source: node.config?.source ?? '',
+          operation: node.config?.operation ?? '',
+          value: node.config?.value ?? '',
+          targetField: node.config?.targetField ?? '',
+        },
+      };
+    }
+    if (node.processorType === 'remove') {
+      return {
+        remove: {
+          source: node.config?.source ?? '',
+        },
+      };
+    }
+    if (node.processorType === 'rename') {
+      return {
+        rename: {
+          source: node.config?.source ?? '',
+          targetField: node.config?.targetField ?? '',
+        },
+      };
+    }
+    if (node.processorType === 'replace') {
+      return {
+        replace: {
+          source: node.config?.source ?? '',
+          pattern: node.config?.pattern ?? '',
+          replacement: node.config?.replacement ?? '',
+          ...(typeof node.config?.regex === 'boolean' ? { regex: node.config.regex } : {}),
+          targetField: node.config?.targetField ?? '',
+        },
+      };
+    }
+    if (node.processorType === 'setOutputStream') {
+      return {
+        setOutputStream: {
+          output: node.config?.output ?? '',
+        },
+      };
+    }
+    if (node.processorType === 'sort') {
+      return {
+        sort: {
+          source: node.config?.source ?? '',
+          targetField: node.config?.targetField ?? '',
+        },
+      };
+    }
+    if (node.processorType === 'split') {
+      return {
+        split: {
+          source: node.config?.source ?? '',
+          delimiter: node.config?.delimiter ?? '',
+          targetField: node.config?.targetField ?? '',
+        },
+      };
+    }
+    if (node.processorType === 'strcase') {
+      return {
+        strcase: {
+          source: node.config?.source ?? '',
+          type: node.config?.type ?? '',
+          targetField: node.config?.targetField ?? '',
+        },
+      };
+    }
+    if (node.processorType === 'substr') {
+      const startValue = node.config?.start ?? '';
+      const endValue = node.config?.end ?? '';
+      return {
+        substr: {
+          source: node.config?.source ?? '',
+          ...(String(startValue).trim() ? { start: Number(startValue) } : {}),
+          ...(String(endValue).trim() ? { end: Number(endValue) } : {}),
+          targetField: node.config?.targetField ?? '',
+        },
+      };
+    }
+    if (node.processorType === 'switch') {
+      const cases = Array.isArray(node.config?.cases) ? node.config.cases : [];
+      const defaultProcessors = Array.isArray(node.config?.defaultProcessors)
+        ? node.config.defaultProcessors
+        : [];
+      return {
+        switch: {
+          source: node.config?.source ?? '',
+          operator: node.config?.operator ?? '',
+          case: cases.map((item: any) => ({
+            match: item.match ?? '',
+            ...(item.operator ? { operator: item.operator } : {}),
+            then: buildFlowProcessors(Array.isArray(item.processors) ? item.processors : []),
+          })),
+          default: buildFlowProcessors(defaultProcessors),
+        },
+      };
+    }
+    if (node.processorType === 'trim') {
+      return {
+        trim: {
+          source: node.config?.source ?? '',
+          ...(node.config?.cutset ? { cutset: node.config.cutset } : {}),
+          targetField: node.config?.targetField ?? '',
+        },
+      };
+    }
+    return {
+      [node.processorType]: node.config || {},
+    };
+  };
+  const buildFlowProcessors = (nodes: FlowNode[]) => nodes.map(buildFlowProcessor);
+  const createConditionNode = (): ConditionNode => ({
+    id: nextBuilderId(),
+    type: 'condition',
+    left: '$v1',
+    operator: '==',
+    right: '1',
+  });
+  const createGroupNode = (): ConditionGroup => ({
+    id: nextBuilderId(),
+    type: 'group',
+    operator: 'AND',
+    children: [createConditionNode()],
+  });
+  const [builderConditions, setBuilderConditions] = useState<BuilderConditionRow[]>([
+    { id: nextBuilderId(), condition: createConditionNode(), result: '1' },
   ]);
   const [builderElseResult, setBuilderElseResult] = useState('0');
   const [builderRegularText, setBuilderRegularText] = useState('');
   const varListRef = useRef<HTMLDivElement | null>(null);
   const varRowRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const builderSyncRef = useRef<'friendly' | 'regular' | null>(null);
+  const [advancedFlow, setAdvancedFlow] = useState<FlowNode[]>([]);
+  const [globalPreFlow, setGlobalPreFlow] = useState<FlowNode[]>([]);
+  const [globalPostFlow, setGlobalPostFlow] = useState<FlowNode[]>([]);
+  const [flowEditor, setFlowEditor] = useState<{
+    scope: 'object' | 'global';
+    lane: 'object' | 'pre' | 'post';
+    nodeId: string;
+    setNodesOverride?: React.Dispatch<React.SetStateAction<FlowNode[]>>;
+  } | null>(null);
+  const [flowEditorDraft, setFlowEditorDraft] = useState<FlowNode | null>(null);
+  const [showFieldReferenceModal, setShowFieldReferenceModal] = useState(false);
+  const [eventFieldPickerOpen, setEventFieldPickerOpen] = useState(false);
+  const [eventFieldSearch, setEventFieldSearch] = useState('');
+  const [eventFieldInsertContext, setEventFieldInsertContext] = useState<{
+    panelKey: string;
+    field: string;
+    value: string;
+    replaceStart: number;
+    replaceEnd: number;
+  } | null>(null);
+  const flowIdRef = useRef(0);
+  const isPreGlobalFlow = flowEditor?.scope === 'global' && flowEditor?.lane === 'pre';
+  const isPreScopeEventPath = (value: string | undefined | null) => (
+    isPreGlobalFlow && typeof value === 'string' && value.includes('$.event')
+  );
+  const hasPreScopeEventUsage = (draft: FlowNode | null) => {
+    if (!draft || !isPreGlobalFlow) {
+      return false;
+    }
+    if (draft.kind === 'if') {
+      return isPreScopeEventPath(draft.condition.property)
+        || isPreScopeEventPath(draft.condition.value);
+    }
+    return isPreScopeEventPath(draft.config?.source)
+      || isPreScopeEventPath(draft.config?.targetField)
+      || isPreScopeEventPath(draft.config?.pattern);
+  };
 
   const getNestedValue = (source: any, path: string) => (
     path.split('.').reduce((acc, key) => (acc == null ? undefined : acc[key]), source)
@@ -348,6 +1341,220 @@ function App() {
     'data.permissions.rule.Rules.update',
     'permissions.rule.Rules.update',
   ];
+
+  const flowProcessorConfigSpecs: Record<string, Array<{
+    key: string;
+    label: string;
+    type: 'text' | 'json' | 'boolean';
+    placeholder?: string;
+  }>> = {
+    append: [
+      { key: 'source', label: 'Source', type: 'text', placeholder: 'Example Value' },
+      { key: 'array', label: 'Array (JSON)', type: 'json', placeholder: '[]' },
+      { key: 'targetField', label: 'Target', type: 'text', placeholder: '$.event.NewArray' },
+    ],
+    appendToOutputStream: [
+      { key: 'source', label: 'Source', type: 'text', placeholder: '$.trap' },
+      { key: 'output', label: 'Output', type: 'text', placeholder: 'pulsar+ssl:///assure1/event/sink' },
+    ],
+    break: [],
+    convert: [
+      { key: 'source', label: 'Source', type: 'text', placeholder: '$.event.Count' },
+      { key: 'type', label: 'Type', type: 'text', placeholder: 'inttostring' },
+      { key: 'targetField', label: 'Target', type: 'text', placeholder: '$.event.CountString' },
+    ],
+    copy: [
+      { key: 'source', label: 'Source', type: 'text', placeholder: '$.event.Count' },
+      { key: 'targetField', label: 'Target', type: 'text', placeholder: '$.event.CopiedCount' },
+    ],
+    discard: [],
+    eval: [
+      { key: 'source', label: 'Source', type: 'text', placeholder: '<expression>' },
+      { key: 'targetField', label: 'Target (optional)', type: 'text', placeholder: '$.localmem.evalResult' },
+    ],
+    foreach: [
+      { key: 'source', label: 'Source', type: 'text', placeholder: '$.event.Details.trap.variables' },
+      { key: 'keyVal', label: 'Key', type: 'text', placeholder: 'i' },
+      { key: 'valField', label: 'Value', type: 'text', placeholder: 'v' },
+    ],
+    grok: [
+      { key: 'source', label: 'Source', type: 'text', placeholder: '$.syslog.datagram' },
+      { key: 'pattern', label: 'Pattern', type: 'text', placeholder: '%LINK-5-CHANGED: Interface %{VALUE:interface}, changed state to %{VALUE:status}' },
+      { key: 'targetField', label: 'Target', type: 'text', placeholder: '$.syslog.variables' },
+    ],
+    json: [
+      { key: 'source', label: 'Source', type: 'text', placeholder: '{"key":"value"}' },
+      { key: 'targetField', label: 'Target', type: 'text', placeholder: '$.localmem.json' },
+    ],
+    log: [
+      { key: 'type', label: 'Type', type: 'text', placeholder: 'info' },
+      { key: 'source', label: 'Source', type: 'text', placeholder: 'Log message' },
+    ],
+    lookup: [
+      { key: 'source', label: 'Source', type: 'text', placeholder: 'db' },
+      { key: 'properties', label: 'Properties (JSON)', type: 'json', placeholder: '{}' },
+      { key: 'fallback', label: 'Fallback (JSON)', type: 'json', placeholder: '{}' },
+      { key: 'targetField', label: 'Target', type: 'text', placeholder: '$.localmem.results' },
+    ],
+    math: [
+      { key: 'source', label: 'Source', type: 'text', placeholder: '$.event.Count' },
+      { key: 'operation', label: 'Operation', type: 'text', placeholder: '*' },
+      { key: 'value', label: 'Value', type: 'text', placeholder: '2' },
+      { key: 'targetField', label: 'Target', type: 'text', placeholder: '$.localmem.CountTimesTwo' },
+    ],
+    remove: [
+      { key: 'source', label: 'Source', type: 'text', placeholder: '$.trap.timeTicks' },
+    ],
+    rename: [
+      { key: 'source', label: 'Source', type: 'text', placeholder: '$.event.Details' },
+      { key: 'targetField', label: 'Target', type: 'text', placeholder: '$.event.DetailsOld' },
+    ],
+    replace: [
+      { key: 'source', label: 'Source', type: 'text', placeholder: 'This is a test' },
+      { key: 'pattern', label: 'Pattern', type: 'text', placeholder: 'a test' },
+      { key: 'replacement', label: 'Replacement', type: 'text', placeholder: 'not a test' },
+      { key: 'regex', label: 'Regex', type: 'boolean' },
+      { key: 'targetField', label: 'Target', type: 'text', placeholder: '$.localmem.example' },
+    ],
+    setOutputStream: [
+      { key: 'output', label: 'Output', type: 'text', placeholder: 'pulsar+ssl:///assure1/event/sink' },
+    ],
+    sort: [
+      { key: 'source', label: 'Source', type: 'text', placeholder: '$.trap.variables[0]' },
+      { key: 'targetField', label: 'Target', type: 'text', placeholder: '$.trap.sortedVariables' },
+    ],
+    split: [
+      { key: 'source', label: 'Source', type: 'text', placeholder: '1,2,3,4' },
+      { key: 'delimiter', label: 'Delimiter', type: 'text', placeholder: ',' },
+      { key: 'targetField', label: 'Target', type: 'text', placeholder: '$.localmem.splitarr' },
+    ],
+    strcase: [
+      { key: 'source', label: 'Source', type: 'text', placeholder: 'HELLO, WORLD' },
+      { key: 'type', label: 'Type', type: 'text', placeholder: 'lower' },
+      { key: 'targetField', label: 'Target', type: 'text', placeholder: '$.localmem.lowercase' },
+    ],
+    substr: [
+      { key: 'source', label: 'Source', type: 'text', placeholder: 'Hello' },
+      { key: 'start', label: 'Start (optional)', type: 'text', placeholder: '1' },
+      { key: 'end', label: 'End (optional)', type: 'text', placeholder: '' },
+      { key: 'targetField', label: 'Target', type: 'text', placeholder: '$.localmem.substr' },
+    ],
+    switch: [
+      { key: 'source', label: 'Source', type: 'text', placeholder: '$.localmem.val1' },
+      { key: 'operator', label: 'Operator', type: 'text', placeholder: '!=' },
+    ],
+    trim: [
+      { key: 'source', label: 'Source', type: 'text', placeholder: 'Hello' },
+      { key: 'cutset', label: 'Cutset', type: 'text', placeholder: 'H' },
+      { key: 'targetField', label: 'Target', type: 'text', placeholder: '$.localmem.trim' },
+    ],
+  };
+
+  const getFlowEditorJsonErrors = (draft: FlowNode | null) => {
+    if (!draft || draft.kind !== 'processor') {
+      return [] as Array<{ field: string; message: string }>;
+    }
+    const errors: Array<{ field: string; message: string }> = [];
+    const specs = flowProcessorConfigSpecs[draft.processorType] || [];
+    specs.forEach((spec) => {
+      if (spec.type !== 'json') {
+        return;
+      }
+      const valueKey = `${spec.key}Text`;
+      const raw = String(draft.config?.[valueKey] ?? '').trim();
+      if (!raw) {
+        return;
+      }
+      try {
+        JSON.parse(raw);
+      } catch {
+        errors.push({ field: spec.key, message: `${spec.label} must be valid JSON.` });
+      }
+    });
+    if (draft.processorType === 'set') {
+      const raw = String(draft.config?.argsText ?? '').trim();
+      if (raw) {
+        try {
+          const parsed = JSON.parse(raw);
+          if (!Array.isArray(parsed)) {
+            errors.push({ field: 'args', message: 'Args must be a JSON array.' });
+          }
+        } catch {
+          errors.push({ field: 'args', message: 'Args must be valid JSON.' });
+        }
+      }
+    }
+    return errors;
+  };
+
+  const applyFlowEditorExample = () => {
+    if (!flowEditorDraft) {
+      return;
+    }
+    const key = flowEditorDraft.kind === 'if'
+      ? 'if'
+      : flowEditorDraft.processorType;
+    const help = processorHelp[key];
+    if (!help?.example) {
+      return;
+    }
+    let parsed: any = null;
+    try {
+      parsed = JSON.parse(help.example);
+    } catch {
+      return;
+    }
+    const processorKey = Object.keys(parsed || {})[0];
+    const payload = parsed?.[processorKey];
+    if (!processorKey || !payload) {
+      return;
+    }
+    if (flowEditorDraft.kind === 'if' && processorKey === 'if') {
+      setFlowEditorDraft((prev) => (prev && prev.kind === 'if'
+        ? {
+          ...prev,
+          condition: {
+            property: String(payload.source ?? ''),
+            operator: String(payload.operator ?? '=='),
+            value: String(payload.value ?? ''),
+          },
+        }
+        : prev));
+      return;
+    }
+    if (flowEditorDraft.kind !== 'processor') {
+      return;
+    }
+    const nextConfig: Record<string, any> = { ...(flowEditorDraft.config || {}) };
+    Object.entries(payload).forEach(([field, value]) => {
+      if (field === 'array' && Array.isArray(value)) {
+        nextConfig.arrayText = JSON.stringify(value, null, 2);
+        return;
+      }
+      if (field === 'properties' && value && typeof value === 'object') {
+        nextConfig.propertiesText = JSON.stringify(value, null, 2);
+        return;
+      }
+      if (field === 'fallback' && value && typeof value === 'object') {
+        nextConfig.fallbackText = JSON.stringify(value, null, 2);
+        return;
+      }
+      if (field === 'args' && Array.isArray(value)) {
+        nextConfig.argsText = JSON.stringify(value, null, 2);
+        return;
+      }
+      if (field === 'processors' || field === 'then' || field === 'else' || field === 'case' || field === 'default') {
+        return;
+      }
+      nextConfig[field] = value;
+    });
+    setFlowEditorDraft((prev) => (prev && prev.kind === 'processor'
+      ? {
+        ...prev,
+        config: nextConfig,
+      }
+      : prev));
+  };
   const explicitFlags = permissionPaths
     .map((path) => getNestedValue(session?.ua_login, path))
     .filter((value) => value !== undefined);
@@ -400,6 +1607,11 @@ function App() {
     }, 1000);
     return () => window.clearInterval(interval);
   }, [saveLoading]);
+  useEffect(() => {
+    if (showFieldReferenceModal || eventFieldPickerOpen) {
+      ensureEventsSchema();
+    }
+  }, [showFieldReferenceModal, eventFieldPickerOpen]);
   const isAnyPanelEditing = Object.values(panelEditState).some(Boolean);
 
   const togglePanelEdit = (key: string) => {
@@ -416,9 +1628,19 @@ function App() {
         source: value,
       }));
     }
+    if (field === 'processorTarget') {
+      setProcessorDraft((prev) => ({
+        ...prev,
+        targetField: value,
+      }));
+    }
   };
 
-  const handleProcessorSourceChange = (value: string, cursorIndex: number | null) => {
+  const handleProcessorSourceChange = (
+    value: string,
+    cursorIndex: number | null,
+    inputType?: string,
+  ) => {
     setProcessorDraft((prev) => ({
       ...prev,
       source: value,
@@ -426,23 +1648,183 @@ function App() {
     if (!builderTarget) {
       return;
     }
-    const match = getVarInsertMatch(value, cursorIndex);
-    if (!match) {
+    if (inputType && !inputType.startsWith('insert')) {
       return;
     }
-    const obj = getObjectByPanelKey(builderTarget.panelKey);
-    const trapVars = obj?.trap?.variables || [];
-    setVarModalVars(Array.isArray(trapVars) ? trapVars : []);
-    setVarInsertContext({
+    const varMatch = getVarInsertMatch(value, cursorIndex);
+    if (varMatch) {
+      const obj = getObjectByPanelKey(builderTarget.panelKey);
+      const trapVars = obj?.trap?.variables || [];
+      setVarModalVars(Array.isArray(trapVars) ? trapVars : []);
+      setVarInsertContext({
+        panelKey: builderTarget.panelKey,
+        field: 'processorSource',
+        value,
+        replaceStart: varMatch.replaceStart,
+        replaceEnd: varMatch.replaceEnd,
+      });
+      setVarModalMode('insert');
+      setVarModalOpen(true);
+      setVarModalToken(varMatch.token);
+      return;
+    }
+    const eventMatch = getEventFieldInsertMatch(value, cursorIndex);
+    if (!eventMatch || isPreGlobalFlow) {
+      return;
+    }
+    setEventFieldSearch(eventMatch.query || '');
+    setEventFieldInsertContext({
       panelKey: builderTarget.panelKey,
       field: 'processorSource',
       value,
-      replaceStart: match.replaceStart,
-      replaceEnd: match.replaceEnd,
+      replaceStart: eventMatch.replaceStart,
+      replaceEnd: eventMatch.replaceEnd,
     });
-    setVarModalMode('insert');
-    setVarModalOpen(true);
-    setVarModalToken(match.token);
+    setEventFieldPickerOpen(true);
+  };
+
+  const handleProcessorTargetChange = (
+    value: string,
+    cursorIndex: number | null,
+    inputType?: string,
+  ) => {
+    setProcessorDraft((prev) => ({
+      ...prev,
+      targetField: value,
+    }));
+    if (!builderTarget) {
+      return;
+    }
+    if (inputType && !inputType.startsWith('insert')) {
+      return;
+    }
+    const eventMatch = getEventFieldInsertMatch(value, cursorIndex);
+    if (!eventMatch) {
+      return;
+    }
+    setEventFieldSearch(eventMatch.query || '');
+    setEventFieldInsertContext({
+      panelKey: builderTarget.panelKey,
+      field: 'processorTarget',
+      value,
+      replaceStart: eventMatch.replaceStart,
+      replaceEnd: eventMatch.replaceEnd,
+    });
+    setEventFieldPickerOpen(true);
+  };
+
+  const handleRegularEvalInputChange = (
+    value: string,
+    cursorIndex: number | null,
+    inputType?: string,
+  ) => {
+    setBuilderRegularText(value);
+    if (!builderTarget) {
+      return;
+    }
+    if (inputType && !inputType.startsWith('insert')) {
+      return;
+    }
+    const varMatch = getVarInsertMatch(value, cursorIndex);
+    if (varMatch) {
+      const obj = getObjectByPanelKey(builderTarget.panelKey);
+      setVarModalToken(varMatch.token);
+      setVarModalVars(Array.isArray(obj?.trap?.variables) ? obj.trap.variables : []);
+      setVarInsertContext({
+        panelKey: builderTarget.panelKey,
+        field: 'builderRegular',
+        value,
+        replaceStart: varMatch.replaceStart,
+        replaceEnd: varMatch.replaceEnd,
+      });
+      setVarModalMode('insert');
+      setVarModalOpen(true);
+      return;
+    }
+    const eventMatch = getEventFieldInsertMatch(value, cursorIndex);
+    if (!eventMatch) {
+      return;
+    }
+    setEventFieldSearch(eventMatch.query || '');
+    setEventFieldInsertContext({
+      panelKey: builderTarget.panelKey,
+      field: 'builderRegular',
+      value,
+      replaceStart: eventMatch.replaceStart,
+      replaceEnd: eventMatch.replaceEnd,
+    });
+    setEventFieldPickerOpen(true);
+  };
+
+  const splitTopLevel = (expr: string, token: string) => {
+    const parts: string[] = [];
+    let depth = 0;
+    let buffer = '';
+    for (let i = 0; i < expr.length; i += 1) {
+      const ch = expr[i];
+      if (ch === '(') {
+        depth += 1;
+      }
+      if (ch === ')') {
+        depth = Math.max(0, depth - 1);
+      }
+      if (depth === 0 && expr.slice(i, i + token.length) === token) {
+        parts.push(buffer.trim());
+        buffer = '';
+        i += token.length - 1;
+        continue;
+      }
+      buffer += ch;
+    }
+    if (buffer.trim()) {
+      parts.push(buffer.trim());
+    }
+    return parts;
+  };
+
+  const parseConditionExpression = (expr: string): ConditionTree | null => {
+    const cleaned = unwrapOuterParens(expr.trim());
+    if (!cleaned) {
+      return null;
+    }
+    const orParts = splitTopLevel(cleaned, '||');
+    if (orParts.length > 1) {
+      const children = orParts.map(parseConditionExpression);
+      if (children.some((child) => !child)) {
+        return null;
+      }
+      return {
+        id: nextBuilderId(),
+        type: 'group',
+        operator: 'OR',
+        children: children as ConditionTree[],
+      };
+    }
+    const andParts = splitTopLevel(cleaned, '&&');
+    if (andParts.length > 1) {
+      const children = andParts.map(parseConditionExpression);
+      if (children.some((child) => !child)) {
+        return null;
+      }
+      return {
+        id: nextBuilderId(),
+        type: 'group',
+        operator: 'AND',
+        children: children as ConditionTree[],
+      };
+    }
+    const match = cleaned.match(/^(.+?)(==|!=|>=|<=|>|<)(.+)$/);
+    if (!match) {
+      return null;
+    }
+    const [, left, operator, right] = match;
+    return {
+      id: nextBuilderId(),
+      type: 'condition',
+      left: left.trim(),
+      operator,
+      right: right.trim(),
+    };
   };
 
   const parseEvalToRows = (text: string) => {
@@ -450,7 +1832,7 @@ function App() {
     if (!cleaned) {
       return null;
     }
-    const rows: Array<{ left: string; operator: string; right: string; result: string }> = [];
+    const rows: BuilderConditionRow[] = [];
     let elseResult = '';
     const walk = (expr: string): boolean => {
       const node = splitTernary(unwrapOuterParens(expr.trim()));
@@ -458,16 +1840,13 @@ function App() {
         elseResult = expr.trim();
         return true;
       }
-      const condition = unwrapOuterParens(node.condition.trim());
-      const match = condition.match(/^(.+?)(==|!=|>=|<=|>|<)(.+)$/);
-      if (!match) {
+      const conditionNode = parseConditionExpression(node.condition);
+      if (!conditionNode) {
         return false;
       }
-      const [, left, operator, right] = match;
       rows.push({
-        left: left.trim(),
-        operator,
-        right: right.trim(),
+        id: nextBuilderId(),
+        condition: conditionNode,
         result: node.whenTrue.trim(),
       });
       return walk(node.whenFalse);
@@ -850,6 +2229,14 @@ function App() {
     return () => window.clearTimeout(handle);
   }, [searchQuery, searchScope, isAuthenticated]);
 
+  useEffect(() => {
+    if (!isAuthenticated) {
+      return;
+    }
+    void refreshSearchStatus();
+    return () => stopSearchStatusPolling();
+  }, [isAuthenticated]);
+
   const handleRebuildIndex = async () => {
     setSearchError(null);
     setSearchLoading(true);
@@ -1192,17 +2579,19 @@ function App() {
       'copy',
       'replace',
       'convert',
-      'interpolate',
+      'eval',
+      'json',
+      'lookup',
       'append',
       'sort',
       'split',
       'math',
-      'length',
-      'date',
       'regex',
+      'grok',
       'rename',
       'strcase',
       'substr',
+      'trim',
     ];
     for (const key of keys) {
       const target = processor?.[key]?.targetField;
@@ -1216,7 +2605,13 @@ function App() {
   const getOverrideFlags = (obj: any) => {
     const objectName = obj?.['@objectName'];
     if (!objectName) {
-      return { event: false, trap: false, pre: false, any: false };
+      return {
+        event: false,
+        trap: false,
+        pre: false,
+        any: false,
+        advancedFlow: false,
+      };
     }
     const overrides = overrideIndex.get(objectName) || [];
     const processors = overrides.flatMap((entry: any) => (Array.isArray(entry?.processors) ? entry.processors : []));
@@ -1224,7 +2619,15 @@ function App() {
     const event = targets.some((target) => target.startsWith('$.event.'));
     const trap = targets.some((target) => target.startsWith('$.trap.') || target.includes('trap.variables'));
     const pre = targets.some((target) => target.startsWith('$.preProcessors'));
-    return { event, trap, pre, any: event || trap || pre };
+    const hasProcessors = processors.length > 0;
+    const hasUntargeted = processors.some((proc: any) => !getProcessorTargetField(proc));
+    return {
+      event,
+      trap,
+      pre,
+      any: event || trap || pre || hasProcessors,
+      advancedFlow: hasProcessors && (hasUntargeted || (!event && !trap && !pre)),
+    };
   };
 
   const getOverrideTargets = (obj: any) => {
@@ -1350,6 +2753,45 @@ function App() {
 
   const reservedEventFields = new Set(['EventID', 'EventKey', 'Method']);
   const baseEventFieldOrder = ['Node', 'Summary', 'Severity', 'EventType', 'EventCategory', 'ExpireTime'];
+  const eventFieldDescriptions: Record<string, string> = {
+    EventID: 'Database-managed ID; do not set or change this value.',
+    EventKey: 'Rules-set de-duplication key used to match events in the live table.',
+    EventCategory: '1=Resolution, 2=Problem, 3=Discrete; used by correlation logic.',
+    EventType: 'Event type string used for correlation (e.g., linkUpDown).',
+    Ack: 'Acknowledged flag (1=yes, 0=no).',
+    Action: 'Non-human process that made a change (mechanizations/tools).',
+    Actor: 'Entity or user that caused the change.',
+    Count: 'De-dup count; incremented for duplicate events only.',
+    Customer: 'Customer identifier.',
+    Department: 'Department label; defaulted if missing.',
+    Details: 'JSON text for extra details (replaces Custom1–5).',
+    DeviceType: 'General device category; defaulted if missing.',
+    Duration: 'Time between FirstReported and LastChanged.',
+    EscalationFlag: 'Escalation state: 0=no, 1=pending, 2=escalated.',
+    ExpireTime: 'Seconds after LastChanged before eligible for delete.',
+    FirstReported: 'Epoch ms when the event first occurred.',
+    IPAddress: 'Device IP address; defaults to 0.0.0.0 if missing.',
+    LastChanged: 'Epoch ms when the event was last updated.',
+    LastReported: 'Epoch ms when the event last occurred.',
+    Location: 'Location name/address used by analytics.',
+    Method: 'Protocol/source that received the event (e.g., Trapd, Syslogd).',
+    Node: 'Device name (often DNS), derived from IP lookup.',
+    OrigSeverity: 'Original severity at creation.',
+    OwnerName: 'Current owner/assignee username.',
+    RootCauseFlag: 'Flag indicating the event is a root cause.',
+    RootCauseID: 'EventID of the root cause event.',
+    Score: 'Ranking score (often Severity × Priority).',
+    Service: 'SLM service name when a violation is detected.',
+    ServiceImpact: 'Service impact indicator/level.',
+    Severity: 'Severity 0–5 for display and routing.',
+    SubDeviceType: 'Vendor/model information; defaulted if missing.',
+    SubMethod: 'Specific processing label (e.g., MIB name).',
+    SubNode: 'Event instance (e.g., ifIndex) used for correlation.',
+    Summary: 'Free-form summary shown in the event list.',
+    TicketFlag: 'Ticket state: 0=none, 1=create, 2=processing, 3=opened.',
+    TicketID: 'External ticket ID.',
+    ZoneID: 'Device zone identifier.',
+  };
 
   const getExistingEventFields = (obj: any, panelKey: string) => {
     const fields = new Set<string>();
@@ -1377,6 +2819,7 @@ function App() {
   const formatEventFieldLabel = (field: string) => (
     field.replace(/([a-z])([A-Z])/g, '$1 $2')
   );
+  const getEventFieldDescription = (field: string) => eventFieldDescriptions[field] || '';
 
   const openAddFieldModal = (panelKey: string, obj: any) => {
     setAddFieldContext({ panelKey, obj });
@@ -1792,7 +3235,11 @@ function App() {
       return '—';
     }
     if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
-      return renderHighlightedText(String(value));
+      const text = String(value);
+      if (typeof value === 'string' && text.includes('$v')) {
+        return renderEvalLineWithVars(text, trapVars);
+      }
+      return renderHighlightedText(text);
     }
     if (value && typeof value === 'object' && typeof value.eval === 'string') {
       return renderEvalDisplay(value.eval, trapVars);
@@ -1824,16 +3271,90 @@ function App() {
     return { token: match[0], replaceStart: start, replaceEnd: cursorIndex };
   };
 
+  const getEventFieldInsertMatch = (value: string, cursorIndex: number | null) => {
+    if (cursorIndex === null) {
+      return null;
+    }
+    const prefix = value.slice(0, cursorIndex);
+    const match = prefix.match(/\$\.event\.?[A-Za-z0-9_]*$/);
+    if (!match) {
+      return null;
+    }
+    const start = prefix.lastIndexOf(match[0]);
+    const token = match[0];
+    const rawQuery = token.replace('$.event', '').replace(/^\./, '');
+    return {
+      token,
+      query: rawQuery,
+      replaceStart: start,
+      replaceEnd: cursorIndex,
+    };
+  };
+
   const handleVarInsertSelect = (token: string) => {
     if (!varInsertContext) {
       return;
     }
     const { panelKey, field, value, replaceStart, replaceEnd } = varInsertContext;
     const nextValue = `${value.slice(0, replaceStart)}${token}${value.slice(replaceEnd)}`;
-    if (field === 'processorSource') {
+    if (panelKey === '__flow__') {
+      setFlowEditorDraft((prev) => {
+        if (!prev) {
+          return prev;
+        }
+        if (field === 'flowEditor.source') {
+          return {
+            ...prev,
+            config: {
+              ...(prev as FlowProcessorNode).config,
+              source: nextValue,
+            },
+          } as FlowNode;
+        }
+        if (field === 'flowEditor.targetField') {
+          return {
+            ...prev,
+            config: {
+              ...(prev as FlowProcessorNode).config,
+              targetField: nextValue,
+            },
+          } as FlowNode;
+        }
+        if (field === 'flowEditor.pattern') {
+          return {
+            ...prev,
+            config: {
+              ...(prev as FlowProcessorNode).config,
+              pattern: nextValue,
+            },
+          } as FlowNode;
+        }
+        if (field === 'flowEditor.condition.property' && prev.kind === 'if') {
+          return {
+            ...prev,
+            condition: {
+              ...prev.condition,
+              property: nextValue,
+            },
+          } as FlowNode;
+        }
+        if (field === 'flowEditor.condition.value' && prev.kind === 'if') {
+          return {
+            ...prev,
+            condition: {
+              ...prev.condition,
+              value: nextValue,
+            },
+          } as FlowNode;
+        }
+        return prev;
+      });
+    } else if (field === 'processorSource' || field === 'processorTarget') {
       updateBuilderDraftField(field, nextValue);
     } else if (field === 'builderLiteral') {
       setBuilderLiteralText(nextValue);
+    } else if (field === 'builderRegular') {
+      setBuilderRegularText(nextValue);
     } else {
       setPanelDrafts((prev) => ({
         ...prev,
@@ -1852,6 +3373,188 @@ function App() {
     setVarModalToken(null);
   };
 
+  const handleEventFieldInsertSelect = (fieldName: string) => {
+    if (!eventFieldInsertContext) {
+      return;
+    }
+    const { panelKey, field, value, replaceStart, replaceEnd } = eventFieldInsertContext;
+    if (panelKey === '__flow__' && isPreGlobalFlow) {
+      setEventFieldPickerOpen(false);
+      setEventFieldInsertContext(null);
+      return;
+    }
+    const insertToken = `$.event.${fieldName}`;
+    const nextValue = `${value.slice(0, replaceStart)}${insertToken}${value.slice(replaceEnd)}`;
+    if (panelKey === '__flow__') {
+      setFlowEditorDraft((prev) => {
+        if (!prev) {
+          return prev;
+        }
+        if (field === 'flowEditor.source') {
+          return {
+            ...prev,
+            config: {
+              ...(prev as FlowProcessorNode).config,
+              source: nextValue,
+            },
+          } as FlowNode;
+        }
+        if (field === 'flowEditor.targetField') {
+          return {
+            ...prev,
+            config: {
+              ...(prev as FlowProcessorNode).config,
+              targetField: nextValue,
+            },
+          } as FlowNode;
+        }
+        if (field === 'flowEditor.pattern') {
+          return {
+            ...prev,
+            config: {
+              ...(prev as FlowProcessorNode).config,
+              pattern: nextValue,
+            },
+          } as FlowNode;
+        }
+        if (field === 'flowEditor.condition.property' && prev.kind === 'if') {
+          return {
+            ...prev,
+            condition: {
+              ...prev.condition,
+              property: nextValue,
+            },
+          } as FlowNode;
+        }
+        if (field === 'flowEditor.condition.value' && prev.kind === 'if') {
+          return {
+            ...prev,
+            condition: {
+              ...prev.condition,
+              value: nextValue,
+            },
+          } as FlowNode;
+        }
+        return prev;
+      });
+    } else if (field === 'processorSource') {
+      updateBuilderDraftField(field, nextValue);
+    } else if (field === 'builderLiteral') {
+      setBuilderLiteralText(nextValue);
+    } else if (field === 'builderRegular') {
+      setBuilderRegularText(nextValue);
+    } else {
+      setPanelDrafts((prev) => ({
+        ...prev,
+        [panelKey]: {
+          ...prev[panelKey],
+          event: {
+            ...prev[panelKey]?.event,
+            [field]: nextValue,
+          },
+        },
+      }));
+    }
+    setEventFieldPickerOpen(false);
+    setEventFieldInsertContext(null);
+  };
+
+  const handleFlowEditorInputChange = (
+    fieldKey: 'flowEditor.source' | 'flowEditor.targetField' | 'flowEditor.pattern'
+    | 'flowEditor.condition.property' | 'flowEditor.condition.value',
+    value: string,
+    cursorIndex: number | null,
+    inputType?: string,
+  ) => {
+    setFlowEditorDraft((prev) => {
+      if (!prev) {
+        return prev;
+      }
+      if (fieldKey === 'flowEditor.source') {
+        return {
+          ...prev,
+          config: {
+            ...(prev as FlowProcessorNode).config,
+            source: value,
+          },
+        } as FlowNode;
+      }
+      if (fieldKey === 'flowEditor.targetField') {
+        return {
+          ...prev,
+          config: {
+            ...(prev as FlowProcessorNode).config,
+            targetField: value,
+          },
+        } as FlowNode;
+      }
+      if (fieldKey === 'flowEditor.pattern') {
+        return {
+          ...prev,
+          config: {
+            ...(prev as FlowProcessorNode).config,
+            pattern: value,
+          },
+        } as FlowNode;
+      }
+      if (fieldKey === 'flowEditor.condition.property' && prev.kind === 'if') {
+        return {
+          ...prev,
+          condition: {
+            ...prev.condition,
+            property: value,
+          },
+        } as FlowNode;
+      }
+      if (fieldKey === 'flowEditor.condition.value' && prev.kind === 'if') {
+        return {
+          ...prev,
+          condition: {
+            ...prev.condition,
+            value,
+          },
+        } as FlowNode;
+      }
+      return prev;
+    });
+
+    if (inputType && !inputType.startsWith('insert')) {
+      return;
+    }
+
+    const varMatch = getVarInsertMatch(value, cursorIndex);
+    if (varMatch) {
+      const obj = builderTarget ? getObjectByPanelKey(builderTarget.panelKey) : null;
+      const trapVars = obj?.trap?.variables || [];
+      setVarModalVars(Array.isArray(trapVars) ? trapVars : []);
+      setVarInsertContext({
+        panelKey: '__flow__',
+        field: fieldKey,
+        value,
+        replaceStart: varMatch.replaceStart,
+        replaceEnd: varMatch.replaceEnd,
+      });
+      setVarModalMode('insert');
+      setVarModalOpen(true);
+      setVarModalToken(varMatch.token);
+      return;
+    }
+
+    const eventMatch = getEventFieldInsertMatch(value, cursorIndex);
+    if (!eventMatch) {
+      return;
+    }
+    setEventFieldSearch(eventMatch.query || '');
+    setEventFieldInsertContext({
+      panelKey: '__flow__',
+      field: fieldKey,
+      value,
+      replaceStart: eventMatch.replaceStart,
+      replaceEnd: eventMatch.replaceEnd,
+    });
+    setEventFieldPickerOpen(true);
+  };
+
   const handleLiteralInputChange = (
     value: string,
     cursorIndex: number | null,
@@ -1866,6 +3569,19 @@ function App() {
     }
     const match = getVarInsertMatch(value, cursorIndex);
     if (!match) {
+      const eventMatch = getEventFieldInsertMatch(value, cursorIndex);
+      if (!eventMatch) {
+        return;
+      }
+      setEventFieldSearch(eventMatch.query || '');
+      setEventFieldInsertContext({
+        panelKey: builderTarget.panelKey,
+        field: 'builderLiteral',
+        value,
+        replaceStart: eventMatch.replaceStart,
+        replaceEnd: eventMatch.replaceEnd,
+      });
+      setEventFieldPickerOpen(true);
       return;
     }
     const obj = getObjectByPanelKey(builderTarget.panelKey);
@@ -1905,20 +3621,34 @@ function App() {
       return;
     }
     const match = getVarInsertMatch(value, cursorIndex);
-    if (!match) {
+    if (match) {
+      setVarModalToken(match.token);
+      setVarModalVars(Array.isArray(obj?.trap?.variables) ? obj.trap.variables : []);
+      setVarModalMode('insert');
+      setVarInsertContext({
+        panelKey,
+        field,
+        value,
+        replaceStart: match.replaceStart,
+        replaceEnd: match.replaceEnd,
+      });
+      setVarModalOpen(true);
       return;
     }
-    setVarModalToken(match.token);
-    setVarModalVars(Array.isArray(obj?.trap?.variables) ? obj.trap.variables : []);
-    setVarModalMode('insert');
-    setVarInsertContext({
+
+    const eventMatch = getEventFieldInsertMatch(value, cursorIndex);
+    if (!eventMatch) {
+      return;
+    }
+    setEventFieldSearch(eventMatch.query || '');
+    setEventFieldInsertContext({
       panelKey,
       field,
       value,
-      replaceStart: match.replaceStart,
-      replaceEnd: match.replaceEnd,
+      replaceStart: eventMatch.replaceStart,
+      replaceEnd: eventMatch.replaceEnd,
     });
-    setVarModalOpen(true);
+    setEventFieldPickerOpen(true);
   };
 
   const openBuilderForField = (obj: any, panelKey: string, field: string) => {
@@ -1959,7 +3689,6 @@ function App() {
         sourceType: existingProcessor.regex?.source?.startsWith('$.') ? 'path' : 'literal',
         source: String(existingProcessor.regex?.source ?? ''),
         pattern: String(existingProcessor.regex?.pattern ?? ''),
-        group: String(existingProcessor.regex?.group ?? '1'),
         targetField: existingProcessor.regex?.targetField ?? targetPath,
       });
       return;
@@ -1973,7 +3702,6 @@ function App() {
         sourceType: existingProcessor.set?.source?.startsWith('$.') ? 'path' : 'literal',
         source: String(existingProcessor.set?.source ?? ''),
         pattern: '',
-        group: '1',
         targetField: existingProcessor.set?.targetField ?? targetPath,
       });
       return;
@@ -1986,7 +3714,7 @@ function App() {
       setBuilderTypeLocked('eval');
       if (parsed) {
         setBuilderMode('friendly');
-        setBuilderRows(parsed.rows);
+        setBuilderConditions(parsed.rows);
         setBuilderElseResult(parsed.elseResult);
       } else {
         setBuilderMode('regular');
@@ -2007,7 +3735,6 @@ function App() {
       sourceType: 'literal',
       source: '',
       pattern: '',
-      group: '1',
       targetField: targetPath,
     });
   };
@@ -2163,13 +3890,421 @@ function App() {
         regex: {
           source: sourceValue,
           pattern: processorDraft.pattern,
-          group: Number(processorDraft.group) || 1,
           targetField,
         },
       };
     }
     return null;
   };
+
+  type ProcessorCatalogItem = {
+    id: string;
+    label: string;
+    nodeKind: 'processor' | 'if';
+    status: 'working' | 'testing' | 'planned';
+    paletteLabel?: string;
+    builderEnabled: boolean;
+    helpKey: keyof typeof processorHelp;
+  };
+
+  const processorCatalog: ProcessorCatalogItem[] = [
+    {
+      id: 'set',
+      label: 'Set',
+      nodeKind: 'processor',
+      status: 'testing',
+      builderEnabled: true,
+      helpKey: 'set',
+    },
+    {
+      id: 'regex',
+      label: 'Regex',
+      nodeKind: 'processor',
+      status: 'testing',
+      builderEnabled: true,
+      helpKey: 'regex',
+    },
+    {
+      id: 'if',
+      label: 'If',
+      paletteLabel: 'If (Flow)',
+      nodeKind: 'if',
+      status: 'testing',
+      builderEnabled: false,
+      helpKey: 'if',
+    },
+    {
+      id: 'append',
+      label: 'Append',
+      nodeKind: 'processor',
+      status: 'testing',
+      builderEnabled: false,
+      helpKey: 'append',
+    },
+    {
+      id: 'appendToOutputStream',
+      label: 'Append to Output Stream',
+      nodeKind: 'processor',
+      status: 'testing',
+      builderEnabled: false,
+      helpKey: 'appendToOutputStream',
+    },
+    {
+      id: 'break',
+      label: 'Break',
+      nodeKind: 'processor',
+      status: 'testing',
+      builderEnabled: false,
+      helpKey: 'break',
+    },
+    {
+      id: 'convert',
+      label: 'Convert',
+      nodeKind: 'processor',
+      status: 'testing',
+      builderEnabled: false,
+      helpKey: 'convert',
+    },
+    {
+      id: 'copy',
+      label: 'Copy',
+      nodeKind: 'processor',
+      status: 'testing',
+      builderEnabled: false,
+      helpKey: 'copy',
+    },
+    {
+      id: 'discard',
+      label: 'Discard',
+      nodeKind: 'processor',
+      status: 'testing',
+      builderEnabled: false,
+      helpKey: 'discard',
+    },
+    {
+      id: 'eval',
+      label: 'Eval',
+      nodeKind: 'processor',
+      status: 'testing',
+      builderEnabled: false,
+      helpKey: 'eval',
+    },
+    {
+      id: 'foreach',
+      label: 'Foreach',
+      nodeKind: 'processor',
+      status: 'testing',
+      builderEnabled: false,
+      helpKey: 'foreach',
+    },
+    {
+      id: 'grok',
+      label: 'Grok',
+      nodeKind: 'processor',
+      status: 'testing',
+      builderEnabled: false,
+      helpKey: 'grok',
+    },
+    {
+      id: 'json',
+      label: 'JSON',
+      nodeKind: 'processor',
+      status: 'testing',
+      builderEnabled: false,
+      helpKey: 'json',
+    },
+    {
+      id: 'log',
+      label: 'Log',
+      nodeKind: 'processor',
+      status: 'testing',
+      builderEnabled: false,
+      helpKey: 'log',
+    },
+    {
+      id: 'lookup',
+      label: 'Lookup',
+      nodeKind: 'processor',
+      status: 'testing',
+      builderEnabled: false,
+      helpKey: 'lookup',
+    },
+    {
+      id: 'math',
+      label: 'Math',
+      nodeKind: 'processor',
+      status: 'testing',
+      builderEnabled: false,
+      helpKey: 'math',
+    },
+    {
+      id: 'remove',
+      label: 'Remove',
+      nodeKind: 'processor',
+      status: 'testing',
+      builderEnabled: false,
+      helpKey: 'remove',
+    },
+    {
+      id: 'rename',
+      label: 'Rename',
+      nodeKind: 'processor',
+      status: 'testing',
+      builderEnabled: false,
+      helpKey: 'rename',
+    },
+    {
+      id: 'replace',
+      label: 'Replace',
+      nodeKind: 'processor',
+      status: 'testing',
+      builderEnabled: false,
+      helpKey: 'replace',
+    },
+    {
+      id: 'setOutputStream',
+      label: 'Set Output Stream',
+      nodeKind: 'processor',
+      status: 'testing',
+      builderEnabled: false,
+      helpKey: 'setOutputStream',
+    },
+    {
+      id: 'sort',
+      label: 'Sort',
+      nodeKind: 'processor',
+      status: 'testing',
+      builderEnabled: false,
+      helpKey: 'sort',
+    },
+    {
+      id: 'split',
+      label: 'Split',
+      nodeKind: 'processor',
+      status: 'testing',
+      builderEnabled: false,
+      helpKey: 'split',
+    },
+    {
+      id: 'strcase',
+      label: 'String Case',
+      nodeKind: 'processor',
+      status: 'testing',
+      builderEnabled: false,
+      helpKey: 'strcase',
+    },
+    {
+      id: 'substr',
+      label: 'Substring',
+      nodeKind: 'processor',
+      status: 'testing',
+      builderEnabled: false,
+      helpKey: 'substr',
+    },
+    {
+      id: 'switch',
+      label: 'Switch',
+      nodeKind: 'processor',
+      status: 'testing',
+      builderEnabled: false,
+      helpKey: 'switch',
+    },
+    {
+      id: 'trim',
+      label: 'Trim',
+      nodeKind: 'processor',
+      status: 'testing',
+      builderEnabled: false,
+      helpKey: 'trim',
+    },
+  ];
+
+  const flowPalette: Array<{
+    label: string;
+    nodeKind: 'processor' | 'if';
+    processorType?: string;
+    status: 'working' | 'testing' | 'planned';
+  }> = processorCatalog.map((item) => ({
+    label: item.paletteLabel || item.label,
+    nodeKind: item.nodeKind,
+    processorType: item.nodeKind === 'processor' ? item.id : undefined,
+    status: item.status,
+  }));
+  const paletteSearch = advancedProcessorSearch.trim().toLowerCase();
+  const filteredFlowPalette = flowPalette.filter((item) => (
+    item.label.toLowerCase().includes(paletteSearch)
+  ));
+  const paletteSections = [
+    { title: 'Working', status: 'working' as const },
+    { title: 'Testing', status: 'testing' as const },
+    { title: 'Planned', status: 'planned' as const },
+  ].map((section) => ({
+    ...section,
+    items: filteredFlowPalette.filter((item) => item.status === section.status),
+  }));
+
+  const getFlowNodeLabel = (node: FlowNode) => {
+    if (node.kind === 'if') {
+      return 'If';
+    }
+    const item = flowPalette.find((entry) => entry.processorType === node.processorType);
+    return item?.label || node.processorType;
+  };
+
+  const handleFlowDragOver = (event: React.DragEvent<HTMLElement>) => {
+    event.stopPropagation();
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'copy';
+  };
+
+  const handleFlowDrop = (
+    event: React.DragEvent<HTMLElement>,
+    path: FlowBranchPath,
+    setNodes: React.Dispatch<React.SetStateAction<FlowNode[]>>,
+  ) => {
+    event.stopPropagation();
+    event.preventDefault();
+    const payloadRaw = event.dataTransfer.getData('application/json')
+      || event.dataTransfer.getData('text/plain');
+    if (!payloadRaw) {
+      return;
+    }
+    let payload: any = null;
+    try {
+      payload = JSON.parse(payloadRaw);
+    } catch {
+      return;
+    }
+    if (!payload || typeof payload !== 'object') {
+      return;
+    }
+    if (payload.source === 'palette') {
+      const newNode = createFlowNode(payload);
+      setNodes((prev) => appendNodeAtPath(prev, path, newNode));
+      return;
+    }
+    if (payload.source === 'flow' && payload.nodeId) {
+      setNodes((prev) => {
+        const { nodes, removed } = removeNodeById(prev, payload.nodeId);
+        if (!removed) {
+          return prev;
+        }
+        return appendNodeAtPath(nodes, path, removed);
+      });
+    }
+  };
+
+  const renderFlowList = (
+    nodes: FlowNode[],
+    path: FlowBranchPath,
+    setNodes: React.Dispatch<React.SetStateAction<FlowNode[]>>,
+    scope: 'object' | 'global',
+    lane: 'object' | 'pre' | 'post',
+  ) => (
+    <div
+      className="flow-lane"
+      onDragOver={handleFlowDragOver}
+      onDrop={(event) => handleFlowDrop(event, path, setNodes)}
+    >
+      {nodes.length === 0 && (
+        <div className="flow-empty">Drop processors here</div>
+      )}
+      {nodes.map((node) => (
+        <div
+          key={node.id}
+          className={node.kind === 'if' ? 'flow-node flow-node-if' : 'flow-node'}
+          draggable
+          onDragStart={(event) => {
+            const payload = JSON.stringify({
+              source: 'flow',
+              nodeId: node.id,
+            });
+            event.dataTransfer.setData('application/json', payload);
+            event.dataTransfer.setData('text/plain', payload);
+          }}
+        >
+          <div className="flow-node-header">
+            <div className="flow-node-title">{getFlowNodeLabel(node)}</div>
+            <div className="flow-node-actions">
+              <button
+                type="button"
+                className="flow-node-edit"
+                onClick={() => openFlowEditor(node.id, scope, lane, nodes, setNodes)}
+              >
+                Edit
+              </button>
+              <button
+                type="button"
+                className="flow-node-remove"
+                onClick={() => setNodes((prev) => removeNodeById(prev, node.id).nodes)}
+              >
+                Remove
+              </button>
+            </div>
+          </div>
+          {node.kind === 'if' && (
+            <div className="flow-branches">
+              <div className="flow-branch">
+                <div className="flow-branch-title">Then</div>
+                {renderFlowList(node.then, { kind: 'if', id: node.id, branch: 'then' }, setNodes, scope, lane)}
+              </div>
+              <div className="flow-branch">
+                <div className="flow-branch-title">Else</div>
+                {renderFlowList(node.else, { kind: 'if', id: node.id, branch: 'else' }, setNodes, scope, lane)}
+              </div>
+            </div>
+          )}
+          {node.kind === 'processor' && node.processorType === 'foreach' && (
+            <div className="flow-branches">
+              <div className="flow-branch">
+                <div className="flow-branch-title">Per-item processors</div>
+                {renderFlowList(
+                  Array.isArray(node.config?.processors)
+                    ? node.config.processors
+                    : [],
+                  { kind: 'foreach', id: node.id, branch: 'processors' },
+                  setNodes,
+                  scope,
+                  lane,
+                )}
+              </div>
+            </div>
+          )}
+          {node.kind === 'processor' && node.processorType === 'switch' && (
+            <div className="flow-branches">
+              <div className="flow-branch">
+                <div className="flow-branch-title">Cases</div>
+                {(Array.isArray(node.config?.cases) ? node.config.cases : []).map((item: any) => (
+                  <div key={item.id} className="flow-branch flow-branch-nested">
+                    <div className="flow-branch-title">Case</div>
+                    {renderFlowList(
+                      Array.isArray(item.processors) ? item.processors : [],
+                      { kind: 'switch', id: node.id, branch: 'case', caseId: item.id },
+                      setNodes,
+                      scope,
+                      lane,
+                    )}
+                  </div>
+                ))}
+              </div>
+              <div className="flow-branch">
+                <div className="flow-branch-title">Default</div>
+                {renderFlowList(
+                  Array.isArray(node.config?.defaultProcessors)
+                    ? node.config.defaultProcessors
+                    : [],
+                  { kind: 'switch', id: node.id, branch: 'default' },
+                  setNodes,
+                  scope,
+                  lane,
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
 
   const applyProcessor = () => {
     if (!builderTarget) {
@@ -2235,51 +4370,169 @@ function App() {
   };
 
   const processorHelp: Record<string, { title: string; description: string; example: string }> = {
-    set: {
-      title: 'Set',
-      description: 'Set a target field to a literal value or another field path. Useful for overrides or copying values.',
-      example: '{"set": {"source": "$.event.Summary", "targetField": "$.event.Description"}}',
+    append: {
+      title: 'Append',
+      description: 'Append a value to an array or concatenate text into a target field (planned).',
+      example: '{"append": {"source": "Example Value", "array": [], "targetField": "$.event.NewArray"}}',
     },
-    regex: {
-      title: 'Regex',
-      description: 'Extract a value from text using a regular expression capture group and store it in a target field.',
-      example: '{"regex": {"source": "$.event.Summary", "pattern": "type=(\\w+)", "group": 1, "targetField": "$.event.EventType"}}',
+    appendToOutputStream: {
+      title: 'Append to Output Stream',
+      description: 'Append data to a configured output stream (planned).',
+      example: '{"appendToOutputStream": {"source": "$.trap", "output": "pulsar+ssl:///assure1/event/sink"}}',
+    },
+    break: {
+      title: 'Break',
+      description: 'Stop processing the current processor chain (planned).',
+      example: '{"break": {}}',
     },
     convert: {
       title: 'Convert',
       description: 'Convert a value from one type/format to another (planned).',
-      example: '{"convert": {"source": "$.event.ExpireTime", "type": "int", "targetField": "$.event.ExpireTime"}}',
+      example: '{"convert": {"source": "$.event.Count", "type": "inttostring", "targetField": "$.event.CountString", "ignoreFailure": true}}',
+    },
+    copy: {
+      title: 'Copy',
+      description: 'Copy a value from one field to another (planned).',
+      example: '{"copy": {"source": "$.event.Count", "targetField": "$.event.CopiedCount"}}',
+    },
+    discard: {
+      title: 'Discard',
+      description: 'Discard the event or processing result (planned).',
+      example: '{"discard": {}}',
+    },
+    eval: {
+      title: 'Eval',
+      description: 'Evaluate a JavaScript expression and store the result (planned).',
+      example: '{"eval": {"source": "<expression>", "targetField": "$.localmem.evalResult"}}',
+    },
+    foreach: {
+      title: 'Foreach',
+      description: 'Iterate over an array/object and run processors for each item (planned).',
+      example: '{"foreach": {"source": "$.event.Details.trap.variables", "keyVal": "i", "valField": "v", "processors": []}}',
+    },
+    grok: {
+      title: 'Grok',
+      description: 'Parse text using Grok patterns and store extracted values (planned).',
+      example: '{"grok": {"source": "$.syslog.datagram", "pattern": "%LINK-5-CHANGED: Interface %{VALUE:interface}, changed state to %{VALUE:status}", "targetField": "$.syslog.variables"}}',
+    },
+    if: {
+      title: 'If',
+      description: 'Conditionally run processors based on a single condition (planned).',
+      example: '{"if": {"source": "$.event.EventCategory", "operator": "==", "value": 3, "processors": [], "else": []}}',
+    },
+    json: {
+      title: 'JSON',
+      description: 'Parse a JSON string and store the result (planned).',
+      example: '{"json": {"source": "{\"key\":\"value\"}", "targetField": "$.localmem.json"}}',
+    },
+    log: {
+      title: 'Log',
+      description: 'Write a message to the processor log (planned).',
+      example: '{"log": {"type": "info", "source": "Log message"}}',
+    },
+    lookup: {
+      title: 'Lookup',
+      description: 'Lookup data from a source and store it in a target field (planned).',
+      example: '{"lookup": {"source": "db", "properties": {}, "fallback": {}, "targetField": "$.localmem.results"}}',
     },
     math: {
       title: 'Math',
       description: 'Apply arithmetic to a numeric source and store the result (planned).',
-      example: '{"math": {"source": "$.event.Retry", "op": "*", "value": 2, "targetField": "$.event.Retry"}}',
+      example: '{"math": {"source": "$.event.Count", "operation": "*", "value": 2, "targetField": "$.localmem.CountTimesTwo"}}',
     },
-    append: {
-      title: 'Append',
-      description: 'Append or concatenate text to a source value (planned).',
-      example: '{"append": {"source": "$.event.Summary", "value": " (validated)", "targetField": "$.event.Summary"}}',
+    regex: {
+      title: 'Regex',
+      description: 'Extract a value from text using a regular expression capture group and store it in a target field.',
+      example: '{"regex": {"source": "Events are cleared", "pattern": "Events are (?<text>.*$)", "targetField": ""}}',
     },
-    map: {
-      title: 'Map/Lookup',
-      description: 'Map a value to a new output using a lookup table (planned).',
-      example: '{"map": {"source": "$.event.Severity", "map": {"1": "Critical"}, "targetField": "$.event.Severity"}}',
+    remove: {
+      title: 'Remove',
+      description: 'Remove a field from the payload (planned).',
+      example: '{"remove": {"source": "$.trap.timeTicks"}}',
+    },
+    rename: {
+      title: 'Rename',
+      description: 'Rename or move a field to a new target (planned).',
+      example: '{"rename": {"source": "$.event.Details", "targetField": "$.event.DetailsOld"}}',
+    },
+    replace: {
+      title: 'Replace',
+      description: 'Replace text in a source string (planned).',
+      example: '{"replace": {"source": "This is a test", "pattern": "a test", "replacement": "not a test", "targetField": "$.localmem.example"}}',
+    },
+    set: {
+      title: 'Set',
+      description: 'Set a target field to a literal value or another field path. Useful for overrides or copying values.',
+      example: '{"set": {"source": "$.event.%s", "args": ["Details"], "targetField": "$.event.Details2"}}',
+    },
+    setOutputStream: {
+      title: 'Set Output Stream',
+      description: 'Change the output stream for the event (planned).',
+      example: '{"setOutputStream": {"output": "pulsar+ssl:///assure1/event/sink"}}',
+    },
+    sort: {
+      title: 'Sort',
+      description: 'Sort an array or list and store it (planned).',
+      example: '{"sort": {"source": "$.trap.variables", "targetField": "$.trap.sortedVariables"}}',
+    },
+    split: {
+      title: 'Split',
+      description: 'Split a string using a delimiter (planned).',
+      example: '{"split": {"source": "1,2,3,4", "delimiter": ",", "targetField": "$.localmem.splitarr"}}',
+    },
+    strcase: {
+      title: 'String Case',
+      description: 'Change the case of a string (planned).',
+      example: '{"strcase": {"source": "HELLO, WORLD", "type": "lower", "targetField": "$.localmem.lowercase"}}',
+    },
+    substr: {
+      title: 'Substring',
+      description: 'Extract a substring from a source value (planned).',
+      example: '{"substr": {"source": "Hello", "start": 1, "targetField": "$.localmem.substr"}}',
+    },
+    switch: {
+      title: 'Switch',
+      description: 'Branch processors based on matching cases (planned).',
+      example: '{"switch": {"source": "$.localmem.val1", "operator": "!=", "case": [{"match": 2, "then": [{"discard": {}}]}, {"match": 5, "operator": "==", "then": [{"discard": {}}]}], "default": [{"log": {"type": "info", "source": "Do nothing since none of the cases were met"}}]}}',
+    },
+    trim: {
+      title: 'Trim',
+      description: 'Trim characters from a source string (planned).',
+      example: '{"trim": {"source": "Hello", "cutset": "H", "targetField": "$.localmem.trim"}}',
     },
   };
 
   const renderProcessorHelp = (key: keyof typeof processorHelp) => {
     const help = processorHelp[key];
     return (
-      <span className="processor-help override-summary" tabIndex={0}>
+      <span
+        className="processor-help"
+        tabIndex={0}
+        role="button"
+        onMouseEnter={(event) => {
+          const rect = event.currentTarget.getBoundingClientRect();
+          setProcessorTooltip({
+            title: help.title,
+            description: help.description,
+            example: help.example,
+            x: rect.left + rect.width / 2,
+            y: rect.bottom + 8,
+          });
+        }}
+        onMouseLeave={() => setProcessorTooltip(null)}
+        onFocus={(event) => {
+          const rect = event.currentTarget.getBoundingClientRect();
+          setProcessorTooltip({
+            title: help.title,
+            description: help.description,
+            example: help.example,
+            x: rect.left + rect.width / 2,
+            y: rect.bottom + 8,
+          });
+        }}
+        onBlur={() => setProcessorTooltip(null)}
+      >
         <span className="processor-help-icon">?</span>
-        <div className="override-summary-card" role="tooltip">
-          <div className="override-summary-title">{help.title}</div>
-          <div className="processor-help-text">{help.description}</div>
-          <details className="processor-help-code">
-            <summary>Example</summary>
-            <div className="processor-help-snippet">{help.example}</div>
-          </details>
-        </div>
       </span>
     );
   };
@@ -2289,6 +4542,47 @@ function App() {
       return;
     }
     setBuilderRegularText(template);
+  };
+
+  const handleBuilderSelect = (item: ProcessorCatalogItem, isEnabled: boolean) => {
+    if (!isEnabled) {
+      return;
+    }
+    if (item.id === 'if') {
+      setAdvancedProcessorScope('object');
+      setShowAdvancedProcessorModal(true);
+      return;
+    }
+    if (item.id === 'set') {
+      setProcessorType('set');
+      setProcessorStep('configure');
+      setProcessorDraft((prev) => ({
+        ...prev,
+        sourceType: 'literal',
+        source: '',
+        pattern: '',
+        targetField: builderTarget
+          ? `$.event.${builderTarget.field}`
+          : prev.targetField,
+      }));
+      return;
+    }
+    if (item.id === 'regex') {
+      setProcessorType('regex');
+      setProcessorStep('configure');
+      setProcessorDraft((prev) => ({
+        ...prev,
+        sourceType: 'path',
+        source: '$.event.Summary',
+        pattern: '',
+        targetField: builderTarget
+          ? `$.event.${builderTarget.field}`
+          : prev.targetField,
+      }));
+      return;
+    }
+    setProcessorType(item.id);
+    setProcessorStep('configure');
   };
 
   useEffect(() => {
@@ -2308,7 +4602,7 @@ function App() {
     }
     builderSyncRef.current = 'friendly';
     setBuilderRegularText(compiled);
-  }, [builderRows, builderElseResult]);
+  }, [builderConditions, builderElseResult]);
 
   useEffect(() => {
     if (!builderTarget) {
@@ -2327,29 +4621,137 @@ function App() {
       return;
     }
     builderSyncRef.current = 'regular';
-    setBuilderRows(parsed.rows);
+    setBuilderConditions(parsed.rows);
     setBuilderElseResult(parsed.elseResult);
   }, [builderRegularText]);
 
-  const updateBuilderRow = (index: number, key: 'left' | 'operator' | 'right' | 'result', value: string) => {
-    setBuilderRows((prev) => prev.map((row, idx) => (
-      idx === index ? { ...row, [key]: value } : row
+  const updateConditionNode = (
+    node: ConditionTree,
+    targetId: string,
+    updater: (current: ConditionTree) => ConditionTree,
+  ): ConditionTree => {
+    if (node.id === targetId) {
+      return updater(node);
+    }
+    if (node.type === 'group') {
+      return {
+        ...node,
+        children: node.children.map((child) => updateConditionNode(child, targetId, updater)),
+      };
+    }
+    return node;
+  };
+
+  const updateBuilderCondition = (
+    rowId: string,
+    nodeId: string,
+    key: 'left' | 'operator' | 'right',
+    value: string,
+  ) => {
+    setBuilderConditions((prev) => prev.map((row) => (
+      row.id === rowId
+        ? {
+          ...row,
+          condition: updateConditionNode(row.condition, nodeId, (current) => (
+            current.type === 'condition'
+              ? { ...current, [key]: value }
+              : current
+          )),
+        }
+        : row
+    )));
+  };
+
+  const updateConditionGroupOperator = (rowId: string, nodeId: string, operator: 'AND' | 'OR') => {
+    setBuilderConditions((prev) => prev.map((row) => (
+      row.id === rowId
+        ? {
+          ...row,
+          condition: updateConditionNode(row.condition, nodeId, (current) => (
+            current.type === 'group' ? { ...current, operator } : current
+          )),
+        }
+        : row
+    )));
+  };
+
+  const addConditionChild = (rowId: string, nodeId: string, type: 'condition' | 'group') => {
+    const newChild = type === 'group' ? createGroupNode() : createConditionNode();
+    setBuilderConditions((prev) => prev.map((row) => (
+      row.id === rowId
+        ? {
+          ...row,
+          condition: updateConditionNode(row.condition, nodeId, (current) => (
+            current.type === 'group'
+              ? { ...current, children: [...current.children, newChild] }
+              : current
+          )),
+        }
+        : row
+    )));
+  };
+
+  const removeConditionChild = (rowId: string, nodeId: string) => {
+    const removeNode = (node: ConditionTree): ConditionTree | null => {
+      if (node.id === nodeId) {
+        return null;
+      }
+      if (node.type === 'group') {
+        const nextChildren = node.children
+          .map(removeNode)
+          .filter((child): child is ConditionTree => Boolean(child));
+        if (nextChildren.length === 0) {
+          return createConditionNode();
+        }
+        return { ...node, children: nextChildren };
+      }
+      return node;
+    };
+    setBuilderConditions((prev) => prev.map((row) => (
+      row.id === rowId
+        ? { ...row, condition: removeNode(row.condition) as ConditionTree }
+        : row
+    )));
+  };
+
+  const updateBuilderResult = (rowId: string, value: string) => {
+    setBuilderConditions((prev) => prev.map((row) => (
+      row.id === rowId ? { ...row, result: value } : row
     )));
   };
 
   const addBuilderRow = () => {
-    setBuilderRows((prev) => ([
+    setBuilderConditions((prev) => ([
       ...prev,
-      { left: '$v1', operator: '==', right: '1', result: '' },
+      { id: nextBuilderId(), condition: createConditionNode(), result: '' },
     ]));
   };
 
-  const removeBuilderRow = (index: number) => {
-    setBuilderRows((prev) => prev.filter((_, idx) => idx !== index));
+  const removeBuilderRow = (rowId: string) => {
+    setBuilderConditions((prev) => prev.filter((row) => row.id !== rowId));
+  };
+
+  const buildConditionExpression = (node: ConditionTree): string => {
+    if (node.type === 'condition') {
+      const left = node.left.trim();
+      const right = node.right.trim();
+      if (!left || !node.operator || !right) {
+        return '';
+      }
+      return `${left} ${node.operator} ${right}`;
+    }
+    const parts = node.children
+      .map((child) => buildConditionExpression(child))
+      .filter(Boolean);
+    if (parts.length !== node.children.length) {
+      return '';
+    }
+    const joiner = node.operator === 'AND' ? ' && ' : ' || ';
+    return `(${parts.join(joiner)})`;
   };
 
   const buildFriendlyEval = () => {
-    if (builderRows.length === 0) {
+    if (builderConditions.length === 0) {
       return '';
     }
     const elseValue = builderElseResult.trim();
@@ -2357,18 +4759,139 @@ function App() {
       return '';
     }
     let expr = elseValue;
-    for (let i = builderRows.length - 1; i >= 0; i -= 1) {
-      const row = builderRows[i];
-      const left = row.left.trim();
-      const right = row.right.trim();
+    for (let i = builderConditions.length - 1; i >= 0; i -= 1) {
+      const row = builderConditions[i];
       const result = row.result.trim();
-      if (!left || !row.operator || !right || !result) {
+      const condition = buildConditionExpression(row.condition);
+      if (!condition || !result) {
         return '';
       }
-      const condition = `${left} ${row.operator} ${right}`;
       expr = `(${condition}) ? ${result} : ${expr}`;
     }
     return expr;
+  };
+
+  const renderConditionNode = (
+    rowId: string,
+    node: ConditionTree,
+    depth: number,
+    isNested: boolean,
+    parentCount: number,
+  ) => {
+    if (node.type === 'condition') {
+      return (
+        <div className={`builder-condition-line${isNested ? ' builder-condition-line-nested' : ''}`}>
+          <input
+            className="builder-input"
+            value={node.left}
+            onChange={(e) => updateBuilderCondition(rowId, node.id, 'left', e.target.value)}
+            placeholder="$v1"
+            disabled={!isBuilderTargetReady}
+            title={node.left}
+          />
+          <select
+            className="builder-select"
+            value={node.operator}
+            onChange={(e) => updateBuilderCondition(rowId, node.id, 'operator', e.target.value)}
+            disabled={!isBuilderTargetReady}
+          >
+            <option value="==">==</option>
+            <option value="!=">!=</option>
+            <option value=">">&gt;</option>
+            <option value=">=">&gt;=</option>
+            <option value="<">&lt;</option>
+            <option value="<=">&lt;=</option>
+          </select>
+          <input
+            className="builder-input"
+            value={node.right}
+            onChange={(e) => updateBuilderCondition(rowId, node.id, 'right', e.target.value)}
+            placeholder="1"
+            disabled={!isBuilderTargetReady}
+            title={node.right}
+          />
+          {isNested && (
+            <button
+              type="button"
+              className="builder-remove"
+              onClick={() => removeConditionChild(rowId, node.id)}
+              disabled={!isBuilderTargetReady || parentCount <= 1}
+              aria-label="Remove condition"
+            >
+              ×
+            </button>
+          )}
+        </div>
+      );
+    }
+    return (
+      <div className={`builder-group builder-group-depth-${depth}`}>
+        <div className="builder-group-header">
+          <div className="builder-group-title-row">
+            <span className="builder-group-title">Group</span>
+            <span className="builder-group-operator-pill">{node.operator}</span>
+          </div>
+          <div className="builder-mode-toggle">
+            <button
+              type="button"
+              className={node.operator === 'AND'
+                ? 'builder-mode-button builder-mode-button-active'
+                : 'builder-mode-button'}
+              onClick={() => updateConditionGroupOperator(rowId, node.id, 'AND')}
+              disabled={!isBuilderTargetReady}
+            >
+              AND
+            </button>
+            <button
+              type="button"
+              className={node.operator === 'OR'
+                ? 'builder-mode-button builder-mode-button-active'
+                : 'builder-mode-button'}
+              onClick={() => updateConditionGroupOperator(rowId, node.id, 'OR')}
+              disabled={!isBuilderTargetReady}
+            >
+              OR
+            </button>
+          </div>
+          {isNested && (
+            <button
+              type="button"
+              className="builder-remove"
+              onClick={() => removeConditionChild(rowId, node.id)}
+              disabled={!isBuilderTargetReady || parentCount <= 1}
+              aria-label="Remove group"
+            >
+              ×
+            </button>
+          )}
+        </div>
+        <div className="builder-group-children">
+          {node.children.map((child) => (
+            <div key={child.id} className="builder-group-child">
+              {renderConditionNode(rowId, child, depth + 1, true, node.children.length)}
+            </div>
+          ))}
+        </div>
+        <div className="builder-group-actions">
+          <button
+            type="button"
+            className="builder-link"
+            onClick={() => addConditionChild(rowId, node.id, 'condition')}
+            disabled={!isBuilderTargetReady}
+          >
+            Add condition
+          </button>
+          <button
+            type="button"
+            className="builder-link"
+            onClick={() => addConditionChild(rowId, node.id, 'group')}
+            disabled={!isBuilderTargetReady}
+          >
+            Add group
+          </button>
+        </div>
+      </div>
+    );
   };
 
   const applyFriendlyEval = () => {
@@ -2818,6 +5341,8 @@ function App() {
       ) !== builderLiteralText;
     })()
     : false;
+  const flowEditorJsonErrors = getFlowEditorJsonErrors(flowEditorDraft);
+  const flowEditorArgsError = flowEditorJsonErrors.find((item) => item.field === 'args')?.message || '';
 
   return (
     <ErrorBoundary>
@@ -2827,7 +5352,7 @@ function App() {
           {isAuthenticated && (
             <div className="header-actions">
               <p>Welcome, {session?.user}</p>
-              <button type="button" className="logout-button" onClick={handleLogout}>
+              <button type="button" className="search-button logout-button" onClick={handleLogout}>
                 <span className="logout-icon" aria-hidden="true">🚪</span>
                 Logout
               </button>
@@ -2912,54 +5437,56 @@ function App() {
                   <div className="panel-section">
                     <div className="panel-section-title">Favorites</div>
                     <div className="favorites-section">
-                    <details open={favoritesFolders.length > 0}>
-                      <summary>Favorite Folders</summary>
-                      {favoritesLoading && <div className="muted">Loading…</div>}
-                      {favoritesError && <div className="error">{favoritesError}</div>}
-                      {favoritesFolders.length === 0 ? (
-                        <div className="empty-state">No favorites yet.</div>
-                      ) : (
-                        <ul className="favorites-list">
-                          {favoritesFolders.map((fav) => (
-                            <li key={`${fav.type}-${fav.pathId}`}>
-                              <button
-                                type="button"
-                                className="quick-link"
-                                onClick={() => handleOpenFolder({ PathID: fav.pathId, PathName: fav.label })}
-                              >
-                                {fav.label}
-                                {getParentLabel(getParentPath(fav.pathId)) && (
-                                  <span className="favorite-parent"> - ({getParentLabel(getParentPath(fav.pathId))})</span>
-                                )}
-                              </button>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </details>
-                    <details open={favoritesFiles.length > 0}>
-                      <summary>Favorite Files</summary>
-                      {favoritesFiles.length === 0 ? (
-                        <div className="empty-state">No favorites yet.</div>
-                      ) : (
-                        <ul className="favorites-list">
-                          {favoritesFiles.map((fav) => (
-                            <li key={`${fav.type}-${fav.pathId}`}>
-                              <button
-                                type="button"
-                                className="quick-link"
-                                onClick={() => openFileFromUrl(fav.pathId, fav.node)}
-                              >
-                                {fav.label}
-                                {fav.node && (
-                                  <span className="favorite-parent"> - ({getParentLabel(fav.node)})</span>
-                                )}
-                              </button>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </details>
+                    <div className="favorites-scroll">
+                      <details open={favoritesFolders.length > 0}>
+                        <summary>Favorite Folders</summary>
+                        {favoritesLoading && <div className="muted">Loading…</div>}
+                        {favoritesError && <div className="error">{favoritesError}</div>}
+                        {favoritesFolders.length === 0 ? (
+                          <div className="empty-state">No favorites yet.</div>
+                        ) : (
+                          <ul className="favorites-list">
+                            {favoritesFolders.map((fav) => (
+                              <li key={`${fav.type}-${fav.pathId}`}>
+                                <button
+                                  type="button"
+                                  className="quick-link"
+                                  onClick={() => handleOpenFolder({ PathID: fav.pathId, PathName: fav.label })}
+                                >
+                                  {fav.label}
+                                  {getParentLabel(getParentPath(fav.pathId)) && (
+                                    <span className="favorite-parent"> - ({getParentLabel(getParentPath(fav.pathId))})</span>
+                                  )}
+                                </button>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </details>
+                      <details open={favoritesFiles.length > 0}>
+                        <summary>Favorite Files</summary>
+                        {favoritesFiles.length === 0 ? (
+                          <div className="empty-state">No favorites yet.</div>
+                        ) : (
+                          <ul className="favorites-list">
+                            {favoritesFiles.map((fav) => (
+                              <li key={`${fav.type}-${fav.pathId}`}>
+                                <button
+                                  type="button"
+                                  className="quick-link"
+                                  onClick={() => openFileFromUrl(fav.pathId, fav.node)}
+                                >
+                                  {fav.label}
+                                  {fav.node && (
+                                    <span className="favorite-parent"> - ({getParentLabel(fav.node)})</span>
+                                  )}
+                                </button>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </details>
+                    </div>
                     </div>
                   </div>
                 </div>
@@ -3227,6 +5754,16 @@ function App() {
                         Raw
                       </span>
                     </div>
+                    <button
+                      type="button"
+                      className="action-link"
+                      onClick={() => {
+                        setAdvancedProcessorScope('global');
+                        setShowAdvancedProcessorModal(true);
+                      }}
+                    >
+                      Advanced Processors (Global)
+                    </button>
                   </div>
                   {fileError && <div className="error">{fileError}</div>}
                   {saveError && <div className="error">{saveError}</div>}
@@ -3282,6 +5819,11 @@ function App() {
                                     <span className="object-name">{obj?.['@objectName'] || `Object ${idx + 1}`}</span>
                                     {obj?.certification && <span className="pill">{obj.certification}</span>}
                                     {overrideFlags.any && <span className="pill override-pill">Override</span>}
+                                    {overrideFlags.advancedFlow && (
+                                      <span className="pill" title="Advanced Flow configured for this object">
+                                        Advanced Flow
+                                      </span>
+                                    )}
                                     {highlightObjectKeys.includes(getObjectKey(obj, idx)) && (
                                       <span className="pill match-pill">Match</span>
                                     )}
@@ -3782,7 +6324,9 @@ function App() {
                                             <span className={isFieldHighlighted(eventPanelKey, field)
                                               ? 'label label-warning'
                                               : 'label'}>
-                                              {formatEventFieldLabel(field)}
+                                              <span title={getEventFieldDescription(field)}>
+                                                {formatEventFieldLabel(field)}
+                                              </span>
                                               {renderFieldBadges(eventPanelKey, field, obj, overrideTargets)}
                                               {panelEditState[eventPanelKey] && (
                                                 <span className="label-actions">
@@ -4031,78 +6575,183 @@ function App() {
                                   {builderFocus === 'eval' && (
                                     <div className="builder-section">
                                       <div className="builder-section-title">Eval Builder</div>
-                                      <div className="builder-mode-toggle">
+                                      <div className="builder-mode-row">
+                                        <div className="builder-mode-toggle">
+                                          <button
+                                            type="button"
+                                            className={builderMode === 'friendly'
+                                              ? 'builder-mode-button builder-mode-button-active'
+                                              : 'builder-mode-button'}
+                                            onClick={() => setBuilderMode('friendly')}
+                                          >
+                                            Friendly
+                                          </button>
+                                          <button
+                                            type="button"
+                                            className={builderMode === 'regular'
+                                              ? 'builder-mode-button builder-mode-button-active'
+                                              : 'builder-mode-button'}
+                                            onClick={() => setBuilderMode('regular')}
+                                          >
+                                            Regular
+                                          </button>
+                                        </div>
                                         <button
                                           type="button"
-                                          className={builderMode === 'friendly'
-                                            ? 'builder-mode-button builder-mode-button-active'
-                                            : 'builder-mode-button'}
-                                          onClick={() => setBuilderMode('friendly')}
+                                          className="builder-link"
+                                          onClick={() => {
+                                            setAdvancedProcessorScope('object');
+                                            setShowAdvancedProcessorModal(true);
+                                          }}
                                         >
-                                          Friendly
-                                        </button>
-                                        <button
-                                          type="button"
-                                          className={builderMode === 'regular'
-                                            ? 'builder-mode-button builder-mode-button-active'
-                                            : 'builder-mode-button'}
-                                          onClick={() => setBuilderMode('regular')}
-                                        >
-                                          Regular
+                                          Advanced Processors
                                         </button>
                                       </div>
                                       {builderMode === 'friendly' ? (
                                         <div className="builder-friendly">
                                           <div className="builder-friendly-rows">
-                                            {builderRows.map((row, index) => (
-                                              <div className="builder-friendly-row" key={`row-${index}`}>
-                                                <input
-                                                  className="builder-input"
-                                                  value={row.left}
-                                                  onChange={(e) => updateBuilderRow(index, 'left', e.target.value)}
-                                                  placeholder="$v1"
-                                                  disabled={!isBuilderTargetReady}
-                                                  title={row.left}
-                                                />
-                                                <select
-                                                  className="builder-select"
-                                                  value={row.operator}
-                                                  onChange={(e) => updateBuilderRow(index, 'operator', e.target.value)}
-                                                  disabled={!isBuilderTargetReady}
-                                                >
-                                                  <option value="==">==</option>
-                                                  <option value="!=">!=</option>
-                                                  <option value=">">&gt;</option>
-                                                  <option value=">=">&gt;=</option>
-                                                  <option value="<">&lt;</option>
-                                                  <option value="<=">&lt;=</option>
-                                                </select>
-                                                <input
-                                                  className="builder-input"
-                                                  value={row.right}
-                                                  onChange={(e) => updateBuilderRow(index, 'right', e.target.value)}
-                                                  placeholder="1"
-                                                  disabled={!isBuilderTargetReady}
-                                                  title={row.right}
-                                                />
-                                                <span className="builder-friendly-arrow">→</span>
-                                                <input
-                                                  className="builder-input builder-input-result"
-                                                  value={row.result}
-                                                  onChange={(e) => updateBuilderRow(index, 'result', e.target.value)}
-                                                  placeholder="result"
-                                                  disabled={!isBuilderTargetReady}
-                                                  title={row.result}
-                                                />
-                                                <button
-                                                  type="button"
-                                                  className="builder-remove"
-                                                  onClick={() => removeBuilderRow(index)}
-                                                  disabled={!isBuilderTargetReady || builderRows.length === 1}
-                                                  aria-label="Remove condition"
-                                                >
-                                                  ×
-                                                </button>
+                                            {builderConditions.map((row) => (
+                                              <div className="builder-condition-block" key={row.id}>
+                                                {row.condition.type === 'condition' ? (
+                                                  <>
+                                                    <div className="builder-friendly-row">
+                                                      <input
+                                                        className="builder-input"
+                                                        value={row.condition.left}
+                                                        onChange={(e) => updateBuilderCondition(
+                                                          row.id,
+                                                          row.condition.id,
+                                                          'left',
+                                                          e.target.value,
+                                                        )}
+                                                        placeholder="$v1"
+                                                        disabled={!isBuilderTargetReady}
+                                                        title={row.condition.left}
+                                                      />
+                                                      <select
+                                                        className="builder-select"
+                                                        value={row.condition.operator}
+                                                        onChange={(e) => updateBuilderCondition(
+                                                          row.id,
+                                                          row.condition.id,
+                                                          'operator',
+                                                          e.target.value,
+                                                        )}
+                                                        disabled={!isBuilderTargetReady}
+                                                      >
+                                                        <option value="==">==</option>
+                                                        <option value="!=">!=</option>
+                                                        <option value=">">&gt;</option>
+                                                        <option value=">=">&gt;=</option>
+                                                        <option value="<">&lt;</option>
+                                                        <option value="<=">&lt;=</option>
+                                                      </select>
+                                                      <input
+                                                        className="builder-input"
+                                                        value={row.condition.right}
+                                                        onChange={(e) => updateBuilderCondition(
+                                                          row.id,
+                                                          row.condition.id,
+                                                          'right',
+                                                          e.target.value,
+                                                        )}
+                                                        placeholder="1"
+                                                        disabled={!isBuilderTargetReady}
+                                                        title={row.condition.right}
+                                                      />
+                                                      <span className="builder-friendly-arrow">→</span>
+                                                      <input
+                                                        className="builder-input builder-input-result"
+                                                        value={row.result}
+                                                        onChange={(e) => updateBuilderResult(row.id, e.target.value)}
+                                                        placeholder="result"
+                                                        disabled={!isBuilderTargetReady}
+                                                        title={row.result}
+                                                      />
+                                                      <button
+                                                        type="button"
+                                                        className="builder-remove"
+                                                        onClick={() => removeBuilderRow(row.id)}
+                                                        disabled={!isBuilderTargetReady || builderConditions.length === 1}
+                                                        aria-label="Remove condition"
+                                                      >
+                                                        ×
+                                                      </button>
+                                                    </div>
+                                                    <div className="builder-group-actions">
+                                                      <button
+                                                        type="button"
+                                                        className="builder-link"
+                                                        onClick={() => {
+                                                          const newChild = createConditionNode();
+                                                          setBuilderConditions((prev) => prev.map((item) => (
+                                                            item.id === row.id
+                                                              ? {
+                                                                ...item,
+                                                                condition: {
+                                                                  id: nextBuilderId(),
+                                                                  type: 'group',
+                                                                  operator: 'AND',
+                                                                  children: [item.condition, newChild],
+                                                                },
+                                                              }
+                                                              : item
+                                                          )));
+                                                        }}
+                                                        disabled={!isBuilderTargetReady}
+                                                      >
+                                                        Add condition
+                                                      </button>
+                                                      <button
+                                                        type="button"
+                                                        className="builder-link"
+                                                        onClick={() => {
+                                                          const newGroup = createGroupNode();
+                                                          setBuilderConditions((prev) => prev.map((item) => (
+                                                            item.id === row.id
+                                                              ? {
+                                                                ...item,
+                                                                condition: {
+                                                                  id: nextBuilderId(),
+                                                                  type: 'group',
+                                                                  operator: 'AND',
+                                                                  children: [item.condition, newGroup],
+                                                                },
+                                                              }
+                                                              : item
+                                                          )));
+                                                        }}
+                                                        disabled={!isBuilderTargetReady}
+                                                      >
+                                                        Add group
+                                                      </button>
+                                                    </div>
+                                                  </>
+                                                ) : (
+                                                  <div className="builder-group-row">
+                                                    {renderConditionNode(row.id, row.condition, 0, false, 1)}
+                                                    <div className="builder-group-result">
+                                                      <span className="builder-friendly-arrow">→</span>
+                                                      <input
+                                                        className="builder-input builder-input-result"
+                                                        value={row.result}
+                                                        onChange={(e) => updateBuilderResult(row.id, e.target.value)}
+                                                        placeholder="result"
+                                                        disabled={!isBuilderTargetReady}
+                                                        title={row.result}
+                                                      />
+                                                      <button
+                                                        type="button"
+                                                        className="builder-remove"
+                                                        onClick={() => removeBuilderRow(row.id)}
+                                                        disabled={!isBuilderTargetReady || builderConditions.length === 1}
+                                                        aria-label="Remove condition"
+                                                      >
+                                                        ×
+                                                      </button>
+                                                    </div>
+                                                  </div>
+                                                )}
                                               </div>
                                             ))}
                                           </div>
@@ -4163,7 +6812,11 @@ function App() {
                                               className="builder-textarea"
                                               placeholder="Enter raw eval expression"
                                               value={builderRegularText}
-                                              onChange={(e) => setBuilderRegularText(e.target.value)}
+                                              onChange={(e) => handleRegularEvalInputChange(
+                                                e.target.value,
+                                                e.target.selectionStart,
+                                                (e.nativeEvent as InputEvent | undefined)?.inputType,
+                                              )}
                                               disabled={!isBuilderTargetReady}
                                             />
                                             {builderRegularText && (
@@ -4225,7 +6878,19 @@ function App() {
                                   )}
                                   {builderFocus === 'processor' && (
                                     <div className="builder-section processor-builder">
-                                      <div className="builder-section-title">Processor Builder</div>
+                                      <div className="builder-section-title-row">
+                                        <div className="builder-section-title">Processor Builder</div>
+                                        <button
+                                          type="button"
+                                          className="builder-link"
+                                          onClick={() => {
+                                            setAdvancedProcessorScope('object');
+                                            setShowAdvancedProcessorModal(true);
+                                          }}
+                                        >
+                                          Advanced Flow
+                                        </button>
+                                      </div>
                                       {!isBuilderTargetReady && (
                                         <div className="builder-hint">Select a field in Edit mode.</div>
                                       )}
@@ -4266,84 +6931,31 @@ function App() {
                                           </div>
                                           {processorStep === 'select' && (
                                             <div className="processor-grid">
-                                              <div className="processor-card">
-                                                <button
-                                                  type="button"
-                                                  className={processorType === 'set'
-                                                    ? 'builder-card builder-card-selected'
-                                                    : 'builder-card'}
-                                                  onClick={() => {
-                                                    setProcessorType('set');
-                                                    setProcessorStep('configure');
-                                                    setProcessorDraft((prev) => ({
-                                                      ...prev,
-                                                      sourceType: 'literal',
-                                                      source: '',
-                                                      pattern: '',
-                                                      group: '1',
-                                                      targetField: builderTarget
-                                                        ? `$.event.${builderTarget.field}`
-                                                        : prev.targetField,
-                                                    }));
-                                                  }}
-                                                >
-                                                  Set
-                                                </button>
-                                                {renderProcessorHelp('set')}
-                                              </div>
-                                              <div className="processor-card">
-                                                <button
-                                                  type="button"
-                                                  className={processorType === 'regex'
-                                                    ? 'builder-card builder-card-selected'
-                                                    : 'builder-card'}
-                                                  onClick={() => {
-                                                    setProcessorType('regex');
-                                                    setProcessorStep('configure');
-                                                    setProcessorDraft((prev) => ({
-                                                      ...prev,
-                                                      sourceType: 'path',
-                                                      source: '$.event.Summary',
-                                                      pattern: '',
-                                                      group: '1',
-                                                      targetField: builderTarget
-                                                        ? `$.event.${builderTarget.field}`
-                                                        : prev.targetField,
-                                                    }));
-                                                  }}
-                                                >
-                                                  Regex
-                                                </button>
-                                                {renderProcessorHelp('regex')}
-                                              </div>
-                                              <div className="processor-card">
-                                                <button type="button" className="builder-card" disabled>
-                                                  Convert (soon)
-                                                </button>
-                                                {renderProcessorHelp('convert')}
-                                              </div>
-                                              <div className="processor-card">
-                                                <button type="button" className="builder-card" disabled>
-                                                  Math (soon)
-                                                </button>
-                                                {renderProcessorHelp('math')}
-                                              </div>
-                                              <div className="processor-card">
-                                                <button type="button" className="builder-card" disabled>
-                                                  Append (soon)
-                                                </button>
-                                                {renderProcessorHelp('append')}
-                                              </div>
-                                              <div className="processor-card">
-                                                <button type="button" className="builder-card" disabled>
-                                                  Map/Lookup (soon)
-                                                </button>
-                                                {renderProcessorHelp('map')}
-                                              </div>
+                                              {processorCatalog.map((item) => {
+                                                const isSelected = processorType === item.id;
+                                                const isEnabled = item.status !== 'planned';
+                                                const buttonLabel = item.paletteLabel || item.label;
+                                                return (
+                                                  <div key={item.id} className="processor-card">
+                                                    <button
+                                                      type="button"
+                                                      className={isSelected
+                                                        ? 'builder-card builder-card-selected'
+                                                        : 'builder-card'}
+                                                      onClick={() => handleBuilderSelect(item, isEnabled)}
+                                                      disabled={!isEnabled}
+                                                    >
+                                                      {buttonLabel}
+                                                    </button>
+                                                    {renderProcessorHelp(item.helpKey)}
+                                                  </div>
+                                                );
+                                              })}
                                             </div>
                                           )}
                                           {processorStep === 'configure' && processorType === 'set' && (
                                             <div className="processor-form">
+                                              <div className="builder-section-title">Processor: Set</div>
                                               <div className="processor-row">
                                                 <label className="builder-label">Source type</label>
                                                 <div className="builder-mode-toggle">
@@ -4385,6 +6997,7 @@ function App() {
                                                     onChange={(e) => handleProcessorSourceChange(
                                                       e.target.value,
                                                       e.target.selectionStart,
+                                                      (e.nativeEvent as InputEvent | undefined)?.inputType,
                                                     )}
                                                   />
                                                   <button
@@ -4415,10 +7028,11 @@ function App() {
                                                   className="builder-input"
                                                   value={processorDraft.targetField}
                                                   placeholder="$.event.EventType"
-                                                  onChange={(e) => setProcessorDraft((prev) => ({
-                                                    ...prev,
-                                                    targetField: e.target.value,
-                                                  }))}
+                                                  onChange={(e) => handleProcessorTargetChange(
+                                                    e.target.value,
+                                                    e.target.selectionStart,
+                                                    (e.nativeEvent as InputEvent | undefined)?.inputType,
+                                                  )}
                                                 />
                                               </div>
                                               <div className="processor-actions">
@@ -4434,6 +7048,7 @@ function App() {
                                           )}
                                           {processorStep === 'configure' && processorType === 'regex' && (
                                             <div className="processor-form">
+                                              <div className="builder-section-title">Processor: Regex</div>
                                               <div className="processor-row">
                                                 <label className="builder-label">Source type</label>
                                                 <div className="builder-mode-toggle">
@@ -4475,6 +7090,7 @@ function App() {
                                                     onChange={(e) => handleProcessorSourceChange(
                                                       e.target.value,
                                                       e.target.selectionStart,
+                                                      (e.nativeEvent as InputEvent | undefined)?.inputType,
                                                     )}
                                                   />
                                                   <button
@@ -4512,27 +7128,16 @@ function App() {
                                                 />
                                               </div>
                                               <div className="processor-row">
-                                                <label className="builder-label">Group</label>
-                                                <input
-                                                  className="builder-input"
-                                                  value={processorDraft.group}
-                                                  placeholder="1"
-                                                  onChange={(e) => setProcessorDraft((prev) => ({
-                                                    ...prev,
-                                                    group: e.target.value,
-                                                  }))}
-                                                />
-                                              </div>
-                                              <div className="processor-row">
                                                 <label className="builder-label">Target</label>
                                                 <input
                                                   className="builder-input"
                                                   value={processorDraft.targetField}
                                                   placeholder="$.event.EventType"
-                                                  onChange={(e) => setProcessorDraft((prev) => ({
-                                                    ...prev,
-                                                    targetField: e.target.value,
-                                                  }))}
+                                                  onChange={(e) => handleProcessorTargetChange(
+                                                    e.target.value,
+                                                    e.target.selectionStart,
+                                                    (e.nativeEvent as InputEvent | undefined)?.inputType,
+                                                  )}
                                                 />
                                               </div>
                                               <div className="processor-actions">
@@ -4546,6 +7151,31 @@ function App() {
                                               </div>
                                             </div>
                                           )}
+                                          {processorStep === 'configure'
+                                            && processorType
+                                            && !['set', 'regex'].includes(processorType)
+                                            && (
+                                              <div className="processor-form">
+                                                <div className="builder-section-title">
+                                                  Processor: {formatEventFieldLabel(processorType)}
+                                                </div>
+                                                <div className="builder-hint">
+                                                  Configure this processor in Advanced Flow.
+                                                </div>
+                                                <div className="processor-actions">
+                                                  <button
+                                                    type="button"
+                                                    className="builder-card"
+                                                    onClick={() => {
+                                                      setAdvancedProcessorScope('object');
+                                                      setShowAdvancedProcessorModal(true);
+                                                    }}
+                                                  >
+                                                    Open Advanced Flow
+                                                  </button>
+                                                </div>
+                                              </div>
+                                            )}
                                           {processorStep === 'review' && (
                                             <div className="processor-review">
                                               <div className="builder-preview">
@@ -4666,6 +7296,762 @@ function App() {
                       </div>
                     </div>
                   )}
+                  {showAdvancedProcessorModal && (
+                    <div className="modal-overlay" role="dialog" aria-modal="true">
+                      <div className="modal modal-flow">
+                        <div className="flow-modal-header">
+                          <h3>
+                            {advancedProcessorScope === 'global'
+                              ? 'Advanced Processors (Global)'
+                              : 'Advanced Processors (Object)'}
+                          </h3>
+                          <button
+                            type="button"
+                            className="flow-modal-close"
+                            onClick={() => setShowAdvancedProcessorModal(false)}
+                          >
+                            Close
+                          </button>
+                        </div>
+                        <div className="flow-modal-subtitle">
+                          {advancedProcessorScope === 'global'
+                            ? 'Wireframe: configure global pre/post processors for the file. Drag from the palette into the lanes.'
+                            : 'Wireframe: configure object processors. Drag from the palette into the flow lanes.'}
+                        </div>
+                        <div className="flow-modal-body">
+                          <div className="flow-palette">
+                            <div className="flow-palette-title">Palette</div>
+                            <input
+                              className="flow-palette-search"
+                              placeholder="Search processors"
+                              value={advancedProcessorSearch}
+                              onChange={(event) => setAdvancedProcessorSearch(event.target.value)}
+                            />
+                            <div className="flow-palette-list">
+                              {paletteSections.map((section) => (
+                                <div key={section.status} className="flow-palette-section">
+                                  <div className="flow-palette-section-title">{section.title}</div>
+                                  {section.items.length === 0 ? (
+                                    <div className="flow-palette-empty">None</div>
+                                  ) : (
+                                    <div className="flow-palette-section-grid">
+                                      {section.items.map((item) => {
+                                        const isEnabled = item.status !== 'planned';
+                                        return (
+                                          <div
+                                            key={`${item.label}-${item.nodeKind}`}
+                                            className={isEnabled
+                                              ? 'flow-palette-item'
+                                              : 'flow-palette-item flow-palette-item-disabled'}
+                                            draggable={isEnabled}
+                                            onDragStart={(event) => {
+                                              if (!isEnabled) {
+                                                return;
+                                              }
+                                              const payload = JSON.stringify({
+                                                source: 'palette',
+                                                nodeKind: item.nodeKind,
+                                                processorType: item.processorType,
+                                              });
+                                              event.dataTransfer.setData('application/json', payload);
+                                              event.dataTransfer.setData('text/plain', payload);
+                                              event.dataTransfer.effectAllowed = 'copyMove';
+                                            }}
+                                          >
+                                            <span>{item.label}</span>
+                                            {renderProcessorHelp((item.nodeKind === 'if'
+                                              ? 'if'
+                                              : item.processorType) as keyof typeof processorHelp)}
+                                          </div>
+                                        );
+                                      })}
+                                    </div>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                          <div className="flow-canvas">
+                            {advancedProcessorScope === 'global' ? (
+                              <>
+                                <div className="flow-canvas-title">Global Flow</div>
+                                <div className="flow-global-sections">
+                                  <div className="flow-global-section">
+                                    <div className="flow-global-title">Pre</div>
+                                    {renderFlowList(globalPreFlow, { kind: 'root' }, setGlobalPreFlow, 'global', 'pre')}
+                                  </div>
+                                  <div className="flow-global-section">
+                                    <div className="flow-global-title">Post</div>
+                                    {renderFlowList(globalPostFlow, { kind: 'root' }, setGlobalPostFlow, 'global', 'post')}
+                                  </div>
+                                </div>
+                                <div className="flow-preview">
+                                  <div className="flow-preview-title">JSON Preview</div>
+                                  <pre className="flow-preview-code">
+                                    {JSON.stringify({
+                                      pre: buildFlowProcessors(globalPreFlow),
+                                      post: buildFlowProcessors(globalPostFlow),
+                                    }, null, 2)}
+                                  </pre>
+                                </div>
+                              </>
+                            ) : (
+                              <>
+                                <div className="flow-canvas-title">Flow</div>
+                                {renderFlowList(advancedFlow, { kind: 'root' }, setAdvancedFlow, 'object', 'object')}
+                                <div className="flow-preview">
+                                  <div className="flow-preview-title">JSON Preview</div>
+                                  <pre className="flow-preview-code">
+                                    {JSON.stringify(buildFlowProcessors(advancedFlow), null, 2)}
+                                  </pre>
+                                </div>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  {flowEditor && flowEditorDraft && (
+                    <div className="modal-overlay" role="dialog" aria-modal="true">
+                      <div className="modal modal-wide">
+                        <div className="flow-editor-header">
+                          <h3>
+                            Configure Processor
+                            {flowEditorDraft ? ` — ${getFlowNodeLabel(flowEditorDraft)}` : ''}
+                          </h3>
+                          <button
+                            type="button"
+                            className="builder-link"
+                            onClick={() => setShowFieldReferenceModal(true)}
+                          >
+                            Field reference
+                          </button>
+                        </div>
+                        {processorHelp[flowEditorDraft.kind === 'if' ? 'if' : flowEditorDraft.processorType] && (
+                          <div className="builder-hint">
+                            <div>
+                              {processorHelp[flowEditorDraft.kind === 'if' ? 'if' : flowEditorDraft.processorType].description}
+                            </div>
+                            <div className="builder-example-row">
+                              <button
+                                type="button"
+                                className="builder-link"
+                                onClick={applyFlowEditorExample}
+                              >
+                                Apply example
+                              </button>
+                              <span className="builder-example-code">
+                                {processorHelp[flowEditorDraft.kind === 'if' ? 'if' : flowEditorDraft.processorType].example}
+                              </span>
+                            </div>
+                          </div>
+                        )}
+                        {flowEditorDraft.kind === 'processor' && flowEditorDraft.processorType === 'set' && (
+                          <div className="processor-form">
+                            <div className="processor-row">
+                              <label className="builder-label">Source type</label>
+                              <div className="builder-mode-toggle">
+                                <button
+                                  type="button"
+                                  className={(flowEditorDraft.config?.sourceType || 'literal') === 'literal'
+                                    ? 'builder-mode-button builder-mode-button-active'
+                                    : 'builder-mode-button'}
+                                  onClick={() => setFlowEditorDraft((prev) => (prev
+                                    ? {
+                                      ...prev,
+                                      config: {
+                                        ...(prev as FlowProcessorNode).config,
+                                        sourceType: 'literal',
+                                      },
+                                    }
+                                    : prev))}
+                                >
+                                  Literal
+                                </button>
+                                <button
+                                  type="button"
+                                  className={(flowEditorDraft.config?.sourceType || 'literal') === 'path'
+                                    ? 'builder-mode-button builder-mode-button-active'
+                                    : 'builder-mode-button'}
+                                  onClick={() => setFlowEditorDraft((prev) => (prev
+                                    ? {
+                                      ...prev,
+                                      config: {
+                                        ...(prev as FlowProcessorNode).config,
+                                        sourceType: 'path',
+                                      },
+                                    }
+                                    : prev))}
+                                >
+                                  Path
+                                </button>
+                              </div>
+                            </div>
+                            <div className="processor-row">
+                              <label className="builder-label">Source</label>
+                              <input
+                                className="builder-input"
+                                value={flowEditorDraft.config?.source || ''}
+                                onChange={(e) => handleFlowEditorInputChange(
+                                  'flowEditor.source',
+                                  e.target.value,
+                                  e.target.selectionStart,
+                                  (e.nativeEvent as InputEvent | undefined)?.inputType,
+                                )}
+                              />
+                            </div>
+                            <div className="processor-row">
+                              <label className="builder-label">Target</label>
+                              <input
+                                className="builder-input"
+                                value={flowEditorDraft.config?.targetField || ''}
+                                onChange={(e) => handleFlowEditorInputChange(
+                                  'flowEditor.targetField',
+                                  e.target.value,
+                                  e.target.selectionStart,
+                                  (e.nativeEvent as InputEvent | undefined)?.inputType,
+                                )}
+                              />
+                            </div>
+                            <div className="processor-row">
+                              <label className="builder-label">Args (optional JSON array)</label>
+                              <input
+                                className="builder-input"
+                                placeholder='["$.event.Node", "$.event.EventType"]'
+                                value={flowEditorDraft.config?.argsText || ''}
+                                onChange={(e) => setFlowEditorDraft((prev) => (prev
+                                  ? {
+                                    ...prev,
+                                    config: {
+                                      ...(prev as FlowProcessorNode).config,
+                                      argsText: e.target.value,
+                                    },
+                                  }
+                                  : prev))}
+                              />
+                              {flowEditorArgsError && (
+                                <div className="builder-hint builder-hint-warning">{flowEditorArgsError}</div>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                        {flowEditorDraft.kind === 'processor' && flowEditorDraft.processorType === 'regex' && (
+                          <div className="processor-form">
+                            <div className="processor-row">
+                              <label className="builder-label">Source</label>
+                              <input
+                                className="builder-input"
+                                value={flowEditorDraft.config?.source || ''}
+                                onChange={(e) => handleFlowEditorInputChange(
+                                  'flowEditor.source',
+                                  e.target.value,
+                                  e.target.selectionStart,
+                                  (e.nativeEvent as InputEvent | undefined)?.inputType,
+                                )}
+                              />
+                            </div>
+                            <div className="processor-row">
+                              <label className="builder-label">Pattern</label>
+                              <input
+                                className="builder-input"
+                                value={flowEditorDraft.config?.pattern || ''}
+                                onChange={(e) => handleFlowEditorInputChange(
+                                  'flowEditor.pattern',
+                                  e.target.value,
+                                  e.target.selectionStart,
+                                  (e.nativeEvent as InputEvent | undefined)?.inputType,
+                                )}
+                              />
+                            </div>
+                            <div className="processor-row">
+                              <label className="builder-label">Target</label>
+                              <input
+                                className="builder-input"
+                                value={flowEditorDraft.config?.targetField || ''}
+                                onChange={(e) => handleFlowEditorInputChange(
+                                  'flowEditor.targetField',
+                                  e.target.value,
+                                  e.target.selectionStart,
+                                  (e.nativeEvent as InputEvent | undefined)?.inputType,
+                                )}
+                              />
+                            </div>
+                          </div>
+                        )}
+                        {flowEditorDraft.kind === 'if' && (
+                          <div className="processor-form">
+                            <div className="processor-row">
+                              <label className="builder-label">Property</label>
+                              <input
+                                className="builder-input"
+                                value={flowEditorDraft.condition.property}
+                                onChange={(e) => handleFlowEditorInputChange(
+                                  'flowEditor.condition.property',
+                                  e.target.value,
+                                  e.target.selectionStart,
+                                  (e.nativeEvent as InputEvent | undefined)?.inputType,
+                                )}
+                              />
+                            </div>
+                            <div className="processor-row">
+                              <label className="builder-label">Operator</label>
+                              <select
+                                className="builder-select"
+                                value={flowEditorDraft.condition.operator}
+                                onChange={(e) => setFlowEditorDraft((prev) => (prev
+                                  ? {
+                                    ...prev,
+                                    condition: {
+                                      ...(prev as FlowIfNode).condition,
+                                      operator: e.target.value,
+                                    },
+                                  }
+                                  : prev))}
+                              >
+                                <option value="==">==</option>
+                                <option value="!=">!=</option>
+                                <option value=">">&gt;</option>
+                                <option value="<">&lt;</option>
+                                <option value=">=">&gt;=</option>
+                                <option value="<=">&lt;=</option>
+                                <option value="=~">=~</option>
+                              </select>
+                            </div>
+                            <div className="processor-row">
+                              <label className="builder-label">Value</label>
+                              <input
+                                className="builder-input"
+                                value={flowEditorDraft.condition.value}
+                                onChange={(e) => handleFlowEditorInputChange(
+                                  'flowEditor.condition.value',
+                                  e.target.value,
+                                  e.target.selectionStart,
+                                  (e.nativeEvent as InputEvent | undefined)?.inputType,
+                                )}
+                              />
+                            </div>
+                          </div>
+                        )}
+                        {flowEditorDraft.kind === 'processor'
+                          && flowEditorDraft.processorType === 'foreach'
+                          && (
+                            <div className="processor-form">
+                              <div className="processor-row">
+                                <label className="builder-label">Source</label>
+                                <input
+                                  className="builder-input"
+                                  value={flowEditorDraft.config?.source || ''}
+                                  onChange={(e) => setFlowEditorDraft((prev) => (prev
+                                    ? {
+                                      ...prev,
+                                      config: {
+                                        ...(prev as FlowProcessorNode).config,
+                                        source: e.target.value,
+                                      },
+                                    }
+                                    : prev))}
+                                />
+                              </div>
+                              <div className="processor-row">
+                                <label className="builder-label">Key</label>
+                                <input
+                                  className="builder-input"
+                                  value={flowEditorDraft.config?.keyVal || ''}
+                                  onChange={(e) => setFlowEditorDraft((prev) => (prev
+                                    ? {
+                                      ...prev,
+                                      config: {
+                                        ...(prev as FlowProcessorNode).config,
+                                        keyVal: e.target.value,
+                                      },
+                                    }
+                                    : prev))}
+                                />
+                              </div>
+                              <div className="processor-row">
+                                <label className="builder-label">Value</label>
+                                <input
+                                  className="builder-input"
+                                  value={flowEditorDraft.config?.valField || ''}
+                                  onChange={(e) => setFlowEditorDraft((prev) => (prev
+                                    ? {
+                                      ...prev,
+                                      config: {
+                                        ...(prev as FlowProcessorNode).config,
+                                        valField: e.target.value,
+                                      },
+                                    }
+                                    : prev))}
+                                />
+                              </div>
+                              <div className="processor-row">
+                                <label className="builder-label">Processors</label>
+                                {renderFlowList(
+                                  Array.isArray(flowEditorDraft.config?.processors)
+                                    ? (flowEditorDraft.config?.processors as FlowNode[])
+                                    : [],
+                                  { kind: 'root' },
+                                  (updater) => {
+                                    setFlowEditorDraft((prev) => {
+                                      if (!prev || prev.kind !== 'processor') {
+                                        return prev;
+                                      }
+                                      const current = Array.isArray(prev.config?.processors)
+                                        ? prev.config.processors
+                                        : [];
+                                      const next = typeof updater === 'function'
+                                        ? (updater as (items: FlowNode[]) => FlowNode[])(current)
+                                        : updater;
+                                      return {
+                                        ...prev,
+                                        config: {
+                                          ...(prev as FlowProcessorNode).config,
+                                          processors: next,
+                                        },
+                                      } as FlowNode;
+                                    });
+                                  },
+                                  flowEditor?.scope || 'object',
+                                  flowEditor?.lane || 'object',
+                                )}
+                              </div>
+                            </div>
+                          )}
+                        {flowEditorDraft.kind === 'processor'
+                          && flowEditorDraft.processorType === 'switch'
+                          && (
+                            <div className="processor-form">
+                              <div className="processor-row">
+                                <label className="builder-label">Source</label>
+                                <input
+                                  className="builder-input"
+                                  value={flowEditorDraft.config?.source || ''}
+                                  onChange={(e) => setFlowEditorDraft((prev) => (prev
+                                    ? {
+                                      ...prev,
+                                      config: {
+                                        ...(prev as FlowProcessorNode).config,
+                                        source: e.target.value,
+                                      },
+                                    }
+                                    : prev))}
+                                />
+                              </div>
+                              <div className="processor-row">
+                                <label className="builder-label">Operator</label>
+                                <input
+                                  className="builder-input"
+                                  value={flowEditorDraft.config?.operator || ''}
+                                  onChange={(e) => setFlowEditorDraft((prev) => (prev
+                                    ? {
+                                      ...prev,
+                                      config: {
+                                        ...(prev as FlowProcessorNode).config,
+                                        operator: e.target.value,
+                                      },
+                                    }
+                                    : prev))}
+                                />
+                              </div>
+                              <div className="processor-row">
+                                <label className="builder-label">Cases</label>
+                                <div className="flow-switch-cases">
+                                  {(Array.isArray(flowEditorDraft.config?.cases)
+                                    ? flowEditorDraft.config?.cases
+                                    : []).map((item: any) => (
+                                      <div key={item.id} className="flow-switch-case">
+                                        <div className="flow-switch-case-row">
+                                          <label className="builder-label">Match</label>
+                                          <input
+                                            className="builder-input"
+                                            value={item.match ?? ''}
+                                            onChange={(e) => setFlowEditorDraft((prev) => {
+                                              if (!prev || prev.kind !== 'processor') {
+                                                return prev;
+                                              }
+                                              const cases = Array.isArray(prev.config?.cases)
+                                                ? prev.config.cases
+                                                : [];
+                                              return {
+                                                ...prev,
+                                                config: {
+                                                  ...(prev as FlowProcessorNode).config,
+                                                  cases: cases.map((entry: any) => (
+                                                    entry.id === item.id
+                                                      ? { ...entry, match: e.target.value }
+                                                      : entry
+                                                  )),
+                                                },
+                                              } as FlowNode;
+                                            })}
+                                          />
+                                        </div>
+                                        <div className="flow-switch-case-row">
+                                          <label className="builder-label">Operator (optional)</label>
+                                          <input
+                                            className="builder-input"
+                                            value={item.operator ?? ''}
+                                            onChange={(e) => setFlowEditorDraft((prev) => {
+                                              if (!prev || prev.kind !== 'processor') {
+                                                return prev;
+                                              }
+                                              const cases = Array.isArray(prev.config?.cases)
+                                                ? prev.config.cases
+                                                : [];
+                                              return {
+                                                ...prev,
+                                                config: {
+                                                  ...(prev as FlowProcessorNode).config,
+                                                  cases: cases.map((entry: any) => (
+                                                    entry.id === item.id
+                                                      ? { ...entry, operator: e.target.value }
+                                                      : entry
+                                                  )),
+                                                },
+                                              } as FlowNode;
+                                            })}
+                                          />
+                                        </div>
+                                        <div className="flow-switch-case-row">
+                                          <button
+                                            type="button"
+                                            className="builder-link"
+                                            onClick={() => setFlowEditorDraft((prev) => {
+                                              if (!prev || prev.kind !== 'processor') {
+                                                return prev;
+                                              }
+                                              const cases = Array.isArray(prev.config?.cases)
+                                                ? prev.config.cases
+                                                : [];
+                                              return {
+                                                ...prev,
+                                                config: {
+                                                  ...(prev as FlowProcessorNode).config,
+                                                  cases: cases.filter((entry: any) => entry.id !== item.id),
+                                                },
+                                              } as FlowNode;
+                                            })}
+                                          >
+                                            Remove case
+                                          </button>
+                                        </div>
+                                      </div>
+                                    ))}
+                                  <button
+                                    type="button"
+                                    className="builder-link"
+                                    onClick={() => setFlowEditorDraft((prev) => {
+                                      if (!prev || prev.kind !== 'processor') {
+                                        return prev;
+                                      }
+                                      const cases = Array.isArray(prev.config?.cases)
+                                        ? prev.config.cases
+                                        : [];
+                                      return {
+                                        ...prev,
+                                        config: {
+                                          ...(prev as FlowProcessorNode).config,
+                                          cases: [
+                                            ...cases,
+                                            {
+                                              id: nextSwitchCaseId(),
+                                              match: '',
+                                              operator: '',
+                                              processors: [],
+                                            },
+                                          ],
+                                        },
+                                      } as FlowNode;
+                                    })}
+                                  >
+                                    Add case
+                                  </button>
+                                </div>
+                              </div>
+                              <div className="builder-hint">
+                                Drag processors into each case or the Default lane on the canvas.
+                              </div>
+                            </div>
+                          )}
+                        {flowEditorDraft.kind === 'processor'
+                          && !['set', 'regex', 'foreach', 'switch'].includes(flowEditorDraft.processorType)
+                          && (
+                            <div className="processor-form">
+                              {(flowProcessorConfigSpecs[flowEditorDraft.processorType] || []).length === 0 ? (
+                                <div className="builder-hint">
+                                  No configuration required for this processor.
+                                </div>
+                              ) : (
+                                flowProcessorConfigSpecs[flowEditorDraft.processorType].map((field) => {
+                                  const isJsonField = field.type === 'json';
+                                  const valueKey = isJsonField ? `${field.key}Text` : field.key;
+                                  const value = (flowEditorDraft.config?.[valueKey] ?? '') as string | boolean;
+                                  const jsonError = isJsonField && String(value).trim()
+                                    ? (() => {
+                                      try {
+                                        JSON.parse(String(value));
+                                        return '';
+                                      } catch {
+                                        return `${field.label} must be valid JSON.`;
+                                      }
+                                    })()
+                                    : '';
+                                  return (
+                                    <div key={field.key} className="processor-row">
+                                      <label className="builder-label">{field.label}</label>
+                                      {field.type === 'boolean' ? (
+                                        <select
+                                          className="builder-select"
+                                          value={value ? 'true' : 'false'}
+                                          onChange={(e) => setFlowEditorDraft((prev) => (prev
+                                            ? {
+                                              ...prev,
+                                              config: {
+                                                ...(prev as FlowProcessorNode).config,
+                                                [field.key]: e.target.value === 'true',
+                                              },
+                                            }
+                                            : prev))}
+                                        >
+                                          <option value="false">false</option>
+                                          <option value="true">true</option>
+                                        </select>
+                                      ) : isJsonField ? (
+                                        <textarea
+                                          className="builder-textarea"
+                                          placeholder={field.placeholder}
+                                          value={value as string}
+                                          onChange={(e) => setFlowEditorDraft((prev) => (prev
+                                            ? {
+                                              ...prev,
+                                              config: {
+                                                ...(prev as FlowProcessorNode).config,
+                                                [valueKey]: e.target.value,
+                                              },
+                                            }
+                                            : prev))}
+                                        />
+                                      ) : (
+                                        <input
+                                          className="builder-input"
+                                          placeholder={field.placeholder}
+                                          value={value as string}
+                                          onChange={(e) => setFlowEditorDraft((prev) => (prev
+                                            ? {
+                                              ...prev,
+                                              config: {
+                                                ...(prev as FlowProcessorNode).config,
+                                                [field.key]: e.target.value,
+                                              },
+                                            }
+                                            : prev))}
+                                        />
+                                      )}
+                                      {jsonError && (
+                                        <div className="builder-hint builder-hint-warning">{jsonError}</div>
+                                      )}
+                                    </div>
+                                  );
+                                })
+                              )}
+                            </div>
+                          )}
+                        {flowEditorJsonErrors.length > 0 && (
+                          <div className="builder-hint builder-hint-warning">
+                            {flowEditorJsonErrors.map((item) => (
+                              <div key={item.field}>{item.message}</div>
+                            ))}
+                          </div>
+                        )}
+                        {isPreGlobalFlow && hasPreScopeEventUsage(flowEditorDraft) && (
+                          <div className="builder-hint builder-hint-warning">
+                            Pre scope cannot reference $.event.*. Remove those paths or move this processor to post.
+                          </div>
+                        )}
+                        <div className="modal-actions">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setFlowEditor(null);
+                              setFlowEditorDraft(null);
+                            }}
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            type="button"
+                            disabled={
+                              (isPreGlobalFlow && hasPreScopeEventUsage(flowEditorDraft))
+                              || flowEditorJsonErrors.length > 0
+                            }
+                            onClick={() => {
+                              if (!flowEditor || !flowEditorDraft) {
+                                return;
+                              }
+                              if (isPreGlobalFlow && hasPreScopeEventUsage(flowEditorDraft)) {
+                                return;
+                              }
+                              if (flowEditorJsonErrors.length > 0) {
+                                return;
+                              }
+                              const setNodes = flowEditor.setNodesOverride
+                                || getFlowStateByLane(flowEditor.scope, flowEditor.lane).setNodes;
+                              setNodes((prev) => replaceNodeById(prev, flowEditor.nodeId, flowEditorDraft));
+                              setFlowEditor(null);
+                              setFlowEditorDraft(null);
+                            }}
+                          >
+                            Save
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  {showFieldReferenceModal && (
+                    <div className="modal-overlay" role="dialog" aria-modal="true">
+                      <div className="modal modal-wide">
+                        <h3>Field Reference</h3>
+                        <div className="field-reference">
+                          <div className="field-reference-section">
+                            <div className="field-reference-title">Common JSON paths</div>
+                            <ul>
+                              <li>$.event.* (post scope event fields)</li>
+                              <li>$.trap.*, $.syslog.* (method-specific inputs)</li>
+                              <li>$.localmem.* (per-event memory)</li>
+                              <li>$.globalmem.* (requires Coherence)</li>
+                              <li>$.lookups.&lt;lookup&gt;.&lt;key&gt;</li>
+                              <li>$.foreach.&lt;keyField|valField&gt;</li>
+                              <li>$.error.message</li>
+                            </ul>
+                          </div>
+                          <div className="field-reference-section">
+                            <div className="field-reference-title">Event fields (UA schema)</div>
+                            {eventsSchemaFields.length === 0 ? (
+                              <div className="field-reference-empty">
+                                No schema fields loaded.
+                              </div>
+                            ) : (
+                              <div className="field-reference-grid">
+                                {eventsSchemaFields.map((field) => (
+                                  <span
+                                    key={field}
+                                    className="field-reference-chip"
+                                    title={getEventFieldDescription(field)}
+                                  >
+                                    $.event.{field}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                        <div className="modal-actions">
+                          <button type="button" onClick={() => setShowFieldReferenceModal(false)}>Close</button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                   {builderSwitchModal.open && (
                     <div className="modal-overlay" role="dialog" aria-modal="true">
                       <div className="modal">
@@ -4727,6 +8113,17 @@ function App() {
                           </button>
                         </div>
                       </div>
+                    </div>
+                  )}
+                  {processorTooltip && (
+                    <div
+                      className="floating-help-tooltip"
+                      style={{ left: processorTooltip.x, top: processorTooltip.y }}
+                      role="tooltip"
+                    >
+                      <div className="floating-help-title">{processorTooltip.title}</div>
+                      <div className="floating-help-text">{processorTooltip.description}</div>
+                      <div className="floating-help-code">{processorTooltip.example}</div>
                     </div>
                   )}
                   {showSchemaModal && (
@@ -4833,6 +8230,12 @@ function App() {
                                 ]);
                                 const isReserved = reservedEventFields.has(field);
                                 const isExisting = existingFields.has(field);
+                                const description = getEventFieldDescription(field);
+                                const titleParts = [
+                                  ...(isReserved ? ['Reserved field'] : []),
+                                  ...(isExisting ? ['Already present'] : []),
+                                  ...(description ? [description] : []),
+                                ];
                                 return (
                                   <button
                                     key={field}
@@ -4846,11 +8249,7 @@ function App() {
                                       }
                                     }}
                                     disabled={isReserved || isExisting}
-                                    title={isReserved
-                                      ? 'Reserved field'
-                                      : isExisting
-                                        ? 'Already present'
-                                        : ''}
+                                    title={titleParts.join(' • ')}
                                   >
                                     {field}
                                   </button>
@@ -5007,6 +8406,53 @@ function App() {
                       setVarModalOpen(false);
                       setVarModalMode('view');
                       setVarInsertContext(null);
+                    }}>
+                      Close
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+            {eventFieldPickerOpen && (
+              <div className="modal-overlay" role="dialog" aria-modal="true">
+                <div className="modal modal-wide">
+                  <h3>Event Fields</h3>
+                  <input
+                    type="text"
+                    placeholder="Search event fields"
+                    value={eventFieldSearch}
+                    onChange={(e) => setEventFieldSearch(e.target.value)}
+                  />
+                  {eventsSchemaLoading && (
+                    <div className="muted">Loading schema…</div>
+                  )}
+                  {!eventsSchemaLoading && eventsSchemaError && (
+                    <div className="error">{eventsSchemaError}</div>
+                  )}
+                  {!eventsSchemaLoading && !eventsSchemaError && (
+                    <div className="add-field-list">
+                      {eventsSchemaFields
+                        .filter((field) => field.toLowerCase().includes(eventFieldSearch.trim().toLowerCase()))
+                        .map((field) => (
+                          <button
+                            type="button"
+                            key={field}
+                            className="add-field-item"
+                            onClick={() => handleEventFieldInsertSelect(field)}
+                            title={getEventFieldDescription(field)}
+                          >
+                            $.event.{field}
+                          </button>
+                        ))}
+                      {eventsSchemaFields.length === 0 && (
+                        <div className="empty-state">No schema fields loaded.</div>
+                      )}
+                    </div>
+                  )}
+                  <div className="modal-actions">
+                    <button type="button" onClick={() => {
+                      setEventFieldPickerOpen(false);
+                      setEventFieldInsertContext(null);
                     }}>
                       Close
                     </button>

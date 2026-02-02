@@ -1,6 +1,8 @@
 # Project Backlog
 
 ## Now (P0)
+- 🔥 Unify Global/Object processor palettes using a single registry source-of-truth.
+  - Plan: architecture/processor-palette-unification-plan.md
 - RBAC gating for edit/execute:
 	- Call UA roles/permissions API on login.
 	- Verify user has edit + execute permissions on rules ACL.
@@ -12,6 +14,7 @@
 - Implement UA REST API integration in backend (replace mock routes).
 - Build login UI (Oracle JET) with server selection and auth type.
 - Cert-based auth cleanup: confirm UA cert→user mapping and enable certificate auth (currently 401).
+- Docs reference: see architecture/fcom-processor-docs-summary.md (UA FCOM processor/override specs).
 
 ## Next (P1)
 - ✅ File browser tree with search/filters.
@@ -67,6 +70,7 @@
 	- Help entry point (modal/side panel) to ask for guidance (e.g., processor selection/build).
 	- Future: generate new FCOM from MIBs via Mib2FCOM and MIB browser.
 - Processor builder rollout (priority order):
+	- Reference: architecture/fcom-processor-docs-summary.md (processor specs and constraints).
 	1) set
 	2) regex
 	3) convert

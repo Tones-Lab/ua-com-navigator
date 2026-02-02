@@ -175,6 +175,28 @@ The builder should let users pick:
 - Source (literal or $vN)
 - Operator / pattern / conversion type, depending on processor
 
+### Advanced Processor Flow (Wireframe MVP)
+This is a **visual flow** for power users, separate from field-scoped edits.
+
+**Basic functionality**
+- Open “Advanced Processors” modal from the Processor Builder.
+- Palette on the left with all processors (searchable).
+- Drag from palette into the flow lane (root).
+- Drag existing nodes between lanes (e.g., Then/Else).
+- Remove nodes via the inline Remove action.
+
+**Expectations (MVP)**
+- Supports linear list plus basic `if` node with Then/Else lanes.
+- Drag/drop only; no inline processor configuration yet.
+- No persistence to override files yet (visual-only scaffold).
+- No validation or field targeting enforcement in the flow.
+
+**Limitations (MVP)**
+- No switch/foreach nesting yet (future).
+- No ordering controls besides drag/drop.
+- No linking to specific event panel fields.
+- No JSON output or “apply” to overrides yet.
+
 ### Processor-Specific Forms (MVP details)
 Below is the **minimum form** for each processor type. Optional fields are shown and may be collapsed under “Advanced”.
 
