@@ -1,6 +1,7 @@
 # Project Backlog
 
 ## Now (P0)
+- 🔥 Persist active tab across refresh (preserve current page instead of defaulting to Overview).
 - 🔥 Unify Global/Object processor palettes using a single registry source-of-truth.
   - Plan: architecture/processor-palette-unification-plan.md
 - 🔥 Advanced Flow visibility + commit flow:
@@ -177,4 +178,10 @@ create a 'send all traps' feature - that sends all traps in a given FCOM file to
 
 
 
+
+Need to fix the folder refresh / cache - curernt broken if you click admin while selecting a folder under fcom. throw error in modal. need to resolve this.
+
+Still not showing correct count of overrides in any of the review / summmary pages - why not?
+
+BUG: If i click on a FCOOM file - and open the builder in edit mode, then click away to a new file, the builder should close and not be open on the new file / page. 
 

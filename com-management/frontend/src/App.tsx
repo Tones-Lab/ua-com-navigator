@@ -3,6 +3,15 @@ import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
 import { useSessionStore } from './stores';
 import api from './services/api';
+import AppTabs from './app/AppTabs';
+import OverviewPage from './features/overview/OverviewPage';
+import PcomPage from './features/pcom/PcomPage';
+import MibBrowserPage from './features/mib/MibBrowserPage';
+import FcomBrowserPanel from './features/fcom/FcomBrowserPanel';
+import FcomFileHeader from './features/fcom/FcomFileHeader';
+import FcomFolderOverview from './features/fcom/FcomFolderOverview';
+import FcomFilePreview from './features/fcom/FcomFilePreview';
+import FcomBuilderSidebar from './features/fcom/FcomBuilderSidebar';
 import './App.css';
 
 const COMS_PATH_PREFIX = 'id-core/default/processing/event/fcom/_objects';
@@ -21,18 +30,18 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { has
     // eslint-disable-next-line no-console
     console.error('UI crash:', error, info);
   }
-
   render() {
     if (this.state.hasError) {
       return (
         <div className="app">
-          <div className="panel">
-            <h2>Something went wrong</h2>
-            <p className="error">{this.state.error?.message || 'Unknown error'}</p>
-            <button type="button" className="save-button" onClick={() => window.location.reload()}>
-              Reload
-            </button>
-          </div>
+          <header className="app-header">
+            <h1>COM Curation &amp; Management</h1>
+          </header>
+          <main>
+            <div className="error">
+              Something went wrong while rendering the app. Refresh the page to try again.
+            </div>
+          </main>
         </div>
       );
     }
@@ -41,9 +50,19 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { has
   }
 }
 
+type AppTab = 'overview' | 'fcom' | 'pcom' | 'mib';
+
 export default function App() {
-  const { session, isAuthenticated, setSession, setServers, servers, clearSession } = useSessionStore();
-  const [serverId, setServerId] = useState<string>('');
+  const {
+    session,
+    servers,
+    isAuthenticated,
+    setSession,
+    clearSession,
+    setServers,
+  } = useSessionStore();
+  const [activeApp, setActiveApp] = useState<AppTab>('overview');
+  const [serverId, setServerId] = useState('');
   const [authType, setAuthType] = useState<'basic' | 'certificate'>('basic');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -52,143 +71,6 @@ export default function App() {
   const [caPath, setCaPath] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [activeApp, setActiveApp] = useState<'overview' | 'fcom' | 'pcom' | 'mib'>('overview');
-  const [browsePath, setBrowsePath] = useState('/');
-  const [showPathModal, setShowPathModal] = useState(false);
-  const [overviewData, setOverviewData] = useState<any | null>(null);
-  const [overviewStatus, setOverviewStatus] = useState<any | null>(null);
-  const [overviewLoading, setOverviewLoading] = useState(false);
-  const [overviewError, setOverviewError] = useState<string | null>(null);
-  const [overviewTopN, setOverviewTopN] = useState(10);
-  const [showUserMenu, setShowUserMenu] = useState(false);
-  const [cacheActionMessage, setCacheActionMessage] = useState<string | null>(null);
-  const [overviewVendorFilter, setOverviewVendorFilter] = useState('');
-  const [overviewVendorSort, setOverviewVendorSort] = useState<{
-    key: 'vendor' | 'files' | 'overrides' | 'objects' | 'variables' | 'evalObjects' | 'processorObjects' | 'literalObjects';
-    direction: 'asc' | 'desc';
-  }>({ key: 'objects', direction: 'desc' });
-  const formatDisplayPath = (rawPath: string) => {
-    const cleaned = rawPath.replace(/^\/+/, '');
-    if (!cleaned) {
-      return '/';
-    }
-    const parts = cleaned.split('/');
-    if (parts[0]?.startsWith('id-')) {
-      parts[0] = parts[0].replace(/^id-/, '');
-    }
-    return `/${parts.join('/')}`;
-  };
-
-  const getCurrentPath = () => {
-    if (selectedFile?.PathID) {
-      return formatDisplayPath(selectedFile.PathID);
-    }
-    if (browseNode) {
-      return formatDisplayPath(browseNode);
-    }
-    return '/';
-  };
-  const normalizeNodeSegment = (value: string) => value.replace(/^\/+|\/+$/g, '');
-  const buildFcomNodePath = (protocol: string, vendor?: string) => {
-    const segments = [COMS_PATH_PREFIX, normalizeNodeSegment(protocol)];
-    if (vendor) {
-      segments.push(normalizeNodeSegment(vendor));
-    }
-    return segments.filter(Boolean).join('/');
-  };
-  const handleOverviewFolderClick = (protocol: string, vendor?: string) => {
-    const node = buildFcomNodePath(protocol, vendor);
-    const label = vendor || protocol;
-    setActiveApp('fcom');
-    void handleOpenFolder({ PathID: node, PathName: label });
-  };
-  const getSortIndicator = (activeKey: string, key: string, direction: 'asc' | 'desc') => (
-    activeKey === key ? (direction === 'asc' ? '▲' : '▼') : ''
-  );
-  const toggleOverviewSort = (
-    key: 'vendor' | 'files' | 'overrides' | 'objects' | 'variables' | 'evalObjects' | 'processorObjects' | 'literalObjects',
-  ) => {
-    setOverviewVendorSort((prev) => {
-      if (prev.key === key) {
-        return { key, direction: prev.direction === 'asc' ? 'desc' : 'asc' };
-      }
-      return { key, direction: key === 'vendor' ? 'asc' : 'desc' };
-    });
-  };
-  const toggleFolderSort = (key: 'file' | 'objects' | 'schemaErrors' | 'unknownFields') => {
-    setFolderTableSort((prev) => {
-      if (prev.key === key) {
-        return { key, direction: prev.direction === 'asc' ? 'desc' : 'asc' };
-      }
-      return { key, direction: key === 'file' ? 'asc' : 'desc' };
-    });
-  };
-  const renderOverrideSummaryCard = (
-    obj: any,
-    overrideValueMap: Map<string, any>,
-    fields: string[],
-    title: string,
-  ) => {
-    const maxItems = 6;
-    const visible = fields.slice(0, maxItems);
-    const remaining = fields.length - visible.length;
-    const overrideHoverProps = {
-      onMouseEnter: () => {
-        setSuppressVarTooltip(true);
-        setSuppressEvalTooltip(true);
-      },
-      onMouseLeave: () => {
-        setSuppressVarTooltip(false);
-        setSuppressEvalTooltip(false);
-      },
-      onFocus: () => {
-        setSuppressVarTooltip(true);
-        setSuppressEvalTooltip(true);
-      },
-      onBlur: () => {
-        setSuppressVarTooltip(false);
-        setSuppressEvalTooltip(false);
-      },
-    };
-    return (
-      <div className="override-summary-card" role="tooltip" {...overrideHoverProps}>
-        <div className="override-summary-title">
-          {title}
-        </div>
-        <ul className="override-summary-list">
-          {visible.map((field) => (
-            <li key={field} className="override-summary-item">
-              <span className="override-summary-field">Original: {formatEventFieldLabel(field)}</span>
-              <span className="override-summary-value">
-                {(() => {
-                  const originalValue = obj?.event?.[field];
-                  if (originalValue == null) {
-                    return '—';
-                  }
-                  if (typeof originalValue === 'object' && typeof originalValue.eval === 'string') {
-                    return renderHighlightedText(originalValue.eval);
-                  }
-                  if (typeof originalValue === 'string' || typeof originalValue === 'number' || typeof originalValue === 'boolean') {
-                    return renderHighlightedText(String(originalValue));
-                  }
-                  try {
-                    return renderHighlightedText(JSON.stringify(originalValue));
-                  } catch {
-                    return '—';
-                  }
-                })()}
-              </span>
-            </li>
-          ))}
-          {remaining > 0 && (
-            <li className="override-summary-item">
-              <span className="override-summary-value">+{remaining} more</span>
-            </li>
-          )}
-        </ul>
-      </div>
-    );
-  };
   const [browseLoading, setBrowseLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchScope, setSearchScope] = useState<'all' | 'name' | 'content'>('all');
@@ -215,6 +97,20 @@ export default function App() {
   const lastSelectedFileRef = useRef<string | null>(null);
   const friendlyViewRef = useRef<HTMLDivElement | null>(null);
   const friendlyMainRef = useRef<HTMLDivElement | null>(null);
+  const [browsePath] = useState('/');
+  const [overviewStatus, setOverviewStatus] = useState<any | null>(null);
+  const [overviewData, setOverviewData] = useState<any | null>(null);
+  const [overviewLoading, setOverviewLoading] = useState(false);
+  const [overviewError, setOverviewError] = useState<string | null>(null);
+  const [overviewTopN, setOverviewTopN] = useState(10);
+  const [overviewVendorFilter, setOverviewVendorFilter] = useState('');
+  const [overviewVendorSort, setOverviewVendorSort] = useState<{
+    key: 'vendor' | 'files' | 'overrides' | 'objects';
+    direction: 'asc' | 'desc';
+  }>({ key: 'files', direction: 'desc' });
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const [cacheActionMessage, setCacheActionMessage] = useState<string | null>(null);
+  const [showPathModal, setShowPathModal] = useState(false);
   const [mibPath, setMibPath] = useState('/');
   const [mibEntries, setMibEntries] = useState<any[]>([]);
   const [mibLoading, setMibLoading] = useState(false);
@@ -355,6 +251,23 @@ export default function App() {
     });
   }, [overviewData, overviewTopN, overviewVendorFilter, overviewVendorSort]);
 
+  const toggleOverviewSort = (key: 'vendor' | 'files' | 'overrides' | 'objects') => {
+    setOverviewVendorSort((prev) => (
+      prev.key === key
+        ? { key, direction: prev.direction === 'asc' ? 'desc' : 'asc' }
+        : { key, direction: 'desc' }
+    ));
+  };
+
+  const handleOverviewFolderClick = (protocol: string, vendor?: string) => {
+    const path = [COMS_PATH_PREFIX, protocol, vendor].filter(Boolean).join('/');
+    const entryLabel = vendor || protocol;
+    confirmDiscardIfDirty(() => {
+      setActiveApp('fcom');
+      void handleOpenFolderInternal({ PathID: path, PathName: entryLabel });
+    });
+  };
+
   const getRawPath = () => {
     if (selectedFile?.PathID) {
       return `/${selectedFile.PathID}`;
@@ -414,6 +327,28 @@ export default function App() {
     return `${days}d`;
   };
 
+  const formatDisplayPath = (pathId?: string | null) => {
+    if (!pathId) {
+      return '/';
+    }
+    const cleaned = pathId.replace(/^\/+/, '');
+    if (!cleaned) {
+      return '/';
+    }
+    const segments = cleaned.split('/');
+    if (segments[0]?.startsWith('id-')) {
+      segments[0] = segments[0].replace(/^id-/, '');
+    }
+    return `/${segments.join('/')}`;
+  };
+
+  const getSortIndicator = (activeKey: string, key: string, direction: 'asc' | 'desc') => {
+    if (activeKey !== key) {
+      return null;
+    }
+    return direction === 'asc' ? '↑' : '↓';
+  };
+
   const [browseError, setBrowseError] = useState<string | null>(null);
   const [browseData, setBrowseData] = useState<any>(null);
   const [browseNode, setBrowseNode] = useState<string | null>(null);
@@ -449,6 +384,14 @@ export default function App() {
     });
     return sortedRows;
   }, [folderOverview, folderTableFilter, folderTableSort]);
+
+  const toggleFolderSort = (key: 'file' | 'objects' | 'schemaErrors' | 'unknownFields') => {
+    setFolderTableSort((prev) => (
+      prev.key === key
+        ? { key, direction: prev.direction === 'asc' ? 'desc' : 'asc' }
+        : { key, direction: 'desc' }
+    ));
+  };
   const [breadcrumbs, setBreadcrumbs] = useState<Array<{ label: string; node: string | null }>>([
     { label: '/', node: null },
   ]);
@@ -2862,6 +2805,15 @@ export default function App() {
   };
 
   const handleOpenFileInternal = async (entry: any) => {
+    closeBuilder();
+    setPanelEditState({});
+    setPanelDrafts({});
+    setPanelEvalModes({});
+    setPanelOverrideRemovals({});
+    setPanelAddedFields({});
+    setPanelNavWarning({ open: false, fields: {} });
+    setPendingCancel(null);
+    setPendingNav(null);
     if (!highlightNextOpenRef.current) {
       setHighlightQuery(null);
       setHighlightPathId(null);
@@ -2942,6 +2894,15 @@ export default function App() {
   };
 
   const handleOpenFolderInternal = async (entry: any) => {
+    closeBuilder();
+    setPanelEditState({});
+    setPanelDrafts({});
+    setPanelEvalModes({});
+    setPanelOverrideRemovals({});
+    setPanelAddedFields({});
+    setPanelNavWarning({ open: false, fields: {} });
+    setPendingCancel(null);
+    setPendingNav(null);
     setHighlightQuery(null);
     setHighlightPathId(null);
     setHighlightObjectKeys([]);
@@ -4108,6 +4069,43 @@ export default function App() {
       setSuppressVarTooltip(false);
       setSuppressEvalTooltip(false);
     },
+  };
+
+  const renderOverrideSummaryCard = (
+    obj: any,
+    overrideValueMap: Map<string, any>,
+    fields: string[],
+    title: string,
+  ) => {
+    const rows = fields
+      .map((field) => {
+        const target = field.startsWith('$.') ? field : `$.event.${field}`;
+        if (!overrideValueMap.has(target)) {
+          return null;
+        }
+        return { field, value: overrideValueMap.get(target) };
+      })
+      .filter(Boolean) as Array<{ field: string; value: any }>;
+
+    if (rows.length === 0) {
+      return null;
+    }
+
+    return (
+      <div className="override-summary-card" role="tooltip">
+        <div className="override-summary-title">{title}</div>
+        <ul className="override-summary-list">
+          {rows.map((row) => (
+            <li key={`${row.field}-${String(row.value)}`} className="override-summary-item">
+              <span className="override-summary-field">{row.field}</span>
+              <span className="override-summary-value">
+                {renderValue(row.value, obj?.trap?.variables, { suppressEvalTooltip: true })}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
   };
 
   const reservedEventFields = new Set(['EventID', 'EventKey', 'Method']);
@@ -7864,50 +7862,89 @@ export default function App() {
     return 'Processor removed';
   };
 
+  const builderSidebar = (
+    <FcomBuilderSidebar
+      isAnyPanelEditing={isAnyPanelEditing}
+      builderOpen={builderOpen}
+      builderTarget={builderTarget}
+      builderDirty={builderDirty}
+      canUndoBuilder={canUndoBuilder}
+      canRedoBuilder={canRedoBuilder}
+      handleBuilderUndo={handleBuilderUndo}
+      handleBuilderRedo={handleBuilderRedo}
+      setShowBuilderHelpModal={setShowBuilderHelpModal}
+      requestCancelBuilder={requestCancelBuilder}
+      setBuilderOpen={setBuilderOpen}
+      builderFocus={builderFocus}
+      isBuilderTargetReady={isBuilderTargetReady}
+      builderTypeLocked={builderTypeLocked}
+      setBuilderSwitchModal={setBuilderSwitchModal}
+      applyBuilderTypeSwitch={applyBuilderTypeSwitch}
+      builderLiteralText={builderLiteralText}
+      handleLiteralInputChange={handleLiteralInputChange}
+      literalDirty={literalDirty}
+      applyLiteralValue={applyLiteralValue}
+      builderMode={builderMode}
+      setBuilderMode={setBuilderMode}
+      hasEditPermission={hasEditPermission}
+      setAdvancedProcessorScope={setAdvancedProcessorScope}
+      setShowAdvancedProcessorModal={setShowAdvancedProcessorModal}
+      builderConditions={builderConditions}
+      setBuilderConditions={setBuilderConditions}
+      updateBuilderCondition={updateBuilderCondition}
+      updateBuilderResult={updateBuilderResult}
+      removeBuilderRow={removeBuilderRow}
+      addBuilderRow={addBuilderRow}
+      createConditionNode={createConditionNode}
+      createGroupNode={createGroupNode}
+      nextBuilderId={nextBuilderId}
+      renderConditionNode={renderConditionNode}
+      builderElseResult={builderElseResult}
+      setBuilderElseResult={setBuilderElseResult}
+      friendlyPreview={friendlyPreview}
+      applyFriendlyEval={applyFriendlyEval}
+      formatEvalReadableList={formatEvalReadableList}
+      builderRegularText={builderRegularText}
+      handleRegularEvalInputChange={handleRegularEvalInputChange}
+      clearRegularEval={clearRegularEval}
+      applyRegularEval={applyRegularEval}
+      applyBuilderTemplate={applyBuilderTemplate}
+      openAdvancedFlowModal={openAdvancedFlowModal}
+      processorStep={processorStep}
+      setProcessorStep={setProcessorStep}
+      processorType={processorType}
+      processorPayload={processorPayload}
+      processorCatalog={processorCatalog}
+      handleBuilderSelect={handleBuilderSelect}
+      builderProcessorConfig={builderProcessorConfig}
+      setBuilderProcessorConfig={setBuilderProcessorConfig}
+      builderNestedAddType={builderNestedAddType}
+      setBuilderNestedAddType={setBuilderNestedAddType}
+      builderPaletteItems={builderPaletteItems}
+      builderSwitchCaseAddType={builderSwitchCaseAddType}
+      setBuilderSwitchCaseAddType={setBuilderSwitchCaseAddType}
+      builderSwitchDefaultAddType={builderSwitchDefaultAddType}
+      setBuilderSwitchDefaultAddType={setBuilderSwitchDefaultAddType}
+      createFlowNodeFromPaletteValue={createFlowNodeFromPaletteValue}
+      renderProcessorHelp={renderProcessorHelp}
+      renderProcessorConfigFields={renderProcessorConfigFields}
+      renderFlowList={renderFlowList}
+      getProcessorCatalogLabel={getProcessorCatalogLabel}
+      getProcessorSummaryLines={getProcessorSummaryLines}
+      showProcessorJson={showProcessorJson}
+      setShowProcessorJson={setShowProcessorJson}
+      applyProcessor={applyProcessor}
+      nextSwitchCaseId={nextSwitchCaseId}
+    />
+  );
+
   return (
     <ErrorBoundary>
       <div className="app">
         <header className="app-header">
           <h1>COM Curation &amp; Management</h1>
           {isAuthenticated && (
-            <div className="app-nav" role="tablist" aria-label="Application navigation">
-              <button
-                type="button"
-                className={activeApp === 'overview' ? 'app-nav-button app-nav-button-active' : 'app-nav-button'}
-                onClick={() => setActiveApp('overview')}
-                role="tab"
-                aria-selected={activeApp === 'overview'}
-              >
-                Overview
-              </button>
-              <button
-                type="button"
-                className={activeApp === 'fcom' ? 'app-nav-button app-nav-button-active' : 'app-nav-button'}
-                onClick={() => setActiveApp('fcom')}
-                role="tab"
-                aria-selected={activeApp === 'fcom'}
-              >
-                FCOM
-              </button>
-              <button
-                type="button"
-                className={activeApp === 'pcom' ? 'app-nav-button app-nav-button-active' : 'app-nav-button'}
-                onClick={() => setActiveApp('pcom')}
-                role="tab"
-                aria-selected={activeApp === 'pcom'}
-              >
-                PCOM
-              </button>
-              <button
-                type="button"
-                className={activeApp === 'mib' ? 'app-nav-button app-nav-button-active' : 'app-nav-button'}
-                onClick={() => setActiveApp('mib')}
-                role="tab"
-                aria-selected={activeApp === 'mib'}
-              >
-                MIB Browser
-              </button>
-            </div>
+            <AppTabs activeApp={activeApp} onChange={setActiveApp} />
           )}
           {isAuthenticated && (
             <div className="header-actions">
@@ -7932,2498 +7969,164 @@ export default function App() {
         {isAuthenticated ? (
           <>
           {activeApp === 'overview' ? (
-            <div className="overview-layout">
-              <div className="overview-columns">
-                <section className="overview-card overview-card-fcom">
-                  <div className="overview-card-header">
-                    <div>
-                      <h2>FCOM Overview</h2>
-                      <p className="overview-subtitle">File, object, and vendor rollups from FCOM folders.</p>
-                      <div className="overview-cache-status">
-                        {overviewStatus?.isBuilding
-                          ? 'Cache: Refreshing'
-                          : overviewStatus?.lastBuiltAt
-                            ? `Cache: Loaded (age: ${formatRelativeAge(overviewStatus.lastBuiltAt)})`
-                            : 'Cache: Not loaded'}
-                      </div>
-                    </div>
-                    <div className="overview-actions">
-                      <div className="overview-topn">
-                        <label htmlFor="overview-topn">Top N</label>
-                        <select
-                          id="overview-topn"
-                          value={overviewTopN}
-                          onChange={(event) => setOverviewTopN(Number(event.target.value))}
-                        >
-                          <option value={10}>10</option>
-                          <option value={25}>25</option>
-                          <option value={50}>50</option>
-                          <option value={100}>100</option>
-                          <option value={0}>All</option>
-                        </select>
-                      </div>
-                      <button
-                        type="button"
-                        className="save-button"
-                        onClick={() => loadOverview({ forceRebuild: true })}
-                        disabled={overviewLoading}
-                      >
-                        Refresh
-                      </button>
-                    </div>
-                  </div>
-                  <div className="overview-filter-row">
-                    <label htmlFor="overview-vendor-filter">Filter vendors</label>
-                    <input
-                      id="overview-vendor-filter"
-                      type="text"
-                      placeholder="Type to filter vendors"
-                      value={overviewVendorFilter}
-                      onChange={(event) => setOverviewVendorFilter(event.target.value)}
-                    />
-                  </div>
-
-                  {overviewError && <p className="error">{overviewError}</p>}
-                  {overviewLoading && !overviewData && (
-                    <div className="overview-empty">Loading overview…</div>
-                  )}
-
-                  {overviewData && (
-                    <>
-                      <div className="overview-stat-grid">
-                        <div className="overview-stat">
-                          <span className="overview-stat-label">Original FCOM files</span>
-                          <span className="overview-stat-value">
-                            {formatOverviewNumber(overviewData.totals?.files || 0)}
-                          </span>
-                        </div>
-                        <div className="overview-stat">
-                          <span className="overview-stat-label">Overrides</span>
-                          <span className="overview-stat-value">
-                            {formatOverviewNumber(overviewData.totals?.overrides || 0)}
-                          </span>
-                        </div>
-                        <div className="overview-stat">
-                          <span className="overview-stat-label">Objects</span>
-                          <span className="overview-stat-value">
-                            {formatOverviewNumber(overviewData.totals?.objects || 0)}
-                          </span>
-                        </div>
-                        <div className="overview-stat">
-                          <span className="overview-stat-label">Trap variables</span>
-                          <span className="overview-stat-value">
-                            {formatOverviewNumber(overviewData.totals?.variables || 0)}
-                          </span>
-                        </div>
-                        <div className="overview-stat">
-                          <span className="overview-stat-label">Eval objects</span>
-                          <span className="overview-stat-value">
-                            {formatOverviewNumber(overviewData.totals?.evalObjects || 0)}
-                          </span>
-                        </div>
-                        <div className="overview-stat">
-                          <span className="overview-stat-label">Processor objects</span>
-                          <span className="overview-stat-value">
-                            {formatOverviewNumber(overviewData.totals?.processorObjects || 0)}
-                          </span>
-                        </div>
-                        <div className="overview-stat">
-                          <span className="overview-stat-label">Literal objects</span>
-                          <span className="overview-stat-value">
-                            {formatOverviewNumber(overviewData.totals?.literalObjects || 0)}
-                          </span>
-                        </div>
-                      </div>
-
-                      {overviewProtocols.length === 0 ? (
-                        <div className="overview-empty">No protocol data found.</div>
-                      ) : (
-                        <div className="overview-protocols">
-                          {overviewProtocols.map((protocol: any) => (
-                            <div key={protocol.name} className="overview-protocol">
-                              <div className="overview-protocol-header">
-                                <h3>
-                                  <button
-                                    type="button"
-                                    className="folder-link overview-folder-link"
-                                    onClick={() => handleOverviewFolderClick(protocol.name)}
-                                  >
-                                    {protocol.name}
-                                  </button>
-                                </h3>
-                                <div className="overview-protocol-meta">
-                                  <span>Files {formatOverviewNumber(protocol.counts?.files || 0)}</span>
-                                  <span>Objects {formatOverviewNumber(protocol.counts?.objects || 0)}</span>
-                                  <span>Overrides {formatOverviewNumber(protocol.counts?.overrides || 0)}</span>
-                                </div>
-                              </div>
-                              <div className="overview-table-wrapper">
-                                <table className="overview-table">
-                                  <thead>
-                                    <tr>
-                                      <th>
-                                        <button
-                                          type="button"
-                                          className="table-sort-button"
-                                          onClick={() => toggleOverviewSort('vendor')}
-                                        >
-                                          Vendor {getSortIndicator(overviewVendorSort.key, 'vendor', overviewVendorSort.direction)}
-                                        </button>
-                                      </th>
-                                      <th>
-                                        <button
-                                          type="button"
-                                          className="table-sort-button"
-                                          onClick={() => toggleOverviewSort('files')}
-                                        >
-                                          Files {getSortIndicator(overviewVendorSort.key, 'files', overviewVendorSort.direction)}
-                                        </button>
-                                      </th>
-                                      <th>
-                                        <button
-                                          type="button"
-                                          className="table-sort-button"
-                                          onClick={() => toggleOverviewSort('overrides')}
-                                        >
-                                          Overrides {getSortIndicator(overviewVendorSort.key, 'overrides', overviewVendorSort.direction)}
-                                        </button>
-                                      </th>
-                                      <th>
-                                        <button
-                                          type="button"
-                                          className="table-sort-button"
-                                          onClick={() => toggleOverviewSort('objects')}
-                                        >
-                                          Objects {getSortIndicator(overviewVendorSort.key, 'objects', overviewVendorSort.direction)}
-                                        </button>
-                                      </th>
-                                      <th>
-                                        <button
-                                          type="button"
-                                          className="table-sort-button"
-                                          onClick={() => toggleOverviewSort('variables')}
-                                        >
-                                          Variables {getSortIndicator(overviewVendorSort.key, 'variables', overviewVendorSort.direction)}
-                                        </button>
-                                      </th>
-                                      <th>
-                                        <button
-                                          type="button"
-                                          className="table-sort-button"
-                                          onClick={() => toggleOverviewSort('evalObjects')}
-                                        >
-                                          Eval {getSortIndicator(overviewVendorSort.key, 'evalObjects', overviewVendorSort.direction)}
-                                        </button>
-                                      </th>
-                                      <th>
-                                        <button
-                                          type="button"
-                                          className="table-sort-button"
-                                          onClick={() => toggleOverviewSort('processorObjects')}
-                                        >
-                                          Processor {getSortIndicator(overviewVendorSort.key, 'processorObjects', overviewVendorSort.direction)}
-                                        </button>
-                                      </th>
-                                      <th>
-                                        <button
-                                          type="button"
-                                          className="table-sort-button"
-                                          onClick={() => toggleOverviewSort('literalObjects')}
-                                        >
-                                          Literal {getSortIndicator(overviewVendorSort.key, 'literalObjects', overviewVendorSort.direction)}
-                                        </button>
-                                      </th>
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                    {(protocol.vendors || []).map((vendor: any) => (
-                                      <tr key={`${protocol.name}-${vendor.name}`}>
-                                        <td>
-                                          <button
-                                            type="button"
-                                            className="folder-link overview-folder-link"
-                                            onClick={() => handleOverviewFolderClick(protocol.name, vendor.name)}
-                                          >
-                                            {vendor.name}
-                                          </button>
-                                        </td>
-                                        <td>{formatOverviewNumber(vendor.counts?.files || 0)}</td>
-                                        <td>{formatOverviewNumber(vendor.counts?.overrides || 0)}</td>
-                                        <td>{formatOverviewNumber(vendor.counts?.objects || 0)}</td>
-                                        <td>{formatOverviewNumber(vendor.counts?.variables || 0)}</td>
-                                        <td>{formatOverviewNumber(vendor.counts?.evalObjects || 0)}</td>
-                                        <td>{formatOverviewNumber(vendor.counts?.processorObjects || 0)}</td>
-                                        <td>{formatOverviewNumber(vendor.counts?.literalObjects || 0)}</td>
-                                      </tr>
-                                    ))}
-                                  </tbody>
-                                </table>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </>
-                  )}
-
-                  {!overviewLoading && !overviewData && !overviewError && (
-                    <div className="overview-empty">Overview data is not available yet.</div>
-                  )}
-                </section>
-
-                <section className="overview-card overview-card-pcom">
-                  <div className="overview-card-header">
-                    <div>
-                      <h2>PCOM Overview</h2>
-                      <p className="overview-subtitle">Work in progress.</p>
-                    </div>
-                  </div>
-                  <div className="overview-empty">
-                    PCOM reporting is coming soon.
-                  </div>
-                </section>
-              </div>
-            </div>
+            <OverviewPage
+              overviewStatus={overviewStatus}
+              overviewTopN={overviewTopN}
+              setOverviewTopN={setOverviewTopN}
+              loadOverview={loadOverview}
+              overviewLoading={overviewLoading}
+              overviewVendorFilter={overviewVendorFilter}
+              setOverviewVendorFilter={setOverviewVendorFilter}
+              overviewError={overviewError}
+              overviewData={overviewData}
+              overviewProtocols={overviewProtocols}
+              formatRelativeAge={formatRelativeAge}
+              formatOverviewNumber={formatOverviewNumber}
+              handleOverviewFolderClick={handleOverviewFolderClick}
+              toggleOverviewSort={toggleOverviewSort}
+              getSortIndicator={getSortIndicator}
+              overviewVendorSort={overviewVendorSort}
+            />
           ) : activeApp === 'fcom' ? (
           <div className="split-layout">
-            <div className="panel">
-              <div className="panel-scroll">
-                <div className="panel-header">
-                  <div className="panel-title-row">
-                    <h2>File Browser</h2>
-                    <button
-                      type="button"
-                      className="info-button"
-                      onClick={() => setShowPathModal(true)}
-                      aria-label="Show full path"
-                      title="Show full path"
-                    >
-                      ?
-                    </button>
-                  </div>
-                  {!hasEditPermission && (
-                    <div className="panel-flag-row">
-                      <span className="read-only-flag" title="You do not have permission to edit rules.">
-                        Read-only access
-                      </span>
-                    </div>
-                  )}
-                  <div className="breadcrumbs">
-                    {breadcrumbs.map((crumb, index) => (
-                      <button
-                        key={`${crumb.label}-${index}`}
-                        type="button"
-                        className="crumb"
-                        onClick={() => handleCrumbClick(index)}
-                        disabled={index === breadcrumbs.length - 1}
-                      >
-                        {crumb.label}
-                      </button>
-                    ))}
-                  </div>
-                  <div className="panel-section">
-                    <div className="panel-section-title">Search</div>
-                    <form className="global-search" onSubmit={handleSearchSubmit}>
-                      <div className="global-search-row">
-                        <input
-                          type="text"
-                          placeholder="Search files and contents"
-                          value={searchQuery}
-                          onChange={(e) => setSearchQuery(e.target.value)}
-                        />
-                        <select
-                          value={searchScope}
-                          onChange={(e) => setSearchScope(e.target.value as 'all' | 'name' | 'content')}
-                        >
-                          <option value="all">All</option>
-                          <option value="name">Names</option>
-                          <option value="content">Content</option>
-                        </select>
-                        <button type="submit" className="search-button" disabled={searchLoading}>
-                          {searchLoading ? 'Searching…' : 'Search'}
-                        </button>
-                      </div>
-                      <div className="search-actions-row">
-                        <button
-                          type="button"
-                          className="ghost-button"
-                          onClick={handleClearSearch}
-                          disabled={!searchQuery && searchResults.length === 0}
-                        >
-                          Clear Search
-                        </button>
-                        <button type="button" className="ghost-button" onClick={handleResetNavigation}>
-                          Reset Navigation
-                        </button>
-                      </div>
-                    </form>
-                  </div>
-                  <div className="panel-section">
-                    <div className="panel-section-title">Favorites</div>
-                    <div className="favorites-section">
-                    <div className="favorites-scroll">
-                      <details open={favoritesFolders.length > 0}>
-                        <summary>Favorite Folders</summary>
-                        {favoritesLoading && <div className="muted">Loading…</div>}
-                        {favoritesError && <div className="error">{favoritesError}</div>}
-                        {favoritesFolders.length === 0 ? (
-                          <div className="empty-state">No favorites yet.</div>
-                        ) : (
-                          <ul className="favorites-list">
-                            {favoritesFolders.map((fav) => (
-                              <li key={`${fav.type}-${fav.pathId}`}>
-                                <button
-                                  type="button"
-                                  className="quick-link"
-                                  onClick={() => handleOpenFolder({ PathID: fav.pathId, PathName: fav.label })}
-                                >
-                                  {fav.label}
-                                  {getParentLabel(getParentPath(fav.pathId)) && (
-                                    <span className="favorite-parent"> - ({getParentLabel(getParentPath(fav.pathId))})</span>
-                                  )}
-                                </button>
-                              </li>
-                            ))}
-                          </ul>
-                        )}
-                      </details>
-                      <details open={favoritesFiles.length > 0}>
-                        <summary>Favorite Files</summary>
-                        {favoritesFiles.length === 0 ? (
-                          <div className="empty-state">No favorites yet.</div>
-                        ) : (
-                          <ul className="favorites-list">
-                            {favoritesFiles.map((fav) => (
-                              <li key={`${fav.type}-${fav.pathId}`}>
-                                <button
-                                  type="button"
-                                  className="quick-link"
-                                  onClick={() => openFileFromUrl(fav.pathId, fav.node)}
-                                >
-                                  {fav.label}
-                                  {fav.node && (
-                                    <span className="favorite-parent"> - ({getParentLabel(fav.node)})</span>
-                                  )}
-                                </button>
-                              </li>
-                            ))}
-                          </ul>
-                        )}
-                      </details>
-                    </div>
-                    </div>
-                  </div>
-                </div>
-                {searchQuery.trim() && (
-                  <div className="search-results">
-                    <div className="search-results-header">
-                      <span>Search results ({searchResults.length})</span>
-                      {searchLoading && <span className="muted">Searching…</span>}
-                    </div>
-                    {searchError && <div className="error">{searchError}</div>}
-                    {!searchLoading && !searchError && searchResults.length === 0 && (
-                      <div className="empty-state">No matches found.</div>
-                    )}
-                    {!searchLoading && !searchError && searchResults.length > 0 && (
-                      <ul className="search-results-list">
-                        {searchResults.map((result, idx) => (
-                          <li key={`${result?.pathId || result?.name || 'result'}-${idx}`}>
-                            <button
-                              type="button"
-                              className="search-result-link"
-                              onClick={() => openFileFromUrl(result.pathId || result.path || '')}
-                            >
-                              {getSearchResultName(result)}
-                            </button>
-                            {result?.pathId && <div className="search-result-path">{result.pathId}</div>}
-                            {result?.snippet && <div className="search-snippet">{result.snippet}</div>}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                )}
-                {browseError && <div className="error">{browseError}</div>}
-                {browseLoading ? (
-                  <div className="browse-loading">Loading folders…</div>
-                ) : (
-                  <div className="browse-results">
-                    {entries.length === 0 ? (
-                      <div className="empty-state">No files or folders found.</div>
-                    ) : (
-                      <ul className="browse-list">
-                        {entries.map((entry) => {
-                          const folder = isFolder(entry);
-                          return (
-                            <li key={entry.PathID || entry.PathName}>
-                              <button
-                                type="button"
-                                className={folder ? 'browse-link' : 'browse-link file-link'}
-                                onClick={() => (folder ? handleOpenFolder(entry) : handleOpenFile(entry))}
-                              >
-                                <span className="browse-icon" aria-hidden="true">
-                                  {folder ? '📁' : '📄'}
-                                </span>
-                                {entry.PathName || entry.PathID}
-                              </button>
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
+            <FcomBrowserPanel
+              hasEditPermission={hasEditPermission}
+              setShowPathModal={setShowPathModal}
+              breadcrumbs={breadcrumbs}
+              handleCrumbClick={handleCrumbClick}
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              searchScope={searchScope}
+              setSearchScope={setSearchScope}
+              handleSearchSubmit={handleSearchSubmit}
+              searchLoading={searchLoading}
+              handleClearSearch={handleClearSearch}
+              handleResetNavigation={handleResetNavigation}
+              favoritesFolders={favoritesFolders}
+              favoritesFiles={favoritesFiles}
+              favoritesLoading={favoritesLoading}
+              favoritesError={favoritesError}
+              handleOpenFolder={handleOpenFolder}
+              openFileFromUrl={openFileFromUrl}
+              getParentLabel={getParentLabel}
+              getParentPath={getParentPath}
+              searchResults={searchResults}
+              searchError={searchError}
+              getSearchResultName={getSearchResultName}
+              browseError={browseError}
+              browseLoading={browseLoading}
+              entries={entries}
+              isFolder={isFolder}
+              handleOpenFile={handleOpenFile}
+            />
             <div className="panel">
               <div className="panel-scroll">
                 <div className="file-details">
-                  {selectedFolder && !selectedFile && (
-                    <div className="panel-section">
-                      <div className="panel-section-title">Folder Overview</div>
-                      <div className="file-title">
-                        <strong>{selectedFolder.PathName || selectedFolder.PathID}</strong>
-                        {selectedFolder.PathID && (
-                          <span className="file-path">{formatDisplayPath(selectedFolder.PathID)}</span>
-                        )}
-                      </div>
-                      {folderLoading && <div className="muted">Loading overview…</div>}
-                      {!folderLoading && folderOverview && (
-                        <div className="folder-overview">
-                          <div className="overview-stat-grid">
-                            <div className="overview-stat">
-                              <span className="overview-stat-label">Files</span>
-                              <span className="overview-stat-value">
-                                {formatOverviewNumber(folderOverview.fileCount || 0)}
-                              </span>
-                            </div>
-                            <div className="overview-stat">
-                              <span className="overview-stat-label">Overrides</span>
-                              <span className="overview-stat-value">
-                                {formatOverviewNumber(folderOverview.overrideCount || 0)}
-                              </span>
-                            </div>
-                            <div className="overview-stat">
-                              <span className="overview-stat-label">Objects</span>
-                              <span className="overview-stat-value">
-                                {formatOverviewNumber(folderOverview.objectCount || 0)}
-                              </span>
-                            </div>
-                            <div className="overview-stat">
-                              <span className="overview-stat-label">Schema issues</span>
-                              <span className="overview-stat-value">
-                                {formatOverviewNumber(folderOverview.schemaErrorCount || 0)}
-                              </span>
-                            </div>
-                            <div className="overview-stat">
-                              <span className="overview-stat-label">Unknown fields</span>
-                              <span className="overview-stat-value">
-                                {formatOverviewNumber(folderOverview.unknownFieldCount || 0)}
-                              </span>
-                            </div>
-                          </div>
-                          {Array.isArray(folderOverview.topFiles) && folderOverview.topFiles.length > 0 ? (
-                            <div className="overview-table-wrapper">
-                              <div className="overview-filter-row">
-                                <label htmlFor="folder-file-filter">Filter files</label>
-                                <input
-                                  id="folder-file-filter"
-                                  type="text"
-                                  placeholder="Type to filter files"
-                                  value={folderTableFilter}
-                                  onChange={(event) => setFolderTableFilter(event.target.value)}
-                                />
-                              </div>
-                              <table className="overview-table">
-                                <thead>
-                                  <tr>
-                                    <th>
-                                      <button
-                                        type="button"
-                                        className="table-sort-button"
-                                        onClick={() => toggleFolderSort('file')}
-                                      >
-                                        File {getSortIndicator(folderTableSort.key, 'file', folderTableSort.direction)}
-                                      </button>
-                                    </th>
-                                    <th>
-                                      <button
-                                        type="button"
-                                        className="table-sort-button"
-                                        onClick={() => toggleFolderSort('objects')}
-                                      >
-                                        Objects {getSortIndicator(folderTableSort.key, 'objects', folderTableSort.direction)}
-                                      </button>
-                                    </th>
-                                    <th>
-                                      <button
-                                        type="button"
-                                        className="table-sort-button"
-                                        onClick={() => toggleFolderSort('schemaErrors')}
-                                      >
-                                        Schema {getSortIndicator(folderTableSort.key, 'schemaErrors', folderTableSort.direction)}
-                                      </button>
-                                    </th>
-                                    <th>
-                                      <button
-                                        type="button"
-                                        className="table-sort-button"
-                                        onClick={() => toggleFolderSort('unknownFields')}
-                                      >
-                                        Unknown {getSortIndicator(folderTableSort.key, 'unknownFields', folderTableSort.direction)}
-                                      </button>
-                                    </th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  {folderTableRows.map((row: any) => (
-                                    <tr key={row.pathId || row.file}>
-                                      <td>{row.file}</td>
-                                      <td>{formatOverviewNumber(row.objects || 0)}</td>
-                                      <td>{formatOverviewNumber(row.schemaErrors || 0)}</td>
-                                      <td>{formatOverviewNumber(row.unknownFields || 0)}</td>
-                                    </tr>
-                                  ))}
-                                </tbody>
-                              </table>
-                            </div>
-                          ) : (
-                            <div className="overview-empty">No overview rows available.</div>
-                          )}
-                        </div>
-                      )}
-                    </div>
+                  {!selectedFile && (
+                    <FcomFolderOverview
+                      selectedFolder={selectedFolder}
+                      folderLoading={folderLoading}
+                      folderOverview={folderOverview}
+                      folderTableFilter={folderTableFilter}
+                      setFolderTableFilter={setFolderTableFilter}
+                      toggleFolderSort={toggleFolderSort}
+                      folderTableSort={folderTableSort}
+                      folderTableRows={folderTableRows}
+                      formatOverviewNumber={formatOverviewNumber}
+                      formatDisplayPath={formatDisplayPath}
+                      getSortIndicator={getSortIndicator}
+                    />
                   )}
-                  <div className="file-title">
-                    <strong>
-                      {selectedFile?.PathName || 'Select a file'}
-                      {selectedFile && (
-                        <button
-                          type="button"
-                          className={isFavorite('file', selectedFile.PathID) ? 'favorite-button active' : 'favorite-button'}
-                          onClick={() => toggleFavorite({
-                            type: 'file',
-                            pathId: selectedFile.PathID,
-                            label: selectedFile.PathName,
-                            node: browseNode || undefined,
-                          })}
-                          aria-label="Toggle favorite file"
-                          title="Toggle favorite file"
-                        >
-                          ★
-                        </button>
-                      )}
-                    </strong>
-                    {selectedFile?.PathID && (
-                      <span className="file-path">{formatDisplayPath(selectedFile.PathID)}</span>
-                    )}
-                  </div>
-                  <div className="file-meta-row">
-                    <span className="schema-status">
-                      {schemaLoading && <span>Schema: Loading…</span>}
-                      {schemaError && (
-                        <button type="button" className="schema-issue" onClick={() => setShowSchemaModal(true)}>
-                          Schema: Error
-                        </button>
-                      )}
-                      {!schemaLoading && !schemaError && !validator && (
-                        <button type="button" className="schema-issue" onClick={() => setShowSchemaModal(true)}>
-                          Schema: Not available
-                        </button>
-                      )}
-                      {!schemaLoading && !schemaError && validator && !jsonParseError && validationErrors.length === 0 && (
-                        <span className="schema-valid" aria-label="Schema validated">
-                          Schema: ✓
-                        </span>
-                      )}
-                      {!schemaLoading && !schemaError && validator && (jsonParseError || validationErrors.length > 0) && (
-                        <button type="button" className="schema-issue" onClick={() => setShowSchemaModal(true)}>
-                          Schema: {jsonParseError ? 'JSON error' : `${validationErrors.length} issue(s)`}
-                        </button>
-                      )}
-                    </span>
-                  </div>
-                  {overrideInfo?.overrideMeta?.pathName
-                    && Array.isArray(overrideInfo?.overrides)
-                    && overrideInfo.overrides.length > 0 && (
-                    <div className="override-meta-row">
-                      <span>
-                        Override file: {overrideInfo?.overrideMeta?.pathName || overrideInfo?.overrideFileName || '—'}
-                      </span>
-                      <span>
-                        Revision:{' '}
-                        {overrideInfo?.overrideMeta?.revision && /^[0-9]+$/.test(String(overrideInfo.overrideMeta.revision))
-                          ? `r${overrideInfo.overrideMeta.revision}`
-                          : overrideInfo?.overrideMeta?.revision || '—'}
-                      </span>
-                      <span>Modified: {overrideInfo?.overrideMeta?.modified || '—'}</span>
-                      <span>Modified by: {overrideInfo?.overrideMeta?.modifiedBy || '—'}</span>
-                    </div>
-                  )}
-                  <div className="action-row">
-                    {selectedFile ? (
-                      <>
-                        <div className="view-toggle">
-                          <span className={viewMode === 'friendly' ? 'view-toggle-label active' : 'view-toggle-label'}>
-                            Friendly
-                          </span>
-                          <label className="switch" aria-label="Toggle friendly/raw view">
-                            <input
-                              type="checkbox"
-                              checked={viewMode !== 'friendly'}
-                              onChange={(e) => {
-                                if (e.target.checked) {
-                                  setViewMode('preview');
-                                } else {
-                                  setViewMode('friendly');
-                                }
-                              }}
-                            />
-                            <span className="slider" />
-                          </label>
-                          <span className={viewMode !== 'friendly' ? 'view-toggle-label active' : 'view-toggle-label'}>
-                            Raw
-                          </span>
-                        </div>
-                        <button
-                          type="button"
-                          className="action-link"
-                          onClick={() => {
-                            openAdvancedFlowModal('global');
-                          }}
-                          disabled={!hasEditPermission}
-                          title={hasEditPermission ? '' : 'Read-only access'}
-                        >
-                          Advanced Processors (Global)
-                        </button>
-                        <button
-                          type="button"
-                          className={`action-link${reviewCtaPulse ? ' action-link-pulse' : ''}`}
-                          onClick={() => {
-                            setReviewStep('review');
-                            setShowReviewModal(true);
-                          }}
-                          disabled={!hasStagedChanges || !hasEditPermission}
-                          title={hasStagedChanges
-                            ? `${stagedDiff.totalChanges} staged change(s)`
-                            : hasEditPermission
-                              ? 'No staged changes'
-                              : 'Read-only access'}
-                        >
-                          Review & Save{hasStagedChanges ? ` (${stagedDiff.totalChanges})` : ''}
-                        </button>
-                        {hasGlobalAdvancedFlow && (
-                          <span className="pill" title="Global Advanced Flow configured">
-                            Advanced Flow
-                          </span>
-                        )}
-                        {stagedDiff.editedObjects.length > 0 && (
-                          <span
-                            className="pill"
-                            title={`Edited objects: ${stagedDiff.editedObjects.slice(0, 6).join(', ')}${
-                              stagedDiff.editedObjects.length > 6 ? '…' : ''
-                            }`}
-                          >
-                            Edited objects: {stagedDiff.editedObjects.length}
-                          </span>
-                        )}
-                      </>
-                    ) : (
-                      <span className="muted">Select a file on the left to view and edit.</span>
-                    )}
-                  </div>
-                  {fileError && <div className="error">{fileError}</div>}
-                  {saveError && <div className="error">{saveError}</div>}
-                  {saveSuccess && <div className="success">{saveSuccess}</div>}
-                  {stagedToast && <div className="staged-toast">{stagedToast}</div>}
-                  <div className="file-preview">
-                    {!selectedFile ? (
-                      <div className="empty-state">Select a file on the left to view and edit.</div>
-                    ) : fileLoading ? (
-                      <div>Loading preview…</div>
-                    ) : (
-                      viewMode === 'friendly' ? (
-                        <div
-                          className={isAnyPanelEditing ? 'friendly-layout' : 'friendly-view'}
-                          ref={friendlyViewRef}
-                          onScroll={handleFileScroll}
-                        >
-                          <div
-                            className={isAnyPanelEditing ? 'friendly-main' : ''}
-                            ref={friendlyMainRef}
-                            onScroll={handleFileScroll}
-                          >
-                          {searchHighlightActive && highlightObjectKeys.length > 0 && (
-                            <div className="match-bar">
-                              <span className="match-label">
-                                Match {currentMatchIndex + 1} of {highlightObjectKeys.length}
-                              </span>
-                              {matchObjectOptions.length > 0 && (
-                                <label className="match-jump">
-                                  <span className="match-jump-label">Jump to</span>
-                                  <select
-                                    value={highlightObjectKeys[currentMatchIndex] || ''}
-                                    onChange={(e) => handleJumpToMatch(e.target.value)}
-                                  >
-                                    {matchObjectOptions.map((option, index) => (
-                                      <option key={option.key} value={option.key}>
-                                        {index + 1}. {option.label}
-                                      </option>
-                                    ))}
-                                  </select>
-                                </label>
-                              )}
-                              <div className="match-actions">
-                                <button type="button" className="match-button" onClick={handlePrevMatch}>
-                                  Prev
-                                </button>
-                                <button type="button" className="match-button" onClick={handleNextMatch}>
-                                  Next
-                                </button>
-                              </div>
-                            </div>
-                          )}
-                          {getFriendlyObjects(fileData).length === 0 ? (
-                            <div className="empty-state">No objects found.</div>
-                          ) : (
-                            getFriendlyObjects(fileData).map((obj: any, idx: number) => {
-                              const overrideFlags = getOverrideFlags(obj);
-                              const overrideTargets = getOverrideTargets(obj);
-                              const overrideValueMap = getOverrideValueMap(obj);
-                              const objectKey = getObjectKey(obj, idx);
-                              const eventPanelKey = `${objectKey}:event`;
-                              const eventOverrideFields = getEventOverrideFields(obj);
-                              const panelDirtyFields = panelEditState[eventPanelKey]
-                                ? getPanelDirtyFields(obj, eventPanelKey)
-                                : [];
-                              const baseFields = getBaseEventFields(obj, eventPanelKey);
-                              return (
-                              <div
-                                className={`object-card${highlightObjectKeys.includes(getObjectKey(obj, idx))
-                                  ? ' object-card-highlight'
-                                  : ''}${searchHighlightActive && highlightObjectKeys.length > 0 &&
-                                    !highlightObjectKeys.includes(getObjectKey(obj, idx))
-                                    ? ' object-card-dim'
-                                    : ''}`}
-                                key={obj?.['@objectName'] || idx}
-                                ref={(el) => {
-                                  objectRowRefs.current[objectKey] = el;
-                                }}
-                              >
-                                <div className="object-header">
-                                  <div className="object-header-main">
-                                    <div className="object-title">
-                                      <span className="object-name">{obj?.['@objectName'] || `Object ${idx + 1}`}</span>
-                                      {obj?.certification && <span className="pill">{obj.certification}</span>}
-                                      {overrideFlags.any && <span className="pill override-pill">Override</span>}
-                                      {overrideFlags.advancedFlow && (
-                                        <span className="pill" title="Advanced Flow configured for this object">
-                                          Advanced Flow
-                                        </span>
-                                      )}
-                                      {highlightObjectKeys.includes(getObjectKey(obj, idx)) && (
-                                        <span className="pill match-pill">Match</span>
-                                      )}
-                                    </div>
-                                    {getObjectDescription(obj) && (
-                                      <div className="object-description">{getObjectDescription(obj)}</div>
-                                    )}
-                                  </div>
-                                  <div className="object-actions">
-                                    <button
-                                      type="button"
-                                      className="panel-edit-button"
-                                      onClick={() => openTrapComposerFromTest(obj)}
-                                    >
-                                      Test trap
-                                    </button>
-                                  </div>
-                                </div>
-                                <div
-                                  className={`object-panel${panelEditState[eventPanelKey]
-                                    ? ' object-panel-editing'
-                                    : ''}`}
-                                >
-                                  <div className="object-panel-header">
-                                    <div className="panel-title-group">
-                                      <span className="object-panel-title">Event</span>
-                                      {eventOverrideFields.length > 0 && (
-                                        <span className="pill override-pill">
-                                          Overrides ({eventOverrideFields.length})
-                                        </span>
-                                      )}
-                                      {panelDirtyFields.length > 0 && (
-                                        <span className="pill unsaved-pill">
-                                          Unsaved ({panelDirtyFields.length})
-                                        </span>
-                                      )}
-                                    </div>
-                                    {hasEditPermission && !panelEditState[eventPanelKey] && (
-                                      <button
-                                        type="button"
-                                        className="panel-edit-button"
-                                        onClick={() => startEventEdit(obj, eventPanelKey)}
-                                      >
-                                        Edit
-                                      </button>
-                                    )}
-                                    {hasEditPermission && panelEditState[eventPanelKey] && (
-                                      <div className="panel-edit-actions">
-                                        {eventOverrideFields.length > 1 && (
-                                          <button
-                                            type="button"
-                                            className="override-remove-all-button"
-                                            onClick={() => openRemoveAllOverridesModal(obj, eventPanelKey)}
-                                          >
-                                            Remove All Overrides
-                                          </button>
-                                        )}
-                                        <button
-                                          type="button"
-                                          className="panel-edit-button"
-                                          onClick={() => openAddFieldModal(eventPanelKey, obj)}
-                                          disabled={builderTarget?.panelKey === eventPanelKey}
-                                          title={builderTarget?.panelKey === eventPanelKey
-                                            ? 'Finish or cancel the builder to add fields'
-                                            : ''}
-                                        >
-                                          Add Field
-                                        </button>
-                                        <button
-                                          type="button"
-                                          className="panel-edit-button"
-                                          onClick={() => saveEventEdit(obj, eventPanelKey)}
-                                          disabled={panelDirtyFields.length === 0}
-                                          title={panelDirtyFields.length === 0
-                                            ? 'No changes to save'
-                                            : ''}
-                                        >
-                                          Save
-                                        </button>
-                                        <button
-                                          type="button"
-                                          className="panel-edit-button"
-                                          onClick={() => requestCancelEventEdit(obj, eventPanelKey)}
-                                        >
-                                          Cancel
-                                        </button>
-                                      </div>
-                                    )}
-                                  </div>
-                                  <div className="object-grid">
-                                    <div className="object-row object-row-primary">
-                                      {baseFields.includes('Node') && (
-                                        <div>
-                                          <span className="label">Node</span>
-                                          <span className="value">{renderValue(obj?.event?.Node, obj?.trap?.variables)}</span>
-                                        </div>
-                                      )}
-                                      {baseFields.includes('Summary') && (
-                                        <div>
-                                          <div className="field-header">
-                                            <div className="field-header-main">
-                                              <span className={isFieldHighlighted(eventPanelKey, 'Summary')
-                                                ? 'label label-warning'
-                                                : 'label'}>
-                                                Summary
-                                              </span>
-                                              {renderFieldBadges(eventPanelKey, 'Summary', obj, overrideTargets)}
-                                              {overrideTargets.has('$.event.Summary') && (
-                                                <div
-                                                  className="override-summary"
-                                                  tabIndex={0}
-                                                  {...overrideTooltipHoverProps}
-                                                >
-                                                  <span
-                                                    className="pill override-pill pill-inline pill-action"
-                                                  >
-                                                    Override
-                                                    {hasEditPermission && panelEditState[eventPanelKey] && overrideValueMap.has('$.event.Summary') && (
-                                                      <button
-                                                        type="button"
-                                                        className="pill-close"
-                                                        aria-label="Remove Summary override"
-                                                        onClick={() => openRemoveOverrideModal(obj, 'Summary', eventPanelKey)}
-                                                      >
-                                                        ×
-                                                      </button>
-                                                    )}
-                                                  </span>
-                                                  {renderOverrideSummaryCard(
-                                                    obj,
-                                                    overrideValueMap,
-                                                    ['Summary'],
-                                                    'Override',
-                                                  )}
-                                                </div>
-                                              )}
-                                              {panelEditState[eventPanelKey] && isFieldDirty(obj, eventPanelKey, 'Summary') && (
-                                                <span className="dirty-indicator" title="Unsaved change">✎</span>
-                                              )}
-                                            </div>
-                                            {panelEditState[eventPanelKey] && (
-                                              <button
-                                                type="button"
-                                                className="builder-link builder-link-iconic"
-                                                onClick={() => openBuilderForField(obj, eventPanelKey, 'Summary')}
-                                                disabled={isFieldLockedByBuilder(eventPanelKey, 'Summary')}
-                                                aria-label="Open Builder"
-                                              >
-                                                <span className="builder-link-icon" aria-hidden="true">
-                                                  <svg viewBox="0 0 24 24" role="img" aria-hidden="true">
-                                                    <path
-                                                      d="M22.7 19.3 13.7 10.3a6 6 0 0 1-7.6-7.6l3.2 3.2 2.5-2.5L8.6.2a6 6 0 0 1 7.6 7.6l9 9-2.5 2.5zM2 22l6.3-1.3 6.6-6.6-2.5-2.5-6.6 6.6L2 22z"
-                                                      fill="currentColor"
-                                                    />
-                                                  </svg>
-                                                </span>
-                                                <span className="builder-link-text">Builder</span>
-                                              </button>
-                                            )}
-                                          </div>
-                                          {panelEditState[`${getObjectKey(obj, idx)}:event`] ? (
-                                            (() => {
-                                              const value = getEffectiveEventValue(obj, 'Summary');
-                                              const editable = getEditableValue(value);
-                                              return (
-                                                <input
-                                                  className={isFieldHighlighted(eventPanelKey, 'Summary')
-                                                    ? 'panel-input panel-input-warning'
-                                                    : 'panel-input'}
-                                                  value={panelDrafts?.[`${getObjectKey(obj, idx)}:event`]?.event?.Summary ?? ''}
-                                                  onChange={(e) => handleEventInputChange(
-                                                    obj,
-                                                    eventPanelKey,
-                                                    'Summary',
-                                                    e.target.value,
-                                                    e.target.selectionStart,
-                                                    (e.nativeEvent as InputEvent | undefined)?.inputType,
-                                                  )}
-                                                  disabled={!editable.editable || isFieldLockedByBuilder(eventPanelKey, 'Summary')}
-                                                  title={
-                                                    !editable.editable
-                                                      ? 'Eval values cannot be edited yet'
-                                                      : isFieldLockedByBuilder(eventPanelKey, 'Summary')
-                                                        ? 'Finish or cancel the builder to edit other fields'
-                                                        : ''
-                                                  }
-                                                />
-                                              );
-                                            })()
-                                          ) : (
-                                            <span className="value">
-                                              {renderSummary(
-                                                overrideValueMap.get('$.event.Summary') ?? obj?.event?.Summary,
-                                                obj?.trap?.variables,
-                                              )}
-                                            </span>
-                                          )}
-                                        </div>
-                                      )}
-                                      {baseFields.includes('Severity') && (
-                                        <div>
-                                          <div className="field-header">
-                                            <div className="field-header-main">
-                                              <span className={isFieldHighlighted(eventPanelKey, 'Severity')
-                                                ? 'label label-warning'
-                                                : 'label'}>
-                                                Severity
-                                              </span>
-                                              {renderFieldBadges(eventPanelKey, 'Severity', obj, overrideTargets)}
-                                              {overrideTargets.has('$.event.Severity') && (
-                                                <div
-                                                  className="override-summary"
-                                                  tabIndex={0}
-                                                  {...overrideTooltipHoverProps}
-                                                >
-                                                  <span
-                                                    className="pill override-pill pill-inline pill-action"
-                                                  >
-                                                    Override
-                                                    {hasEditPermission && panelEditState[eventPanelKey] && overrideValueMap.has('$.event.Severity') && (
-                                                      <button
-                                                        type="button"
-                                                        className="pill-close"
-                                                        aria-label="Remove Severity override"
-                                                        onClick={() => openRemoveOverrideModal(obj, 'Severity', eventPanelKey)}
-                                                      >
-                                                        ×
-                                                      </button>
-                                                    )}
-                                                  </span>
-                                                  {renderOverrideSummaryCard(
-                                                    obj,
-                                                    overrideValueMap,
-                                                    ['Severity'],
-                                                    'Override',
-                                                  )}
-                                                </div>
-                                              )}
-                                              {panelEditState[eventPanelKey] && isFieldDirty(obj, eventPanelKey, 'Severity') && (
-                                                <span className="dirty-indicator" title="Unsaved change">✎</span>
-                                              )}
-                                            </div>
-                                            {panelEditState[eventPanelKey] && (
-                                              <button
-                                                type="button"
-                                                className="builder-link builder-link-iconic"
-                                                onClick={() => openBuilderForField(obj, eventPanelKey, 'Severity')}
-                                                disabled={isFieldLockedByBuilder(eventPanelKey, 'Severity')}
-                                                aria-label="Open Builder"
-                                              >
-                                                <span className="builder-link-icon" aria-hidden="true">
-                                                  <svg viewBox="0 0 24 24" role="img" aria-hidden="true">
-                                                    <path
-                                                      d="M22.7 19.3 13.7 10.3a6 6 0 0 1-7.6-7.6l3.2 3.2 2.5-2.5L8.6.2a6 6 0 0 1 7.6 7.6l9 9-2.5 2.5zM2 22l6.3-1.3 6.6-6.6-2.5-2.5-6.6 6.6L2 22z"
-                                                      fill="currentColor"
-                                                    />
-                                                  </svg>
-                                                </span>
-                                                <span className="builder-link-text">Builder</span>
-                                              </button>
-                                            )}
-                                          </div>
-                                          {panelEditState[`${getObjectKey(obj, idx)}:event`] ? (
-                                            <input
-                                              className={isFieldHighlighted(eventPanelKey, 'Severity')
-                                                ? 'panel-input panel-input-warning'
-                                                : 'panel-input'}
-                                              value={panelDrafts?.[`${getObjectKey(obj, idx)}:event`]?.event?.Severity ?? ''}
-                                              onChange={(e) => handleEventInputChange(
-                                                obj,
-                                                eventPanelKey,
-                                                'Severity',
-                                                e.target.value,
-                                                e.target.selectionStart,
-                                                (e.nativeEvent as InputEvent | undefined)?.inputType,
-                                              )}
-                                              disabled={isFieldLockedByBuilder(eventPanelKey, 'Severity')}
-                                              title={isFieldLockedByBuilder(eventPanelKey, 'Severity')
-                                                ? 'Finish or cancel the builder to edit other fields'
-                                                : ''}
-                                            />
-                                          ) : (
-                                            <span className="value">
-                                              {renderValue(
-                                                overrideValueMap.get('$.event.Severity') ?? obj?.event?.Severity,
-                                                obj?.trap?.variables,
-                                              )}
-                                            </span>
-                                          )}
-                                        </div>
-                                      )}
-                                    </div>
-                                    <div className="object-row object-row-secondary">
-                                      {baseFields.includes('EventType') && (
-                                        <div>
-                                          <div className="field-header">
-                                            <div className="field-header-main">
-                                              <span className={isFieldHighlighted(eventPanelKey, 'EventType')
-                                                ? 'label label-warning'
-                                                : 'label'}>
-                                                Event Type
-                                              </span>
-                                              {renderFieldBadges(eventPanelKey, 'EventType', obj, overrideTargets)}
-                                              {overrideTargets.has('$.event.EventType') && (
-                                                <div
-                                                  className="override-summary"
-                                                  tabIndex={0}
-                                                  {...overrideTooltipHoverProps}
-                                                >
-                                                  <span
-                                                    className="pill override-pill pill-inline pill-action"
-                                                  >
-                                                    Override
-                                                    {hasEditPermission && panelEditState[eventPanelKey] && overrideValueMap.has('$.event.EventType') && (
-                                                      <button
-                                                        type="button"
-                                                        className="pill-close"
-                                                        aria-label="Remove EventType override"
-                                                        onClick={() => openRemoveOverrideModal(obj, 'EventType', eventPanelKey)}
-                                                      >
-                                                        ×
-                                                      </button>
-                                                    )}
-                                                  </span>
-                                                  {renderOverrideSummaryCard(
-                                                    obj,
-                                                    overrideValueMap,
-                                                    ['EventType'],
-                                                    'Override',
-                                                  )}
-                                                </div>
-                                              )}
-                                              {panelEditState[eventPanelKey] && isFieldDirty(obj, eventPanelKey, 'EventType') && (
-                                                <span className="dirty-indicator" title="Unsaved change">✎</span>
-                                              )}
-                                            </div>
-                                            {panelEditState[eventPanelKey] && (
-                                              <button
-                                                type="button"
-                                                className="builder-link builder-link-iconic"
-                                                onClick={() => openBuilderForField(obj, eventPanelKey, 'EventType')}
-                                                disabled={isFieldLockedByBuilder(eventPanelKey, 'EventType')}
-                                                aria-label="Open Builder"
-                                              >
-                                                <span className="builder-link-icon" aria-hidden="true">
-                                                  <svg viewBox="0 0 24 24" role="img" aria-hidden="true">
-                                                    <path
-                                                      d="M22.7 19.3 13.7 10.3a6 6 0 0 1-7.6-7.6l3.2 3.2 2.5-2.5L8.6.2a6 6 0 0 1 7.6 7.6l9 9-2.5 2.5zM2 22l6.3-1.3 6.6-6.6-2.5-2.5-6.6 6.6L2 22z"
-                                                      fill="currentColor"
-                                                    />
-                                                  </svg>
-                                                </span>
-                                                <span className="builder-link-text">Builder</span>
-                                              </button>
-                                            )}
-                                          </div>
-                                          {panelEditState[`${getObjectKey(obj, idx)}:event`] ? (
-                                            <input
-                                              className={isFieldHighlighted(eventPanelKey, 'EventType')
-                                                ? 'panel-input panel-input-warning'
-                                                : 'panel-input'}
-                                              value={panelDrafts?.[`${getObjectKey(obj, idx)}:event`]?.event?.EventType ?? ''}
-                                              onChange={(e) => handleEventInputChange(
-                                                obj,
-                                                eventPanelKey,
-                                                'EventType',
-                                                e.target.value,
-                                                e.target.selectionStart,
-                                                (e.nativeEvent as InputEvent | undefined)?.inputType,
-                                              )}
-                                              disabled={isFieldLockedByBuilder(eventPanelKey, 'EventType')}
-                                              title={isFieldLockedByBuilder(eventPanelKey, 'EventType')
-                                                ? 'Finish or cancel the builder to edit other fields'
-                                                : ''}
-                                            />
-                                          ) : (
-                                            <span className="value">
-                                              {renderValue(
-                                                overrideValueMap.get('$.event.EventType') ?? obj?.event?.EventType,
-                                                obj?.trap?.variables,
-                                              )}
-                                            </span>
-                                          )}
-                                        </div>
-                                      )}
-                                      {baseFields.includes('ExpireTime') && (
-                                        <div>
-                                          <div className="field-header">
-                                            <div className="field-header-main">
-                                              <span className={isFieldHighlighted(eventPanelKey, 'ExpireTime')
-                                                ? 'label label-warning'
-                                                : 'label'}>
-                                                Expire Time
-                                              </span>
-                                              {renderFieldBadges(eventPanelKey, 'ExpireTime', obj, overrideTargets)}
-                                              {overrideTargets.has('$.event.ExpireTime') && (
-                                                <div
-                                                  className="override-summary"
-                                                  tabIndex={0}
-                                                  {...overrideTooltipHoverProps}
-                                                >
-                                                  <span
-                                                    className="pill override-pill pill-inline pill-action"
-                                                  >
-                                                    Override
-                                                    {hasEditPermission && panelEditState[eventPanelKey] && overrideValueMap.has('$.event.ExpireTime') && (
-                                                      <button
-                                                        type="button"
-                                                        className="pill-close"
-                                                        aria-label="Remove ExpireTime override"
-                                                        onClick={() => openRemoveOverrideModal(obj, 'ExpireTime', eventPanelKey)}
-                                                      >
-                                                        ×
-                                                      </button>
-                                                    )}
-                                                  </span>
-                                                  {renderOverrideSummaryCard(
-                                                    obj,
-                                                    overrideValueMap,
-                                                    ['ExpireTime'],
-                                                    'Override',
-                                                  )}
-                                                </div>
-                                              )}
-                                              {panelEditState[eventPanelKey] && isFieldDirty(obj, eventPanelKey, 'ExpireTime') && (
-                                                <span className="dirty-indicator" title="Unsaved change">✎</span>
-                                              )}
-                                            </div>
-                                            {panelEditState[eventPanelKey] && (
-                                              <button
-                                                type="button"
-                                                className="builder-link builder-link-iconic"
-                                                onClick={() => openBuilderForField(obj, eventPanelKey, 'ExpireTime')}
-                                                disabled={isFieldLockedByBuilder(eventPanelKey, 'ExpireTime')}
-                                                aria-label="Open Builder"
-                                              >
-                                                <span className="builder-link-icon" aria-hidden="true">
-                                                  <svg viewBox="0 0 24 24" role="img" aria-hidden="true">
-                                                    <path
-                                                      d="M22.7 19.3 13.7 10.3a6 6 0 0 1-7.6-7.6l3.2 3.2 2.5-2.5L8.6.2a6 6 0 0 1 7.6 7.6l9 9-2.5 2.5zM2 22l6.3-1.3 6.6-6.6-2.5-2.5-6.6 6.6L2 22z"
-                                                      fill="currentColor"
-                                                    />
-                                                  </svg>
-                                                </span>
-                                                <span className="builder-link-text">Builder</span>
-                                              </button>
-                                            )}
-                                          </div>
-                                          {panelEditState[`${getObjectKey(obj, idx)}:event`] ? (
-                                            <input
-                                              className={isFieldHighlighted(eventPanelKey, 'ExpireTime')
-                                                ? 'panel-input panel-input-warning'
-                                                : 'panel-input'}
-                                              value={panelDrafts?.[`${getObjectKey(obj, idx)}:event`]?.event?.ExpireTime ?? ''}
-                                              onChange={(e) => handleEventInputChange(
-                                                obj,
-                                                eventPanelKey,
-                                                'ExpireTime',
-                                                e.target.value,
-                                                e.target.selectionStart,
-                                                (e.nativeEvent as InputEvent | undefined)?.inputType,
-                                              )}
-                                              disabled={isFieldLockedByBuilder(eventPanelKey, 'ExpireTime')}
-                                              title={isFieldLockedByBuilder(eventPanelKey, 'ExpireTime')
-                                                ? 'Finish or cancel the builder to edit other fields'
-                                                : ''}
-                                            />
-                                          ) : (
-                                            <span className="value">
-                                              {renderValue(
-                                                overrideValueMap.get('$.event.ExpireTime') ?? obj?.event?.ExpireTime,
-                                                obj?.trap?.variables,
-                                              )}
-                                            </span>
-                                          )}
-                                        </div>
-                                      )}
-                                      {baseFields.includes('EventCategory') && (
-                                        <div>
-                                          <div className="field-header">
-                                            <div className="field-header-main">
-                                              <span className={isFieldHighlighted(eventPanelKey, 'EventCategory')
-                                                ? 'label label-warning'
-                                                : 'label'}>
-                                                Event Category
-                                              </span>
-                                              {renderFieldBadges(eventPanelKey, 'EventCategory', obj, overrideTargets)}
-                                              {overrideTargets.has('$.event.EventCategory') && (
-                                                <div
-                                                  className="override-summary"
-                                                  tabIndex={0}
-                                                  {...overrideTooltipHoverProps}
-                                                >
-                                                  <span
-                                                    className="pill override-pill pill-inline pill-action"
-                                                  >
-                                                    Override
-                                                    {hasEditPermission && panelEditState[eventPanelKey] && overrideValueMap.has('$.event.EventCategory') && (
-                                                      <button
-                                                        type="button"
-                                                        className="pill-close"
-                                                        aria-label="Remove EventCategory override"
-                                                        onClick={() => openRemoveOverrideModal(obj, 'EventCategory', eventPanelKey)}
-                                                      >
-                                                        ×
-                                                      </button>
-                                                    )}
-                                                  </span>
-                                                  {renderOverrideSummaryCard(
-                                                    obj,
-                                                    overrideValueMap,
-                                                    ['EventCategory'],
-                                                    'Override',
-                                                  )}
-                                                </div>
-                                              )}
-                                              {panelEditState[eventPanelKey] && isFieldDirty(obj, eventPanelKey, 'EventCategory') && (
-                                                <span className="dirty-indicator" title="Unsaved change">✎</span>
-                                              )}
-                                            </div>
-                                            {panelEditState[eventPanelKey] && (
-                                              <button
-                                                type="button"
-                                                className="builder-link builder-link-iconic"
-                                                onClick={() => openBuilderForField(obj, eventPanelKey, 'EventCategory')}
-                                                disabled={isFieldLockedByBuilder(eventPanelKey, 'EventCategory')}
-                                                aria-label="Open Builder"
-                                              >
-                                                <span className="builder-link-icon" aria-hidden="true">
-                                                  <svg viewBox="0 0 24 24" role="img" aria-hidden="true">
-                                                    <path
-                                                      d="M22.7 19.3 13.7 10.3a6 6 0 0 1-7.6-7.6l3.2 3.2 2.5-2.5L8.6.2a6 6 0 0 1 7.6 7.6l9 9-2.5 2.5zM2 22l6.3-1.3 6.6-6.6-2.5-2.5-6.6 6.6L2 22z"
-                                                      fill="currentColor"
-                                                    />
-                                                  </svg>
-                                                </span>
-                                                <span className="builder-link-text">Builder</span>
-                                              </button>
-                                            )}
-                                          </div>
-                                          {panelEditState[`${getObjectKey(obj, idx)}:event`] ? (
-                                            <input
-                                              className={isFieldHighlighted(eventPanelKey, 'EventCategory')
-                                                ? 'panel-input panel-input-warning'
-                                                : 'panel-input'}
-                                              value={panelDrafts?.[`${getObjectKey(obj, idx)}:event`]?.event?.EventCategory ?? ''}
-                                              onChange={(e) => handleEventInputChange(
-                                                obj,
-                                                eventPanelKey,
-                                                'EventCategory',
-                                                e.target.value,
-                                                e.target.selectionStart,
-                                                (e.nativeEvent as InputEvent | undefined)?.inputType,
-                                              )}
-                                              disabled={isFieldLockedByBuilder(eventPanelKey, 'EventCategory')}
-                                              title={isFieldLockedByBuilder(eventPanelKey, 'EventCategory')
-                                                ? 'Finish or cancel the builder to edit other fields'
-                                                : ''}
-                                            />
-                                          ) : (
-                                            <span className="value">
-                                              {renderValue(
-                                                overrideValueMap.get('$.event.EventCategory') ?? obj?.event?.EventCategory,
-                                                obj?.trap?.variables,
-                                              )}
-                                            </span>
-                                          )}
-                                        </div>
-                                      )}
-                                      <div>
-                                        <span className="label">OID</span>
-                                        <span className="value monospace">{renderValue(obj?.trap?.oid)}</span>
-                                      </div>
-                                    </div>
-                                    {getAdditionalEventFields(obj, eventPanelKey).length > 0 && (
-                                      <div className="object-row object-row-additional">
-                                        {getAdditionalEventFields(obj, eventPanelKey).map((field) => (
-                                          <div key={`${eventPanelKey}-${field}`}>
-                                            <div className="field-header">
-                                              <div className="field-header-main">
-                                                <span className={isFieldHighlighted(eventPanelKey, field)
-                                                  ? 'label label-warning'
-                                                  : 'label'}>
-                                                  <span title={getEventFieldDescription(field)}>
-                                                    {formatEventFieldLabel(field)}
-                                                  </span>
-                                                </span>
-                                                {renderFieldBadges(eventPanelKey, field, obj, overrideTargets)}
-                                                {overrideTargets.has(`$.event.${field}`) && (
-                                                  <div
-                                                    className="override-summary"
-                                                    tabIndex={0}
-                                                    onMouseEnter={() => {
-                                                      setSuppressVarTooltip(true);
-                                                      setSuppressEvalTooltip(true);
-                                                    }}
-                                                    onMouseLeave={() => {
-                                                      setSuppressVarTooltip(false);
-                                                      setSuppressEvalTooltip(false);
-                                                    }}
-                                                    onFocus={() => {
-                                                      setSuppressVarTooltip(true);
-                                                      setSuppressEvalTooltip(true);
-                                                    }}
-                                                    onBlur={() => {
-                                                      setSuppressVarTooltip(false);
-                                                      setSuppressEvalTooltip(false);
-                                                    }}
-                                                  >
-                                                    <span
-                                                      className="pill override-pill pill-inline pill-action"
-                                                      title={`Original: ${getBaseEventDisplay(obj, field)}`}
-                                                    >
-                                                      Override
-                                                      {hasEditPermission && panelEditState[eventPanelKey]
-                                                        && overrideValueMap.has(`$.event.${field}`) && (
-                                                          <button
-                                                            type="button"
-                                                            className="pill-close"
-                                                            aria-label={`Remove ${field} override`}
-                                                            onClick={() => openRemoveOverrideModal(obj, field, eventPanelKey)}
-                                                          >
-                                                            ×
-                                                          </button>
-                                                        )}
-                                                    </span>
-                                                    {renderOverrideSummaryCard(
-                                                      obj,
-                                                      overrideValueMap,
-                                                      [field],
-                                                      'Override',
-                                                    )}
-                                                  </div>
-                                                )}
-                                                {panelEditState[eventPanelKey] && isFieldDirty(obj, eventPanelKey, field) && (
-                                                  <span className="dirty-indicator" title="Unsaved change">✎</span>
-                                                )}
-                                              </div>
-                                              {panelEditState[eventPanelKey] && (
-                                                <button
-                                                  type="button"
-                                                  className="builder-link builder-link-iconic"
-                                                  onClick={() => openBuilderForField(obj, eventPanelKey, field)}
-                                                  disabled={isFieldLockedByBuilder(eventPanelKey, field)}
-                                                  aria-label="Open Builder"
-                                                >
-                                                  <span className="builder-link-icon" aria-hidden="true">
-                                                    <svg viewBox="0 0 24 24" role="img" aria-hidden="true">
-                                                      <path
-                                                        d="M22.7 19.3 13.7 10.3a6 6 0 0 1-7.6-7.6l3.2 3.2 2.5-2.5L8.6.2a6 6 0 0 1 7.6 7.6l9 9-2.5 2.5zM2 22l6.3-1.3 6.6-6.6-2.5-2.5-6.6 6.6L2 22z"
-                                                        fill="currentColor"
-                                                      />
-                                                    </svg>
-                                                  </span>
-                                                  <span className="builder-link-text">Builder</span>
-                                                </button>
-                                              )}
-                                            </div>
-                                            {panelEditState[eventPanelKey] ? (
-                                              <input
-                                                className={isFieldHighlighted(eventPanelKey, field)
-                                                  ? 'panel-input panel-input-warning'
-                                                  : 'panel-input'}
-                                                value={panelDrafts?.[eventPanelKey]?.event?.[field] ?? ''}
-                                                onChange={(e) => handleEventInputChange(
-                                                  obj,
-                                                  eventPanelKey,
-                                                  field,
-                                                  e.target.value,
-                                                  e.target.selectionStart,
-                                                  (e.nativeEvent as InputEvent | undefined)?.inputType,
-                                                )}
-                                                disabled={isFieldLockedByBuilder(eventPanelKey, field)}
-                                                title={isFieldLockedByBuilder(eventPanelKey, field)
-                                                  ? 'Finish or cancel the builder to edit other fields'
-                                                  : ''}
-                                              />
-                                            ) : (
-                                              <span className="value">
-                                                {renderValue(
-                                                  overrideValueMap.get(`$.event.${field}`) ?? obj?.event?.[field],
-                                                  obj?.trap?.variables,
-                                                )}
-                                              </span>
-                                            )}
-                                          </div>
-                                        ))}
-                                      </div>
-                                    )}
-                                  </div>
-                                </div>
-                                <div
-                                  className={`object-panel${panelEditState[`${getObjectKey(obj, idx)}:pre`]
-                                    ? ' object-panel-editing'
-                                    : ''}`}
-                                >
-                                  <div className="object-panel-header">
-                                    <span className="object-panel-title">PreProcessors</span>
-                                  </div>
-                                  <div className="object-panel-body">
-                                    {renderValue(obj?.preProcessors)}
-                                  </div>
-                                </div>
-                                <div
-                                  className={`object-panel${panelEditState[`${getObjectKey(obj, idx)}:trap`]
-                                    ? ' object-panel-editing'
-                                    : ''}`}
-                                >
-                                  <div className="object-panel-header">
-                                    <span className="object-panel-title">Trap Variables</span>
-                                  </div>
-                                  <div className="object-panel-body">
-                                    {renderTrapVariables(obj?.trap?.variables)}
-                                  </div>
-                                </div>
-                              </div>
-                              );
-                            })
-                          )}
-                          </div>
-                          {isAnyPanelEditing && (
-                            <aside className={`builder-sidebar${builderOpen ? '' : ' builder-sidebar-collapsed'}`}>
-                              <div className="builder-header">
-                                <div>
-                                  <h3>Builder</h3>
-                                  <div className="builder-target">
-                                    {builderTarget ? (
-                                      <div className="builder-target-row">
-                                        <span className="builder-target-badge">
-                                          Editing: {builderTarget.field}
-                                        </span>
-                                        {builderDirty && (
-                                          <span className="pill unsaved-pill">Unsaved</span>
-                                        )}
-                                      </div>
-                                    ) : (
-                                      <span className="builder-target-empty">Select a field to begin</span>
-                                    )}
-                                  </div>
-                                </div>
-                                <div className="builder-header-actions">
-                                  {(canUndoBuilder || canRedoBuilder) && (
-                                    <div className="builder-history-actions">
-                                      <button
-                                        type="button"
-                                        className="builder-link"
-                                        onClick={handleBuilderUndo}
-                                        disabled={!canUndoBuilder}
-                                        title="Undo (Ctrl+Z)"
-                                      >
-                                        Undo
-                                      </button>
-                                      <button
-                                        type="button"
-                                        className="builder-link"
-                                        onClick={handleBuilderRedo}
-                                        disabled={!canRedoBuilder}
-                                        title="Redo (Ctrl+Shift+Z)"
-                                      >
-                                        Redo
-                                      </button>
-                                    </div>
-                                  )}
-                                  {builderOpen && (
-                                    <button
-                                      type="button"
-                                      className="builder-help-button"
-                                      onClick={() => setShowBuilderHelpModal(true)}
-                                    >
-                                      Help
-                                    </button>
-                                  )}
-                                  {builderTarget && (
-                                    <button
-                                      type="button"
-                                      className="builder-cancel-button"
-                                      onClick={requestCancelBuilder}
-                                    >
-                                      Cancel
-                                    </button>
-                                  )}
-                                  <button
-                                    type="button"
-                                    className="builder-toggle"
-                                    onClick={() => setBuilderOpen((prev) => !prev)}
-                                  >
-                                    {builderOpen ? 'Hide' : 'Show'}
-                                  </button>
-                                </div>
-                              </div>
-                              {builderOpen && (
-                                <div className="builder-body">
-                                  <div className="builder-section">
-                                    <div className="builder-section-title">
-                                      Builder Type{builderFocus ? '' : ' (Select one)'}
-                                    </div>
-                                    {!isBuilderTargetReady && (
-                                      <div className="builder-hint">Select a field in Edit mode.</div>
-                                    )}
-                                    {isBuilderTargetReady && !builderFocus && (
-                                      <div className="builder-hint">Choose Eval or Processor to continue.</div>
-                                    )}
-                                    {isBuilderTargetReady && builderTarget && (
-                                      <div className="builder-lock-note">
-                                        Other fields are locked while this builder is active.
-                                      </div>
-                                    )}
-                                    <div className="builder-focus-row">
-                                      <button
-                                        type="button"
-                                        className={builderFocus === 'literal'
-                                          ? 'builder-card builder-card-selected'
-                                          : 'builder-card'}
-                                        disabled={!isBuilderTargetReady || builderTypeLocked === 'literal'}
-                                        onClick={() => {
-                                          if (builderTypeLocked && builderTypeLocked !== 'literal') {
-                                            setBuilderSwitchModal({ open: true, from: builderTypeLocked, to: 'literal' });
-                                            return;
-                                          }
-                                          applyBuilderTypeSwitch('literal');
-                                        }}
-                                      >
-                                        Literal
-                                      </button>
-                                      <button
-                                        type="button"
-                                        className={builderFocus === 'eval'
-                                          ? 'builder-card builder-card-selected'
-                                          : 'builder-card'}
-                                        disabled={!isBuilderTargetReady || builderTypeLocked === 'eval'}
-                                        onClick={() => {
-                                          if (builderTypeLocked && builderTypeLocked !== 'eval') {
-                                            setBuilderSwitchModal({ open: true, from: builderTypeLocked, to: 'eval' });
-                                            return;
-                                          }
-                                          applyBuilderTypeSwitch('eval');
-                                        }}
-                                      >
-                                        Eval
-                                      </button>
-                                      <button
-                                        type="button"
-                                        className={builderFocus === 'processor'
-                                          ? 'builder-card builder-card-selected'
-                                          : 'builder-card'}
-                                        disabled={!isBuilderTargetReady || builderTypeLocked === 'processor'}
-                                        onClick={() => {
-                                          if (builderTypeLocked && builderTypeLocked !== 'processor') {
-                                            setBuilderSwitchModal({ open: true, from: builderTypeLocked, to: 'processor' });
-                                            return;
-                                          }
-                                          applyBuilderTypeSwitch('processor');
-                                        }}
-                                      >
-                                        Processor
-                                      </button>
-                                    </div>
-                                  </div>
-                                  {builderFocus === 'literal' && (
-                                    <div className="builder-section">
-                                      <div className="builder-section-title">Literal Editor</div>
-                                      <div className="builder-regular-input">
-                                        <textarea
-                                          className="builder-textarea"
-                                          placeholder="Enter literal value"
-                                          value={builderLiteralText}
-                                          onChange={(e) => handleLiteralInputChange(
-                                            e.target.value,
-                                            e.target.selectionStart,
-                                            (e.nativeEvent as InputEvent | undefined)?.inputType,
-                                          )}
-                                          disabled={!isBuilderTargetReady}
-                                        />
-                                      </div>
-                                      <div className="builder-regular-actions">
-                                        <button
-                                          type="button"
-                                          className="builder-card builder-card-primary"
-                                          disabled={!isBuilderTargetReady || !literalDirty}
-                                          onClick={applyLiteralValue}
-                                        >
-                                          Apply
-                                        </button>
-                                      </div>
-                                    </div>
-                                  )}
-                                  {builderFocus === 'eval' && (
-                                    <div className="builder-section">
-                                      <div className="builder-section-title">Eval Builder</div>
-                                      <div className="builder-mode-row">
-                                        <div className="builder-mode-toggle">
-                                          <button
-                                            type="button"
-                                            className={builderMode === 'friendly'
-                                              ? 'builder-mode-button builder-mode-button-active'
-                                              : 'builder-mode-button'}
-                                            onClick={() => setBuilderMode('friendly')}
-                                          >
-                                            Friendly
-                                          </button>
-                                          <button
-                                            type="button"
-                                            className={builderMode === 'regular'
-                                              ? 'builder-mode-button builder-mode-button-active'
-                                              : 'builder-mode-button'}
-                                            onClick={() => setBuilderMode('regular')}
-                                          >
-                                            Regular
-                                          </button>
-                                        </div>
-                                        <button
-                                          type="button"
-                                          className="builder-link"
-                                          onClick={() => {
-                                            if (!hasEditPermission) {
-                                              return;
-                                            }
-                                            setAdvancedProcessorScope('object');
-                                            setShowAdvancedProcessorModal(true);
-                                          }}
-                                          disabled={!hasEditPermission}
-                                        >
-                                          Advanced Processors
-                                        </button>
-                                      </div>
-                                      {builderMode === 'friendly' ? (
-                                        <div className="builder-friendly">
-                                          <div className="builder-friendly-rows">
-                                            {builderConditions.map((row) => (
-                                              <div className="builder-condition-block" key={row.id}>
-                                                {row.condition.type === 'condition' ? (
-                                                  <>
-                                                    <div className="builder-friendly-row">
-                                                      <input
-                                                        className="builder-input"
-                                                        value={row.condition.left}
-                                                        onChange={(e) => updateBuilderCondition(
-                                                          row.id,
-                                                          row.condition.id,
-                                                          'left',
-                                                          e.target.value,
-                                                        )}
-                                                        placeholder="$v1"
-                                                        disabled={!isBuilderTargetReady}
-                                                        title={row.condition.left}
-                                                      />
-                                                      <select
-                                                        className="builder-select"
-                                                        value={row.condition.operator}
-                                                        onChange={(e) => updateBuilderCondition(
-                                                          row.id,
-                                                          row.condition.id,
-                                                          'operator',
-                                                          e.target.value,
-                                                        )}
-                                                        disabled={!isBuilderTargetReady}
-                                                      >
-                                                        <option value="==">==</option>
-                                                        <option value="!=">!=</option>
-                                                        <option value=">">&gt;</option>
-                                                        <option value=">=">&gt;=</option>
-                                                        <option value="<">&lt;</option>
-                                                        <option value="<=">&lt;=</option>
-                                                      </select>
-                                                      <input
-                                                        className="builder-input"
-                                                        value={row.condition.right}
-                                                        onChange={(e) => updateBuilderCondition(
-                                                          row.id,
-                                                          row.condition.id,
-                                                          'right',
-                                                          e.target.value,
-                                                        )}
-                                                        placeholder="1"
-                                                        disabled={!isBuilderTargetReady}
-                                                        title={row.condition.right}
-                                                      />
-                                                      <span className="builder-friendly-arrow">→</span>
-                                                      <input
-                                                        className="builder-input builder-input-result"
-                                                        value={row.result}
-                                                        onChange={(e) => updateBuilderResult(row.id, e.target.value)}
-                                                        placeholder="result"
-                                                        disabled={!isBuilderTargetReady}
-                                                        title={row.result}
-                                                      />
-                                                      <button
-                                                        type="button"
-                                                        className="builder-remove"
-                                                        onClick={() => removeBuilderRow(row.id)}
-                                                        disabled={!isBuilderTargetReady || builderConditions.length === 1}
-                                                        aria-label="Remove condition"
-                                                      >
-                                                        ×
-                                                      </button>
-                                                    </div>
-                                                    <div className="builder-group-actions">
-                                                      <button
-                                                        type="button"
-                                                        className="builder-link"
-                                                        onClick={() => {
-                                                          const newChild = createConditionNode();
-                                                          setBuilderConditions((prev) => prev.map((item) => (
-                                                            item.id === row.id
-                                                              ? {
-                                                                ...item,
-                                                                condition: {
-                                                                  id: nextBuilderId(),
-                                                                  type: 'group',
-                                                                  operator: 'AND',
-                                                                  children: [item.condition, newChild],
-                                                                },
-                                                              }
-                                                              : item
-                                                          )));
-                                                        }}
-                                                        disabled={!isBuilderTargetReady}
-                                                      >
-                                                        Add condition
-                                                      </button>
-                                                      <button
-                                                        type="button"
-                                                        className="builder-link"
-                                                        onClick={() => {
-                                                          const newGroup = createGroupNode();
-                                                          setBuilderConditions((prev) => prev.map((item) => (
-                                                            item.id === row.id
-                                                              ? {
-                                                                ...item,
-                                                                condition: {
-                                                                  id: nextBuilderId(),
-                                                                  type: 'group',
-                                                                  operator: 'AND',
-                                                                  children: [item.condition, newGroup],
-                                                                },
-                                                              }
-                                                              : item
-                                                          )));
-                                                        }}
-                                                        disabled={!isBuilderTargetReady}
-                                                      >
-                                                        Add group
-                                                      </button>
-                                                    </div>
-                                                  </>
-                                                ) : (
-                                                  <div className="builder-group-row">
-                                                    {renderConditionNode(row.id, row.condition, 0, false, 1)}
-                                                    <div className="builder-group-result">
-                                                      <span className="builder-friendly-arrow">→</span>
-                                                      <input
-                                                        className="builder-input builder-input-result"
-                                                        value={row.result}
-                                                        onChange={(e) => updateBuilderResult(row.id, e.target.value)}
-                                                        placeholder="result"
-                                                        disabled={!isBuilderTargetReady}
-                                                        title={row.result}
-                                                      />
-                                                      <button
-                                                        type="button"
-                                                        className="builder-remove"
-                                                        onClick={() => removeBuilderRow(row.id)}
-                                                        disabled={!isBuilderTargetReady || builderConditions.length === 1}
-                                                        aria-label="Remove condition"
-                                                      >
-                                                        ×
-                                                      </button>
-                                                    </div>
-                                                  </div>
-                                                )}
-                                              </div>
-                                            ))}
-                                          </div>
-                                          <button
-                                            type="button"
-                                            className="builder-link"
-                                            onClick={addBuilderRow}
-                                            disabled={!isBuilderTargetReady}
-                                          >
-                                            Add condition
-                                          </button>
-                                          <div className="builder-friendly-else">
-                                            <span className="builder-friendly-label">Else</span>
-                                            <input
-                                              className="builder-input"
-                                              value={builderElseResult}
-                                              onChange={(e) => setBuilderElseResult(e.target.value)}
-                                              placeholder="0"
-                                              disabled={!isBuilderTargetReady}
-                                            />
-                                          </div>
-                                          <div className="builder-friendly-actions">
-                                            <button
-                                              type="button"
-                                              className="builder-card builder-card-primary"
-                                              disabled={!isBuilderTargetReady || !friendlyPreview}
-                                              onClick={applyFriendlyEval}
-                                            >
-                                              Apply
-                                            </button>
-                                          </div>
-                                          {isBuilderTargetReady && !friendlyPreview && (
-                                            <div className="builder-hint builder-hint-warning">
-                                              Complete each condition and the Else value to enable Apply.
-                                            </div>
-                                          )}
-                                          <div className="builder-preview">
-                                            <div className="builder-preview-label">Preview</div>
-                                            <div className="builder-preview-value">
-                                              {friendlyPreview || '—'}
-                                            </div>
-                                            {friendlyPreview && (
-                                              <details className="builder-preview-details">
-                                                <summary>Expanded view</summary>
-                                                <div className="builder-preview-lines">
-                                                  {formatEvalReadableList(friendlyPreview).map((line, idx) => (
-                                                    <span key={`${line}-${idx}`}>{line}</span>
-                                                  ))}
-                                                </div>
-                                              </details>
-                                            )}
-                                          </div>
-                                        </div>
-                                      ) : (
-                                        <div className="builder-regular">
-                                          <div className="builder-regular-input">
-                                            <textarea
-                                              className="builder-textarea"
-                                              placeholder="Enter raw eval expression"
-                                              value={builderRegularText}
-                                              onChange={(e) => handleRegularEvalInputChange(
-                                                e.target.value,
-                                                e.target.selectionStart,
-                                                (e.nativeEvent as InputEvent | undefined)?.inputType,
-                                              )}
-                                              disabled={!isBuilderTargetReady}
-                                            />
-                                            {builderRegularText && (
-                                              <button
-                                                type="button"
-                                                className="builder-clear"
-                                                onClick={clearRegularEval}
-                                                aria-label="Clear eval"
-                                              >
-                                                ×
-                                              </button>
-                                            )}
-                                          </div>
-                                          <div className="builder-regular-actions">
-                                            <button
-                                              type="button"
-                                              className="builder-card builder-card-primary"
-                                              disabled={!isBuilderTargetReady || !builderRegularText.trim()}
-                                              onClick={applyRegularEval}
-                                            >
-                                              Apply
-                                            </button>
-                                          </div>
-                                          {isBuilderTargetReady && !builderRegularText.trim() && (
-                                            <div className="builder-hint builder-hint-warning">
-                                              Enter an expression to enable Apply.
-                                            </div>
-                                          )}
-                                          <div className="builder-regular-templates">
-                                            <div className="builder-example-title">Templates</div>
-                                            <button
-                                              type="button"
-                                              className="builder-card"
-                                              disabled={!isBuilderTargetReady || Boolean(builderRegularText.trim())}
-                                              onClick={() => applyBuilderTemplate('($v1==1) ? 1 : 0')}
-                                            >
-                                              Ternary (if/else)
-                                            </button>
-                                            <button
-                                              type="button"
-                                              className="builder-card"
-                                              disabled={!isBuilderTargetReady || Boolean(builderRegularText.trim())}
-                                              onClick={() => applyBuilderTemplate('($v1==1) ? 1 : (($v1==2) ? 2 : 0)')}
-                                            >
-                                              Else-if chain
-                                            </button>
-                                            <button
-                                              type="button"
-                                              className="builder-card"
-                                              disabled={!isBuilderTargetReady || Boolean(builderRegularText.trim())}
-                                              onClick={() => applyBuilderTemplate('$v1')}
-                                            >
-                                              Variable ($vN)
-                                            </button>
-                                          </div>
-                                        </div>
-                                      )}
-                                    </div>
-                                  )}
-                                  {builderFocus === 'processor' && (
-                                    <div className="builder-section processor-builder">
-                                      <div className="builder-section-title-row">
-                                        <div className="builder-section-title">Processor Builder</div>
-                                        <button
-                                          type="button"
-                                          className="builder-link"
-                                          onClick={() => {
-                                            openAdvancedFlowModal(
-                                              'object',
-                                              undefined,
-                                              builderTarget ? `$.event.${builderTarget.field}` : null,
-                                            );
-                                          }}
-                                        >
-                                          Advanced Flow
-                                        </button>
-                                      </div>
-                                      {!isBuilderTargetReady && (
-                                        <div className="builder-hint">Select a field in Edit mode.</div>
-                                      )}
-                                      {isBuilderTargetReady && (
-                                        <>
-                                          <div className="processor-steps">
-                                            {[
-                                              { key: 'select', label: 'Select' },
-                                              { key: 'configure', label: 'Configure' },
-                                              { key: 'review', label: 'Review/Save' },
-                                            ].map((stepItem, index) => {
-                                              const isActive = processorStep === stepItem.key;
-                                              const isConfigureReady = Boolean(processorType);
-                                              const isReviewReady = Boolean(processorPayload);
-                                              const isEnabled = stepItem.key === 'select'
-                                                || (stepItem.key === 'configure' && isConfigureReady)
-                                                || (stepItem.key === 'review' && isReviewReady);
-                                              const isComplete = stepItem.key === 'select'
-                                                ? isConfigureReady
-                                                : stepItem.key === 'configure'
-                                                  ? isReviewReady
-                                                  : false;
-                                              const title = stepItem.key === 'configure' && !isConfigureReady
-                                                ? 'Select a processor to enable.'
-                                                : stepItem.key === 'review' && !isReviewReady
-                                                  ? 'Complete configuration to enable.'
-                                                  : '';
-                                              return (
-                                                <button
-                                                  key={stepItem.key}
-                                                  type="button"
-                                                  className={`processor-step${isActive ? ' processor-step-active' : ''}${isComplete ? ' processor-step-complete' : ''}`}
-                                                  disabled={!isEnabled}
-                                                  title={title}
-                                                  onClick={() => {
-                                                    if (!isEnabled) {
-                                                      return;
-                                                    }
-                                                    setProcessorStep(stepItem.key as typeof processorStep);
-                                                  }}
-                                                >
-                                                  <span className="processor-step-index">
-                                                    {isComplete ? '✓' : index + 1}
-                                                  </span>
-                                                  {stepItem.label}
-                                                </button>
-                                              );
-                                            })}
-                                          </div>
-                                          {processorStep === 'select' && (
-                                            <div className="processor-grid">
-                                              {processorCatalog.map((item) => {
-                                                const isSelected = processorType === item.id;
-                                                const isEnabled = item.status !== 'planned';
-                                                const buttonLabel = item.paletteLabel || item.label;
-                                                return (
-                                                  <div key={item.id} className="processor-card">
-                                                    <button
-                                                      type="button"
-                                                      className={isSelected
-                                                        ? 'builder-card builder-card-selected'
-                                                        : 'builder-card'}
-                                                      onClick={() => handleBuilderSelect(item, isEnabled)}
-                                                      disabled={!isEnabled}
-                                                    >
-                                                      {buttonLabel}
-                                                    </button>
-                                                    {renderProcessorHelp(item.helpKey)}
-                                                  </div>
-                                                );
-                                              })}
-                                            </div>
-                                          )}
-                                          {processorStep === 'configure' && (
-                                            <div className="processor-form">
-                                              <div className="builder-section-title">
-                                                Processor: {processorType ? getProcessorCatalogLabel(processorType) : '—'}
-                                              </div>
-                                              {!processorType && (
-                                                <div className="builder-hint">Select a processor to configure.</div>
-                                              )}
-                                              {processorType && (
-                                                <>
-                                                  {renderProcessorConfigFields(
-                                                    processorType,
-                                                    builderProcessorConfig,
-                                                    (key, value) => setBuilderProcessorConfig((prev) => ({
-                                                      ...prev,
-                                                      [key]: value,
-                                                    })),
-                                                    'builder',
-                                                  )}
-                                                  {processorType === 'foreach' && (
-                                                    <div className="processor-row">
-                                                      <label className="builder-label">Per-item processors</label>
-                                                      <div className="builder-hint">
-                                                        Add processors to run for each item.
-                                                      </div>
-                                                      <div className="builder-inline-actions">
-                                                        <select
-                                                          className="builder-select"
-                                                          value={builderNestedAddType}
-                                                          onChange={(e) => setBuilderNestedAddType(e.target.value)}
-                                                        >
-                                                          {builderPaletteItems.map((item) => (
-                                                            <option
-                                                              key={`${item.nodeKind}-${item.processorType || 'if'}`}
-                                                              value={item.nodeKind === 'if' ? 'if' : (item.processorType as string)}
-                                                            >
-                                                              {item.label}
-                                                            </option>
-                                                          ))}
-                                                        </select>
-                                                        <button
-                                                          type="button"
-                                                          className="builder-card"
-                                                          onClick={() => {
-                                                            const node = createFlowNodeFromPaletteValue(builderNestedAddType);
-                                                            setBuilderProcessorConfig((prev) => {
-                                                              const current = Array.isArray(prev.processors)
-                                                                ? prev.processors
-                                                                : [];
-                                                              return {
-                                                                ...prev,
-                                                                processors: [...current, node],
-                                                              };
-                                                            });
-                                                          }}
-                                                        >
-                                                          Add processor
-                                                        </button>
-                                                      </div>
-                                                      {renderFlowList(
-                                                        Array.isArray(builderProcessorConfig.processors)
-                                                          ? (builderProcessorConfig.processors as FlowNode[])
-                                                          : [],
-                                                        { kind: 'root' },
-                                                        (updater) => {
-                                                          setBuilderProcessorConfig((prev) => {
-                                                            const current = Array.isArray(prev.processors)
-                                                              ? prev.processors
-                                                              : [];
-                                                            const next = typeof updater === 'function'
-                                                              ? (updater as (items: FlowNode[]) => FlowNode[])(current)
-                                                              : updater;
-                                                            return {
-                                                              ...prev,
-                                                              processors: next,
-                                                            };
-                                                          });
-                                                        },
-                                                        'object',
-                                                        'object',
-                                                      )}
-                                                    </div>
-                                                  )}
-                                                  {processorType === 'switch' && (
-                                                    <div className="processor-row">
-                                                      <label className="builder-label">Cases</label>
-                                                      <div className="flow-switch-cases">
-                                                        {(Array.isArray(builderProcessorConfig.cases)
-                                                          ? builderProcessorConfig.cases
-                                                          : []).map((item: any) => (
-                                                            <div key={item.id} className="flow-switch-case">
-                                                              <div className="flow-switch-case-row">
-                                                                <label className="builder-label">Match</label>
-                                                                <input
-                                                                  className="builder-input"
-                                                                  value={item.match ?? ''}
-                                                                  onChange={(e) => setBuilderProcessorConfig((prev) => {
-                                                                    const cases = Array.isArray(prev.cases)
-                                                                      ? prev.cases
-                                                                      : [];
-                                                                    return {
-                                                                      ...prev,
-                                                                      cases: cases.map((entry: any) => (
-                                                                        entry.id === item.id
-                                                                          ? { ...entry, match: e.target.value }
-                                                                          : entry
-                                                                      )),
-                                                                    };
-                                                                  })}
-                                                                />
-                                                              </div>
-                                                              <div className="flow-switch-case-row">
-                                                                <label className="builder-label">Operator (optional)</label>
-                                                                <input
-                                                                  className="builder-input"
-                                                                  value={item.operator ?? ''}
-                                                                  onChange={(e) => setBuilderProcessorConfig((prev) => {
-                                                                    const cases = Array.isArray(prev.cases)
-                                                                      ? prev.cases
-                                                                      : [];
-                                                                    return {
-                                                                      ...prev,
-                                                                      cases: cases.map((entry: any) => (
-                                                                        entry.id === item.id
-                                                                          ? { ...entry, operator: e.target.value }
-                                                                          : entry
-                                                                      )),
-                                                                    };
-                                                                  })}
-                                                                />
-                                                              </div>
-                                                              <div className="flow-switch-case-row">
-                                                                <label className="builder-label">Processors</label>
-                                                                <div className="builder-inline-actions">
-                                                                  <select
-                                                                    className="builder-select"
-                                                                    value={builderSwitchCaseAddType[item.id] || builderNestedAddType}
-                                                                    onChange={(e) => setBuilderSwitchCaseAddType((prev) => ({
-                                                                      ...prev,
-                                                                      [item.id]: e.target.value,
-                                                                    }))}
-                                                                  >
-                                                                    {builderPaletteItems.map((paletteItem) => (
-                                                                      <option
-                                                                        key={`${paletteItem.nodeKind}-${paletteItem.processorType || 'if'}`}
-                                                                        value={paletteItem.nodeKind === 'if'
-                                                                          ? 'if'
-                                                                          : (paletteItem.processorType as string)}
-                                                                      >
-                                                                        {paletteItem.label}
-                                                                      </option>
-                                                                    ))}
-                                                                  </select>
-                                                                  <button
-                                                                    type="button"
-                                                                    className="builder-card"
-                                                                    onClick={() => {
-                                                                      const choice = builderSwitchCaseAddType[item.id] || builderNestedAddType;
-                                                                      const node = createFlowNodeFromPaletteValue(choice);
-                                                                      setBuilderProcessorConfig((prev) => {
-                                                                        const cases = Array.isArray(prev.cases)
-                                                                          ? prev.cases
-                                                                          : [];
-                                                                        return {
-                                                                          ...prev,
-                                                                          cases: cases.map((entry: any) => (
-                                                                            entry.id === item.id
-                                                                              ? {
-                                                                                ...entry,
-                                                                                processors: [
-                                                                                  ...(Array.isArray(entry.processors) ? entry.processors : []),
-                                                                                  node,
-                                                                                ],
-                                                                              }
-                                                                              : entry
-                                                                          )),
-                                                                        };
-                                                                      });
-                                                                    }}
-                                                                  >
-                                                                    Add processor
-                                                                  </button>
-                                                                </div>
-                                                                {renderFlowList(
-                                                                  Array.isArray(item.processors) ? item.processors : [],
-                                                                  { kind: 'root' },
-                                                                  (updater) => {
-                                                                    setBuilderProcessorConfig((prev) => {
-                                                                      const cases = Array.isArray(prev.cases)
-                                                                        ? prev.cases
-                                                                        : [];
-                                                                      return {
-                                                                        ...prev,
-                                                                        cases: cases.map((entry: any) => {
-                                                                          if (entry.id !== item.id) {
-                                                                            return entry;
-                                                                          }
-                                                                          const current = Array.isArray(entry.processors)
-                                                                            ? entry.processors
-                                                                            : [];
-                                                                          const next = typeof updater === 'function'
-                                                                            ? (updater as (items: FlowNode[]) => FlowNode[])(current)
-                                                                            : updater;
-                                                                          return {
-                                                                            ...entry,
-                                                                            processors: next,
-                                                                          };
-                                                                        }),
-                                                                      };
-                                                                    });
-                                                                  },
-                                                                  'object',
-                                                                  'object',
-                                                                )}
-                                                              </div>
-                                                              <div className="flow-switch-case-row">
-                                                                <button
-                                                                  type="button"
-                                                                  className="builder-link"
-                                                                  onClick={() => {
-                                                                    setBuilderProcessorConfig((prev) => {
-                                                                      const cases = Array.isArray(prev.cases)
-                                                                        ? prev.cases
-                                                                        : [];
-                                                                      return {
-                                                                        ...prev,
-                                                                        cases: cases.filter((entry: any) => entry.id !== item.id),
-                                                                      };
-                                                                    });
-                                                                    setBuilderSwitchCaseAddType((prev) => {
-                                                                      const next = { ...prev };
-                                                                      delete next[item.id];
-                                                                      return next;
-                                                                    });
-                                                                  }}
-                                                                >
-                                                                  Remove case
-                                                                </button>
-                                                              </div>
-                                                            </div>
-                                                          ))}
-                                                        <button
-                                                          type="button"
-                                                          className="builder-link"
-                                                          onClick={() => setBuilderProcessorConfig((prev) => {
-                                                            const cases = Array.isArray(prev.cases)
-                                                              ? prev.cases
-                                                              : [];
-                                                            return {
-                                                              ...prev,
-                                                              cases: [
-                                                                ...cases,
-                                                                {
-                                                                  id: nextSwitchCaseId(),
-                                                                  match: '',
-                                                                  operator: '',
-                                                                  processors: [],
-                                                                },
-                                                              ],
-                                                            };
-                                                          })}
-                                                        >
-                                                          Add case
-                                                        </button>
-                                                      </div>
-                                                      <div className="builder-hint">
-                                                        Drag processors to reorder cases or nested processors.
-                                                      </div>
-                                                      <label className="builder-label">Default processors</label>
-                                                      <div className="builder-inline-actions">
-                                                        <select
-                                                          className="builder-select"
-                                                          value={builderSwitchDefaultAddType}
-                                                          onChange={(e) => setBuilderSwitchDefaultAddType(e.target.value)}
-                                                        >
-                                                          {builderPaletteItems.map((paletteItem) => (
-                                                            <option
-                                                              key={`${paletteItem.nodeKind}-${paletteItem.processorType || 'if'}`}
-                                                              value={paletteItem.nodeKind === 'if'
-                                                                ? 'if'
-                                                                : (paletteItem.processorType as string)}
-                                                            >
-                                                              {paletteItem.label}
-                                                            </option>
-                                                          ))}
-                                                        </select>
-                                                        <button
-                                                          type="button"
-                                                          className="builder-card"
-                                                          onClick={() => {
-                                                            const node = createFlowNodeFromPaletteValue(builderSwitchDefaultAddType);
-                                                            setBuilderProcessorConfig((prev) => {
-                                                              const current = Array.isArray(prev.defaultProcessors)
-                                                                ? prev.defaultProcessors
-                                                                : [];
-                                                              return {
-                                                                ...prev,
-                                                                defaultProcessors: [...current, node],
-                                                              };
-                                                            });
-                                                          }}
-                                                        >
-                                                          Add processor
-                                                        </button>
-                                                      </div>
-                                                      {renderFlowList(
-                                                        Array.isArray(builderProcessorConfig.defaultProcessors)
-                                                          ? (builderProcessorConfig.defaultProcessors as FlowNode[])
-                                                          : [],
-                                                        { kind: 'root' },
-                                                        (updater) => {
-                                                          setBuilderProcessorConfig((prev) => {
-                                                            const current = Array.isArray(prev.defaultProcessors)
-                                                              ? prev.defaultProcessors
-                                                              : [];
-                                                            const next = typeof updater === 'function'
-                                                              ? (updater as (items: FlowNode[]) => FlowNode[])(current)
-                                                              : updater;
-                                                            return {
-                                                              ...prev,
-                                                              defaultProcessors: next,
-                                                            };
-                                                          });
-                                                        },
-                                                        'object',
-                                                        'object',
-                                                      )}
-                                                    </div>
-                                                  )}
-                                                  <div className="processor-actions">
-                                                    <button
-                                                      type="button"
-                                                      className="builder-card"
-                                                      onClick={() => setProcessorStep('review')}
-                                                    >
-                                                      Next: Review/Save
-                                                    </button>
-                                                  </div>
-                                                </>
-                                              )}
-                                            </div>
-                                          )}
-                                          {processorStep === 'review' && (
-                                            <div className="processor-review">
-                                              <div className="builder-preview">
-                                                <div className="builder-preview-header">
-                                                  <div className="builder-preview-label">Preview</div>
-                                                  <button
-                                                    type="button"
-                                                    className="builder-link"
-                                                    onClick={() => setShowProcessorJson((prev) => !prev)}
-                                                  >
-                                                    {showProcessorJson ? 'Hide JSON' : 'Show JSON'}
-                                                  </button>
-                                                </div>
-                                                <div className="builder-preview-lines">
-                                                  {(getProcessorSummaryLines(processorPayload) || []).map((line, idx) => (
-                                                    <span key={`${line}-${idx}`}>{line}</span>
-                                                  ))}
-                                                </div>
-                                                {showProcessorJson && (
-                                                  <pre className="code-block">
-                                                    {JSON.stringify(processorPayload, null, 2) || '—'}
-                                                  </pre>
-                                                )}
-                                              </div>
-                                              <div className="processor-review-actions">
-                                                <button
-                                                  type="button"
-                                                  className="ghost-button"
-                                                  onClick={() => setProcessorStep('configure')}
-                                                >
-                                                  Back to Configure
-                                                </button>
-                                                <button
-                                                  type="button"
-                                                  className="builder-card builder-card-primary"
-                                                  onClick={applyProcessor}
-                                                  disabled={!processorPayload}
-                                                >
-                                                  Apply
-                                                </button>
-                                              </div>
-                                            </div>
-                                          )}
-                                        </>
-                                      )}
-                                    </div>
-                                  )}
-                                </div>
-                              )}
-                            </aside>
-                          )}
-                        </div>
-                      ) : (
-                        <div className="raw-view">
-                          {searchHighlightActive && highlightQuery && rawMatchPositions.length > 0 && (
-                            <div className="match-bar">
-                              <span className="match-label">
-                                Raw match {rawMatchIndex + 1} of {rawMatchPositions.length}
-                              </span>
-                              <div className="match-actions">
-                                <button type="button" className="match-button" onClick={handlePrevRawMatch}>
-                                  Prev
-                                </button>
-                                <button type="button" className="match-button" onClick={handleNextRawMatch}>
-                                  Next
-                                </button>
-                              </div>
-                            </div>
-                          )}
-                          <pre className="raw-preview">
-                            {renderRawHighlightedText(rawPreviewText, highlightQuery || '')}
-                          </pre>
-                        </div>
-                      )
-                    )}
-                  </div>
+                  <FcomFileHeader
+                    selectedFile={selectedFile}
+                    browseNode={browseNode}
+                    isFavorite={isFavorite}
+                    toggleFavorite={toggleFavorite}
+                    formatDisplayPath={formatDisplayPath}
+                    schemaLoading={schemaLoading}
+                    schemaError={schemaError}
+                    validator={validator}
+                    jsonParseError={jsonParseError}
+                    validationErrors={validationErrors}
+                    setShowSchemaModal={setShowSchemaModal}
+                    overrideInfo={overrideInfo}
+                    viewMode={viewMode}
+                    setViewMode={setViewMode}
+                    openAdvancedFlowModal={openAdvancedFlowModal}
+                    hasEditPermission={hasEditPermission}
+                    reviewCtaPulse={reviewCtaPulse}
+                    setReviewStep={setReviewStep}
+                    setShowReviewModal={setShowReviewModal}
+                    hasStagedChanges={hasStagedChanges}
+                    stagedDiff={stagedDiff}
+                    hasGlobalAdvancedFlow={hasGlobalAdvancedFlow}
+                    fileError={fileError}
+                    saveError={saveError}
+                    saveSuccess={saveSuccess}
+                    stagedToast={stagedToast}
+                  />
+                  <FcomFilePreview
+                    selectedFile={selectedFile}
+                    fileLoading={fileLoading}
+                    viewMode={viewMode}
+                    isAnyPanelEditing={isAnyPanelEditing}
+                    friendlyViewRef={friendlyViewRef}
+                    friendlyMainRef={friendlyMainRef}
+                    handleFileScroll={handleFileScroll}
+                    searchHighlightActive={searchHighlightActive}
+                    highlightObjectKeys={highlightObjectKeys}
+                    currentMatchIndex={currentMatchIndex}
+                    matchObjectOptions={matchObjectOptions}
+                    handleJumpToMatch={handleJumpToMatch}
+                    handlePrevMatch={handlePrevMatch}
+                    handleNextMatch={handleNextMatch}
+                    getFriendlyObjects={getFriendlyObjects}
+                    fileData={fileData}
+                    getOverrideFlags={getOverrideFlags}
+                    getOverrideTargets={getOverrideTargets}
+                    getOverrideValueMap={getOverrideValueMap}
+                    getObjectKey={getObjectKey}
+                    getEventOverrideFields={getEventOverrideFields}
+                    panelEditState={panelEditState}
+                    getPanelDirtyFields={getPanelDirtyFields}
+                    getBaseEventFields={getBaseEventFields}
+                    hasEditPermission={hasEditPermission}
+                    openTrapComposerFromTest={openTrapComposerFromTest}
+                    getObjectDescription={getObjectDescription}
+                    startEventEdit={startEventEdit}
+                    openRemoveAllOverridesModal={openRemoveAllOverridesModal}
+                    openAddFieldModal={openAddFieldModal}
+                    builderTarget={builderTarget}
+                    saveEventEdit={saveEventEdit}
+                    requestCancelEventEdit={requestCancelEventEdit}
+                    isFieldHighlighted={isFieldHighlighted}
+                    renderFieldBadges={renderFieldBadges}
+                    overrideTooltipHoverProps={overrideTooltipHoverProps}
+                    openRemoveOverrideModal={openRemoveOverrideModal}
+                    renderOverrideSummaryCard={renderOverrideSummaryCard}
+                    isFieldDirty={isFieldDirty}
+                    openBuilderForField={openBuilderForField}
+                    isFieldLockedByBuilder={isFieldLockedByBuilder}
+                    getEffectiveEventValue={getEffectiveEventValue}
+                    getEditableValue={getEditableValue}
+                    panelDrafts={panelDrafts}
+                    handleEventInputChange={handleEventInputChange}
+                    renderSummary={renderSummary}
+                    renderValue={renderValue}
+                    getAdditionalEventFields={getAdditionalEventFields}
+                    getEventFieldDescription={getEventFieldDescription}
+                    formatEventFieldLabel={formatEventFieldLabel}
+                    getBaseEventDisplay={getBaseEventDisplay}
+                    renderTrapVariables={renderTrapVariables}
+                    builderSidebar={builderSidebar}
+                    rawMatchPositions={rawMatchPositions}
+                    rawMatchIndex={rawMatchIndex}
+                    handlePrevRawMatch={handlePrevRawMatch}
+                    handleNextRawMatch={handleNextRawMatch}
+                    rawPreviewText={rawPreviewText}
+                    highlightQuery={highlightQuery}
+                    renderRawHighlightedText={renderRawHighlightedText}
+                  />
                   {showReviewModal && (
                     <div className="modal-overlay" role="dialog" aria-modal="true">
                       <div className="modal modal-wide">
@@ -11860,14 +9563,7 @@ export default function App() {
             </div>
           </div>
           ) : activeApp === 'pcom' ? (
-          <div className="panel pcom-placeholder">
-            <div className="panel-header">
-              <h2>PCOM</h2>
-            </div>
-            <div className="empty-state">
-              PCOM editor coming next. FCOM tooling will be reused for the PCOM flow.
-            </div>
-          </div>
+          <PcomPage />
           ) : (
           <div className="split-layout">
             <div className="panel">
