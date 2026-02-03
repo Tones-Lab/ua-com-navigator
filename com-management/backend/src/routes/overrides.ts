@@ -60,12 +60,14 @@ const resolveOverrideLocation = (fileId: string) => {
     throw new Error('File path does not include fcom');
   }
 
+  const objectsIndex = parts.indexOf('_objects', fcomIndex + 1);
   const basePath = parts.slice(0, fcomIndex + 1).join('/');
-  const methodIndex = parts.findIndex((segment, idx) => idx > fcomIndex && (segment === 'trap' || segment === 'syslog'));
+  const methodBaseIndex = objectsIndex !== -1 ? objectsIndex : fcomIndex;
+  const methodIndex = parts.findIndex((segment, idx) => idx > methodBaseIndex && (segment === 'trap' || segment === 'syslog'));
   const method = methodIndex !== -1 ? parts[methodIndex] : undefined;
   const vendor = methodIndex !== -1
     ? parts[methodIndex + 1]
-    : parts[fcomIndex + 1];
+    : parts[methodBaseIndex + 1];
 
   if (!vendor) {
     throw new Error('Unable to resolve vendor from file path');

@@ -72,7 +72,13 @@ export class UAClient {
   /**
    * List rules files from the FCOM repository
    */
-  async listRules(path: string = '/', limit: number = 100, node?: string, includeMetadata: boolean = false): Promise<any> {
+  async listRules(
+    path: string = '/',
+    limit: number = 100,
+    node?: string,
+    includeMetadata: boolean = false,
+    start: number = 0,
+  ): Promise<any> {
     try {
       logger.info(`[UA] Listing rules at path: ${path}${node ? `, node: ${node}` : ''}`);
       const params = new URLSearchParams();
@@ -83,7 +89,7 @@ export class UAClient {
       }
       params.set('excludeMetadata', includeMetadata ? 'false' : 'true');
       params.set('page', '1');
-      params.set('start', '0');
+      params.set('start', String(start));
       params.set('limit', String(limit));
       params.set('sort[0][property]', 'Path');
       params.set('sort[0][direction]', 'ASC');

@@ -1,10 +1,13 @@
-import fs from 'fs/promises';
 import path from 'path';
 import logger from '../utils/logger';
+import { UAClient } from './ua';
 
-const DEFAULT_COMS_ROOT = path.resolve(process.cwd(), '..', '..', 'coms');
-const IGNORED_DIRS = new Set(['.git', '.svn', 'node_modules']);
+const DEFAULT_PATH_PREFIX = 'id-core/default/processing/event/fcom/_objects';
+const PATH_PREFIX = (process.env.COMS_PATH_PREFIX ?? DEFAULT_PATH_PREFIX).replace(/^\/+|\/+$/g, '');
+const OVERVIEW_PAGE_LIMIT = Number(process.env.OVERVIEW_PAGE_LIMIT || 500);
 const OVERRIDE_SUFFIX = '.override.json';
+const DEFAULT_REFRESH_INTERVAL_MS = 15 * 60 * 1000;
+const OVERVIEW_REFRESH_INTERVAL_MS = Number(process.env.OVERVIEW_REFRESH_INTERVAL_MS || DEFAULT_REFRESH_INTERVAL_MS);
 
 type OverviewCounts = {
   files: number;
@@ -38,6 +41,7 @@ type OverviewStatus = {
   isBuilding: boolean;
   lastBuiltAt: string | null;
   lastDurationMs: number | null;
+  nextRefreshAt: string | null;
   lastError: string | null;
   counts: {
     protocols: number;
@@ -45,6 +49,21 @@ type OverviewStatus = {
     files: number;
     objects: number;
   };
+};
+
+type OverviewState = {
+  data: OverviewData | null;
+  isBuilding: boolean;
+  lastBuiltAt: string | null;
+  lastDurationMs: number | null;
+  nextRefreshAt: string | null;
+  lastError: string | null;
+  refreshTimer: NodeJS.Timeout | null;
+};
+
+const alignToNextMinute = (timestampMs: number) => {
+  const minuteMs = 60 * 1000;
+  return Math.ceil(timestampMs / minuteMs) * minuteMs;
 };
 
 const createEmptyCounts = (): OverviewCounts => ({
@@ -91,73 +110,92 @@ const classifyObject = (obj: any) => {
 };
 
 class OverviewIndexService {
-  private rootPath: string;
-  private data: OverviewData | null = null;
-  private isBuilding = false;
-  private lastBuiltAt: string | null = null;
-  private lastDurationMs: number | null = null;
-  private lastError: string | null = null;
+  private states = new Map<string, OverviewState>();
 
-  constructor(rootPath?: string) {
-    this.rootPath = rootPath || process.env.COMS_ROOT || DEFAULT_COMS_ROOT;
-  }
-
-  start() {
-    if (this.isBuilding) {
-      return;
+  private getState(serverId: string): OverviewState {
+    if (!this.states.has(serverId)) {
+      this.states.set(serverId, {
+        data: null,
+        isBuilding: false,
+        lastBuiltAt: null,
+        lastDurationMs: null,
+        nextRefreshAt: null,
+        lastError: null,
+        refreshTimer: null,
+      });
     }
-    void this.rebuildIndex('startup');
+    return this.states.get(serverId)!;
   }
 
-  getStatus(): OverviewStatus {
+  getStatus(serverId: string): OverviewStatus {
+    const state = this.getState(serverId);
     return {
-      rootPath: this.rootPath,
-      isReady: !!this.data,
-      isBuilding: this.isBuilding,
-      lastBuiltAt: this.lastBuiltAt,
-      lastDurationMs: this.lastDurationMs,
-      lastError: this.lastError,
+      rootPath: PATH_PREFIX,
+      isReady: !!state.data,
+      isBuilding: state.isBuilding,
+      lastBuiltAt: state.lastBuiltAt,
+      lastDurationMs: state.lastDurationMs,
+      nextRefreshAt: state.nextRefreshAt,
+      lastError: state.lastError,
       counts: {
-        protocols: this.data?.protocols.length || 0,
-        vendors: this.data?.protocols.reduce((sum, protocol) => sum + protocol.vendors.length, 0) || 0,
-        files: this.data?.totals.files || 0,
-        objects: this.data?.totals.objects || 0,
+        protocols: state.data?.protocols.length || 0,
+        vendors: state.data?.protocols.reduce((sum, protocol) => sum + protocol.vendors.length, 0) || 0,
+        files: state.data?.totals.files || 0,
+        objects: state.data?.totals.objects || 0,
       },
     };
   }
 
-  getData(): OverviewData | null {
-    return this.data;
+  getData(serverId: string): OverviewData | null {
+    return this.getState(serverId).data;
   }
 
-  async rebuildIndex(trigger: 'startup' | 'manual' = 'manual') {
-    if (this.isBuilding) {
+  async rebuildIndex(serverId: string, uaClient: UAClient, trigger: 'startup' | 'manual' = 'manual') {
+    const state = this.getState(serverId);
+    if (state.isBuilding) {
       return;
     }
-    this.isBuilding = true;
-    this.lastError = null;
+    state.isBuilding = true;
+    state.lastError = null;
     const start = Date.now();
     try {
-      this.data = await this.buildIndex();
-      this.lastBuiltAt = new Date().toISOString();
-      this.lastDurationMs = Date.now() - start;
-      logger.info(`Overview index rebuilt (${trigger}) in ${this.lastDurationMs}ms`);
+      state.data = await this.buildIndex(uaClient);
+      state.lastBuiltAt = new Date().toISOString();
+      state.lastDurationMs = Date.now() - start;
+      this.scheduleNextRefresh(state, serverId, uaClient);
+      logger.info(`Overview index rebuilt (${trigger}) in ${state.lastDurationMs}ms`);
     } catch (error: any) {
-      this.lastError = error?.message || 'Overview index rebuild failed';
-      logger.error(`Overview index rebuild error: ${this.lastError}`);
+      state.lastError = error?.message || 'Overview index rebuild failed';
+      logger.error(`Overview index rebuild error: ${state.lastError}`);
     } finally {
-      this.isBuilding = false;
+      state.isBuilding = false;
     }
   }
 
-  requestRebuild() {
-    if (this.isBuilding) {
+  requestRebuild(serverId: string, uaClient: UAClient) {
+    const state = this.getState(serverId);
+    if (state.isBuilding) {
       return;
     }
-    void this.rebuildIndex('manual');
+    void this.rebuildIndex(serverId, uaClient, 'manual');
   }
 
-  private async buildIndex(): Promise<OverviewData> {
+  private scheduleNextRefresh(state: OverviewState, serverId: string, uaClient: UAClient) {
+    if (state.refreshTimer) {
+      clearTimeout(state.refreshTimer);
+    }
+    const intervalMs = OVERVIEW_REFRESH_INTERVAL_MS;
+    const nextAt = alignToNextMinute(Date.now() + intervalMs);
+    state.nextRefreshAt = new Date(nextAt).toISOString();
+    state.refreshTimer = setTimeout(() => {
+      void this.rebuildIndex(serverId, uaClient, 'manual');
+    }, Math.max(0, nextAt - Date.now()));
+  }
+
+  private async buildIndex(uaClient: UAClient): Promise<OverviewData> {
+    if (!PATH_PREFIX) {
+      throw new Error('COMS_PATH_PREFIX is not configured');
+    }
     const protocolMap = new Map<string, { counts: OverviewCounts; vendors: Map<string, OverviewCounts> }>();
 
     const recordCounts = (protocol: string, vendor: string, delta: OverviewCounts) => {
@@ -172,70 +210,58 @@ class OverviewIndexService {
       addCounts(protocolEntry.vendors.get(vendor)!, delta);
     };
 
-    const walk = async (dirPath: string, relativePath: string) => {
-      const entries = await fs.readdir(dirPath, { withFileTypes: true });
-      for (const entry of entries) {
-        if (IGNORED_DIRS.has(entry.name)) {
-          continue;
-        }
-        const absolutePath = path.join(dirPath, entry.name);
-        const nextRelative = relativePath ? `${relativePath}/${entry.name}` : entry.name;
-        if (entry.isDirectory()) {
-          await walk(absolutePath, nextRelative);
-          continue;
-        }
-        if (!entry.isFile() || !entry.name.toLowerCase().endsWith('.json')) {
-          continue;
-        }
+    const extractRuleText = (data: any) => (
+      data?.content?.data?.[0]?.RuleText
+      ?? data?.data?.[0]?.RuleText
+      ?? data?.RuleText
+      ?? data
+    );
 
-        const parts = nextRelative.split('/').filter(Boolean);
-        if (parts.length === 0) {
-          continue;
+    const parseOverridePayload = (ruleText: string) => {
+      const trimmed = ruleText.trim();
+      if (!trimmed) {
+        return [] as any[];
+      }
+      const parsed = JSON.parse(trimmed);
+      if (Array.isArray(parsed)) {
+        return parsed;
+      }
+      if (parsed && typeof parsed === 'object') {
+        return [parsed];
+      }
+      return [] as any[];
+    };
+
+    const isFolderEntry = (entry: any) => {
+      const name = String(entry?.PathName || entry?.PathID || '').toLowerCase();
+      return !name.endsWith('.json');
+    };
+
+    const listDirectory = async (node: string) => {
+      const all: any[] = [];
+      let start = 0;
+      while (true) {
+        const response = await uaClient.listRules('/', OVERVIEW_PAGE_LIMIT, node, true, start);
+        const data = Array.isArray(response?.data) ? response.data : [];
+        if (data.length === 0) {
+          break;
         }
-
-        let protocol = parts[0];
-        const fileName = parts[parts.length - 1];
-        const overrideIndex = parts.indexOf('overrides');
-        let vendor = '(root)';
-        let isOverride = fileName.toLowerCase().endsWith(OVERRIDE_SUFFIX);
-
-        if (overrideIndex >= 0) {
-          protocol = overrideIndex > 0 ? parts[0] : 'overrides';
-          const vendorCandidate = parts[overrideIndex + 1];
-          vendor = vendorCandidate
-            ? vendorCandidate.replace(new RegExp(`${OVERRIDE_SUFFIX}$`, 'i'), '')
-            : '(root)';
-          isOverride = true;
-        } else if (parts.length >= 3) {
-          vendor = parts[1];
+        all.push(...data);
+        if (data.length < OVERVIEW_PAGE_LIMIT) {
+          break;
         }
+        start += data.length;
+      }
+      return all;
+    };
 
-        if (isOverride) {
-          recordCounts(protocol, vendor, {
-            ...createEmptyCounts(),
-            overrides: 1,
-          });
-          continue;
-        }
-
-        let raw: string;
-        try {
-          raw = await fs.readFile(absolutePath, 'utf-8');
-        } catch (error: any) {
-          logger.warn(`Overview index skipped ${absolutePath}: ${error?.message || 'read error'}`);
-          continue;
-        }
-
-        let parsed: any;
-        try {
-          parsed = JSON.parse(raw);
-        } catch (error: any) {
-          logger.warn(`Overview index failed to parse ${absolutePath}: ${error?.message || 'parse error'}`);
-          continue;
-        }
-
+    const buildFileCounts = async (pathId: string) => {
+      const counts = createEmptyCounts();
+      try {
+        const response = await uaClient.readRule(pathId);
+        const raw = extractRuleText(response);
+        const parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
         const objects: any[] = Array.isArray(parsed?.objects) ? parsed.objects : [];
-        const counts = createEmptyCounts();
         counts.files = 1;
         counts.objects = objects.length;
 
@@ -252,12 +278,103 @@ class OverviewIndexService {
             counts.literalObjects += 1;
           }
         }
+      } catch (error: any) {
+        logger.warn(`Overview index skipped ${pathId}: ${error?.message || 'read error'}`);
+      }
+      return counts;
+    };
 
-        recordCounts(protocol, vendor, counts);
+    const buildOverrideCounts = async (pathId: string) => {
+      try {
+        const response = await uaClient.readRule(pathId);
+        const raw = extractRuleText(response);
+        const text = typeof raw === 'string' ? raw : JSON.stringify(raw ?? []);
+        const overrides = parseOverridePayload(text);
+        return overrides.length;
+      } catch (error: any) {
+        logger.warn(`Overview index override skipped ${pathId}: ${error?.message || 'read error'}`);
+        return 0;
       }
     };
 
-    await walk(this.rootPath, '');
+    const normalizeVendorName = (value: string) => value.trim().toLowerCase();
+    const overrideCountsByVendor = new Map<string, { name: string; count: number }>();
+    const appliedOverrides = new Set<string>();
+    const applyVendorOverride = (protocol: string, vendor: string) => {
+      const vendorKey = normalizeVendorName(vendor);
+      const entry = overrideCountsByVendor.get(vendorKey);
+      if (!entry || entry.count <= 0) {
+        return;
+      }
+      const appliedKey = `${protocol.toLowerCase()}::${vendorKey}`;
+      if (appliedOverrides.has(appliedKey)) {
+        return;
+      }
+      appliedOverrides.add(appliedKey);
+      recordCounts(protocol, vendor, {
+        ...createEmptyCounts(),
+        overrides: entry.count,
+      });
+    };
+
+    const overridesRoot = PATH_PREFIX.includes('/_objects')
+      ? `${PATH_PREFIX.replace('/_objects', '')}/overrides`
+      : `${PATH_PREFIX}/overrides`;
+    try {
+      const overrideListing = await listDirectory(overridesRoot);
+      for (const overrideEntry of overrideListing) {
+        const fileName = String(overrideEntry?.PathName || overrideEntry?.PathID || '');
+        const baseName = path.posix.basename(fileName.replace(/\\/g, '/'));
+        if (!baseName.toLowerCase().endsWith(OVERRIDE_SUFFIX)) {
+          continue;
+        }
+        const vendorName = baseName.replace(new RegExp(`${OVERRIDE_SUFFIX}$`, 'i'), '') || '(root)';
+        const overrideCount = await buildOverrideCounts(String(overrideEntry?.PathID || fileName));
+        overrideCountsByVendor.set(normalizeVendorName(vendorName), {
+          name: vendorName,
+          count: overrideCount,
+        });
+      }
+    } catch (error: any) {
+      logger.warn(`Overview overrides not found for ${overridesRoot}: ${error?.message || 'unknown error'}`);
+    }
+
+    const protocolEntries = await listDirectory(PATH_PREFIX);
+    const protocolFolders = protocolEntries.filter((entry) => isFolderEntry(entry));
+
+    for (const protocolEntry of protocolFolders) {
+      const protocolName = String(protocolEntry?.PathName || protocolEntry?.PathID || '').split('/').pop() || '';
+      if (!protocolName || protocolName.toLowerCase() === 'overrides') {
+        continue;
+      }
+      const protocolNode = String(protocolEntry?.PathID || `${PATH_PREFIX}/${protocolName}`);
+
+      const protocolListing = await listDirectory(protocolNode);
+
+      for (const entry of protocolListing) {
+        const entryName = String(entry?.PathName || entry?.PathID || '');
+        if (entryName.toLowerCase() === 'overrides') {
+          continue;
+        }
+        if (isFolderEntry(entry)) {
+          const vendorName = entryName;
+          const vendorNode = String(entry?.PathID || `${protocolNode}/${vendorName}`);
+          const vendorListing = await listDirectory(vendorNode);
+          for (const vendorEntry of vendorListing) {
+            const vendorEntryName = String(vendorEntry?.PathName || vendorEntry?.PathID || '');
+            if (!vendorEntryName.toLowerCase().endsWith('.json')) {
+              continue;
+            }
+            const counts = await buildFileCounts(String(vendorEntry?.PathID || vendorEntryName));
+            recordCounts(protocolName, vendorName, counts);
+          }
+          applyVendorOverride(protocolName, vendorName);
+        } else if (entryName.toLowerCase().endsWith('.json')) {
+          const counts = await buildFileCounts(String(entry?.PathID || entryName));
+          recordCounts(protocolName, '(root)', counts);
+        }
+      }
+    }
 
     const protocols: ProtocolEntry[] = Array.from(protocolMap.entries())
       .map(([name, data]) => ({
@@ -280,9 +397,8 @@ class OverviewIndexService {
 
 const overviewIndexService = new OverviewIndexService();
 
-export const startOverviewIndexing = () => overviewIndexService.start();
-export const getOverviewStatus = () => overviewIndexService.getStatus();
-export const requestOverviewRebuild = () => overviewIndexService.requestRebuild();
+export const getOverviewStatus = (serverId: string) => overviewIndexService.getStatus(serverId);
+export const requestOverviewRebuild = (serverId: string, uaClient: UAClient) => overviewIndexService.requestRebuild(serverId, uaClient);
 export const overviewIndex = () => overviewIndexService;
 
 export type { OverviewCounts, OverviewData, OverviewStatus };

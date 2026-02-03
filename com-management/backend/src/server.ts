@@ -24,7 +24,6 @@ import brokerRoutes from './routes/broker';
 import mibRoutes from './routes/mibs';
 import overviewRoutes from './routes/overview';
 import { startSearchIndexing } from './services/searchIndex';
-import { startOverviewIndexing } from './services/overviewIndex';
 
 dotenv.config();
 

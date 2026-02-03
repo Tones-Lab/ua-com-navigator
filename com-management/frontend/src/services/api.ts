@@ -201,6 +201,10 @@ class ApiClient {
     return this.client.get('/folders/overview', { params: { node, limit } });
   }
 
+  async getFolderOverviewStatus() {
+    return this.client.get('/folders/overview/status');
+  }
+
   // Search
   async searchComs(query: string, scope: 'all' | 'name' | 'content' = 'all', limit: number = 200) {
     return this.client.get('/search', { params: { q: query, scope, limit } });
@@ -225,6 +229,10 @@ class ApiClient {
 
   async rebuildOverviewIndex() {
     return this.client.post('/overview/rebuild');
+  }
+
+  async rebuildFolderOverviewCache(node?: string, limit: number = 25) {
+    return this.client.post('/folders/overview/rebuild', { node, limit });
   }
 }
 

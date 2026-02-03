@@ -5,6 +5,8 @@ import { useSessionStore } from './stores';
 import api from './services/api';
 import './App.css';
 
+const COMS_PATH_PREFIX = 'id-core/default/processing/event/fcom/_objects';
+
 class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean; error?: Error }> {
   constructor(props: { children: React.ReactNode }) {
     super(props);
@@ -58,6 +60,13 @@ export default function App() {
   const [overviewLoading, setOverviewLoading] = useState(false);
   const [overviewError, setOverviewError] = useState<string | null>(null);
   const [overviewTopN, setOverviewTopN] = useState(10);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const [cacheActionMessage, setCacheActionMessage] = useState<string | null>(null);
+  const [overviewVendorFilter, setOverviewVendorFilter] = useState('');
+  const [overviewVendorSort, setOverviewVendorSort] = useState<{
+    key: 'vendor' | 'files' | 'overrides' | 'objects' | 'variables' | 'evalObjects' | 'processorObjects' | 'literalObjects';
+    direction: 'asc' | 'desc';
+  }>({ key: 'objects', direction: 'desc' });
   const formatDisplayPath = (rawPath: string) => {
     const cleaned = rawPath.replace(/^\/+/, '');
     if (!cleaned) {
@@ -78,6 +87,41 @@ export default function App() {
       return formatDisplayPath(browseNode);
     }
     return '/';
+  };
+  const normalizeNodeSegment = (value: string) => value.replace(/^\/+|\/+$/g, '');
+  const buildFcomNodePath = (protocol: string, vendor?: string) => {
+    const segments = [COMS_PATH_PREFIX, normalizeNodeSegment(protocol)];
+    if (vendor) {
+      segments.push(normalizeNodeSegment(vendor));
+    }
+    return segments.filter(Boolean).join('/');
+  };
+  const handleOverviewFolderClick = (protocol: string, vendor?: string) => {
+    const node = buildFcomNodePath(protocol, vendor);
+    const label = vendor || protocol;
+    setActiveApp('fcom');
+    void handleOpenFolder({ PathID: node, PathName: label });
+  };
+  const getSortIndicator = (activeKey: string, key: string, direction: 'asc' | 'desc') => (
+    activeKey === key ? (direction === 'asc' ? '▲' : '▼') : ''
+  );
+  const toggleOverviewSort = (
+    key: 'vendor' | 'files' | 'overrides' | 'objects' | 'variables' | 'evalObjects' | 'processorObjects' | 'literalObjects',
+  ) => {
+    setOverviewVendorSort((prev) => {
+      if (prev.key === key) {
+        return { key, direction: prev.direction === 'asc' ? 'desc' : 'asc' };
+      }
+      return { key, direction: key === 'vendor' ? 'asc' : 'desc' };
+    });
+  };
+  const toggleFolderSort = (key: 'file' | 'objects' | 'schemaErrors' | 'unknownFields') => {
+    setFolderTableSort((prev) => {
+      if (prev.key === key) {
+        return { key, direction: prev.direction === 'asc' ? 'desc' : 'asc' };
+      }
+      return { key, direction: key === 'file' ? 'asc' : 'desc' };
+    });
   };
   const renderOverrideSummaryCard = (
     obj: any,
@@ -208,6 +252,7 @@ export default function App() {
   const [trapSending, setTrapSending] = useState(false);
   const [trapError, setTrapError] = useState<string | null>(null);
   const [recentTargets, setRecentTargets] = useState<string[]>([]);
+  const [folderOverviewStatus, setFolderOverviewStatus] = useState<any | null>(null);
 
   useEffect(() => {
     const savedQuery = sessionStorage.getItem('fcom.search.query');
@@ -284,17 +329,31 @@ export default function App() {
     if (!overviewData?.protocols) {
       return [] as Array<{ name: string; counts: any; vendors: any[] }>;
     }
+    const filterText = overviewVendorFilter.trim().toLowerCase();
     return overviewData.protocols.map((protocol: any) => {
-      const sortedVendors = [...(protocol.vendors || [])].sort(
-        (a: any, b: any) => (b?.counts?.objects || 0) - (a?.counts?.objects || 0),
-      );
+      const vendors = Array.isArray(protocol.vendors) ? protocol.vendors : [];
+      const filteredVendors = filterText
+        ? vendors.filter((vendor: any) => String(vendor?.name || '').toLowerCase().includes(filterText))
+        : vendors;
+      const sortedVendors = [...filteredVendors].sort((a: any, b: any) => {
+        if (overviewVendorSort.key === 'vendor') {
+          const aName = String(a?.name || '');
+          const bName = String(b?.name || '');
+          return overviewVendorSort.direction === 'asc'
+            ? aName.localeCompare(bName)
+            : bName.localeCompare(aName);
+        }
+        const aValue = Number(a?.counts?.[overviewVendorSort.key] ?? 0);
+        const bValue = Number(b?.counts?.[overviewVendorSort.key] ?? 0);
+        return overviewVendorSort.direction === 'asc' ? aValue - bValue : bValue - aValue;
+      });
       const limit = overviewTopN === 0 ? sortedVendors.length : overviewTopN;
       return {
         ...protocol,
         vendors: sortedVendors.slice(0, limit),
       };
     });
-  }, [overviewData, overviewTopN]);
+  }, [overviewData, overviewTopN, overviewVendorFilter, overviewVendorSort]);
 
   const getRawPath = () => {
     if (selectedFile?.PathID) {
@@ -331,6 +390,30 @@ export default function App() {
     return parts.slice(0, -1).join('/');
   };
 
+  const formatRelativeAge = (timestamp?: string | null) => {
+    if (!timestamp) {
+      return '—';
+    }
+    const ms = Date.now() - new Date(timestamp).getTime();
+    if (!Number.isFinite(ms) || ms < 0) {
+      return '—';
+    }
+    const seconds = Math.floor(ms / 1000);
+    if (seconds < 60) {
+      return `${seconds}s`;
+    }
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) {
+      return `${minutes}m`;
+    }
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) {
+      return `${hours}h`;
+    }
+    const days = Math.floor(hours / 24);
+    return `${days}d`;
+  };
+
   const [browseError, setBrowseError] = useState<string | null>(null);
   const [browseData, setBrowseData] = useState<any>(null);
   const [browseNode, setBrowseNode] = useState<string | null>(null);
@@ -341,6 +424,31 @@ export default function App() {
   const [selectedFolder, setSelectedFolder] = useState<any>(null);
   const [folderOverview, setFolderOverview] = useState<any>(null);
   const [folderLoading, setFolderLoading] = useState(false);
+  const [folderTableFilter, setFolderTableFilter] = useState('');
+  const [folderTableSort, setFolderTableSort] = useState<{
+    key: 'file' | 'objects' | 'schemaErrors' | 'unknownFields';
+    direction: 'asc' | 'desc';
+  }>({ key: 'schemaErrors', direction: 'desc' });
+  const folderTableRows = useMemo(() => {
+    const rows = Array.isArray(folderOverview?.topFiles) ? folderOverview.topFiles : [];
+    const filterText = folderTableFilter.trim().toLowerCase();
+    const filteredRows = filterText
+      ? rows.filter((row: any) => String(row?.file || '').toLowerCase().includes(filterText))
+      : rows;
+    const sortedRows = [...filteredRows].sort((a: any, b: any) => {
+      if (folderTableSort.key === 'file') {
+        const aName = String(a?.file || '');
+        const bName = String(b?.file || '');
+        return folderTableSort.direction === 'asc'
+          ? aName.localeCompare(bName)
+          : bName.localeCompare(aName);
+      }
+      const aValue = Number(a?.[folderTableSort.key] ?? 0);
+      const bValue = Number(b?.[folderTableSort.key] ?? 0);
+      return folderTableSort.direction === 'asc' ? aValue - bValue : bValue - aValue;
+    });
+    return sortedRows;
+  }, [folderOverview, folderTableFilter, folderTableSort]);
   const [breadcrumbs, setBreadcrumbs] = useState<Array<{ label: string; node: string | null }>>([
     { label: '/', node: null },
   ]);
@@ -2378,6 +2486,7 @@ export default function App() {
       // eslint-disable-next-line no-console
       console.info('Login response:', resp?.data);
       setSession(resp.data);
+      setActiveApp('overview');
     } catch (err: any) {
       // eslint-disable-next-line no-console
       console.error('Login error:', err?.response?.data || err);
@@ -2395,6 +2504,7 @@ export default function App() {
     } finally {
       clearSession();
       urlHydrated.current = false;
+      setActiveApp('overview');
       setSelectedFile(null);
       setFileData(null);
       setEntries([]);
@@ -2445,6 +2555,81 @@ export default function App() {
     } catch {
       // ignore
     }
+  };
+
+  const refreshOverviewStatus = async () => {
+    try {
+      const resp = await api.getOverviewStatus();
+      setOverviewStatus(resp.data);
+    } catch {
+      // ignore
+    }
+  };
+
+  const refreshFolderOverviewStatus = async () => {
+    try {
+      const resp = await api.getFolderOverviewStatus();
+      setFolderOverviewStatus(resp.data);
+    } catch {
+      // ignore
+    }
+  };
+
+  const handleRefreshOverviewCache = async (): Promise<boolean> => {
+    setCacheActionMessage('Refreshing overview cache…');
+    try {
+      await api.rebuildOverviewIndex();
+      await loadOverview();
+      setCacheActionMessage('Overview cache refresh triggered.');
+      return true;
+    } catch (err: any) {
+      setCacheActionMessage(err?.response?.data?.error || 'Failed to refresh overview cache');
+      return false;
+    }
+  };
+
+  const handleRefreshSearchCache = async (): Promise<boolean> => {
+    setCacheActionMessage('Refreshing search cache…');
+    try {
+      await api.rebuildSearchIndex();
+      startSearchStatusPolling();
+      setCacheActionMessage('Search cache rebuild started.');
+      return true;
+    } catch (err: any) {
+      setCacheActionMessage(err?.response?.data?.error || 'Failed to refresh search cache');
+      return false;
+    }
+  };
+
+  const handleRefreshFolderCache = async (): Promise<boolean> => {
+    if (!selectedFolder?.PathID) {
+      setCacheActionMessage('Select a folder to rebuild the folder cache.');
+      return false;
+    }
+    setCacheActionMessage('Refreshing folder cache…');
+    try {
+      const resp = await api.rebuildFolderOverviewCache(selectedFolder.PathID, 25);
+      setFolderOverview(resp.data);
+      await refreshFolderOverviewStatus();
+      setCacheActionMessage('Folder overview cache refreshed.');
+      return true;
+    } catch (err: any) {
+      setCacheActionMessage(err?.response?.data?.error || 'Failed to refresh folder overview cache');
+      return false;
+    }
+  };
+
+  const handleRefreshAllCaches = async () => {
+    setCacheActionMessage('Refreshing all caches…');
+    const results = await Promise.allSettled([
+      handleRefreshOverviewCache(),
+      handleRefreshSearchCache(),
+      handleRefreshFolderCache(),
+    ]);
+    const folderSkipped = results[2]?.status === 'fulfilled' && results[2].value === false;
+    setCacheActionMessage(folderSkipped
+      ? 'All cache refresh actions triggered (folder cache skipped — select a folder).'
+      : 'All cache refresh actions triggered.');
   };
 
   const stopSearchStatusPolling = () => {
@@ -2554,6 +2739,15 @@ export default function App() {
     void refreshSearchStatus();
     return () => stopSearchStatusPolling();
   }, [isAuthenticated]);
+
+  useEffect(() => {
+    if (!isAuthenticated || !showUserMenu) {
+      return;
+    }
+    void refreshOverviewStatus();
+    void refreshSearchStatus();
+    void refreshFolderOverviewStatus();
+  }, [isAuthenticated, showUserMenu]);
 
   const handleRebuildIndex = async () => {
     setSearchError(null);
@@ -3509,6 +3703,68 @@ export default function App() {
     return lines;
   };
 
+  const formatOverrideValue = (value: any) => {
+    if (value === undefined) {
+      return '—';
+    }
+    if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+      return String(value);
+    }
+    try {
+      return JSON.stringify(value);
+    } catch {
+      return String(value);
+    }
+  };
+
+  const getProcessorDisplayValue = (processor: any) => {
+    if (processor?.set) {
+      return formatOverrideValue(processor.set.source);
+    }
+    const summary = getProcessorSummaryLines(processor);
+    if (summary.length > 0) {
+      return summary.join(' | ');
+    }
+    return 'override';
+  };
+
+  const buildIfConditionLabel = (payload: any) => {
+    if (!payload || typeof payload !== 'object') {
+      return 'condition';
+    }
+    const source = payload.source ?? 'value';
+    const operator = payload.operator ?? '';
+    const value = payload.value ?? '';
+    return `${source} ${operator} ${value}`.trim();
+  };
+
+  const getOverrideTargetMap = (processors: any[]) => {
+    const map = new Map<string, any>();
+    const visit = (list: any[]) => {
+      (list || []).forEach((processor: any) => {
+        if (processor?.if) {
+          const payload = processor.if;
+          const condition = buildIfConditionLabel(payload);
+          const thenMap = getOverrideTargetMap(payload.processors || []);
+          const elseMap = getOverrideTargetMap(payload.else || []);
+          const targets = new Set<string>([...thenMap.keys(), ...elseMap.keys()]);
+          targets.forEach((target) => {
+            const thenValue = thenMap.get(target) ?? 'no change';
+            const elseValue = elseMap.get(target) ?? 'no change';
+            map.set(target, `if (${condition}) then ${thenValue} else ${elseValue}`);
+          });
+          return;
+        }
+        const target = getProcessorTargetField(processor);
+        if (target) {
+          map.set(target, getProcessorDisplayValue(processor));
+        }
+      });
+    };
+    visit(processors);
+    return map;
+  };
+
   const stringifyProcessor = (processor: any) => {
     try {
       return JSON.stringify(processor || {});
@@ -3657,8 +3913,8 @@ export default function App() {
     }
     const overrides = overrideIndex.get(objectName) || [];
     const processors = overrides.flatMap((entry: any) => (Array.isArray(entry?.processors) ? entry.processors : []));
-    const targets = processors.map(getProcessorTargetField).filter(Boolean) as string[];
-    return new Set<string>(targets);
+    const targetMap = getOverrideTargetMap(processors);
+    return new Set<string>(Array.from(targetMap.keys()));
   };
 
   const getOverrideValueMap = (obj: any) => {
@@ -3668,14 +3924,7 @@ export default function App() {
     }
     const overrides = overrideIndex.get(objectName) || [];
     const processors = overrides.flatMap((entry: any) => (Array.isArray(entry?.processors) ? entry.processors : []));
-    const map = new Map<string, any>();
-    processors.forEach((processor: any) => {
-      const target = processor?.set?.targetField;
-      if (target) {
-        map.set(target, processor.set.source);
-      }
-    });
-    return map;
+    return getOverrideTargetMap(processors);
   };
 
   const getBaseObjectValue = (objectName: string | undefined, target: string) => {
@@ -7662,7 +7911,16 @@ export default function App() {
           )}
           {isAuthenticated && (
             <div className="header-actions">
-              <p>Welcome, {session?.user}</p>
+              <button
+                type="button"
+                className="user-menu-button"
+                onClick={() => {
+                  setCacheActionMessage(null);
+                  setShowUserMenu(true);
+                }}
+              >
+                Welcome, {session?.user}
+              </button>
               <button type="button" className="search-button logout-button" onClick={handleLogout}>
                 <span className="logout-icon" aria-hidden="true">🚪</span>
                 Logout
@@ -7681,6 +7939,13 @@ export default function App() {
                     <div>
                       <h2>FCOM Overview</h2>
                       <p className="overview-subtitle">File, object, and vendor rollups from FCOM folders.</p>
+                      <div className="overview-cache-status">
+                        {overviewStatus?.isBuilding
+                          ? 'Cache: Refreshing'
+                          : overviewStatus?.lastBuiltAt
+                            ? `Cache: Loaded (age: ${formatRelativeAge(overviewStatus.lastBuiltAt)})`
+                            : 'Cache: Not loaded'}
+                      </div>
                     </div>
                     <div className="overview-actions">
                       <div className="overview-topn">
@@ -7706,6 +7971,16 @@ export default function App() {
                         Refresh
                       </button>
                     </div>
+                  </div>
+                  <div className="overview-filter-row">
+                    <label htmlFor="overview-vendor-filter">Filter vendors</label>
+                    <input
+                      id="overview-vendor-filter"
+                      type="text"
+                      placeholder="Type to filter vendors"
+                      value={overviewVendorFilter}
+                      onChange={(event) => setOverviewVendorFilter(event.target.value)}
+                    />
                   </div>
 
                   {overviewError && <p className="error">{overviewError}</p>}
@@ -7767,7 +8042,15 @@ export default function App() {
                           {overviewProtocols.map((protocol: any) => (
                             <div key={protocol.name} className="overview-protocol">
                               <div className="overview-protocol-header">
-                                <h3>{protocol.name}</h3>
+                                <h3>
+                                  <button
+                                    type="button"
+                                    className="folder-link overview-folder-link"
+                                    onClick={() => handleOverviewFolderClick(protocol.name)}
+                                  >
+                                    {protocol.name}
+                                  </button>
+                                </h3>
                                 <div className="overview-protocol-meta">
                                   <span>Files {formatOverviewNumber(protocol.counts?.files || 0)}</span>
                                   <span>Objects {formatOverviewNumber(protocol.counts?.objects || 0)}</span>
@@ -7778,20 +8061,92 @@ export default function App() {
                                 <table className="overview-table">
                                   <thead>
                                     <tr>
-                                      <th>Vendor</th>
-                                      <th>Files</th>
-                                      <th>Overrides</th>
-                                      <th>Objects</th>
-                                      <th>Variables</th>
-                                      <th>Eval</th>
-                                      <th>Processor</th>
-                                      <th>Literal</th>
+                                      <th>
+                                        <button
+                                          type="button"
+                                          className="table-sort-button"
+                                          onClick={() => toggleOverviewSort('vendor')}
+                                        >
+                                          Vendor {getSortIndicator(overviewVendorSort.key, 'vendor', overviewVendorSort.direction)}
+                                        </button>
+                                      </th>
+                                      <th>
+                                        <button
+                                          type="button"
+                                          className="table-sort-button"
+                                          onClick={() => toggleOverviewSort('files')}
+                                        >
+                                          Files {getSortIndicator(overviewVendorSort.key, 'files', overviewVendorSort.direction)}
+                                        </button>
+                                      </th>
+                                      <th>
+                                        <button
+                                          type="button"
+                                          className="table-sort-button"
+                                          onClick={() => toggleOverviewSort('overrides')}
+                                        >
+                                          Overrides {getSortIndicator(overviewVendorSort.key, 'overrides', overviewVendorSort.direction)}
+                                        </button>
+                                      </th>
+                                      <th>
+                                        <button
+                                          type="button"
+                                          className="table-sort-button"
+                                          onClick={() => toggleOverviewSort('objects')}
+                                        >
+                                          Objects {getSortIndicator(overviewVendorSort.key, 'objects', overviewVendorSort.direction)}
+                                        </button>
+                                      </th>
+                                      <th>
+                                        <button
+                                          type="button"
+                                          className="table-sort-button"
+                                          onClick={() => toggleOverviewSort('variables')}
+                                        >
+                                          Variables {getSortIndicator(overviewVendorSort.key, 'variables', overviewVendorSort.direction)}
+                                        </button>
+                                      </th>
+                                      <th>
+                                        <button
+                                          type="button"
+                                          className="table-sort-button"
+                                          onClick={() => toggleOverviewSort('evalObjects')}
+                                        >
+                                          Eval {getSortIndicator(overviewVendorSort.key, 'evalObjects', overviewVendorSort.direction)}
+                                        </button>
+                                      </th>
+                                      <th>
+                                        <button
+                                          type="button"
+                                          className="table-sort-button"
+                                          onClick={() => toggleOverviewSort('processorObjects')}
+                                        >
+                                          Processor {getSortIndicator(overviewVendorSort.key, 'processorObjects', overviewVendorSort.direction)}
+                                        </button>
+                                      </th>
+                                      <th>
+                                        <button
+                                          type="button"
+                                          className="table-sort-button"
+                                          onClick={() => toggleOverviewSort('literalObjects')}
+                                        >
+                                          Literal {getSortIndicator(overviewVendorSort.key, 'literalObjects', overviewVendorSort.direction)}
+                                        </button>
+                                      </th>
                                     </tr>
                                   </thead>
                                   <tbody>
                                     {(protocol.vendors || []).map((vendor: any) => (
                                       <tr key={`${protocol.name}-${vendor.name}`}>
-                                        <td>{vendor.name}</td>
+                                        <td>
+                                          <button
+                                            type="button"
+                                            className="folder-link overview-folder-link"
+                                            onClick={() => handleOverviewFolderClick(protocol.name, vendor.name)}
+                                          >
+                                            {vendor.name}
+                                          </button>
+                                        </td>
                                         <td>{formatOverviewNumber(vendor.counts?.files || 0)}</td>
                                         <td>{formatOverviewNumber(vendor.counts?.overrides || 0)}</td>
                                         <td>{formatOverviewNumber(vendor.counts?.objects || 0)}</td>
@@ -8043,6 +8398,12 @@ export default function App() {
                               </span>
                             </div>
                             <div className="overview-stat">
+                              <span className="overview-stat-label">Overrides</span>
+                              <span className="overview-stat-value">
+                                {formatOverviewNumber(folderOverview.overrideCount || 0)}
+                              </span>
+                            </div>
+                            <div className="overview-stat">
                               <span className="overview-stat-label">Objects</span>
                               <span className="overview-stat-value">
                                 {formatOverviewNumber(folderOverview.objectCount || 0)}
@@ -8063,17 +8424,59 @@ export default function App() {
                           </div>
                           {Array.isArray(folderOverview.topFiles) && folderOverview.topFiles.length > 0 ? (
                             <div className="overview-table-wrapper">
+                              <div className="overview-filter-row">
+                                <label htmlFor="folder-file-filter">Filter files</label>
+                                <input
+                                  id="folder-file-filter"
+                                  type="text"
+                                  placeholder="Type to filter files"
+                                  value={folderTableFilter}
+                                  onChange={(event) => setFolderTableFilter(event.target.value)}
+                                />
+                              </div>
                               <table className="overview-table">
                                 <thead>
                                   <tr>
-                                    <th>File</th>
-                                    <th>Objects</th>
-                                    <th>Schema</th>
-                                    <th>Unknown</th>
+                                    <th>
+                                      <button
+                                        type="button"
+                                        className="table-sort-button"
+                                        onClick={() => toggleFolderSort('file')}
+                                      >
+                                        File {getSortIndicator(folderTableSort.key, 'file', folderTableSort.direction)}
+                                      </button>
+                                    </th>
+                                    <th>
+                                      <button
+                                        type="button"
+                                        className="table-sort-button"
+                                        onClick={() => toggleFolderSort('objects')}
+                                      >
+                                        Objects {getSortIndicator(folderTableSort.key, 'objects', folderTableSort.direction)}
+                                      </button>
+                                    </th>
+                                    <th>
+                                      <button
+                                        type="button"
+                                        className="table-sort-button"
+                                        onClick={() => toggleFolderSort('schemaErrors')}
+                                      >
+                                        Schema {getSortIndicator(folderTableSort.key, 'schemaErrors', folderTableSort.direction)}
+                                      </button>
+                                    </th>
+                                    <th>
+                                      <button
+                                        type="button"
+                                        className="table-sort-button"
+                                        onClick={() => toggleFolderSort('unknownFields')}
+                                      >
+                                        Unknown {getSortIndicator(folderTableSort.key, 'unknownFields', folderTableSort.direction)}
+                                      </button>
+                                    </th>
                                   </tr>
                                 </thead>
                                 <tbody>
-                                  {folderOverview.topFiles.map((row: any) => (
+                                  {folderTableRows.map((row: any) => (
                                     <tr key={row.pathId || row.file}>
                                       <td>{row.file}</td>
                                       <td>{formatOverviewNumber(row.objects || 0)}</td>
@@ -8234,7 +8637,9 @@ export default function App() {
                   {saveSuccess && <div className="success">{saveSuccess}</div>}
                   {stagedToast && <div className="staged-toast">{stagedToast}</div>}
                   <div className="file-preview">
-                    {fileLoading ? (
+                    {!selectedFile ? (
+                      <div className="empty-state">Select a file on the left to view and edit.</div>
+                    ) : fileLoading ? (
                       <div>Loading preview…</div>
                     ) : (
                       viewMode === 'friendly' ? (
@@ -11243,6 +11648,89 @@ export default function App() {
                 </div>
               </div>
             )}
+            {showUserMenu && (
+              <div className="modal-overlay" role="dialog" aria-modal="true">
+                <div className="modal">
+                  <h3>Cache refresh</h3>
+                  <p className="muted">Trigger a manual refresh for server-side caches.</p>
+                  <div className="cache-status-list">
+                    <div className="cache-status-row">
+                      <div className="cache-status-title">Overview cache</div>
+                      <div className="cache-status-meta muted">
+                        Status: {overviewStatus?.isBuilding
+                          ? 'Refreshing'
+                          : overviewStatus?.lastBuiltAt
+                            ? 'Ready'
+                            : 'Not loaded'}
+                        {' · '}Last refresh: {formatTime(overviewStatus?.lastBuiltAt) || '—'}
+                      </div>
+                    </div>
+                    <div className="cache-status-row">
+                      <div className="cache-status-title">Search cache</div>
+                      <div className="cache-status-meta muted">
+                        Status: {searchRebuildPending || searchStatus?.isBuilding
+                          ? 'Refreshing'
+                          : searchStatus?.lastBuiltAt
+                            ? 'Ready'
+                            : 'Not loaded'}
+                        {' · '}Last refresh: {formatTime(searchStatus?.lastBuiltAt) || '—'}
+                      </div>
+                    </div>
+                    <div className="cache-status-row">
+                      <div className="cache-status-title">Folder cache</div>
+                      <div className="cache-status-meta muted">
+                        Status: {folderOverviewStatus?.entryCount
+                          ? 'Ready'
+                          : folderOverviewStatus?.lastClearedAt
+                            ? 'Cleared'
+                            : 'Empty'}
+                        {' · '}Last refresh: {formatTime(folderOverviewStatus?.lastBuiltAt
+                          || folderOverviewStatus?.lastClearedAt) || '—'}
+                      </div>
+                    </div>
+                  </div>
+                  {cacheActionMessage && <div className="success">{cacheActionMessage}</div>}
+                  <div className="cache-refresh-grid">
+                    <button
+                      type="button"
+                      className="builder-card"
+                      onClick={handleRefreshOverviewCache}
+                    >
+                      Refresh overview cache
+                    </button>
+                    <button
+                      type="button"
+                      className="builder-card"
+                      onClick={handleRefreshSearchCache}
+                    >
+                      Refresh search cache
+                    </button>
+                    <button
+                      type="button"
+                      className="builder-card"
+                      onClick={handleRefreshFolderCache}
+                    >
+                      Refresh folder cache
+                    </button>
+                    <button
+                      type="button"
+                      className="builder-card builder-card-primary"
+                      onClick={handleRefreshAllCaches}
+                    >
+                      Refresh all caches
+                    </button>
+                  </div>
+                  <div className="cache-refresh-note muted">
+                    Rebuilds run on the server and can take a few minutes.
+                  </div>
+                  <div className="modal-actions">
+                    <button type="button" onClick={() => setShowUserMenu(false)}>
+                      Close
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
             {varModalOpen && (
               <div className="modal-overlay" role="dialog" aria-modal="true">
                 <div className="modal modal-wide">
@@ -11397,16 +11885,21 @@ export default function App() {
                   </div>
                   <div className="panel-section">
                     <div className="panel-section-title">Path</div>
-                    <div className="mib-path-row">
-                      <button
-                        type="button"
-                        className="ghost-button"
-                        onClick={() => loadMibPath(getParentPath(mibPath))}
-                        disabled={mibPath === '/'}
-                      >
-                        Up
-                      </button>
-                      <span className="mib-path">{mibPath}</span>
+                    <div className="breadcrumbs mib-breadcrumbs">
+                      {buildBreadcrumbsFromPath(mibPath).map((crumb, index, items) => {
+                        const targetPath = crumb.node ? `/${crumb.node}` : '/';
+                        return (
+                          <button
+                            key={`${crumb.label}-${index}`}
+                            type="button"
+                            className="crumb"
+                            onClick={() => loadMibPath(targetPath)}
+                            disabled={index === items.length - 1}
+                          >
+                            {crumb.label}
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
                   <div className="panel-section">

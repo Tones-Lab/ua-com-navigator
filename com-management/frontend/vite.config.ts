@@ -21,6 +21,21 @@ export default defineConfig({
       },
     },
   },
+  preview: {
+    port: 5173,
+    host: '0.0.0.0',
+    https: {
+      key: fs.readFileSync('/opt/assure1/etc/ssl/Web.key'),
+      cert: fs.readFileSync('/opt/assure1/etc/ssl/Web.crt'),
+    },
+    proxy: {
+      '/api': {
+        target: 'https://localhost:3001',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
   resolve: {
     alias: [
       { find: '@', replacement: path.resolve(__dirname, './src') },

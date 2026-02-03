@@ -2,6 +2,17 @@ import { UAServer } from '../types';
 
 const uaServers: Map<string, UAServer> = new Map([
   [
+    'lab-ua-tony02',
+    {
+      server_id: 'lab-ua-tony02',
+      server_name: 'Lab UA (Tony02) (lab-ua-tony02.tony.lab)',
+      hostname: 'lab-ua-tony02.tony.lab',
+      port: 443,
+      environment: 'dev',
+      svn_url: 'svn://lab-ua-tony02.tony.lab/fcom',
+    },
+  ],
+  [
     'dev-ua-01',
     {
       server_id: 'dev-ua-01',
@@ -32,17 +43,6 @@ const uaServers: Map<string, UAServer> = new Map([
       port: 8080,
       environment: 'prod',
       svn_url: 'svn://ua-prod.example.com/fcom',
-    },
-  ],
-  [
-    'lab-ua-tony02',
-    {
-      server_id: 'lab-ua-tony02',
-      server_name: 'Lab UA (Tony02) (lab-ua-tony02.tony.lab)',
-      hostname: 'lab-ua-tony02.tony.lab',
-      port: 443,
-      environment: 'dev',
-      svn_url: 'svn://lab-ua-tony02.tony.lab/fcom',
     },
   ],
 ]);

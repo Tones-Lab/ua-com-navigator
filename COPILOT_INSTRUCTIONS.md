@@ -7,20 +7,20 @@ These rules keep operations safe and predictable in this repo.
 - **Do not run the app with `nohup`, backgrounding, or manual PID management.**
 - **Do not write logs to `/var/log/*` from ad-hoc commands or by editing scripts to append there.**
 - **Manage the app as systemd services only**:
-  - Backend service: `fcom-curator-backend.service`
-  - Frontend service: `fcom-curator-frontend.service`
+  - Backend service: `com-management-backend.service`
+  - Frontend service: `com-management-frontend.service`
   - Restart (canonical):
-    - `systemctl restart fcom-curator-backend`
-    - `systemctl restart fcom-curator-frontend`
+    - `systemctl restart com-management-backend`
+    - `systemctl restart com-management-frontend`
   - Start/stop:
-    - `systemctl start|stop fcom-curator-backend`
-    - `systemctl start|stop fcom-curator-frontend`
+    - `systemctl start|stop com-management-backend`
+    - `systemctl start|stop com-management-frontend`
   - Status:
-    - `systemctl status fcom-curator-backend --no-pager`
-    - `systemctl status fcom-curator-frontend --no-pager`
+    - `systemctl status com-management-backend --no-pager`
+    - `systemctl status com-management-frontend --no-pager`
   - Logs:
-    - `journalctl -u fcom-curator-backend -f`
-    - `journalctl -u fcom-curator-frontend -f`
+    - `journalctl -u com-management-backend -f`
+    - `journalctl -u com-management-frontend -f`
 
 Reminder: after any code change, restart the affected service(s) before manual retesting.
 Explicit requirement: if a code change requires a restart to take effect, you (the agent) must perform the restart of the affected service(s).

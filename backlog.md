@@ -74,6 +74,10 @@
 - Global overrides awareness:
 	- Detect and surface catch-all/global overrides in relevant files.
 	- Summarize global overrides and link to their files from the UI.
+- Override storage path follow-ups:
+	- Backward-compat read for legacy /core/default/processing/event/fcom/overrides (read-only).
+	- Add optional protocol scoping metadata to overrides for more precise reporting.
+	- Add separate dashboard metric for override processor count (vs override objects).
 - LLM assistant (server-side, suggestions-only, edit-gated):
 	- Reuse UA chatbot LLM API integration (OpenAI + OCI).
 	- RAG with vector store (FCOM/PCOM docs, UA docs, schema).
@@ -114,6 +118,12 @@
 	- Option 3: move Builder into an actions menu (⋯) alongside “Remove Override”.
 - Documentation refresh (post-processor rollout):
 	- Update install/prereqs, admin/backend notes, and UI workflow.
+- PCOM metrics discovery (vendor/enterprise):
+	- PCOM root path: /core/default/collection/metric/snmp/_objects/pcom.
+	- Define directory conventions (vendor/model/enterprise).
+	- Backend index for metric types + cache (searchable).
+	- UI: filter/search by vendor/enterprise, list metric types, drill to PCOM file + override.
+	- Add overrides visibility for PCOM (vendor-level).
 
 ## Later (P2)
 - Diff viewer and history panel.
@@ -151,3 +161,20 @@
 Tony Manual Edit - need to add details MIB browser ASAP, that integrates with FCOM and PCOM (to be created).
 
 Advanced - Guided edit mode with 'highlight' section, and explain. this passes code into AI etc using the FCOM and documentation as reference. Then helps provide guidance and best action/steps$A1BASEDIR/bin/sdk/MIB2FCOM --in=<MIB_name>.mib --out=<MIB_name>-FCOM.json --use_parent_mibs
+
+
+2/3/2026 TO DO:
+- do deep five code inspection. suggest refactoring? also, breakup and rename pieces so they arae in relevant folders (fcom, pcom, mib-browser, common, backend, frontend, etc)
+
+
+create a 'send all traps' feature - that sends all traps in a given FCOM file to a selected server.  This is useful for testing large sets of traps quickly.
+- need to add ability to save 'recent' servers for trap testing - so user does not have to select from large list each time.
+- need to add ability to 'favorite' certain MIBs in the MIB browser for quick access.
+- need to add ability to 'search' MIBs by OID, name, description, etc.
+- need to add ability to 'filter' MIBs by vendor, status, type (notification/metric), etc.
+- need to add ability to 'sort' MIBs by name, OID, vendor, etc.
+- need to add ability to 'view MIB details' - showing all relevant info about the MIB, including its structure, definitions, etc.
+
+
+
+
