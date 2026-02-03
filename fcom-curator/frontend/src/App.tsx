@@ -8158,69 +8158,75 @@ export default function App() {
                     </div>
                   )}
                   <div className="action-row">
-                    <div className="view-toggle">
-                      <span className={viewMode === 'friendly' ? 'view-toggle-label active' : 'view-toggle-label'}>
-                        Friendly
-                      </span>
-                      <label className="switch" aria-label="Toggle friendly/raw view">
-                        <input
-                          type="checkbox"
-                          checked={viewMode !== 'friendly'}
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              setViewMode('preview');
-                            } else {
-                              setViewMode('friendly');
-                            }
+                    {selectedFile ? (
+                      <>
+                        <div className="view-toggle">
+                          <span className={viewMode === 'friendly' ? 'view-toggle-label active' : 'view-toggle-label'}>
+                            Friendly
+                          </span>
+                          <label className="switch" aria-label="Toggle friendly/raw view">
+                            <input
+                              type="checkbox"
+                              checked={viewMode !== 'friendly'}
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  setViewMode('preview');
+                                } else {
+                                  setViewMode('friendly');
+                                }
+                              }}
+                            />
+                            <span className="slider" />
+                          </label>
+                          <span className={viewMode !== 'friendly' ? 'view-toggle-label active' : 'view-toggle-label'}>
+                            Raw
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          className="action-link"
+                          onClick={() => {
+                            openAdvancedFlowModal('global');
                           }}
-                        />
-                        <span className="slider" />
-                      </label>
-                      <span className={viewMode !== 'friendly' ? 'view-toggle-label active' : 'view-toggle-label'}>
-                        Raw
-                      </span>
-                    </div>
-                    <button
-                      type="button"
-                      className="action-link"
-                      onClick={() => {
-                        openAdvancedFlowModal('global');
-                      }}
-                      disabled={!hasEditPermission}
-                      title={hasEditPermission ? '' : 'Read-only access'}
-                    >
-                      Advanced Processors (Global)
-                    </button>
-                    <button
-                      type="button"
-                      className={`action-link${reviewCtaPulse ? ' action-link-pulse' : ''}`}
-                      onClick={() => {
-                        setReviewStep('review');
-                        setShowReviewModal(true);
-                      }}
-                      disabled={!hasStagedChanges || !hasEditPermission}
-                      title={hasStagedChanges
-                        ? `${stagedDiff.totalChanges} staged change(s)`
-                        : hasEditPermission
-                          ? 'No staged changes'
-                          : 'Read-only access'}
-                    >
-                      Review & Save{hasStagedChanges ? ` (${stagedDiff.totalChanges})` : ''}
-                    </button>
-                    {hasGlobalAdvancedFlow && (
-                      <span className="pill" title="Global Advanced Flow configured">
-                        Advanced Flow
-                      </span>
-                    )}
-                    {stagedDiff.editedObjects.length > 0 && (
-                      <span
-                        className="pill"
-                        title={`Edited objects: ${stagedDiff.editedObjects.slice(0, 6).join(', ')}${
-                          stagedDiff.editedObjects.length > 6 ? '…' : ''
-                        }`}
-                      >
-                        Edited objects: {stagedDiff.editedObjects.length}
-                      </span>
+                          disabled={!hasEditPermission}
+                          title={hasEditPermission ? '' : 'Read-only access'}
+                        >
+                          Advanced Processors (Global)
+                        </button>
+                        <button
+                          type="button"
+                          className={`action-link${reviewCtaPulse ? ' action-link-pulse' : ''}`}
+                          onClick={() => {
+                            setReviewStep('review');
+                            setShowReviewModal(true);
+                          }}
+                          disabled={!hasStagedChanges || !hasEditPermission}
+                          title={hasStagedChanges
+                            ? `${stagedDiff.totalChanges} staged change(s)`
+                            : hasEditPermission
+                              ? 'No staged changes'
+                              : 'Read-only access'}
+                        >
+                          Review & Save{hasStagedChanges ? ` (${stagedDiff.totalChanges})` : ''}
+                        </button>
+                        {hasGlobalAdvancedFlow && (
+                          <span className="pill" title="Global Advanced Flow configured">
+                            Advanced Flow
+                          </span>
+                        )}
+                        {stagedDiff.editedObjects.length > 0 && (
+                          <span
+                            className="pill"
+                            title={`Edited objects: ${stagedDiff.editedObjects.slice(0, 6).join(', ')}${
+                              stagedDiff.editedObjects.length > 6 ? '…' : ''
+                            }`}
+                          >
+                            Edited objects: {stagedDiff.editedObjects.length}
+                          </span>
+                        )}
+                      </>
+                    ) : (
+                      <span className="muted">Select a file on the left to view and edit.</span>
                     )}
                   </div>
                   {fileError && <div className="error">{fileError}</div>}
