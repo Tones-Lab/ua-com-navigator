@@ -41,7 +41,7 @@ cd /root/navigator/com-management/backend
 npm run dev
 ```
 
-The backend listens on http://localhost:3001 by default. If SSL_KEY_PATH and SSL_CERT_PATH exist, HTTPS is enabled.
+The backend listens on https://localhost:3001 when SSL_KEY_PATH and SSL_CERT_PATH exist (recommended). If not, it falls back to http://localhost:3001.
 
 ### Frontend
 
@@ -50,7 +50,7 @@ cd /root/navigator/com-management/frontend
 npm run dev -- --host 0.0.0.0 --port 5173
 ```
 
-Open: http://localhost:5173
+Open: https://localhost:5173 (recommended)
 
 ## Login flow
 
@@ -62,7 +62,7 @@ Open: http://localhost:5173
 ## Smoke test
 
 ```bash
-curl http://localhost:3001/health
+curl https://localhost:3001/health
 ```
 
 ## Common issues

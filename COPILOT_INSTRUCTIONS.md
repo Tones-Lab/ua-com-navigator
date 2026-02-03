@@ -41,9 +41,38 @@ Explicit requirement: if a code change requires a restart to take effect, you (t
 - **Only send fields explicitly documented or required by the UA REST API.**
 - **Do not include extra/unknown keys** even if they appear to be tolerated by UA.
 
-## Git commit messages
+## Git commit messages (strict)
 
-Prefer descriptive, multi-line commit messages that include what changed and why. Avoid one-line commits for non-trivial changes.
+All commits must follow this format:
+
+Title line:
+```
+<type>(<scope>): <summary>
+```
+- type: feat | fix | refactor | docs | chore | test | perf | build | ci | revert
+- scope: area (e.g., fcom, backend, frontend, docs, infra)
+- summary: specific, imperative, <= 72 chars
+
+Body (required):
+```
+Why:
+- <problem/goal>
+
+What:
+- <key change 1>
+- <key change 2>
+
+Impact:
+- <behavior/user impact>
+- <risk/mitigation or “None”>
+```
+
+Footer (optional):
+```
+Refs: <issue/PR/link>
+```
+
+Hard rule: do not use one‑line commit messages for non‑trivial changes.
 
 ## Repo hygiene (hard rule)
 

@@ -95,7 +95,7 @@ Backend configuration is driven by environment variables (see [backend/.env.exam
 |---|---|---|
 | PORT | 3001 | API port |
 | NODE_ENV | development | Node environment |
-| FRONTEND_URL | http://localhost:5173 | Allowed CORS origin |
+| FRONTEND_URL | https://localhost:5173 | Allowed CORS origin |
 | LOG_LEVEL | info | Logger level |
 | SSL_KEY_PATH | /opt/assure1/etc/ssl/Web.key | Enable HTTPS if key+cert exist |
 | SSL_CERT_PATH | /opt/assure1/etc/ssl/Web.crt | Enable HTTPS if key+cert exist |
