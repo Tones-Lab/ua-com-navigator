@@ -8,24 +8,24 @@ Improve staged review usability for large diffs: add object‑level expand/colla
 - Users need quick access to original vs staged values without scrolling through each card.
 
 ## Current Touchpoints
-- Review modal rendering in [fcom-curator/frontend/src/App.tsx](../fcom-curator/frontend/src/App.tsx)
+- Review modal rendering in [com-management/frontend/src/App.tsx](../com-management/frontend/src/App.tsx)
   - `stagedDiff.sections`, `expandedOriginals`
-- Styles in [fcom-curator/frontend/src/App.css](../fcom-curator/frontend/src/App.css)
+- Styles in [com-management/frontend/src/App.css](../com-management/frontend/src/App.css)
 
 ## Recommended Changes
 ### 1) Object‑level expand/collapse
-- **Files:** [fcom-curator/frontend/src/App.tsx](../fcom-curator/frontend/src/App.tsx)
+- **Files:** [com-management/frontend/src/App.tsx](../com-management/frontend/src/App.tsx)
 - **Changes:**
   - Wrap each `section` in a collapsible container.
   - Default open when only 1 object, collapsed otherwise.
 
 ### 2) Expand all originals
-- **Files:** [fcom-curator/frontend/src/App.tsx](../fcom-curator/frontend/src/App.tsx)
+- **Files:** [com-management/frontend/src/App.tsx](../com-management/frontend/src/App.tsx)
 - **Changes:**
   - Add a toggle near “Review staged changes” to set all `expandedOriginals` to true/false.
 
 ### 3) Compact summaries
-- **Files:** [fcom-curator/frontend/src/App.tsx](../fcom-curator/frontend/src/App.tsx)
+- **Files:** [com-management/frontend/src/App.tsx](../com-management/frontend/src/App.tsx)
 - **Changes:**
   - Show short summary per change in collapsed state (“Original: …”, “After: …”).
 
@@ -48,8 +48,8 @@ Improve staged review usability for large diffs: add object‑level expand/colla
 - Keeps scan-ability without losing change context.
 
 ## Files Updated
-- [fcom-curator/frontend/src/App.tsx](../fcom-curator/frontend/src/App.tsx)
-- [fcom-curator/frontend/src/App.css](../fcom-curator/frontend/src/App.css)
+- [com-management/frontend/src/App.tsx](../com-management/frontend/src/App.tsx)
+- [com-management/frontend/src/App.css](../com-management/frontend/src/App.css)
 
 ## Status
 - ✅ Completed in current iteration.

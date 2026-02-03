@@ -1,11 +1,11 @@
-# FCOM Curation & Management Interface
+# COM Management Interface
 
 Full-stack application for managing FCOM rule files across multiple Unified Assurance (UA) server environments.
 
 ## Project Structure
 
 ```
-fcom-curator/
+com-management/
 ├── backend/              # Node.js/Express API server
 │   ├── src/
 │   │   ├── server.ts     # Express app setup

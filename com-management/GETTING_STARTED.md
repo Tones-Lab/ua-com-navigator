@@ -1,4 +1,4 @@
-# FCOM Curator - Getting Started
+# COM Management - Getting Started
 
 ## ✅ What's Complete
 
@@ -69,7 +69,7 @@ The app now includes a working end-to-end flow (login → browse → edit → sa
 │   ├── FCOM_Curation_UI_Plan.md          (updated with auth details)
 │   └── openapi-fcom-curation.yaml        (REST API contract)
 │
-└── fcom-curator/                         (NEW - full project)
+   └── com-management/                       (NEW - full project)
     ├── backend/
     │   ├── src/
     │   │   ├── server.ts                 (Express app)
@@ -121,7 +121,7 @@ The app now includes a working end-to-end flow (login → browse → edit → sa
 
 ```bash
 # Install all dependencies
-cd /root/navigator/fcom-curator
+cd /root/navigator/com-management
 npm install
 
 # Terminal 1: Backend (port 3001)

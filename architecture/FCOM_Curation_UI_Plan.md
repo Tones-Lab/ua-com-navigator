@@ -1,6 +1,6 @@
-# Project Plan: FCOM Curation & Management Interface
+# Project Plan: COM Management Interface
 
-**Goal:** To build a centralized, web-based application that interacts with multiple Unified Assurance (UA) server environments. It will allow users to safely view, search, edit, validate, test, and promote FCOM `.json` rule files by interfacing directly with each UA server's REST API and its underlying SVN version control system.
+**Goal:** To build a centralized, web-based application that interacts with multiple Unified Assurance (UA) server environments. It will allow users to safely view, search, edit, validate, test, and promote COM `.json` rule files (FCOM + PCOM) by interfacing directly with each UA server's REST API and its underlying SVN version control system.
 
 ---
 ## Phase 1: Multi-Server Architecture & Foundation

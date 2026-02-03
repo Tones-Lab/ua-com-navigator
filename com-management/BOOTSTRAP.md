@@ -8,7 +8,7 @@
    - All endpoints from Phase 1-5 of the plan
    - Ready for code generation or manual implementation
 
-### 2. **Backend Scaffolding** (`fcom-curator/backend/`)
+### 2. **Backend Scaffolding** (`com-management/backend/`)
    - Express.js with TypeScript
    - Complete route structure:
      - `routes/auth.ts` – Authentication (login/logout/session)
@@ -20,7 +20,7 @@
    - Error handling middleware
    - All TODO comments marking integration points
 
-### 3. **Frontend Scaffolding** (`fcom-curator/frontend/`)
+### 3. **Frontend Scaffolding** (`com-management/frontend/`)
    - React 18 + Vite + TypeScript
    - Oracle JET + Preact ready (packages installed)
    - Zustand state management (session + editor)
@@ -97,11 +97,11 @@
 
 ## File Locations
 
-- **Backend:** `/root/navigator/fcom-curator/backend/`
-- **Frontend:** `/root/navigator/fcom-curator/frontend/`
+- **Backend:** `/root/navigator/com-management/backend/`
+- **Frontend:** `/root/navigator/com-management/frontend/`
 - **API Spec:** `/root/navigator/architecture/openapi-fcom-curation.yaml`
 - **Project Plan:** `/root/navigator/architecture/FCOM_Curation_UI_Plan.md`
-- **Roadmap:** `/root/navigator/fcom-curator/ROADMAP.md`
+- **Roadmap:** `/root/navigator/com-management/ROADMAP.md`
 
 ---
 
@@ -133,7 +133,7 @@ cd ../frontend && npm run preview
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                   FCOM Curator Frontend                 │
+│                 COM Management Frontend                 │
 │            (React + Vite + Oracle JET)                  │
 │     - Login (basic/cert)                                │
 │     - File browser                                      │
@@ -144,7 +144,7 @@ cd ../frontend && npm run preview
                      │ HTTP/REST
                      ▼
 ┌─────────────────────────────────────────────────────────┐
-│                   FCOM Curator Backend                  │
+│                  COM Management Backend                 │
 │            (Express.js + TypeScript)                    │
 │     - Session management                                │
 │     - UA API proxy                                      │

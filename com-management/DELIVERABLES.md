@@ -1,4 +1,4 @@
-# FCOM Curator - Project Deliverables
+# COM Management - Project Deliverables
 
 **Date:** January 27, 2026  
 **Status:** ✅ BOOTSTRAP COMPLETE - Ready for development  
@@ -9,7 +9,7 @@
 ## 📦 What You're Getting
 
 ### 1. Full-Stack Monorepo
-**Location:** `/root/navigator/fcom-curator/`
+**Location:** `/root/navigator/com-management/`
 
 #### Backend (Express.js)
 - ✅ TypeScript setup with strict mode
@@ -253,7 +253,7 @@ await ua.diffRules('file-id', 'HEAD', 'WORKING');
 
 ### 1. Install Dependencies
 ```bash
-cd /root/navigator/fcom-curator
+cd /root/navigator/com-management
 yarn install
 ```
 
@@ -292,7 +292,7 @@ curl http://localhost:3001/health
 ### Files to Reference
 - **API Details:** `openapi-fcom-curation.yaml`
 - **Project Plan:** `architecture/FCOM_Curation_UI_Plan.md`
-- **Roadmap:** `fcom-curator/ROADMAP.md`
+- **Roadmap:** `com-management/ROADMAP.md`
 - **Code Examples:** Backend routes in `backend/src/routes/`
 
 ### UA Documentation
@@ -312,7 +312,7 @@ curl http://localhost:3001/health
 
 Run this command to verify everything is set up:
 ```bash
-cd /root/navigator/fcom-curator
+cd /root/navigator/com-management
 yarn install  # Should install without errors
 yarn build    # Should compile both backend and frontend
 ```
@@ -338,4 +338,4 @@ If both complete successfully, your scaffold is ready!
 
 ---
 
-**You now have a complete, professional foundation to build the FCOM Curator. All infrastructure is in place. Time to build! 🚀**
+**You now have a complete, professional foundation to build the COM Management interface. All infrastructure is in place. Time to build! 🚀**

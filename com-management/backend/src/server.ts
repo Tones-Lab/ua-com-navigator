@@ -109,11 +109,11 @@ if (useHttps) {
   const key = fs.readFileSync(sslKeyPath);
   const cert = fs.readFileSync(sslCertPath);
   https.createServer({ key, cert }, app).listen(port, () => {
-    logger.info(`FCOM Curator Backend listening on https://localhost:${port}`);
+    logger.info(`COM Management Backend listening on https://localhost:${port}`);
   });
 } else {
   app.listen(port, () => {
-    logger.info(`FCOM Curator Backend listening on http://localhost:${port}`);
+    logger.info(`COM Management Backend listening on http://localhost:${port}`);
   });
 }
 

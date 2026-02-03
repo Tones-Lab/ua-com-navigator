@@ -8,34 +8,34 @@ Expand the Processor Builder beyond `set` and `regex` to include additional proc
 - Improves consistency and reduces errors by validating inputs in a guided UI.
 
 ## Current Touchpoints
-- Builder UI and logic in [fcom-curator/frontend/src/App.tsx](../fcom-curator/frontend/src/App.tsx)
+- Builder UI and logic in [com-management/frontend/src/App.tsx](../com-management/frontend/src/App.tsx)
   - Processor builder state: `processorType`, `processorDraft`, `buildProcessorPayload()`
   - Builder UI: processor selection, configure, review/preview
-- Styling in [fcom-curator/frontend/src/App.css](../fcom-curator/frontend/src/App.css)
+- Styling in [com-management/frontend/src/App.css](../com-management/frontend/src/App.css)
 - Processor help text in `processorHelp` object
 
 ## Recommended Changes
 ### 1) Add new processor types to builder
-- **Files:** [fcom-curator/frontend/src/App.tsx](../fcom-curator/frontend/src/App.tsx)
+- **Files:** [com-management/frontend/src/App.tsx](../com-management/frontend/src/App.tsx)
 - **Changes:**
   - Extend `processorCatalog` to mark new processors as `builderEnabled: true`.
   - Add per‑processor configuration schema in `processorHelp` for description/example.
   - Extend `buildProcessorPayload()` to build payloads for each processor.
 
 ### 2) Add configuration forms per processor
-- **Files:** [fcom-curator/frontend/src/App.tsx](../fcom-curator/frontend/src/App.tsx)
+- **Files:** [com-management/frontend/src/App.tsx](../com-management/frontend/src/App.tsx)
 - **Changes:**
   - Add UI blocks for each processor’s required fields (e.g., `copy.source`, `copy.targetField`, `split.delimiter`, `trim.targetField`).
   - Reuse existing helpers for field insertion and path normalization.
 
 ### 3) Validation + inline errors
-- **Files:** [fcom-curator/frontend/src/App.tsx](../fcom-curator/frontend/src/App.tsx)
+- **Files:** [com-management/frontend/src/App.tsx](../com-management/frontend/src/App.tsx)
 - **Changes:**
   - Add per‑processor validation in builder “Configure” step and disable “Review/Save” until valid.
   - Surface specific hints for required fields and type validation.
 
 ### 4) Preview and JSON review
-- **Files:** [fcom-curator/frontend/src/App.tsx](../fcom-curator/frontend/src/App.tsx)
+- **Files:** [com-management/frontend/src/App.tsx](../com-management/frontend/src/App.tsx)
 - **Changes:**
   - Keep existing JSON preview and formatted summary lines for each processor.
   - Add a compact summary for new processors (e.g., “copy source → target”).
@@ -66,8 +66,8 @@ Expand the Processor Builder beyond `set` and `regex` to include additional proc
 - Unified Review/Save UX and summary preview across processors.
 
 ## Files Updated
-- [fcom-curator/frontend/src/App.tsx](../fcom-curator/frontend/src/App.tsx)
-- [fcom-curator/frontend/src/App.css](../fcom-curator/frontend/src/App.css)
+- [com-management/frontend/src/App.tsx](../com-management/frontend/src/App.tsx)
+- [com-management/frontend/src/App.css](../com-management/frontend/src/App.css)
 
 ## Status
 - ✅ Completed in current iteration.
