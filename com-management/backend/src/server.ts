@@ -117,6 +117,5 @@ if (useHttps) {
 }
 
 startSearchIndexing();
-startOverviewIndexing();
 
 export default app;

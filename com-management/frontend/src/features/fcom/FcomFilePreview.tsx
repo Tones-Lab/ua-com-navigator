@@ -1,4 +1,4 @@
-import React from 'react';
+import type { ReactNode, RefObject } from 'react';
 import FcomObjectCard from './FcomObjectCard';
 import FcomRawPreview from './FcomRawPreview';
 import FcomMatchBar from './FcomMatchBar';
@@ -8,8 +8,8 @@ type FcomFilePreviewProps = {
   fileLoading: boolean;
   viewMode: 'friendly' | 'preview';
   isAnyPanelEditing: boolean;
-  friendlyViewRef: React.RefObject<HTMLDivElement>;
-  friendlyMainRef: React.RefObject<HTMLDivElement>;
+  friendlyViewRef: RefObject<HTMLDivElement>;
+  friendlyMainRef: RefObject<HTMLDivElement>;
   handleFileScroll: () => void;
   searchHighlightActive: boolean;
   highlightObjectKeys: string[];
@@ -31,6 +31,7 @@ type FcomFilePreviewProps = {
   hasEditPermission: boolean;
   openTrapComposerFromTest: (obj: any) => void;
   getObjectDescription: (obj: any) => string;
+  isTestableObject: (obj: any) => boolean;
   startEventEdit: (obj: any, panelKey: string) => void;
   openRemoveAllOverridesModal: (obj: any, panelKey: string) => void;
   openAddFieldModal: (panelKey: string, obj: any) => void;
@@ -38,11 +39,16 @@ type FcomFilePreviewProps = {
   saveEventEdit: (obj: any, panelKey: string) => void;
   requestCancelEventEdit: (obj: any, panelKey: string) => void;
   isFieldHighlighted: (panelKey: string, field: string) => boolean;
-  renderFieldBadges: (panelKey: string, field: string, obj: any, overrideTargets: Set<string>) => React.ReactNode;
+  renderFieldBadges: (panelKey: string, field: string, obj: any, overrideTargets: Set<string>) => ReactNode;
   overrideTooltipHoverProps: any;
   openRemoveOverrideModal: (obj: any, field: string, panelKey: string) => void;
-  renderOverrideSummaryCard: (obj: any, overrideValueMap: Map<string, any>, fields: string[], title: string) => React.ReactNode;
+  renderOverrideSummaryCard: (obj: any, overrideValueMap: Map<string, any>, fields: string[], title: string) => ReactNode;
   isFieldDirty: (obj: any, panelKey: string, field: string) => boolean;
+  isFieldPendingRemoval: (panelKey: string, field: string) => boolean;
+  isFieldNew: (obj: any, field: string) => boolean;
+  getStagedDirtyFields: (obj: any) => string[];
+  isFieldStagedDirty: (obj: any, field: string) => boolean;
+  isFieldStagedRemoved: (obj: any, field: string) => boolean;
   openBuilderForField: (obj: any, panelKey: string, field: string) => void;
   isFieldLockedByBuilder: (panelKey: string, field: string) => boolean;
   getEffectiveEventValue: (obj: any, field: string) => any;
@@ -56,21 +62,21 @@ type FcomFilePreviewProps = {
     caret: number | null,
     inputType?: string,
   ) => void;
-  renderSummary: (value: any, trapVars?: any[]) => React.ReactNode;
-  renderValue: (value: any, trapVars?: any[], options?: any) => React.ReactNode;
+  renderSummary: (value: any, trapVars?: any[]) => ReactNode;
+  renderValue: (value: any, trapVars?: any[], options?: any) => ReactNode;
   getAdditionalEventFields: (obj: any, panelKey: string) => string[];
   getEventFieldDescription: (field: string) => string;
   formatEventFieldLabel: (field: string) => string;
   getBaseEventDisplay: (obj: any, field: string) => string;
-  renderTrapVariables: (vars: any) => React.ReactNode;
-  builderSidebar: React.ReactNode;
+  renderTrapVariables: (vars: any) => ReactNode;
+  builderSidebar: ReactNode;
   rawMatchPositions: number[];
   rawMatchIndex: number;
   handlePrevRawMatch: () => void;
   handleNextRawMatch: () => void;
   rawPreviewText: string;
   highlightQuery: string | null;
-  renderRawHighlightedText: (text: string, query: string) => React.ReactNode;
+  renderRawHighlightedText: (text: string, query: string) => ReactNode;
 };
 
 export default function FcomFilePreview({
@@ -101,6 +107,7 @@ export default function FcomFilePreview({
   hasEditPermission,
   openTrapComposerFromTest,
   getObjectDescription,
+  isTestableObject,
   startEventEdit,
   openRemoveAllOverridesModal,
   openAddFieldModal,
@@ -113,6 +120,11 @@ export default function FcomFilePreview({
   openRemoveOverrideModal,
   renderOverrideSummaryCard,
   isFieldDirty,
+  isFieldPendingRemoval,
+  isFieldNew,
+  getStagedDirtyFields,
+  isFieldStagedDirty,
+  isFieldStagedRemoved,
   openBuilderForField,
   isFieldLockedByBuilder,
   getEffectiveEventValue,
@@ -135,6 +147,7 @@ export default function FcomFilePreview({
   highlightQuery,
   renderRawHighlightedText,
 }: FcomFilePreviewProps) {
+  const friendlyObjects = getFriendlyObjects(fileData);
   return (
     <div className="file-preview">
       {!selectedFile ? (
@@ -176,10 +189,10 @@ export default function FcomFilePreview({
                   )}
                 </FcomMatchBar>
               )}
-              {getFriendlyObjects(fileData).length === 0 ? (
+              {friendlyObjects.length === 0 ? (
                 <div className="empty-state">No objects found.</div>
               ) : (
-                getFriendlyObjects(fileData).map((obj: any, idx: number) => {
+                friendlyObjects.map((obj: any, idx: number) => {
                   const objectKey = getObjectKey(obj, idx);
                   return (
                     <FcomObjectCard
@@ -199,6 +212,7 @@ export default function FcomFilePreview({
                       hasEditPermission={hasEditPermission}
                       openTrapComposerFromTest={openTrapComposerFromTest}
                       getObjectDescription={getObjectDescription}
+                      isTestableObject={isTestableObject}
                       startEventEdit={startEventEdit}
                       openRemoveAllOverridesModal={openRemoveAllOverridesModal}
                       openAddFieldModal={openAddFieldModal}
@@ -211,6 +225,11 @@ export default function FcomFilePreview({
                       openRemoveOverrideModal={openRemoveOverrideModal}
                       renderOverrideSummaryCard={renderOverrideSummaryCard}
                       isFieldDirty={isFieldDirty}
+                      isFieldPendingRemoval={isFieldPendingRemoval}
+                      isFieldNew={isFieldNew}
+                      getStagedDirtyFields={getStagedDirtyFields}
+                      isFieldStagedDirty={isFieldStagedDirty}
+                      isFieldStagedRemoved={isFieldStagedRemoved}
                       openBuilderForField={openBuilderForField}
                       isFieldLockedByBuilder={isFieldLockedByBuilder}
                       getEffectiveEventValue={getEffectiveEventValue}

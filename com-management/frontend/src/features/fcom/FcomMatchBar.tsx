@@ -1,10 +1,10 @@
-import React from 'react';
+import type { ReactNode } from 'react';
 
 type FcomMatchBarProps = {
   label: string;
   onPrev: () => void;
   onNext: () => void;
-  children?: React.ReactNode;
+  children?: ReactNode;
 };
 
 export default function FcomMatchBar({ label, onPrev, onNext, children }: FcomMatchBarProps) {

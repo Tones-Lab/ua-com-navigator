@@ -1,4 +1,4 @@
-import React from 'react';
+import type { ReactNode } from 'react';
 
 type FcomFolderOverviewProps = {
   selectedFolder: any | null;
@@ -11,7 +11,12 @@ type FcomFolderOverviewProps = {
   folderTableRows: any[];
   formatOverviewNumber: (value: number) => string;
   formatDisplayPath: (pathId?: string | null) => string;
-  getSortIndicator: (activeKey: string, key: string, direction: 'asc' | 'desc') => React.ReactNode;
+  getSortIndicator: (activeKey: string, key: string, direction: 'asc' | 'desc') => ReactNode;
+  hasEditPermission: boolean;
+  onTestVendor: () => void;
+  onTestFile: (pathId: string, label?: string) => void;
+  isVendorTesting: boolean;
+  isFileTesting: (pathId?: string) => boolean;
 };
 
 export default function FcomFolderOverview({
@@ -26,6 +31,11 @@ export default function FcomFolderOverview({
   formatOverviewNumber,
   formatDisplayPath,
   getSortIndicator,
+  hasEditPermission,
+  onTestVendor,
+  onTestFile,
+  isVendorTesting,
+  isFileTesting,
 }: FcomFolderOverviewProps) {
   if (!selectedFolder) {
     return null;
@@ -39,6 +49,19 @@ export default function FcomFolderOverview({
         {selectedFolder.PathID && (
           <span className="file-path">{formatDisplayPath(selectedFolder.PathID)}</span>
         )}
+      </div>
+      <div className="action-row">
+        <button
+          type="button"
+          className="action-link"
+          onClick={onTestVendor}
+          disabled={!hasEditPermission || isVendorTesting}
+          title={hasEditPermission
+            ? ''
+            : 'Read-only access'}
+        >
+          {isVendorTesting ? 'Testing…' : 'Test Vendor SNMP Traps (All Files)'}
+        </button>
       </div>
       {folderLoading && <div className="muted">Loading overview…</div>}
       {!folderLoading && folderOverview && (
@@ -126,6 +149,7 @@ export default function FcomFolderOverview({
                         Unknown {getSortIndicator(folderTableSort.key, 'unknownFields', folderTableSort.direction)}
                       </button>
                     </th>
+                    <th>Test</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -135,6 +159,19 @@ export default function FcomFolderOverview({
                       <td>{formatOverviewNumber(row.objects || 0)}</td>
                       <td>{formatOverviewNumber(row.schemaErrors || 0)}</td>
                       <td>{formatOverviewNumber(row.unknownFields || 0)}</td>
+                      <td>
+                        <button
+                          type="button"
+                          className="ghost-button"
+                          onClick={() => row.pathId && onTestFile(row.pathId, row.file)}
+                          disabled={!row.pathId || !hasEditPermission || isFileTesting(row.pathId)}
+                          title={hasEditPermission
+                            ? ''
+                            : 'Read-only access'}
+                        >
+                          {isFileTesting(row.pathId) ? 'Testing…' : 'Test SNMP File'}
+                        </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>

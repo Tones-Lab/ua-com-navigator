@@ -1,15 +1,15 @@
 # Project Backlog
 
 ## Now (P0)
-- 🔥 Persist active tab across refresh (preserve current page instead of defaulting to Overview).
+- ✅ Persist active tab across refresh (preserve current page instead of defaulting to Overview).
 - 🔥 Unify Global/Object processor palettes using a single registry source-of-truth.
   - Plan: architecture/processor-palette-unification-plan.md
-- 🔥 Advanced Flow visibility + commit flow:
-	- Object header pills: Override + Advanced Flow when object processors exist.
-	- Global Advanced Flow badge in file header when pre/post flows exist.
-	- Pending Advanced Flow banner until commit is confirmed.
-	- Ensure Advanced Flow edits route through commit modal (SVN commit gate).
-- 🔥 Processor override summaries in Friendly view:
+- ✅ Advanced Flow visibility + commit flow:
+	- ✅ Object header pills: Override + Advanced Flow when object processors exist.
+	- ✅ Global Advanced Flow badge in file header when pre/post flows exist.
+	- ✅ Pending Advanced Flow banner until commit is confirmed.
+	- ✅ Ensure Advanced Flow edits route through commit modal (SVN commit gate).
+- ✅ Processor override summaries in Friendly view:
 	- Tooltip/card summary for field-level processors (type + key params).
 	- “View in Advanced Flow” link + optional JSON toggle.
 - RBAC gating for edit/execute:
@@ -44,7 +44,7 @@
 	- ✅ Backend endpoint to fetch/cache UA Events field definitions.
 	- ✅ Use UA DB Query tool (DESCRIBE Event.Events) and cache at startup/TTL.
 	- ✅ Unknown fields flagged as Critical.
-- Core FCOM object editor (form-based).
+- ✅ Core FCOM object editor (form-based).
 - ✅ Real-time schema validation in UI.
 - Generic value renderer/editor for event fields (string/int/eval/objects):
 	- Render raw strings/ints normally; show eval badge for {eval: "..."}.
@@ -120,7 +120,7 @@
 - Documentation refresh (post-processor rollout):
 	- Update install/prereqs, admin/backend notes, and UI workflow.
 - PCOM metrics discovery (vendor/enterprise):
-	- PCOM root path: /core/default/collection/metric/snmp/_objects/pcom.
+	- PCOM root path (SNMP): /core/default/collection/metric/snmp/_objects/pcom.
 	- Define directory conventions (vendor/model/enterprise).
 	- Backend index for metric types + cache (searchable).
 	- UI: filter/search by vendor/enterprise, list metric types, drill to PCOM file + override.
@@ -130,7 +130,7 @@
 - Diff viewer and history panel.
 - Event config UI + trap variable helper.
 - Preprocessor editor.
-- Test single object + test all.
+- ✅ Test single object + test all.
 - Create mature documentation: how-to, usage guide, and README updates.
 - Human-editable COM forms (end goal):
 	- Form-based editor that abstracts JSON structure into field-level UI.
@@ -158,30 +158,44 @@
 	- Recent targets: show recent/manual destinations alongside server list results.
 - Integrate UA Mib2FCOM tools (MIB browser, stub generation, conversion workflows).
 
+Tony Manual Edits - Features and Bug list
 
-Tony Manual Edit - need to add details MIB browser ASAP, that integrates with FCOM and PCOM (to be created).
+FEATURE - P2-feature002 - New Feature - need to add details MIB browser ASAP, that integrates with FCOM and PCOM (to be created).
 
-Advanced - Guided edit mode with 'highlight' section, and explain. this passes code into AI etc using the FCOM and documentation as reference. Then helps provide guidance and best action/steps$A1BASEDIR/bin/sdk/MIB2FCOM --in=<MIB_name>.mib --out=<MIB_name>-FCOM.json --use_parent_mibs
+FEATURE - P2-feature003 - NEW FEATURE - Guided edit mode with 'highlight' section, and explain. this passes code into AI etc using the FCOM and documentation as reference. Then helps provide guidance and best action/steps$A1BASEDIR/bin/sdk/MIB2FCOM --in=<MIB_name>.mib --out=<MIB_name>-FCOM.json --use_parent_mibs
 
+FEATURE - P5-feature001 - ask AI to validate the COM created -- is this possible?
 
-2/3/2026 TO DO:
-- do deep five code inspection. suggest refactoring? also, breakup and rename pieces so they arae in relevant folders (fcom, pcom, mib-browser, common, backend, frontend, etc)
+COMPLETE - FEATURE - 
+	create a 'send all traps' feature - that sends all traps in a given FCOM file to a selected server.  This is useful for testing large sets of traps quickly.
+		- need to add ability to save 'recent' servers for trap testing - so user does not have to select from large list each time.
+		- need to add ability to 'favorite' certain MIBs in the MIB browser for quick access.
+		- need to add ability to 'search' MIBs by OID, name, description, etc.
+		- need to add ability to 'filter' MIBs by vendor, status, type (notification/metric), etc.
+		- need to add ability to 'sort' MIBs by name, OID, vendor, etc.
+		- need to add ability to 'view MIB details' - showing all relevant info about the MIB, including its structure, definitions, etc.
 
+BUG - P1-bug002 - Need to fix the folder refresh / cache - curernt broken if you click admin while selecting a folder under fcom. throw error in modal. need to resolve this.
 
-create a 'send all traps' feature - that sends all traps in a given FCOM file to a selected server.  This is useful for testing large sets of traps quickly.
-- need to add ability to save 'recent' servers for trap testing - so user does not have to select from large list each time.
-- need to add ability to 'favorite' certain MIBs in the MIB browser for quick access.
-- need to add ability to 'search' MIBs by OID, name, description, etc.
-- need to add ability to 'filter' MIBs by vendor, status, type (notification/metric), etc.
-- need to add ability to 'sort' MIBs by name, OID, vendor, etc.
-- need to add ability to 'view MIB details' - showing all relevant info about the MIB, including its structure, definitions, etc.
+BUG - P1-bug003 -Still not showing correct count of overrides in any of the review / summmary pages - why not?
 
+COMPLETE - BUG - If i click on a FCOOM file - and open the builder in edit mode, then click away to a new file, the builder should close and not be open on the new file / page. 
 
+BUG - P0-bug001 - variables do not load the variables modal when typing $v_ - it should, but it doesn't.
 
+Need more testing. What can we do? Need CoPilot to suggest testing options we can use for a UI etc. What is possible?
 
-Need to fix the folder refresh / cache - curernt broken if you click admin while selecting a folder under fcom. throw error in modal. need to resolve this.
+COMPLETE - FEATURE - P0-testing - need to run individual vendor based file test - make sure updated logging works when sending 1-N tests at once.
 
-Still not showing correct count of overrides in any of the review / summmary pages - why not?
+COMPLETE - BUG - Clicking ? breaks the UI - should show FCOM cache and path information
 
-BUG: If i click on a FCOOM file - and open the builder in edit mode, then click away to a new file, the builder should close and not be open on the new file / page. 
+COMPLETE - BUG -Doing a ssarch works in the left panel, but clicking the entry takes you to the file, but doesn't highlight in green and highlight the exact match/search term with yellow like it used to
+
+COMPLETE - BUG - A new field added to a COM definition - comes in as an override (correct). however, if i want to delete the new field entirely, so no longer  have it set to anything by default (as the override) - you cannot delete it via the UI - need a way to delete an override when original is 'not existent' or the hover = new 
+
+COMPLETE - FEATURE - remove all overrides needs to be smart in the deletion of fields that are NOT in the original file, those entries should be cleanly removed from the override file, and the entry in the object panel should also be removed entirely to cleanup the view of 'old' or 'stale' entries that are no longer used - COMPLETE
+
+FEATURE - P0-feature004 - PCOM (performance COM) should be supported.
+
+I am using CloudFlare tunnel to open access to the UA-COM Management application externally. I use the hostname of ua-com.ccfc1986.us pointing to the internal IP of the server 192.168.3.42 on port 5173. However, when i try to login i get a CORS error. Is there a way we can resolve this issue on the server / application side? 
 

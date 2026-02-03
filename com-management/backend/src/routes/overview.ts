@@ -76,12 +76,9 @@ router.get('/', (req: Request, res: Response) => {
     const { uaClient, serverId } = getUaClientFromSession(req);
     const status = getOverviewStatus(serverId);
     if (!status.isReady) {
-      if (!status.isBuilding) {
-        requestOverviewRebuild(serverId, uaClient);
-      }
       return res.status(503).json({
-        error: 'Overview index is still building',
-        status: getOverviewStatus(serverId),
+        error: status.lastError || 'Overview index is still building',
+        status,
       });
     }
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import type { Dispatch, ReactNode, SetStateAction } from 'react';
 
 type FcomBuilderSidebarProps = {
   isAnyPanelEditing: boolean;
@@ -11,7 +11,7 @@ type FcomBuilderSidebarProps = {
   handleBuilderRedo: () => void;
   setShowBuilderHelpModal: (open: boolean) => void;
   requestCancelBuilder: () => void;
-  setBuilderOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setBuilderOpen: Dispatch<SetStateAction<boolean>>;
   builderFocus: 'literal' | 'eval' | 'processor' | null;
   isBuilderTargetReady: boolean;
   builderTypeLocked: 'literal' | 'eval' | 'processor' | null;
@@ -27,7 +27,7 @@ type FcomBuilderSidebarProps = {
   setAdvancedProcessorScope: (scope: 'object' | 'global') => void;
   setShowAdvancedProcessorModal: (open: boolean) => void;
   builderConditions: Array<{ id: string; condition: any; result: string }>;
-  setBuilderConditions: React.Dispatch<React.SetStateAction<Array<{ id: string; condition: any; result: string }>>>;
+  setBuilderConditions: Dispatch<SetStateAction<Array<{ id: string; condition: any; result: string }>>>;
   updateBuilderCondition: (rowId: string, conditionId: string, key: string, value: string) => void;
   updateBuilderResult: (rowId: string, value: string) => void;
   removeBuilderRow: (rowId: string) => void;
@@ -35,7 +35,7 @@ type FcomBuilderSidebarProps = {
   createConditionNode: () => any;
   createGroupNode: () => any;
   nextBuilderId: () => string;
-  renderConditionNode: (rowId: string, condition: any, depth: number, isNested: boolean, groupCount: number) => React.ReactNode;
+  renderConditionNode: (rowId: string, condition: any, depth: number, isNested: boolean, groupCount: number) => ReactNode;
   builderElseResult: string;
   setBuilderElseResult: (value: string) => void;
   friendlyPreview: string;
@@ -54,33 +54,33 @@ type FcomBuilderSidebarProps = {
   processorCatalog: any[];
   handleBuilderSelect: (item: any, isEnabled: boolean) => void;
   builderProcessorConfig: any;
-  setBuilderProcessorConfig: React.Dispatch<React.SetStateAction<any>>;
+  setBuilderProcessorConfig: Dispatch<SetStateAction<any>>;
   builderNestedAddType: string;
   setBuilderNestedAddType: (value: string) => void;
   builderPaletteItems: any[];
   builderSwitchCaseAddType: Record<string, string>;
-  setBuilderSwitchCaseAddType: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+  setBuilderSwitchCaseAddType: Dispatch<SetStateAction<Record<string, string>>>;
   builderSwitchDefaultAddType: string;
   setBuilderSwitchDefaultAddType: (value: string) => void;
   createFlowNodeFromPaletteValue: (value: string) => any;
-  renderProcessorHelp: (helpKey: string) => React.ReactNode;
+  renderProcessorHelp: (helpKey: string) => ReactNode;
   renderProcessorConfigFields: (
     processorType: string,
     config: any,
     onChange: (key: string, value: any) => void,
     context: string,
-  ) => React.ReactNode;
+  ) => ReactNode;
   renderFlowList: (
     items: any[],
     context: { kind: string },
     onChange: (updater: any) => void,
     scope: string,
     parentScope: string,
-  ) => React.ReactNode;
+  ) => ReactNode;
   getProcessorCatalogLabel: (processorType: string) => string;
   getProcessorSummaryLines: (payload: any) => string[];
   showProcessorJson: boolean;
-  setShowProcessorJson: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowProcessorJson: Dispatch<SetStateAction<boolean>>;
   applyProcessor: () => void;
   nextSwitchCaseId: () => string;
 };

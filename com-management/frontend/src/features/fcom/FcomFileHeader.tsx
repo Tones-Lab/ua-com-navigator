@@ -1,5 +1,3 @@
-import React from 'react';
-
 type FcomFileHeaderProps = {
   selectedFile: any | null;
   browseNode: string | null;
@@ -17,6 +15,9 @@ type FcomFileHeaderProps = {
   setViewMode: (mode: 'friendly' | 'preview') => void;
   openAdvancedFlowModal: (scope: 'global' | 'object', objectName?: string, focusTarget?: string | null) => void;
   hasEditPermission: boolean;
+  onTestFile: () => void;
+  fileTestLoading: boolean;
+  fileTestLabel: string;
   reviewCtaPulse: boolean;
   setReviewStep: (step: 'review' | 'commit') => void;
   setShowReviewModal: (open: boolean) => void;
@@ -46,6 +47,9 @@ export default function FcomFileHeader({
   setViewMode,
   openAdvancedFlowModal,
   hasEditPermission,
+  onTestFile,
+  fileTestLoading,
+  fileTestLabel,
   reviewCtaPulse,
   setReviewStep,
   setShowReviewModal,
@@ -152,6 +156,21 @@ export default function FcomFileHeader({
                 Raw
               </span>
             </div>
+            <button
+              type="button"
+              className="action-link"
+              onClick={onTestFile}
+              disabled={!hasEditPermission || fileTestLoading}
+              title={hasEditPermission
+                ? ''
+                : 'Read-only access'}
+            >
+              {fileTestLoading
+                ? 'Testing…'
+                : fileTestLabel
+                  ? `Test All ${fileTestLabel} SNMP Traps`
+                  : 'Test SNMP File'}
+            </button>
             <button
               type="button"
               className="action-link"

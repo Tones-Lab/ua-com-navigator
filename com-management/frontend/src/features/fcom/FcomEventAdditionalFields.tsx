@@ -1,4 +1,4 @@
-import React from 'react';
+import type { ReactNode } from 'react';
 
 type FcomEventAdditionalFieldsProps = {
   additionalFields: string[];
@@ -9,11 +9,15 @@ type FcomEventAdditionalFieldsProps = {
   panelEditState: Record<string, boolean>;
   hasEditPermission: boolean;
   isFieldHighlighted: (panelKey: string, field: string) => boolean;
-  renderFieldBadges: (panelKey: string, field: string, obj: any, overrideTargets: Set<string>) => React.ReactNode;
+  renderFieldBadges: (panelKey: string, field: string, obj: any, overrideTargets: Set<string>) => ReactNode;
   overrideTooltipHoverProps: any;
   openRemoveOverrideModal: (obj: any, field: string, panelKey: string) => void;
-  renderOverrideSummaryCard: (obj: any, overrideValueMap: Map<string, any>, fields: string[], title: string) => React.ReactNode;
+  renderOverrideSummaryCard: (obj: any, overrideValueMap: Map<string, any>, fields: string[], title: string) => ReactNode;
   isFieldDirty: (obj: any, panelKey: string, field: string) => boolean;
+  isFieldPendingRemoval: (panelKey: string, field: string) => boolean;
+  isFieldNew: (obj: any, field: string) => boolean;
+  isFieldStagedDirty: (obj: any, field: string) => boolean;
+  isFieldStagedRemoved: (obj: any, field: string) => boolean;
   openBuilderForField: (obj: any, panelKey: string, field: string) => void;
   isFieldLockedByBuilder: (panelKey: string, field: string) => boolean;
   panelDrafts: Record<string, any>;
@@ -25,7 +29,7 @@ type FcomEventAdditionalFieldsProps = {
     caret: number | null,
     inputType?: string,
   ) => void;
-  renderValue: (value: any, trapVars?: any[], options?: any) => React.ReactNode;
+  renderValue: (value: any, trapVars?: any[], options?: any) => ReactNode;
   getEventFieldDescription: (field: string) => string;
   formatEventFieldLabel: (field: string) => string;
   getBaseEventDisplay: (obj: any, field: string) => string;
@@ -45,6 +49,10 @@ export default function FcomEventAdditionalFields({
   openRemoveOverrideModal,
   renderOverrideSummaryCard,
   isFieldDirty,
+  isFieldPendingRemoval,
+  isFieldNew,
+  isFieldStagedDirty,
+  isFieldStagedRemoved,
   openBuilderForField,
   isFieldLockedByBuilder,
   panelDrafts,
@@ -64,6 +72,10 @@ export default function FcomEventAdditionalFields({
         <div key={`${eventPanelKey}-${field}`}>
           <div className="field-header">
             <div className="field-header-main">
+              {(() => {
+                const stagedRemoved = isFieldStagedRemoved(obj, field);
+                return (
+                  <>
               <span className={isFieldHighlighted(eventPanelKey, field)
                 ? 'label label-warning'
                 : 'label'}>
@@ -79,8 +91,16 @@ export default function FcomEventAdditionalFields({
                   {...overrideTooltipHoverProps}
                 >
                   <span
-                    className="pill override-pill pill-inline pill-action"
-                    title={`Original: ${getBaseEventDisplay(obj, field)}`}
+                    className={`pill override-pill pill-inline pill-action${(panelEditState[eventPanelKey]
+                      && isFieldPendingRemoval(eventPanelKey, field))
+                      || stagedRemoved
+                      ? ' pill-removed'
+                      : ''}`}
+                    title={panelEditState[eventPanelKey]
+                      && (isFieldPendingRemoval(eventPanelKey, field) || stagedRemoved)
+                      && !isFieldNew(obj, field)
+                      ? 'Will revert to Original value'
+                      : `Original is: ${getBaseEventDisplay(obj, field)}`}
                   >
                     Override
                     {hasEditPermission && panelEditState[eventPanelKey]
@@ -103,9 +123,19 @@ export default function FcomEventAdditionalFields({
                   )}
                 </div>
               )}
-              {panelEditState[eventPanelKey] && isFieldDirty(obj, eventPanelKey, field) && (
+              {((panelEditState[eventPanelKey]
+                && (isFieldPendingRemoval(eventPanelKey, field) || stagedRemoved))
+                || (!panelEditState[eventPanelKey] && stagedRemoved)) && (
+                <span className="pill removed-pill">Removed</span>
+              )}
+              {(panelEditState[eventPanelKey]
+                ? isFieldDirty(obj, eventPanelKey, field) || stagedRemoved
+                : isFieldStagedDirty(obj, field)) && (
                 <span className="dirty-indicator" title="Unsaved change">✎</span>
               )}
+                  </>
+                );
+              })()}
             </div>
             {panelEditState[eventPanelKey] && (
               <button
@@ -129,9 +159,12 @@ export default function FcomEventAdditionalFields({
           </div>
           {panelEditState[eventPanelKey] ? (
             <input
-              className={isFieldHighlighted(eventPanelKey, field)
+              className={`${isFieldHighlighted(eventPanelKey, field)
                 ? 'panel-input panel-input-warning'
-                : 'panel-input'}
+                : 'panel-input'}${(isFieldPendingRemoval(eventPanelKey, field)
+                || isFieldStagedRemoved(obj, field))
+                ? ' panel-input-removed'
+                : ''}`}
               value={panelDrafts?.[eventPanelKey]?.event?.[field] ?? ''}
               onChange={(e) => handleEventInputChange(
                 obj,
@@ -141,18 +174,25 @@ export default function FcomEventAdditionalFields({
                 e.target.selectionStart,
                 (e.nativeEvent as InputEvent | undefined)?.inputType,
               )}
-              disabled={isFieldLockedByBuilder(eventPanelKey, field)}
+              disabled={isFieldLockedByBuilder(eventPanelKey, field)
+                || (isFieldPendingRemoval(eventPanelKey, field) && isFieldNew(obj, field))}
               title={isFieldLockedByBuilder(eventPanelKey, field)
                 ? 'Finish or cancel the builder to edit other fields'
-                : ''}
+                : (isFieldPendingRemoval(eventPanelKey, field) || isFieldStagedRemoved(obj, field))
+                  ? 'Marked for removal'
+                  : ''}
             />
           ) : (
-            <span className="value">
-              {renderValue(
-                overrideValueMap.get(`$.event.${field}`) ?? obj?.event?.[field],
-                obj?.trap?.variables,
-              )}
-            </span>
+            (isFieldStagedRemoved(obj, field) && isFieldNew(obj, field)) ? (
+              <span className="value value-removed">Will be removed</span>
+            ) : (
+              <span className="value">
+                {renderValue(
+                  overrideValueMap.get(`$.event.${field}`) ?? obj?.event?.[field],
+                  obj?.trap?.variables,
+                )}
+              </span>
+            )
           )}
         </div>
       ))}

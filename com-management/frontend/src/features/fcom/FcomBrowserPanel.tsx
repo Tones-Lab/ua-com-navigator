@@ -1,4 +1,4 @@
-import React from 'react';
+import type { FormEvent } from 'react';
 
 type FcomBrowserPanelProps = {
   hasEditPermission: boolean;
@@ -9,7 +9,7 @@ type FcomBrowserPanelProps = {
   setSearchQuery: (value: string) => void;
   searchScope: 'all' | 'name' | 'content';
   setSearchScope: (value: 'all' | 'name' | 'content') => void;
-  handleSearchSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+  handleSearchSubmit: (event: FormEvent<HTMLFormElement>) => void;
   searchLoading: boolean;
   handleClearSearch: () => void;
   handleResetNavigation: () => void;
@@ -19,6 +19,7 @@ type FcomBrowserPanelProps = {
   favoritesError: string | null;
   handleOpenFolder: (entry: any) => void;
   openFileFromUrl: (pathId: string, node?: string | null) => void;
+  handleOpenSearchResult: (result: any) => void;
   getParentLabel: (node?: string) => string;
   getParentPath: (node?: string) => string;
   searchResults: any[];
@@ -50,6 +51,7 @@ export default function FcomBrowserPanel({
   favoritesError,
   handleOpenFolder,
   openFileFromUrl,
+  handleOpenSearchResult,
   getParentLabel,
   getParentPath,
   searchResults,
@@ -207,7 +209,7 @@ export default function FcomBrowserPanel({
                     <button
                       type="button"
                       className="search-result-link"
-                      onClick={() => openFileFromUrl(result.pathId || result.path || '')}
+                      onClick={() => handleOpenSearchResult(result)}
                     >
                       {getSearchResultName(result)}
                     </button>

@@ -108,11 +108,13 @@ class ApiClient {
 
   // Testing
   async testObject(fileId: string, objectName: string) {
-    return this.client.post(`/files/${fileId}/test`, { object_name: objectName });
+    const encoded = encodeURIComponent(fileId);
+    return this.client.post(`/files/${encoded}/test`, { object_name: objectName });
   }
 
   async testAllObjects(fileId: string) {
-    return this.client.post(`/files/${fileId}/test-all`);
+    const encoded = encodeURIComponent(fileId);
+    return this.client.post(`/files/${encoded}/test-all`);
   }
 
   // Broker servers

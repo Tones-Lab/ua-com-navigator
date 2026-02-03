@@ -9,8 +9,20 @@ import { getEventsSchemaFields } from '../services/eventsSchemaCache';
 
 const router = Router();
 const CACHE_TTL_MS = Number(process.env.FOLDER_OVERVIEW_TTL_MS || 10 * 60 * 1000);
+const DEFAULT_PATH_PREFIX = 'id-core/default/processing/event/fcom/_objects';
+const PATH_PREFIX = (process.env.COMS_PATH_PREFIX ?? DEFAULT_PATH_PREFIX).replace(/^\/+|\/+$/g, '');
+const FOLDER_OVERVIEW_PAGE_LIMIT = Number(process.env.FOLDER_OVERVIEW_PAGE_LIMIT || 500);
+const FOLDER_OVERVIEW_CONCURRENCY = Math.max(1, Number(process.env.FOLDER_OVERVIEW_CONCURRENCY || 20));
+const FOLDER_OVERVIEW_FILE_CONCURRENCY = Math.max(1, Number(process.env.FOLDER_OVERVIEW_FILE_CONCURRENCY || 20));
 const overviewCache = new Map<string, { data: any; fetchedAt: number }>();
 let lastClearedAtMs: number | null = null;
+let isBuilding = false;
+let buildProgress = {
+  phase: null as string | null,
+  processed: 0,
+  total: 0,
+  unit: 'folders',
+};
 
 const schemaPath = path.resolve(process.cwd(), 'schema', 'fcom.schema.json');
 const schemaRaw = fs.readFileSync(schemaPath, 'utf-8');
@@ -94,12 +106,101 @@ const parseOverridePayload = (ruleText: string) => {
   return [] as any[];
 };
 
-const buildFolderOverview = async (uaClient: UAClient, node: string, limit: number) => {
-  const eventsFields = await getEventsSchemaFields(uaClient);
-  const allowedFields = new Set(eventsFields.map((f) => f.toLowerCase()));
+const getProcessorTargetField = (processor: any) => {
+  if (!processor || typeof processor !== 'object') {
+    return null;
+  }
+  const keys = [
+    'set',
+    'copy',
+    'replace',
+    'convert',
+    'eval',
+    'json',
+    'lookup',
+    'append',
+    'sort',
+    'split',
+    'math',
+    'regex',
+    'grok',
+    'rename',
+    'strcase',
+    'substr',
+    'trim',
+  ];
+  for (const key of keys) {
+    const target = processor?.[key]?.targetField;
+    if (target) {
+      return target;
+    }
+  }
+  return null;
+};
 
-  const listing = await uaClient.listRules('/', 500, node);
-  const entries = Array.isArray(listing?.data) ? listing.data : [];
+const collectOverrideTargets = (
+  processors: any[],
+  objectName: string,
+  targetKeys: Set<string>,
+) => {
+  (processors || []).forEach((processor: any) => {
+    if (!processor || typeof processor !== 'object') {
+      return;
+    }
+    if (processor.if) {
+      const payload = processor.if;
+      collectOverrideTargets(Array.isArray(payload.processors) ? payload.processors : [], objectName, targetKeys);
+      collectOverrideTargets(Array.isArray(payload.else) ? payload.else : [], objectName, targetKeys);
+    }
+    if (processor.foreach?.processors) {
+      collectOverrideTargets(Array.isArray(processor.foreach.processors) ? processor.foreach.processors : [], objectName, targetKeys);
+    }
+    if (Array.isArray(processor.switch?.case)) {
+      processor.switch.case.forEach((entry: any) => {
+        collectOverrideTargets(
+          Array.isArray(entry?.then) ? entry.then : Array.isArray(entry?.processors) ? entry.processors : [],
+          objectName,
+          targetKeys,
+        );
+      });
+    }
+    if (Array.isArray(processor.switch?.default)) {
+      collectOverrideTargets(processor.switch.default, objectName, targetKeys);
+    }
+    const target = getProcessorTargetField(processor);
+    if (target && typeof target === 'string' && target.startsWith('$.event.')) {
+      targetKeys.add(`${objectName}::${target}`);
+    }
+  });
+};
+
+const buildFolderOverview = async (uaClient: UAClient, node: string, limit: number) => {
+  let allowedFields = new Set<string>();
+  try {
+    const eventsFields = await getEventsSchemaFields(uaClient);
+    allowedFields = new Set(eventsFields.map((f) => f.toLowerCase()));
+  } catch (error: any) {
+    logger.warn(`Folder overview schema lookup failed: ${error?.message || 'unknown error'}`);
+    allowedFields = new Set<string>();
+  }
+
+  let entries: any[] = [];
+  try {
+    const listing = await uaClient.listRules('/', 500, node);
+    entries = Array.isArray(listing?.data) ? listing.data : [];
+  } catch (error: any) {
+    logger.error(`Folder overview list error for ${node}: ${error?.message || 'list error'}`);
+    return {
+      node,
+      fileCount: 0,
+      objectCount: 0,
+      schemaErrorCount: 0,
+      unknownFieldCount: 0,
+      overrideCount: await getOverrideCountForNode(uaClient, node),
+      topFiles: [],
+      cachedAt: new Date().toISOString(),
+    };
+  }
   const files = entries.filter((item: any) => String(item.PathName || '').toLowerCase().endsWith('.json'));
 
   let fileCount = files.length;
@@ -110,40 +211,73 @@ const buildFolderOverview = async (uaClient: UAClient, node: string, limit: numb
 
   const rows: Array<{ file: string; pathId: string; schemaErrors: number; unknownFields: number; objects: number }> = [];
 
-  for (const entry of files) {
+  const processFile = async (entry: any) => {
     const fileId = entry.PathID;
-    const response = await uaClient.readRule(fileId);
-    const content = parseRuleText(response);
-    if (!content) {
-      continue;
-    }
-    const objects = Array.isArray(content?.objects) ? content.objects : Array.isArray(content) ? content : [];
-    objectCount += objects.length;
+    try {
+      const response = await uaClient.readRule(fileId);
+      const content = parseRuleText(response);
+      if (!content) {
+        return null;
+      }
+      const objects = Array.isArray(content?.objects) ? content.objects : Array.isArray(content) ? content : [];
+      const valid = validate(content);
+      const errors = valid ? 0 : (validate.errors || []).length;
 
-    const valid = validate(content);
-    const errors = valid ? 0 : (validate.errors || []).length;
-    schemaErrorCount += errors;
-
-    let unknowns = 0;
-    if (allowedFields.size > 0) {
-      for (const obj of objects) {
-        const event = getEventFields(obj);
-        for (const key of Object.keys(event)) {
-          if (!allowedFields.has(key.toLowerCase())) {
-            unknowns += 1;
+      let unknowns = 0;
+      if (allowedFields.size > 0) {
+        for (const obj of objects) {
+          const event = getEventFields(obj);
+          for (const key of Object.keys(event)) {
+            if (!allowedFields.has(key.toLowerCase())) {
+              unknowns += 1;
+            }
           }
         }
       }
-    }
-    unknownFieldCount += unknowns;
 
-    rows.push({
-      file: entry.PathName || fileId,
-      pathId: fileId,
-      schemaErrors: errors,
-      unknownFields: unknowns,
-      objects: objects.length,
+      return {
+        row: {
+          file: entry.PathName || fileId,
+          pathId: fileId,
+          schemaErrors: errors,
+          unknownFields: unknowns,
+          objects: objects.length,
+        },
+        objectCount: objects.length,
+        schemaErrors: errors,
+        unknownFields: unknowns,
+      };
+    } catch (error: any) {
+      logger.warn(`Folder overview skipped ${fileId}: ${error?.message || 'read error'}`);
+      return null;
+    }
+  };
+
+  const runFilePool = async (entries: any[], concurrency: number) => {
+    const results: Array<Awaited<ReturnType<typeof processFile>> | null> = [];
+    let cursor = 0;
+    const workers = Array.from({ length: Math.min(concurrency, entries.length) }, async () => {
+      while (cursor < entries.length) {
+        const idx = cursor;
+        cursor += 1;
+        const result = await processFile(entries[idx]);
+        results[idx] = result;
+      }
     });
+    await Promise.all(workers);
+    return results.filter(Boolean) as Array<NonNullable<Awaited<ReturnType<typeof processFile>>>>;
+  };
+
+  const useConcurrency = files.length > 5;
+  const processed = useConcurrency
+    ? await runFilePool(files, FOLDER_OVERVIEW_FILE_CONCURRENCY)
+    : (await runFilePool(files, 1));
+
+  for (const result of processed) {
+    objectCount += result.objectCount;
+    schemaErrorCount += result.schemaErrors;
+    unknownFieldCount += result.unknownFields;
+    rows.push(result.row);
   }
 
   const ranked = rows
@@ -172,6 +306,7 @@ const resolveOverridePathFromNode = (node: string) => {
   const objectsIndex = parts.indexOf('_objects', fcomIndex + 1);
   const methodBaseIndex = objectsIndex !== -1 ? objectsIndex : fcomIndex;
   const methodIndex = parts.findIndex((segment, idx) => idx > methodBaseIndex && (segment === 'trap' || segment === 'syslog'));
+  const protocol = methodIndex !== -1 ? parts[methodIndex] : null;
   const vendor = methodIndex !== -1
     ? parts[methodIndex + 1]
     : parts[methodBaseIndex + 1];
@@ -181,6 +316,9 @@ const resolveOverridePathFromNode = (node: string) => {
   }
 
   const basePath = parts.slice(0, fcomIndex + 1).join('/');
+  if (protocol) {
+    return `${basePath}/overrides/${protocol}/${vendor}.override.json`;
+  }
   return `${basePath}/overrides/${vendor}.override.json`;
 };
 
@@ -194,10 +332,106 @@ const getOverrideCountForNode = async (uaClient: UAClient, node: string) => {
     const raw = extractRuleText(response);
     const text = typeof raw === 'string' ? raw : JSON.stringify(raw ?? []);
     const overrides = parseOverridePayload(text);
-    return overrides.length;
+    const targetKeys = new Set<string>();
+    overrides.forEach((entry: any) => {
+      const objectName = entry?.['@objectName'] || '__global__';
+      const processors = Array.isArray(entry?.processors) ? entry.processors : [];
+      collectOverrideTargets(processors, objectName, targetKeys);
+    });
+    return targetKeys.size;
   } catch {
     return 0;
   }
+};
+
+const isFolderEntry = (entry: any) => {
+  const name = String(entry?.PathName || entry?.PathID || '').toLowerCase();
+  return !name.endsWith('.json');
+};
+
+const listDirectory = async (uaClient: UAClient, node: string) => {
+  const all: any[] = [];
+  let start = 0;
+  try {
+    while (true) {
+      const response = await uaClient.listRules('/', FOLDER_OVERVIEW_PAGE_LIMIT, node, true, start);
+      const data = Array.isArray(response?.data) ? response.data : [];
+      if (data.length === 0) {
+        break;
+      }
+      all.push(...data);
+      if (data.length < FOLDER_OVERVIEW_PAGE_LIMIT) {
+        break;
+      }
+      start += data.length;
+    }
+  } catch (error: any) {
+    logger.warn(`Folder overview list failed for ${node}: ${error?.message || 'list error'}`);
+  }
+  return all;
+};
+
+const rebuildAllFolderOverviews = async (uaClient: UAClient, limit: number) => {
+  if (!PATH_PREFIX) {
+    throw new Error('COMS_PATH_PREFIX is not configured');
+  }
+  const protocolEntries = await listDirectory(uaClient, PATH_PREFIX);
+  const protocolFolders = protocolEntries.filter((entry) => isFolderEntry(entry));
+  const vendorNodes: string[] = [];
+
+  for (const protocolEntry of protocolFolders) {
+    const protocolName = String(protocolEntry?.PathName || protocolEntry?.PathID || '').split('/').pop() || '';
+    if (!protocolName || protocolName.toLowerCase() === 'overrides') {
+      continue;
+    }
+    const protocolNode = String(protocolEntry?.PathID || `${PATH_PREFIX}/${protocolName}`);
+    let protocolListing: any[] = [];
+    try {
+      protocolListing = await listDirectory(uaClient, protocolNode);
+    } catch (error: any) {
+      logger.warn(`Folder overview protocol scan failed for ${protocolNode}: ${error?.message || 'list error'}`);
+      continue;
+    }
+    for (const entry of protocolListing) {
+      const entryName = String(entry?.PathName || entry?.PathID || '');
+      if (entryName.toLowerCase() === 'overrides') {
+        continue;
+      }
+      if (isFolderEntry(entry)) {
+        const vendorName = entryName;
+        const vendorNode = String(entry?.PathID || `${protocolNode}/${vendorName}`);
+        vendorNodes.push(vendorNode);
+      }
+    }
+  }
+
+  buildProgress.phase = 'Rebuilding folders';
+  buildProgress.processed = 0;
+  buildProgress.total = vendorNodes.length;
+  buildProgress.unit = 'folders';
+
+  const runPool = async (nodes: string[], concurrency: number) => {
+    let cursor = 0;
+    const workers = Array.from({ length: Math.min(concurrency, nodes.length) }, async () => {
+      while (cursor < nodes.length) {
+        const idx = cursor;
+        cursor += 1;
+        const vendorNode = nodes[idx];
+        try {
+          const data = await buildFolderOverview(uaClient, vendorNode, limit);
+          const cacheKey = `${vendorNode}:${limit}`;
+          overviewCache.set(cacheKey, { data, fetchedAt: Date.now() });
+        } catch (error: any) {
+          logger.warn(`Folder overview build failed for ${vendorNode}: ${error?.message || 'build error'}`);
+        } finally {
+          buildProgress.processed += 1;
+        }
+      }
+    });
+    await Promise.all(workers);
+  };
+
+  await runPool(vendorNodes, FOLDER_OVERVIEW_CONCURRENCY);
 };
 
 router.get('/overview', async (req: Request, res: Response) => {
@@ -233,7 +467,8 @@ router.get('/overview/status', (req: Request, res: Response) => {
     : null;
   res.json({
     isReady: entries.length > 0,
-    isBuilding: false,
+    isBuilding,
+    progress: buildProgress,
     entryCount: entries.length,
     ttlMs: CACHE_TTL_MS,
     lastBuiltAt: lastBuiltAtMs ? new Date(lastBuiltAtMs).toISOString() : null,
@@ -245,24 +480,41 @@ router.post('/overview/rebuild', async (req: Request, res: Response) => {
   if (!requireSession(req, res)) {
     return;
   }
+  isBuilding = true;
+  buildProgress = {
+    phase: 'Starting',
+    processed: 0,
+    total: 0,
+    unit: 'folders',
+  };
   try {
     const { node, limit = 25 } = req.body as { node?: string; limit?: number };
+    const parsedLimit = Number(limit) || 25;
     if (!node) {
       overviewCache.clear();
       lastClearedAtMs = Date.now();
-      res.json({ status: 'cleared' });
+      const uaClient = getUaClientFromSession(req);
+      await rebuildAllFolderOverviews(uaClient, parsedLimit);
+      res.json({ status: 'rebuilt', count: overviewCache.size });
       return;
     }
-    const parsedLimit = Number(limit) || 25;
     const cacheKey = `${node}:${parsedLimit}`;
     overviewCache.delete(cacheKey);
     const uaClient = getUaClientFromSession(req);
+    buildProgress.phase = 'Rebuilding folder';
+    buildProgress.processed = 0;
+    buildProgress.total = 1;
+    buildProgress.unit = 'folders';
     const data = await buildFolderOverview(uaClient, node, parsedLimit);
     overviewCache.set(cacheKey, { data, fetchedAt: Date.now() });
+    buildProgress.processed = 1;
     res.json(data);
   } catch (error: any) {
     logger.error(`Folder overview rebuild error: ${error.message}`);
     res.status(500).json({ error: error.message || 'Failed to rebuild folder overview' });
+  } finally {
+    buildProgress.phase = 'Completed';
+    isBuilding = false;
   }
 });
 

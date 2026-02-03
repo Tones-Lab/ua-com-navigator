@@ -8,6 +8,7 @@ const OVERVIEW_PAGE_LIMIT = Number(process.env.OVERVIEW_PAGE_LIMIT || 500);
 const OVERRIDE_SUFFIX = '.override.json';
 const DEFAULT_REFRESH_INTERVAL_MS = 15 * 60 * 1000;
 const OVERVIEW_REFRESH_INTERVAL_MS = Number(process.env.OVERVIEW_REFRESH_INTERVAL_MS || DEFAULT_REFRESH_INTERVAL_MS);
+const OVERVIEW_CONCURRENCY = Math.max(1, Number(process.env.OVERVIEW_CONCURRENCY || 20));
 
 type OverviewCounts = {
   files: number;
@@ -43,6 +44,12 @@ type OverviewStatus = {
   lastDurationMs: number | null;
   nextRefreshAt: string | null;
   lastError: string | null;
+  progress: {
+    phase: string | null;
+    processed: number;
+    total: number;
+    unit: string;
+  };
   counts: {
     protocols: number;
     vendors: number;
@@ -58,6 +65,12 @@ type OverviewState = {
   lastDurationMs: number | null;
   nextRefreshAt: string | null;
   lastError: string | null;
+  progress: {
+    phase: string | null;
+    processed: number;
+    total: number;
+    unit: string;
+  };
   refreshTimer: NodeJS.Timeout | null;
 };
 
@@ -121,6 +134,12 @@ class OverviewIndexService {
         lastDurationMs: null,
         nextRefreshAt: null,
         lastError: null,
+        progress: {
+          phase: null,
+          processed: 0,
+          total: 0,
+          unit: 'items',
+        },
         refreshTimer: null,
       });
     }
@@ -137,6 +156,7 @@ class OverviewIndexService {
       lastDurationMs: state.lastDurationMs,
       nextRefreshAt: state.nextRefreshAt,
       lastError: state.lastError,
+      progress: state.progress,
       counts: {
         protocols: state.data?.protocols.length || 0,
         vendors: state.data?.protocols.reduce((sum, protocol) => sum + protocol.vendors.length, 0) || 0,
@@ -157,11 +177,23 @@ class OverviewIndexService {
     }
     state.isBuilding = true;
     state.lastError = null;
+    state.progress = {
+      phase: 'Starting',
+      processed: 0,
+      total: 0,
+      unit: 'items',
+    };
     const start = Date.now();
     try {
-      state.data = await this.buildIndex(uaClient);
+      state.data = await this.buildIndex(uaClient, state);
       state.lastBuiltAt = new Date().toISOString();
       state.lastDurationMs = Date.now() - start;
+      state.progress = {
+        phase: 'Completed',
+        processed: state.progress.total || state.progress.processed,
+        total: state.progress.total || state.progress.processed,
+        unit: state.progress.unit,
+      };
       this.scheduleNextRefresh(state, serverId, uaClient);
       logger.info(`Overview index rebuilt (${trigger}) in ${state.lastDurationMs}ms`);
     } catch (error: any) {
@@ -192,7 +224,7 @@ class OverviewIndexService {
     }, Math.max(0, nextAt - Date.now()));
   }
 
-  private async buildIndex(uaClient: UAClient): Promise<OverviewData> {
+  private async buildIndex(uaClient: UAClient, state: OverviewState): Promise<OverviewData> {
     if (!PATH_PREFIX) {
       throw new Error('COMS_PATH_PREFIX is not configured');
     }
@@ -232,6 +264,78 @@ class OverviewIndexService {
       return [] as any[];
     };
 
+    const normalizePathString = (value: string) => (
+      path.posix.normalize(String(value || '').replace(/\\/g, '/')).replace(/^\/+/, '')
+    );
+
+    const getProcessorTargetField = (processor: any) => {
+      if (!processor || typeof processor !== 'object') {
+        return null;
+      }
+      const keys = [
+        'set',
+        'copy',
+        'replace',
+        'convert',
+        'eval',
+        'json',
+        'lookup',
+        'append',
+        'sort',
+        'split',
+        'math',
+        'regex',
+        'grok',
+        'rename',
+        'strcase',
+        'substr',
+        'trim',
+      ];
+      for (const key of keys) {
+        const target = processor?.[key]?.targetField;
+        if (target) {
+          return target;
+        }
+      }
+      return null;
+    };
+
+    const collectOverrideTargets = (
+      processors: any[],
+      objectName: string,
+      targetKeys: Set<string>,
+    ) => {
+      (processors || []).forEach((processor: any) => {
+        if (!processor || typeof processor !== 'object') {
+          return;
+        }
+        if (processor.if) {
+          const payload = processor.if;
+          collectOverrideTargets(Array.isArray(payload.processors) ? payload.processors : [], objectName, targetKeys);
+          collectOverrideTargets(Array.isArray(payload.else) ? payload.else : [], objectName, targetKeys);
+        }
+        if (processor.foreach?.processors) {
+          collectOverrideTargets(Array.isArray(processor.foreach.processors) ? processor.foreach.processors : [], objectName, targetKeys);
+        }
+        if (Array.isArray(processor.switch?.case)) {
+          processor.switch.case.forEach((entry: any) => {
+            collectOverrideTargets(
+              Array.isArray(entry?.then) ? entry.then : Array.isArray(entry?.processors) ? entry.processors : [],
+              objectName,
+              targetKeys,
+            );
+          });
+        }
+        if (Array.isArray(processor.switch?.default)) {
+          collectOverrideTargets(processor.switch.default, objectName, targetKeys);
+        }
+        const target = getProcessorTargetField(processor);
+        if (target && typeof target === 'string' && target.startsWith('$.event.')) {
+          targetKeys.add(`${objectName}::${target}`);
+        }
+      });
+    };
+
     const isFolderEntry = (entry: any) => {
       const name = String(entry?.PathName || entry?.PathID || '').toLowerCase();
       return !name.endsWith('.json');
@@ -251,6 +355,21 @@ class OverviewIndexService {
           break;
         }
         start += data.length;
+      }
+      return all;
+    };
+
+    const listDirectoryRecursive = async (node: string) => {
+      const entries = await listDirectory(node);
+      const all: any[] = [...entries];
+      const folders = entries.filter((entry) => isFolderEntry(entry));
+      for (const folder of folders) {
+        const folderNode = String(folder?.PathID || folder?.PathName || '');
+        if (!folderNode) {
+          continue;
+        }
+        const nested = await listDirectoryRecursive(folderNode);
+        all.push(...nested);
       }
       return all;
     };
@@ -290,7 +409,13 @@ class OverviewIndexService {
         const raw = extractRuleText(response);
         const text = typeof raw === 'string' ? raw : JSON.stringify(raw ?? []);
         const overrides = parseOverridePayload(text);
-        return overrides.length;
+        const targetKeys = new Set<string>();
+        overrides.forEach((entry: any) => {
+          const objectName = entry?.['@objectName'] || '__global__';
+          const processors = Array.isArray(entry?.processors) ? entry.processors : [];
+          collectOverrideTargets(processors, objectName, targetKeys);
+        });
+        return targetKeys.size;
       } catch (error: any) {
         logger.warn(`Overview index override skipped ${pathId}: ${error?.message || 'read error'}`);
         return 0;
@@ -298,19 +423,19 @@ class OverviewIndexService {
     };
 
     const normalizeVendorName = (value: string) => value.trim().toLowerCase();
-    const overrideCountsByVendor = new Map<string, { name: string; count: number }>();
+    const overrideCountsByProtocolVendor = new Map<string, { name: string; count: number; protocol: string }>();
     const appliedOverrides = new Set<string>();
     const applyVendorOverride = (protocol: string, vendor: string) => {
       const vendorKey = normalizeVendorName(vendor);
-      const entry = overrideCountsByVendor.get(vendorKey);
+      const lookupKey = `${protocol.toLowerCase()}::${vendorKey}`;
+      const entry = overrideCountsByProtocolVendor.get(lookupKey);
       if (!entry || entry.count <= 0) {
         return;
       }
-      const appliedKey = `${protocol.toLowerCase()}::${vendorKey}`;
-      if (appliedOverrides.has(appliedKey)) {
+      if (appliedOverrides.has(lookupKey)) {
         return;
       }
-      appliedOverrides.add(appliedKey);
+      appliedOverrides.add(lookupKey);
       recordCounts(protocol, vendor, {
         ...createEmptyCounts(),
         overrides: entry.count,
@@ -321,19 +446,37 @@ class OverviewIndexService {
       ? `${PATH_PREFIX.replace('/_objects', '')}/overrides`
       : `${PATH_PREFIX}/overrides`;
     try {
-      const overrideListing = await listDirectory(overridesRoot);
-      for (const overrideEntry of overrideListing) {
-        const fileName = String(overrideEntry?.PathName || overrideEntry?.PathID || '');
-        const baseName = path.posix.basename(fileName.replace(/\\/g, '/'));
-        if (!baseName.toLowerCase().endsWith(OVERRIDE_SUFFIX)) {
+      const overrideListing = await listDirectoryRecursive(overridesRoot);
+      const overridesRootNormalized = normalizePathString(overridesRoot);
+      const overrideFiles = overrideListing.filter((entry) => {
+        const fileName = normalizePathString(String(entry?.PathName || entry?.PathID || ''));
+        return fileName && path.posix.basename(fileName).toLowerCase().endsWith(OVERRIDE_SUFFIX);
+      });
+      state.progress.phase = 'Scanning overrides';
+      state.progress.processed = 0;
+      state.progress.total = overrideFiles.length;
+      state.progress.unit = 'overrides';
+      for (const overrideEntry of overrideFiles) {
+        const fileName = normalizePathString(String(overrideEntry?.PathName || overrideEntry?.PathID || ''));
+        if (!fileName) {
           continue;
         }
+        const baseName = path.posix.basename(fileName);
+        const relative = path.posix.relative(overridesRootNormalized, fileName);
+        if (!relative || relative.startsWith('..')) {
+          continue;
+        }
+        const parts = relative.split('/').filter(Boolean);
+        const protocol = parts.length > 1 ? parts[0] : '(root)';
         const vendorName = baseName.replace(new RegExp(`${OVERRIDE_SUFFIX}$`, 'i'), '') || '(root)';
         const overrideCount = await buildOverrideCounts(String(overrideEntry?.PathID || fileName));
-        overrideCountsByVendor.set(normalizeVendorName(vendorName), {
+        const key = `${protocol.toLowerCase()}::${normalizeVendorName(vendorName)}`;
+        overrideCountsByProtocolVendor.set(key, {
           name: vendorName,
           count: overrideCount,
+          protocol,
         });
+        state.progress.processed += 1;
       }
     } catch (error: any) {
       logger.warn(`Overview overrides not found for ${overridesRoot}: ${error?.message || 'unknown error'}`);
@@ -341,6 +484,9 @@ class OverviewIndexService {
 
     const protocolEntries = await listDirectory(PATH_PREFIX);
     const protocolFolders = protocolEntries.filter((entry) => isFolderEntry(entry));
+    const fileEntries: Array<{ pathId: string; protocol: string; vendor: string }> = [];
+    const vendorPairs: Array<{ protocol: string; vendor: string }> = [];
+    const vendorKeySet = new Set<string>();
 
     for (const protocolEntry of protocolFolders) {
       const protocolName = String(protocolEntry?.PathName || protocolEntry?.PathID || '').split('/').pop() || '';
@@ -360,20 +506,56 @@ class OverviewIndexService {
           const vendorName = entryName;
           const vendorNode = String(entry?.PathID || `${protocolNode}/${vendorName}`);
           const vendorListing = await listDirectory(vendorNode);
+          const vendorKey = `${protocolName}::${vendorName}`;
+          if (!vendorKeySet.has(vendorKey)) {
+            vendorKeySet.add(vendorKey);
+            vendorPairs.push({ protocol: protocolName, vendor: vendorName });
+          }
           for (const vendorEntry of vendorListing) {
             const vendorEntryName = String(vendorEntry?.PathName || vendorEntry?.PathID || '');
             if (!vendorEntryName.toLowerCase().endsWith('.json')) {
               continue;
             }
-            const counts = await buildFileCounts(String(vendorEntry?.PathID || vendorEntryName));
-            recordCounts(protocolName, vendorName, counts);
+            fileEntries.push({
+              pathId: String(vendorEntry?.PathID || vendorEntryName),
+              protocol: protocolName,
+              vendor: vendorName,
+            });
           }
-          applyVendorOverride(protocolName, vendorName);
         } else if (entryName.toLowerCase().endsWith('.json')) {
-          const counts = await buildFileCounts(String(entry?.PathID || entryName));
-          recordCounts(protocolName, '(root)', counts);
+          fileEntries.push({
+            pathId: String(entry?.PathID || entryName),
+            protocol: protocolName,
+            vendor: '(root)',
+          });
         }
       }
+    }
+
+    state.progress.phase = 'Scanning objects';
+    state.progress.processed = 0;
+    state.progress.total = fileEntries.length;
+    state.progress.unit = 'files';
+
+    const runPool = async (items: typeof fileEntries, concurrency: number) => {
+      let cursor = 0;
+      const workers = Array.from({ length: Math.min(concurrency, items.length) }, async () => {
+        while (cursor < items.length) {
+          const idx = cursor;
+          cursor += 1;
+          const entry = items[idx];
+          const counts = await buildFileCounts(entry.pathId);
+          recordCounts(entry.protocol, entry.vendor, counts);
+          state.progress.processed += 1;
+        }
+      });
+      await Promise.all(workers);
+    };
+
+    await runPool(fileEntries, OVERVIEW_CONCURRENCY);
+
+    for (const pair of vendorPairs) {
+      applyVendorOverride(pair.protocol, pair.vendor);
     }
 
     const protocols: ProtocolEntry[] = Array.from(protocolMap.entries())

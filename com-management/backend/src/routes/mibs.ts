@@ -383,21 +383,111 @@ router.post('/trap/send', async (req: Request, res: Response) => {
       args.push(String(entry.value ?? ''));
     });
 
-    await new Promise<void>((resolve, reject) => {
-      execFile(TRAP_CMD, args, {
+    const buildArgs = (overrideType?: string) => {
+      const nextArgs = ['-v', '2c', '-c', community || 'public'];
+      if (mibModule) {
+        nextArgs.push('-M', MIB_ROOT, '-m', String(mibModule));
+      }
+      nextArgs.push(targetHost);
+      nextArgs.push('0', normalizeOid(String(trapOid)));
+      (Array.isArray(varbinds) ? varbinds : []).forEach((entry: any) => {
+        if (!entry?.oid) {
+          return;
+        }
+        nextArgs.push(normalizeOid(String(entry.oid)));
+        const fallbackType = overrideType || entry.type || 's';
+        nextArgs.push(fallbackType);
+        nextArgs.push(String(entry.value ?? ''));
+      });
+      return nextArgs;
+    };
+
+    const execTrap = (trapArgs: string[]) => new Promise<void>((resolve, reject) => {
+      execFile(TRAP_CMD, trapArgs, {
         env: {
           ...process.env,
           MIBDIRS: MIB_ROOT,
           MIBS: mibModule ? String(mibModule) : (process.env.MIBS || ''),
         },
-      }, (error) => {
+      }, (error, stdout, stderr) => {
         if (error) {
+          (error as any).stdout = stdout;
+          (error as any).stderr = stderr;
           reject(error);
           return;
         }
         resolve();
       });
     });
+
+    const inferTypeFromError = (stderr: string) => {
+      const match = stderr.match(/Type of attribute is\s+([A-Za-z0-9\-\s]+),/i);
+      if (!match) {
+        return null;
+      }
+      const raw = match[1].trim().toLowerCase();
+      if (raw.includes('counter') || raw.includes('gauge') || raw.includes('unsigned')) {
+        return 'u';
+      }
+      if (raw.includes('integer')) {
+        return 'i';
+      }
+      if (raw.includes('timeticks') || raw.includes('time ticks')) {
+        return 't';
+      }
+      if (raw.includes('object identifier') || raw === 'oid') {
+        return 'o';
+      }
+      if (raw.includes('octet')) {
+        return 's';
+      }
+      return null;
+    };
+
+    try {
+      await execTrap(buildArgs());
+    } catch (error: any) {
+      const trimmedStderr = String(error?.stderr || '').trim();
+      const trimmedStdout = String(error?.stdout || '').trim();
+      const inferredType = inferTypeFromError(trimmedStderr);
+      if (inferredType) {
+        try {
+          logger.warn('Trap send retry with inferred type', {
+            trapOid,
+            targetHost,
+            mibModule,
+            inferredType,
+          });
+          await execTrap(buildArgs(inferredType));
+          return res.json({ success: true, retried: true, inferredType });
+        } catch (retryError: any) {
+          logger.error('Trap send failed after retry', {
+            message: retryError.message,
+            code: (retryError as any).code,
+            signal: (retryError as any).signal,
+            trapOid,
+            targetHost,
+            mibModule,
+            varbindCount: Array.isArray(varbinds) ? varbinds.length : 0,
+            stderr: String(retryError?.stderr || '').trim() || undefined,
+            stdout: String(retryError?.stdout || '').trim() || undefined,
+          });
+          throw retryError;
+        }
+      }
+      logger.error('Trap send failed', {
+        message: error.message,
+        code: (error as any).code,
+        signal: (error as any).signal,
+        trapOid,
+        targetHost,
+        mibModule,
+        varbindCount: Array.isArray(varbinds) ? varbinds.length : 0,
+        stderr: trimmedStderr || undefined,
+        stdout: trimmedStdout || undefined,
+      });
+      throw error;
+    }
 
     res.json({ success: true });
   } catch (error: any) {

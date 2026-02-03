@@ -123,7 +123,7 @@ Backend configuration is driven by environment variables (see [backend/.env.exam
 | UA_MIB_DIR | $A1BASEDIR/distrib/mibs | MIB root for browsing |
 | UA_MIB2FCOM_BIN | $A1BASEDIR/bin/sdk/MIB2FCOM | MIB2FCOM binary path |
 | UA_SNMP_TRAP_CMD | snmptrap | snmptrap executable |
-| MIBS |  | Extra MIB search path for snmp tools |
+| MIBS |  | Extra MIB search path for SNMP tools |
 
 Frontend configuration is code‑driven; no env vars are required by default.
 

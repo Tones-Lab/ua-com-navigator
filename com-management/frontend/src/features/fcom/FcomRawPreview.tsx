@@ -1,4 +1,4 @@
-import React from 'react';
+import type { ReactNode } from 'react';
 import FcomMatchBar from './FcomMatchBar';
 
 type FcomRawPreviewProps = {
@@ -9,7 +9,7 @@ type FcomRawPreviewProps = {
   handlePrevRawMatch: () => void;
   handleNextRawMatch: () => void;
   rawPreviewText: string;
-  renderRawHighlightedText: (text: string, query: string) => React.ReactNode;
+  renderRawHighlightedText: (text: string, query: string) => ReactNode;
 };
 
 export default function FcomRawPreview({

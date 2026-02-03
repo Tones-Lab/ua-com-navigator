@@ -1,4 +1,4 @@
-import React from 'react';
+import type { ReactNode } from 'react';
 import FcomEventPrimaryRow from './FcomEventPrimaryRow';
 import FcomEventSecondaryRow from './FcomEventSecondaryRow';
 import FcomEventAdditionalFields from './FcomEventAdditionalFields';
@@ -19,6 +19,7 @@ type FcomObjectCardProps = {
   hasEditPermission: boolean;
   openTrapComposerFromTest: (obj: any) => void;
   getObjectDescription: (obj: any) => string;
+  isTestableObject: (obj: any) => boolean;
   startEventEdit: (obj: any, panelKey: string) => void;
   openRemoveAllOverridesModal: (obj: any, panelKey: string) => void;
   openAddFieldModal: (panelKey: string, obj: any) => void;
@@ -26,11 +27,16 @@ type FcomObjectCardProps = {
   saveEventEdit: (obj: any, panelKey: string) => void;
   requestCancelEventEdit: (obj: any, panelKey: string) => void;
   isFieldHighlighted: (panelKey: string, field: string) => boolean;
-  renderFieldBadges: (panelKey: string, field: string, obj: any, overrideTargets: Set<string>) => React.ReactNode;
+  renderFieldBadges: (panelKey: string, field: string, obj: any, overrideTargets: Set<string>) => ReactNode;
   overrideTooltipHoverProps: any;
   openRemoveOverrideModal: (obj: any, field: string, panelKey: string) => void;
-  renderOverrideSummaryCard: (obj: any, overrideValueMap: Map<string, any>, fields: string[], title: string) => React.ReactNode;
+  renderOverrideSummaryCard: (obj: any, overrideValueMap: Map<string, any>, fields: string[], title: string) => ReactNode;
   isFieldDirty: (obj: any, panelKey: string, field: string) => boolean;
+  isFieldPendingRemoval: (panelKey: string, field: string) => boolean;
+  isFieldNew: (obj: any, field: string) => boolean;
+  getStagedDirtyFields: (obj: any) => string[];
+  isFieldStagedDirty: (obj: any, field: string) => boolean;
+  isFieldStagedRemoved: (obj: any, field: string) => boolean;
   openBuilderForField: (obj: any, panelKey: string, field: string) => void;
   isFieldLockedByBuilder: (panelKey: string, field: string) => boolean;
   getEffectiveEventValue: (obj: any, field: string) => any;
@@ -44,13 +50,13 @@ type FcomObjectCardProps = {
     caret: number | null,
     inputType?: string,
   ) => void;
-  renderSummary: (value: any, trapVars?: any[]) => React.ReactNode;
-  renderValue: (value: any, trapVars?: any[], options?: any) => React.ReactNode;
+  renderSummary: (value: any, trapVars?: any[]) => ReactNode;
+  renderValue: (value: any, trapVars?: any[], options?: any) => ReactNode;
   getAdditionalEventFields: (obj: any, panelKey: string) => string[];
   getEventFieldDescription: (field: string) => string;
   formatEventFieldLabel: (field: string) => string;
   getBaseEventDisplay: (obj: any, field: string) => string;
-  renderTrapVariables: (vars: any) => React.ReactNode;
+  renderTrapVariables: (vars: any) => ReactNode;
 };
 
 export default function FcomObjectCard({
@@ -69,6 +75,7 @@ export default function FcomObjectCard({
   hasEditPermission,
   openTrapComposerFromTest,
   getObjectDescription,
+  isTestableObject,
   startEventEdit,
   openRemoveAllOverridesModal,
   openAddFieldModal,
@@ -81,6 +88,11 @@ export default function FcomObjectCard({
   openRemoveOverrideModal,
   renderOverrideSummaryCard,
   isFieldDirty,
+  isFieldPendingRemoval,
+  isFieldNew,
+  getStagedDirtyFields,
+  isFieldStagedDirty,
+  isFieldStagedRemoved,
   openBuilderForField,
   isFieldLockedByBuilder,
   getEffectiveEventValue,
@@ -103,7 +115,14 @@ export default function FcomObjectCard({
   const panelDirtyFields = panelEditState[eventPanelKey]
     ? getPanelDirtyFields(obj, eventPanelKey)
     : [];
+  const stagedDirtyFields = panelEditState[eventPanelKey]
+    ? []
+    : getStagedDirtyFields(obj);
+  const unsavedCount = panelEditState[eventPanelKey]
+    ? panelDirtyFields.length
+    : stagedDirtyFields.length;
   const baseFields = getBaseEventFields(obj, eventPanelKey);
+  const objectDescription = getObjectDescription(obj);
 
   return (
     <div
@@ -113,7 +132,6 @@ export default function FcomObjectCard({
           !highlightObjectKeys.includes(objectKey)
           ? ' object-card-dim'
           : ''}`}
-      key={obj?.['@objectName'] || idx}
     >
       <div className="object-header">
         <div className="object-header-main">
@@ -130,8 +148,8 @@ export default function FcomObjectCard({
               <span className="pill match-pill">Match</span>
             )}
           </div>
-          {getObjectDescription(obj) && (
-            <div className="object-description">{getObjectDescription(obj)}</div>
+          {objectDescription && (
+            <div className="object-description">{objectDescription}</div>
           )}
         </div>
         <div className="object-actions">
@@ -139,6 +157,10 @@ export default function FcomObjectCard({
             type="button"
             className="panel-edit-button"
             onClick={() => openTrapComposerFromTest(obj)}
+            disabled={!isTestableObject(obj)}
+            title={isTestableObject(obj)
+              ? 'Send a test trap for this object'
+              : 'No test command found in this object'}
           >
             Test trap
           </button>
@@ -157,9 +179,9 @@ export default function FcomObjectCard({
                 Overrides ({eventOverrideFields.length})
               </span>
             )}
-            {panelDirtyFields.length > 0 && (
+            {unsavedCount > 0 && (
               <span className="pill unsaved-pill">
-                Unsaved ({panelDirtyFields.length})
+                Unsaved ({unsavedCount})
               </span>
             )}
           </div>
@@ -230,6 +252,10 @@ export default function FcomObjectCard({
             openRemoveOverrideModal={openRemoveOverrideModal}
             renderOverrideSummaryCard={renderOverrideSummaryCard}
             isFieldDirty={isFieldDirty}
+            isFieldPendingRemoval={isFieldPendingRemoval}
+            isFieldNew={isFieldNew}
+            isFieldStagedDirty={isFieldStagedDirty}
+            isFieldStagedRemoved={isFieldStagedRemoved}
             openBuilderForField={openBuilderForField}
             isFieldLockedByBuilder={isFieldLockedByBuilder}
             getEffectiveEventValue={getEffectiveEventValue}
@@ -253,6 +279,10 @@ export default function FcomObjectCard({
             openRemoveOverrideModal={openRemoveOverrideModal}
             renderOverrideSummaryCard={renderOverrideSummaryCard}
             isFieldDirty={isFieldDirty}
+            isFieldPendingRemoval={isFieldPendingRemoval}
+            isFieldNew={isFieldNew}
+            isFieldStagedDirty={isFieldStagedDirty}
+            isFieldStagedRemoved={isFieldStagedRemoved}
             openBuilderForField={openBuilderForField}
             isFieldLockedByBuilder={isFieldLockedByBuilder}
             panelDrafts={panelDrafts}
@@ -273,6 +303,10 @@ export default function FcomObjectCard({
             openRemoveOverrideModal={openRemoveOverrideModal}
             renderOverrideSummaryCard={renderOverrideSummaryCard}
             isFieldDirty={isFieldDirty}
+            isFieldPendingRemoval={isFieldPendingRemoval}
+            isFieldNew={isFieldNew}
+            isFieldStagedDirty={isFieldStagedDirty}
+            isFieldStagedRemoved={isFieldStagedRemoved}
             openBuilderForField={openBuilderForField}
             isFieldLockedByBuilder={isFieldLockedByBuilder}
             panelDrafts={panelDrafts}

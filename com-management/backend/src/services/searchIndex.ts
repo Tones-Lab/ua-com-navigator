@@ -52,6 +52,12 @@ type SearchIndexStatus = {
   lastDurationMs: number | null;
   nextRefreshAt: string | null;
   lastError: string | null;
+  progress: {
+    phase: string | null;
+    processed: number;
+    total: number;
+    unit: string;
+  };
   counts: {
     files: number;
     folders: number;
@@ -123,6 +129,12 @@ class SearchIndexService {
   private nextRefreshAt: string | null = null;
   private lastError: string | null = null;
   private refreshTimer: NodeJS.Timeout | null = null;
+  private progress = {
+    phase: null as string | null,
+    processed: 0,
+    total: 0,
+    unit: 'files',
+  };
 
   constructor(rootPath?: string) {
     this.rootPath = rootPath || process.env.COMS_ROOT || DEFAULT_COMS_ROOT;
@@ -144,6 +156,7 @@ class SearchIndexService {
       lastDurationMs: this.lastDurationMs,
       nextRefreshAt: this.nextRefreshAt,
       lastError: this.lastError,
+      progress: this.progress,
       counts: {
         files: this.index?.fileCount || 0,
         folders: this.index?.folderCount || 0,
@@ -159,12 +172,24 @@ class SearchIndexService {
     }
     this.isBuilding = true;
     this.lastError = null;
+    this.progress = {
+      phase: 'Starting',
+      processed: 0,
+      total: 0,
+      unit: 'files',
+    };
     const start = Date.now();
     try {
       const nextIndex = await this.buildIndex();
       this.index = nextIndex;
       this.lastBuiltAt = new Date().toISOString();
       this.lastDurationMs = Date.now() - start;
+      this.progress = {
+        phase: 'Completed',
+        processed: this.progress.total || this.progress.processed,
+        total: this.progress.total || this.progress.processed,
+        unit: this.progress.unit,
+      };
       const interval = getRefreshIntervalMs(this.lastDurationMs);
       this.scheduleNextRefresh(interval);
       logger.info(`Search index rebuilt (${trigger}) in ${this.lastDurationMs}ms`);
@@ -302,6 +327,41 @@ class SearchIndexService {
     let folderCount = 0;
     let totalBytes = 0;
 
+    const countFiles = async (dirPath: string): Promise<number> => {
+      let count = 0;
+      const entries = await fs.readdir(dirPath, { withFileTypes: true });
+      for (const entry of entries) {
+        if (IGNORED_DIRS.has(entry.name)) {
+          continue;
+        }
+        const absolutePath = path.join(dirPath, entry.name);
+        if (entry.isDirectory()) {
+          count += await countFiles(absolutePath);
+        } else if (entry.isFile()) {
+          count += 1;
+        }
+      }
+      return count;
+    };
+
+    try {
+      const totalFiles = await countFiles(this.rootPath);
+      this.progress = {
+        phase: 'Indexing files',
+        processed: 0,
+        total: totalFiles,
+        unit: 'files',
+      };
+    } catch (error: any) {
+      logger.warn(`Search index count failed: ${error?.message || 'count error'}`);
+      this.progress = {
+        phase: 'Indexing files',
+        processed: 0,
+        total: 0,
+        unit: 'files',
+      };
+    }
+
     const walk = async (dirPath: string, relativePath: string) => {
       const entries = await fs.readdir(dirPath, { withFileTypes: true });
       for (const entry of entries) {
@@ -331,6 +391,7 @@ class SearchIndexService {
             nameLower: entry.name.toLowerCase(),
             pathLower: pathId.toLowerCase(),
           });
+          this.progress.processed += 1;
           try {
             const stat = await fs.stat(absolutePath);
             totalBytes += stat.size;

@@ -1,4 +1,4 @@
-import React from 'react';
+import type { ReactNode } from 'react';
 
 type FcomEventPrimaryRowProps = {
   baseFields: string[];
@@ -9,11 +9,15 @@ type FcomEventPrimaryRowProps = {
   panelEditState: Record<string, boolean>;
   hasEditPermission: boolean;
   isFieldHighlighted: (panelKey: string, field: string) => boolean;
-  renderFieldBadges: (panelKey: string, field: string, obj: any, overrideTargets: Set<string>) => React.ReactNode;
+  renderFieldBadges: (panelKey: string, field: string, obj: any, overrideTargets: Set<string>) => ReactNode;
   overrideTooltipHoverProps: any;
   openRemoveOverrideModal: (obj: any, field: string, panelKey: string) => void;
-  renderOverrideSummaryCard: (obj: any, overrideValueMap: Map<string, any>, fields: string[], title: string) => React.ReactNode;
+  renderOverrideSummaryCard: (obj: any, overrideValueMap: Map<string, any>, fields: string[], title: string) => ReactNode;
   isFieldDirty: (obj: any, panelKey: string, field: string) => boolean;
+  isFieldPendingRemoval: (panelKey: string, field: string) => boolean;
+  isFieldNew: (obj: any, field: string) => boolean;
+  isFieldStagedDirty: (obj: any, field: string) => boolean;
+  isFieldStagedRemoved: (obj: any, field: string) => boolean;
   openBuilderForField: (obj: any, panelKey: string, field: string) => void;
   isFieldLockedByBuilder: (panelKey: string, field: string) => boolean;
   getEffectiveEventValue: (obj: any, field: string) => any;
@@ -27,8 +31,8 @@ type FcomEventPrimaryRowProps = {
     caret: number | null,
     inputType?: string,
   ) => void;
-  renderSummary: (value: any, trapVars?: any[]) => React.ReactNode;
-  renderValue: (value: any, trapVars?: any[], options?: any) => React.ReactNode;
+  renderSummary: (value: any, trapVars?: any[]) => ReactNode;
+  renderValue: (value: any, trapVars?: any[], options?: any) => ReactNode;
 };
 
 export default function FcomEventPrimaryRow({
@@ -45,6 +49,10 @@ export default function FcomEventPrimaryRow({
   openRemoveOverrideModal,
   renderOverrideSummaryCard,
   isFieldDirty,
+  isFieldPendingRemoval,
+  isFieldNew,
+  isFieldStagedDirty,
+  isFieldStagedRemoved,
   openBuilderForField,
   isFieldLockedByBuilder,
   getEffectiveEventValue,
@@ -66,6 +74,10 @@ export default function FcomEventPrimaryRow({
         <div>
           <div className="field-header">
             <div className="field-header-main">
+              {(() => {
+                const stagedRemoved = isFieldStagedRemoved(obj, 'Summary');
+                return (
+                  <>
               <span className={isFieldHighlighted(eventPanelKey, 'Summary')
                 ? 'label label-warning'
                 : 'label'}>
@@ -79,7 +91,16 @@ export default function FcomEventPrimaryRow({
                   {...overrideTooltipHoverProps}
                 >
                   <span
-                    className="pill override-pill pill-inline pill-action"
+                    className={`pill override-pill pill-inline pill-action${(panelEditState[eventPanelKey]
+                      && isFieldPendingRemoval(eventPanelKey, 'Summary'))
+                      || stagedRemoved
+                      ? ' pill-removed'
+                      : ''}`}
+                    title={panelEditState[eventPanelKey]
+                      && (isFieldPendingRemoval(eventPanelKey, 'Summary') || stagedRemoved)
+                      && !isFieldNew(obj, 'Summary')
+                      ? 'Will revert to Original value'
+                      : undefined}
                   >
                     Override
                     {hasEditPermission && panelEditState[eventPanelKey] && overrideValueMap.has('$.event.Summary') && (
@@ -101,9 +122,19 @@ export default function FcomEventPrimaryRow({
                   )}
                 </div>
               )}
-              {panelEditState[eventPanelKey] && isFieldDirty(obj, eventPanelKey, 'Summary') && (
+              {((panelEditState[eventPanelKey]
+                && (isFieldPendingRemoval(eventPanelKey, 'Summary') || stagedRemoved))
+                || (!panelEditState[eventPanelKey] && stagedRemoved)) && (
+                <span className="pill removed-pill">Removed</span>
+              )}
+              {(panelEditState[eventPanelKey]
+                ? isFieldDirty(obj, eventPanelKey, 'Summary') || stagedRemoved
+                : isFieldStagedDirty(obj, 'Summary')) && (
                 <span className="dirty-indicator" title="Unsaved change">✎</span>
               )}
+                  </>
+                );
+              })()}
             </div>
             {panelEditState[eventPanelKey] && (
               <button
@@ -129,11 +160,15 @@ export default function FcomEventPrimaryRow({
             (() => {
               const value = getEffectiveEventValue(obj, 'Summary');
               const editable = getEditableValue(value);
+              const stagedRemoved = isFieldStagedRemoved(obj, 'Summary');
               return (
                 <input
-                  className={isFieldHighlighted(eventPanelKey, 'Summary')
+                  className={`${isFieldHighlighted(eventPanelKey, 'Summary')
                     ? 'panel-input panel-input-warning'
-                    : 'panel-input'}
+                    : 'panel-input'}${(isFieldPendingRemoval(eventPanelKey, 'Summary')
+                    || stagedRemoved)
+                    ? ' panel-input-removed'
+                    : ''}`}
                   value={panelDrafts?.[eventPanelKey]?.event?.Summary ?? ''}
                   onChange={(e) => handleEventInputChange(
                     obj,
@@ -143,13 +178,18 @@ export default function FcomEventPrimaryRow({
                     e.target.selectionStart,
                     (e.nativeEvent as InputEvent | undefined)?.inputType,
                   )}
-                  disabled={!editable.editable || isFieldLockedByBuilder(eventPanelKey, 'Summary')}
+                  disabled={!editable.editable
+                    || isFieldLockedByBuilder(eventPanelKey, 'Summary')
+                    || (isFieldPendingRemoval(eventPanelKey, 'Summary')
+                      && isFieldNew(obj, 'Summary'))}
                   title={
                     !editable.editable
                       ? 'Eval values cannot be edited yet'
                       : isFieldLockedByBuilder(eventPanelKey, 'Summary')
                         ? 'Finish or cancel the builder to edit other fields'
-                        : ''
+                        : (isFieldPendingRemoval(eventPanelKey, 'Summary') || stagedRemoved)
+                          ? 'Marked for removal'
+                          : ''
                   }
                 />
               );
@@ -168,6 +208,10 @@ export default function FcomEventPrimaryRow({
         <div>
           <div className="field-header">
             <div className="field-header-main">
+              {(() => {
+                const stagedRemoved = isFieldStagedRemoved(obj, 'Severity');
+                return (
+                  <>
               <span className={isFieldHighlighted(eventPanelKey, 'Severity')
                 ? 'label label-warning'
                 : 'label'}>
@@ -181,7 +225,16 @@ export default function FcomEventPrimaryRow({
                   {...overrideTooltipHoverProps}
                 >
                   <span
-                    className="pill override-pill pill-inline pill-action"
+                    className={`pill override-pill pill-inline pill-action${(panelEditState[eventPanelKey]
+                      && isFieldPendingRemoval(eventPanelKey, 'Severity'))
+                      || stagedRemoved
+                      ? ' pill-removed'
+                      : ''}`}
+                    title={panelEditState[eventPanelKey]
+                      && (isFieldPendingRemoval(eventPanelKey, 'Severity') || stagedRemoved)
+                      && !isFieldNew(obj, 'Severity')
+                      ? 'Will revert to Original value'
+                      : undefined}
                   >
                     Override
                     {hasEditPermission && panelEditState[eventPanelKey] && overrideValueMap.has('$.event.Severity') && (
@@ -203,9 +256,19 @@ export default function FcomEventPrimaryRow({
                   )}
                 </div>
               )}
-              {panelEditState[eventPanelKey] && isFieldDirty(obj, eventPanelKey, 'Severity') && (
+              {((panelEditState[eventPanelKey]
+                && (isFieldPendingRemoval(eventPanelKey, 'Severity') || stagedRemoved))
+                || (!panelEditState[eventPanelKey] && stagedRemoved)) && (
+                <span className="pill removed-pill">Removed</span>
+              )}
+              {(panelEditState[eventPanelKey]
+                ? isFieldDirty(obj, eventPanelKey, 'Severity') || stagedRemoved
+                : isFieldStagedDirty(obj, 'Severity')) && (
                 <span className="dirty-indicator" title="Unsaved change">✎</span>
               )}
+                  </>
+                );
+              })()}
             </div>
             {panelEditState[eventPanelKey] && (
               <button
@@ -229,9 +292,12 @@ export default function FcomEventPrimaryRow({
           </div>
           {panelEditState[eventPanelKey] ? (
             <input
-              className={isFieldHighlighted(eventPanelKey, 'Severity')
+              className={`${isFieldHighlighted(eventPanelKey, 'Severity')
                 ? 'panel-input panel-input-warning'
-                : 'panel-input'}
+                : 'panel-input'}${(isFieldPendingRemoval(eventPanelKey, 'Severity')
+                || isFieldStagedRemoved(obj, 'Severity'))
+                ? ' panel-input-removed'
+                : ''}`}
               value={panelDrafts?.[eventPanelKey]?.event?.Severity ?? ''}
               onChange={(e) => handleEventInputChange(
                 obj,
@@ -241,10 +307,14 @@ export default function FcomEventPrimaryRow({
                 e.target.selectionStart,
                 (e.nativeEvent as InputEvent | undefined)?.inputType,
               )}
-              disabled={isFieldLockedByBuilder(eventPanelKey, 'Severity')}
+              disabled={isFieldLockedByBuilder(eventPanelKey, 'Severity')
+                || (isFieldPendingRemoval(eventPanelKey, 'Severity')
+                  && isFieldNew(obj, 'Severity'))}
               title={isFieldLockedByBuilder(eventPanelKey, 'Severity')
                 ? 'Finish or cancel the builder to edit other fields'
-                : ''}
+                : (isFieldPendingRemoval(eventPanelKey, 'Severity') || isFieldStagedRemoved(obj, 'Severity'))
+                  ? 'Marked for removal'
+                  : ''}
             />
           ) : (
             <span className="value">
