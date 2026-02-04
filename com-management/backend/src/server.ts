@@ -44,6 +44,8 @@ const allowedOrigins = new Set([
   defaultFrontend,
   'https://lab-ua-tony02.tony.lab:5173',
   'http://lab-ua-tony02.tony.lab:5173',
+  'https://ua-com.ccfc1986.us',
+  'http://ua-com.ccfc1986.us',
 ].filter(Boolean) as string[]);
 
 app.use(cors({

@@ -113,6 +113,13 @@
 	- Doc: architecture/backlog-search-navigation.md
 - ✅ Edit safety enhancements (dirty indicators + builder undo/redo):
 	- Doc: architecture/backlog-edit-safety.md
+- Responsive FCOM browser layout tweaks:
+	- Enforce min-heights for folder/file navigation and search results (show at least 3 results); allow left panel to scroll if needed.
+	- Make search bar sticky within the left panel on small screens.
+	- Collapse Favorites and Search Results sections by default on small screens.
+	- Add inline results count + quick clear/reset controls.
+- Maybe (needs discussion): Responsive drawer for File Browser on narrow screens.
+- Maybe (needs discussion): Minimum panel width / auto-hide left panel when content is in focus.
 - Builder link placement in event headers (re-evaluate with user feedback):
 	- ✅ Option 1 (implemented today): right-aligned Builder link; pills remain next to field title.
 	- Option 2: show Builder link only on hover/focus for a cleaner header.
@@ -166,7 +173,7 @@ FEATURE - P2-feature003 - NEW FEATURE - Guided edit mode with 'highlight' sectio
 
 FEATURE - P5-feature001 - ask AI to validate the COM created -- is this possible?
 
-COMPLETE - FEATURE - 
+✅ - FEATURE - 
 	create a 'send all traps' feature - that sends all traps in a given FCOM file to a selected server.  This is useful for testing large sets of traps quickly.
 		- need to add ability to save 'recent' servers for trap testing - so user does not have to select from large list each time.
 		- need to add ability to 'favorite' certain MIBs in the MIB browser for quick access.
@@ -179,23 +186,38 @@ BUG - P1-bug002 - Need to fix the folder refresh / cache - curernt broken if you
 
 BUG - P1-bug003 -Still not showing correct count of overrides in any of the review / summmary pages - why not?
 
-COMPLETE - BUG - If i click on a FCOOM file - and open the builder in edit mode, then click away to a new file, the builder should close and not be open on the new file / page. 
+✅ - BUG - If i click on a FCOOM file - and open the builder in edit mode, then click away to a new file, the builder should close and not be open on the new file / page. 
 
 BUG - P0-bug001 - variables do not load the variables modal when typing $v_ - it should, but it doesn't.
 
 Need more testing. What can we do? Need CoPilot to suggest testing options we can use for a UI etc. What is possible?
 
-COMPLETE - FEATURE - P0-testing - need to run individual vendor based file test - make sure updated logging works when sending 1-N tests at once.
+✅ - FEATURE - P0-testing - need to run individual vendor based file test - make sure updated logging works when sending 1-N tests at once.
 
-COMPLETE - BUG - Clicking ? breaks the UI - should show FCOM cache and path information
+✅ - BUG - Clicking ? breaks the UI - should show FCOM cache and path information
 
-COMPLETE - BUG -Doing a ssarch works in the left panel, but clicking the entry takes you to the file, but doesn't highlight in green and highlight the exact match/search term with yellow like it used to
+✅ - BUG -Doing a ssarch works in the left panel, but clicking the entry takes you to the file, but doesn't highlight in green and highlight the exact match/search term with yellow like it used to
 
-COMPLETE - BUG - A new field added to a COM definition - comes in as an override (correct). however, if i want to delete the new field entirely, so no longer  have it set to anything by default (as the override) - you cannot delete it via the UI - need a way to delete an override when original is 'not existent' or the hover = new 
+✅ - BUG - A new field added to a COM definition - comes in as an override (correct). however, if i want to delete the new field entirely, so no longer  have it set to anything by default (as the override) - you cannot delete it via the UI - need a way to delete an override when original is 'not existent' or the hover = new 
 
-COMPLETE - FEATURE - remove all overrides needs to be smart in the deletion of fields that are NOT in the original file, those entries should be cleanly removed from the override file, and the entry in the object panel should also be removed entirely to cleanup the view of 'old' or 'stale' entries that are no longer used - COMPLETE
+✅ - FEATURE - remove all overrides needs to be smart in the deletion of fields that are NOT in the original file, those entries should be cleanly removed from the override file, and the entry in the object panel should also be removed entirely to cleanup the view of 'old' or 'stale' entries that are no longer used
 
 FEATURE - P0-feature004 - PCOM (performance COM) should be supported.
 
-I am using CloudFlare tunnel to open access to the UA-COM Management application externally. I use the hostname of ua-com.ccfc1986.us pointing to the internal IP of the server 192.168.3.42 on port 5173. However, when i try to login i get a CORS error. Is there a way we can resolve this issue on the server / application side? 
+BUG - I am using CloudFlare tunnel to open access to the UA-COM Management application externally. I use the hostname of ua-com.ccfc1986.us pointing to the internal IP of the server 192.168.3.42 on port 5173. However, when i try to login i get a CORS error. Is there a way we can resolve this issue on the server / application side? 
 
+Global overrides - need ability to re-create a 'customer.rules' use case
+
+✅ Feature - add ability to 'find next' override - override may exist, but be at bottom of file. if file knows an override exists, click next to see next override in file, or highlight the scroll bar (like you do in vscode or whatever) - to highlight where overrides are in the file. 
+
+Feature - ability to restart FCOM processing microservice from the UI. check with TM if this might be possible. 
+
+BUG - try to reproduct where builder is bar on right is shown, but not in the context of a field edit (all fields are editable, and no field is selected in the builder - shouldnt happen)
+
+BUG - should remove hide button from the builder. we have the close, that is enough and hide is confusing.
+
+FEATURE - default to friendly editor in the eval creation builder
+
+BUG - need to highlight the staged work to be saved better
+
+FEATURE - on nav away during staged save, user clicks cancel to keep working or save - highlight/flash the save button

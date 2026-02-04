@@ -5,6 +5,8 @@ type FcomEventAdditionalFieldsProps = {
   eventPanelKey: string;
   obj: any;
   overrideTargets: Set<string>;
+  processorTargets: Set<string>;
+  getProcessorFieldSummary: (obj: any, field: string) => string;
   overrideValueMap: Map<string, any>;
   panelEditState: Record<string, boolean>;
   hasEditPermission: boolean;
@@ -40,6 +42,8 @@ export default function FcomEventAdditionalFields({
   eventPanelKey,
   obj,
   overrideTargets,
+  processorTargets,
+  getProcessorFieldSummary,
   overrideValueMap,
   panelEditState,
   hasEditPermission,
@@ -158,30 +162,49 @@ export default function FcomEventAdditionalFields({
             )}
           </div>
           {panelEditState[eventPanelKey] ? (
-            <input
-              className={`${isFieldHighlighted(eventPanelKey, field)
-                ? 'panel-input panel-input-warning'
-                : 'panel-input'}${(isFieldPendingRemoval(eventPanelKey, field)
-                || isFieldStagedRemoved(obj, field))
-                ? ' panel-input-removed'
-                : ''}`}
-              value={panelDrafts?.[eventPanelKey]?.event?.[field] ?? ''}
-              onChange={(e) => handleEventInputChange(
-                obj,
-                eventPanelKey,
-                field,
-                e.target.value,
-                e.target.selectionStart,
-                (e.nativeEvent as InputEvent | undefined)?.inputType,
-              )}
-              disabled={isFieldLockedByBuilder(eventPanelKey, field)
-                || (isFieldPendingRemoval(eventPanelKey, field) && isFieldNew(obj, field))}
-              title={isFieldLockedByBuilder(eventPanelKey, field)
-                ? 'Finish or cancel the builder to edit other fields'
-                : (isFieldPendingRemoval(eventPanelKey, field) || isFieldStagedRemoved(obj, field))
-                  ? 'Marked for removal'
-                  : ''}
-            />
+            (() => {
+              const stagedRemoved = isFieldStagedRemoved(obj, field);
+              const isProcessorField = processorTargets.has(`$.event.${field}`);
+              const processorSummary = getProcessorFieldSummary(obj, field);
+              return isProcessorField ? (
+                <div
+                  className={`${isFieldHighlighted(eventPanelKey, field)
+                    ? 'panel-input panel-input-warning'
+                    : 'panel-input'} panel-input-processor${(isFieldPendingRemoval(eventPanelKey, field)
+                    || stagedRemoved)
+                    ? ' panel-input-removed'
+                    : ''}`}
+                  title="Value set by processor"
+                >
+                  Processor{processorSummary ? ` • ${processorSummary}` : ''}
+                </div>
+              ) : (
+                <input
+                  className={`${isFieldHighlighted(eventPanelKey, field)
+                    ? 'panel-input panel-input-warning'
+                    : 'panel-input'}${(isFieldPendingRemoval(eventPanelKey, field)
+                    || stagedRemoved)
+                    ? ' panel-input-removed'
+                    : ''}`}
+                  value={panelDrafts?.[eventPanelKey]?.event?.[field] ?? ''}
+                  onChange={(e) => handleEventInputChange(
+                    obj,
+                    eventPanelKey,
+                    field,
+                    e.target.value,
+                    e.target.selectionStart,
+                    (e.nativeEvent as InputEvent | undefined)?.inputType,
+                  )}
+                  disabled={isFieldLockedByBuilder(eventPanelKey, field)
+                    || (isFieldPendingRemoval(eventPanelKey, field) && isFieldNew(obj, field))}
+                  title={isFieldLockedByBuilder(eventPanelKey, field)
+                    ? 'Finish or cancel the builder to edit other fields'
+                    : (isFieldPendingRemoval(eventPanelKey, field) || stagedRemoved)
+                      ? 'Marked for removal'
+                      : ''}
+                />
+              );
+            })()
           ) : (
             (isFieldStagedRemoved(obj, field) && isFieldNew(obj, field)) ? (
               <span className="value value-removed">Will be removed</span>

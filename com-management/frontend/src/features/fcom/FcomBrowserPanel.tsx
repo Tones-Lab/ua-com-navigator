@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
 
 type FcomBrowserPanelProps = {
@@ -63,6 +64,20 @@ export default function FcomBrowserPanel({
   isFolder,
   handleOpenFile,
 }: FcomBrowserPanelProps) {
+  const [isCompact, setIsCompact] = useState(false);
+
+  useEffect(() => {
+    const media = window.matchMedia('(max-width: 1200px)');
+    const update = () => setIsCompact(media.matches);
+    update();
+    if (typeof media.addEventListener === 'function') {
+      media.addEventListener('change', update);
+      return () => media.removeEventListener('change', update);
+    }
+    media.addListener(update);
+    return () => media.removeListener(update);
+  }, []);
+
   return (
     <div className="panel">
       <div className="panel-scroll">
@@ -99,7 +114,7 @@ export default function FcomBrowserPanel({
               </button>
             ))}
           </div>
-          <div className="panel-section">
+          <div className="panel-section panel-section-search">
             <div className="panel-section-title">Search</div>
             <form className="global-search" onSubmit={handleSearchSubmit}>
               <div className="global-search-row">
@@ -140,7 +155,7 @@ export default function FcomBrowserPanel({
             <div className="panel-section-title">Favorites</div>
             <div className="favorites-section">
               <div className="favorites-scroll">
-                <details open={favoritesFolders.length > 0}>
+                <details open={!isCompact && favoritesFolders.length > 0}>
                   <summary>Favorite Folders</summary>
                   {favoritesLoading && <div className="muted">Loading…</div>}
                   {favoritesError && <div className="error">{favoritesError}</div>}
@@ -165,7 +180,7 @@ export default function FcomBrowserPanel({
                     </ul>
                   )}
                 </details>
-                <details open={favoritesFiles.length > 0}>
+                <details open={!isCompact && favoritesFiles.length > 0}>
                   <summary>Favorite Files</summary>
                   {favoritesFiles.length === 0 ? (
                     <div className="empty-state">No favorites yet.</div>
@@ -193,37 +208,70 @@ export default function FcomBrowserPanel({
           </div>
         </div>
         {searchQuery.trim() && (
-          <div className="search-results">
-            <div className="search-results-header">
+          <details className="search-results" open={!isCompact}>
+            <summary className="search-results-summary">
               <span>Search results ({searchResults.length})</span>
-              {searchLoading && <span className="muted">Searching…</span>}
+              <div className="search-results-actions">
+                {searchLoading && <span className="muted">Searching…</span>}
+                <button
+                  type="button"
+                  className="link-button"
+                  onClick={(event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    handleClearSearch();
+                  }}
+                  disabled={!searchQuery && searchResults.length === 0}
+                >
+                  Clear
+                </button>
+                <button
+                  type="button"
+                  className="link-button"
+                  onClick={(event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    handleResetNavigation();
+                  }}
+                >
+                  Reset
+                </button>
+              </div>
+            </summary>
+            <div className="search-results-body">
+              {searchError && <div className="error">{searchError}</div>}
+              {!searchLoading && !searchError && searchResults.length === 0 && (
+                <div className="empty-state">No matches found.</div>
+              )}
+              {!searchLoading && !searchError && searchResults.length > 0 && (
+                <ul className="search-results-list">
+                  {searchResults.map((result, idx) => (
+                    <li key={`${result?.pathId || result?.name || 'result'}-${idx}`}>
+                      <button
+                        type="button"
+                        className="search-result-link"
+                        onClick={() => handleOpenSearchResult(result)}
+                        title={result?.pathId || ''}
+                      >
+                        {getSearchResultName(result)}
+                      </button>
+                      <div className="search-result-meta">
+                        {result?.source === 'both'
+                          ? 'Match: filename and content'
+                          : result?.source === 'content'
+                            ? 'Match: content'
+                            : 'Match: filename'}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
-            {searchError && <div className="error">{searchError}</div>}
-            {!searchLoading && !searchError && searchResults.length === 0 && (
-              <div className="empty-state">No matches found.</div>
-            )}
-            {!searchLoading && !searchError && searchResults.length > 0 && (
-              <ul className="search-results-list">
-                {searchResults.map((result, idx) => (
-                  <li key={`${result?.pathId || result?.name || 'result'}-${idx}`}>
-                    <button
-                      type="button"
-                      className="search-result-link"
-                      onClick={() => handleOpenSearchResult(result)}
-                    >
-                      {getSearchResultName(result)}
-                    </button>
-                    {result?.pathId && <div className="search-result-path">{result.pathId}</div>}
-                    {result?.snippet && <div className="search-snippet">{result.snippet}</div>}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
+          </details>
         )}
         {browseError && <div className="error">{browseError}</div>}
         {browseLoading ? (
-          <div className="browse-loading">Loading folders…</div>
+          <div className="browse-loading">Refreshing folders…</div>
         ) : (
           <div className="browse-results">
             {entries.length === 0 ? (

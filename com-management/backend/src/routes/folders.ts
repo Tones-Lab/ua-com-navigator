@@ -4,6 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import logger from '../utils/logger';
 import UAClient from '../services/ua';
+import { overviewIndex, OverviewCounts, OverviewData } from '../services/overviewIndex';
 import { getCredentials, getServer, getSession } from '../services/sessionStore';
 import { getEventsSchemaFields } from '../services/eventsSchemaCache';
 
@@ -14,6 +15,8 @@ const PATH_PREFIX = (process.env.COMS_PATH_PREFIX ?? DEFAULT_PATH_PREFIX).replac
 const FOLDER_OVERVIEW_PAGE_LIMIT = Number(process.env.FOLDER_OVERVIEW_PAGE_LIMIT || 500);
 const FOLDER_OVERVIEW_CONCURRENCY = Math.max(1, Number(process.env.FOLDER_OVERVIEW_CONCURRENCY || 20));
 const FOLDER_OVERVIEW_FILE_CONCURRENCY = Math.max(1, Number(process.env.FOLDER_OVERVIEW_FILE_CONCURRENCY || 20));
+const CACHE_DIR = process.env.COM_CACHE_DIR || path.resolve(process.cwd(), 'cache');
+const FOLDER_CACHE_FILE = path.join(CACHE_DIR, 'folder_overview_cache.json');
 const overviewCache = new Map<string, { data: any; fetchedAt: number }>();
 let lastClearedAtMs: number | null = null;
 let isBuilding = false;
@@ -24,13 +27,61 @@ let buildProgress = {
   unit: 'folders',
 };
 
+const ensureCacheDir = () => {
+  try {
+    fs.mkdirSync(CACHE_DIR, { recursive: true });
+  } catch {
+    // ignore
+  }
+};
+
+const loadFolderCacheFromDisk = () => {
+  try {
+    if (!fs.existsSync(FOLDER_CACHE_FILE)) {
+      return;
+    }
+    const raw = fs.readFileSync(FOLDER_CACHE_FILE, 'utf-8');
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed?.entries)) {
+      for (const entry of parsed.entries) {
+        if (Array.isArray(entry) && entry.length === 2) {
+          const [key, value] = entry;
+          if (value?.data && typeof value?.fetchedAt === 'number') {
+            overviewCache.set(key, value);
+          }
+        }
+      }
+    }
+    if (typeof parsed?.lastClearedAtMs === 'number') {
+      lastClearedAtMs = parsed.lastClearedAtMs;
+    }
+  } catch {
+    // ignore
+  }
+};
+
+const persistFolderCacheToDisk = () => {
+  try {
+    ensureCacheDir();
+    const payload = {
+      entries: Array.from(overviewCache.entries()),
+      lastClearedAtMs,
+    };
+    fs.writeFileSync(FOLDER_CACHE_FILE, JSON.stringify(payload));
+  } catch (error: any) {
+    logger.warn(`Folder cache persist failed: ${error?.message || 'write error'}`);
+  }
+};
+
+loadFolderCacheFromDisk();
+
 const schemaPath = path.resolve(process.cwd(), 'schema', 'fcom.schema.json');
 const schemaRaw = fs.readFileSync(schemaPath, 'utf-8');
 const schema = JSON.parse(schemaRaw);
 const ajv = new Ajv({ allErrors: true, strict: false });
 const validate = ajv.compile(schema);
 
-const getUaClientFromSession = (req: Request): UAClient => {
+const getUaClientFromSession = (req: Request): { uaClient: UAClient; serverId: string } => {
   const sessionId = req.cookies.FCOM_SESSION_ID;
   if (!sessionId) {
     throw new Error('No active session');
@@ -43,17 +94,20 @@ const getUaClientFromSession = (req: Request): UAClient => {
   }
 
   const insecureTls = (process.env.UA_TLS_INSECURE ?? 'false').toLowerCase() === 'true';
-  return new UAClient({
-    hostname: server.hostname,
-    port: server.port,
-    auth_method: auth.auth_type,
-    username: auth.username,
-    password: auth.password,
-    cert_path: auth.cert_path,
-    key_path: auth.key_path,
-    ca_cert_path: auth.ca_cert_path,
-    insecure_tls: insecureTls,
-  });
+  return {
+    uaClient: new UAClient({
+      hostname: server.hostname,
+      port: server.port,
+      auth_method: auth.auth_type,
+      username: auth.username,
+      password: auth.password,
+      cert_path: auth.cert_path,
+      key_path: auth.key_path,
+      ca_cert_path: auth.ca_cert_path,
+      insecure_tls: insecureTls,
+    }),
+    serverId: server.server_id,
+  };
 };
 
 const requireSession = (req: Request, res: Response) => {
@@ -174,7 +228,55 @@ const collectOverrideTargets = (
   });
 };
 
-const buildFolderOverview = async (uaClient: UAClient, node: string, limit: number) => {
+const collectEventOverrideTargets = (entry: any, objectName: string, targetKeys: Set<string>) => {
+  if (!entry || typeof entry !== 'object') {
+    return;
+  }
+  const eventPayload = entry.event;
+  if (!eventPayload || typeof eventPayload !== 'object') {
+    return;
+  }
+  Object.keys(eventPayload).forEach((key) => {
+    if (!key) {
+      return;
+    }
+    targetKeys.add(`${objectName}::$.event.${key}`);
+  });
+};
+
+const getCachedCountsForNode = (overviewData: OverviewData | null, node: string): OverviewCounts | null => {
+  if (!overviewData) {
+    return null;
+  }
+  const parts = node.replace(/^\/+/, '').split('/').filter(Boolean);
+  if (parts.length === 0) {
+    return null;
+  }
+  const protocolMap = new Map(overviewData.protocols.map((protocol) => [protocol.name.toLowerCase(), protocol]));
+  const protocolIndex = parts.findIndex((segment) => protocolMap.has(segment.toLowerCase()));
+  if (protocolIndex === -1) {
+    return null;
+  }
+  const protocolEntry = protocolMap.get(parts[protocolIndex].toLowerCase());
+  if (!protocolEntry) {
+    return null;
+  }
+  const vendorSegment = parts[protocolIndex + 1];
+  if (!vendorSegment) {
+    return protocolEntry.counts;
+  }
+  const vendorEntry = protocolEntry.vendors.find(
+    (vendor) => vendor.name.toLowerCase() === vendorSegment.toLowerCase(),
+  );
+  return vendorEntry?.counts ?? protocolEntry.counts;
+};
+
+const buildFolderOverview = async (
+  uaClient: UAClient,
+  node: string,
+  limit: number,
+  cachedCounts?: OverviewCounts | null,
+) => {
   let allowedFields = new Set<string>();
   try {
     const eventsFields = await getEventsSchemaFields(uaClient);
@@ -192,11 +294,11 @@ const buildFolderOverview = async (uaClient: UAClient, node: string, limit: numb
     logger.error(`Folder overview list error for ${node}: ${error?.message || 'list error'}`);
     return {
       node,
-      fileCount: 0,
-      objectCount: 0,
+      fileCount: cachedCounts?.files ?? 0,
+      objectCount: cachedCounts?.objects ?? 0,
       schemaErrorCount: 0,
       unknownFieldCount: 0,
-      overrideCount: await getOverrideCountForNode(uaClient, node),
+      overrideCount: cachedCounts?.overrides ?? await getOverrideCountForNode(uaClient, node),
       topFiles: [],
       cachedAt: new Date().toISOString(),
     };
@@ -207,7 +309,7 @@ const buildFolderOverview = async (uaClient: UAClient, node: string, limit: numb
   let objectCount = 0;
   let schemaErrorCount = 0;
   let unknownFieldCount = 0;
-  const overrideCount = await getOverrideCountForNode(uaClient, node);
+  const overrideCount = cachedCounts ? 0 : await getOverrideCountForNode(uaClient, node);
 
   const rows: Array<{ file: string; pathId: string; schemaErrors: number; unknownFields: number; objects: number }> = [];
 
@@ -286,11 +388,11 @@ const buildFolderOverview = async (uaClient: UAClient, node: string, limit: numb
 
   return {
     node,
-    fileCount,
-    objectCount,
+    fileCount: cachedCounts?.files ?? fileCount,
+    objectCount: cachedCounts?.objects ?? objectCount,
     schemaErrorCount,
     unknownFieldCount,
-    overrideCount,
+    overrideCount: cachedCounts?.overrides ?? overrideCount,
     topFiles: ranked,
     cachedAt: new Date().toISOString(),
   };
@@ -337,6 +439,7 @@ const getOverrideCountForNode = async (uaClient: UAClient, node: string) => {
       const objectName = entry?.['@objectName'] || '__global__';
       const processors = Array.isArray(entry?.processors) ? entry.processors : [];
       collectOverrideTargets(processors, objectName, targetKeys);
+      collectEventOverrideTargets(entry, objectName, targetKeys);
     });
     return targetKeys.size;
   } catch {
@@ -371,7 +474,11 @@ const listDirectory = async (uaClient: UAClient, node: string) => {
   return all;
 };
 
-const rebuildAllFolderOverviews = async (uaClient: UAClient, limit: number) => {
+const rebuildAllFolderOverviews = async (
+  uaClient: UAClient,
+  limit: number,
+  overviewData: OverviewData | null,
+) => {
   if (!PATH_PREFIX) {
     throw new Error('COMS_PATH_PREFIX is not configured');
   }
@@ -410,6 +517,8 @@ const rebuildAllFolderOverviews = async (uaClient: UAClient, limit: number) => {
   buildProgress.total = vendorNodes.length;
   buildProgress.unit = 'folders';
 
+  const nextCache = new Map<string, { data: any; fetchedAt: number }>();
+
   const runPool = async (nodes: string[], concurrency: number) => {
     let cursor = 0;
     const workers = Array.from({ length: Math.min(concurrency, nodes.length) }, async () => {
@@ -418,9 +527,10 @@ const rebuildAllFolderOverviews = async (uaClient: UAClient, limit: number) => {
         cursor += 1;
         const vendorNode = nodes[idx];
         try {
-          const data = await buildFolderOverview(uaClient, vendorNode, limit);
+          const cachedCounts = getCachedCountsForNode(overviewData, vendorNode);
+          const data = await buildFolderOverview(uaClient, vendorNode, limit, cachedCounts);
           const cacheKey = `${vendorNode}:${limit}`;
-          overviewCache.set(cacheKey, { data, fetchedAt: Date.now() });
+          nextCache.set(cacheKey, { data, fetchedAt: Date.now() });
         } catch (error: any) {
           logger.warn(`Folder overview build failed for ${vendorNode}: ${error?.message || 'build error'}`);
         } finally {
@@ -432,6 +542,13 @@ const rebuildAllFolderOverviews = async (uaClient: UAClient, limit: number) => {
   };
 
   await runPool(vendorNodes, FOLDER_OVERVIEW_CONCURRENCY);
+
+  if (nextCache.size > 0) {
+    overviewCache.clear();
+    for (const [key, value] of nextCache.entries()) {
+      overviewCache.set(key, value);
+    }
+  }
 };
 
 router.get('/overview', async (req: Request, res: Response) => {
@@ -447,8 +564,9 @@ router.get('/overview', async (req: Request, res: Response) => {
       return res.json(cached.data);
     }
 
-    const uaClient = getUaClientFromSession(req);
-    const data = await buildFolderOverview(uaClient, node, parsedLimit);
+    const { uaClient, serverId } = getUaClientFromSession(req);
+    const cachedCounts = getCachedCountsForNode(overviewIndex().getData(serverId), node);
+    const data = await buildFolderOverview(uaClient, node, parsedLimit, cachedCounts);
     overviewCache.set(cacheKey, { data, fetchedAt: Date.now() });
     res.json(data);
   } catch (error: any) {
@@ -491,23 +609,23 @@ router.post('/overview/rebuild', async (req: Request, res: Response) => {
     const { node, limit = 25 } = req.body as { node?: string; limit?: number };
     const parsedLimit = Number(limit) || 25;
     if (!node) {
-      overviewCache.clear();
-      lastClearedAtMs = Date.now();
-      const uaClient = getUaClientFromSession(req);
-      await rebuildAllFolderOverviews(uaClient, parsedLimit);
+      const { uaClient, serverId } = getUaClientFromSession(req);
+      await rebuildAllFolderOverviews(uaClient, parsedLimit, overviewIndex().getData(serverId));
+      persistFolderCacheToDisk();
       res.json({ status: 'rebuilt', count: overviewCache.size });
       return;
     }
     const cacheKey = `${node}:${parsedLimit}`;
-    overviewCache.delete(cacheKey);
-    const uaClient = getUaClientFromSession(req);
+    const { uaClient, serverId } = getUaClientFromSession(req);
     buildProgress.phase = 'Rebuilding folder';
     buildProgress.processed = 0;
     buildProgress.total = 1;
     buildProgress.unit = 'folders';
-    const data = await buildFolderOverview(uaClient, node, parsedLimit);
+    const cachedCounts = getCachedCountsForNode(overviewIndex().getData(serverId), node);
+    const data = await buildFolderOverview(uaClient, node, parsedLimit, cachedCounts);
     overviewCache.set(cacheKey, { data, fetchedAt: Date.now() });
     buildProgress.processed = 1;
+    persistFolderCacheToDisk();
     res.json(data);
   } catch (error: any) {
     logger.error(`Folder overview rebuild error: ${error.message}`);

@@ -1,6 +1,4 @@
 import type { ReactNode } from 'react';
-import FcomEventPrimaryRow from './FcomEventPrimaryRow';
-import FcomEventSecondaryRow from './FcomEventSecondaryRow';
 import FcomEventAdditionalFields from './FcomEventAdditionalFields';
 
 type FcomObjectCardProps = {
@@ -9,14 +7,19 @@ type FcomObjectCardProps = {
   objectKey: string;
   highlightObjectKeys: string[];
   searchHighlightActive: boolean;
+  registerObjectRowRef: (key: string, node: HTMLDivElement | null) => void;
+  matchPingKey: string | null;
   getOverrideFlags: (obj: any) => any;
   getOverrideTargets: (obj: any) => Set<string>;
+  getProcessorTargets: (obj: any) => Set<string>;
+  getProcessorFieldSummary: (obj: any, field: string) => string;
   getOverrideValueMap: (obj: any) => Map<string, any>;
   getEventOverrideFields: (obj: any) => string[];
   panelEditState: Record<string, boolean>;
   getPanelDirtyFields: (obj: any, panelKey: string) => string[];
   getBaseEventFields: (obj: any, panelKey: string) => string[];
   hasEditPermission: boolean;
+  showTestControls: boolean;
   openTrapComposerFromTest: (obj: any) => void;
   getObjectDescription: (obj: any) => string;
   isTestableObject: (obj: any) => boolean;
@@ -65,14 +68,19 @@ export default function FcomObjectCard({
   objectKey,
   highlightObjectKeys,
   searchHighlightActive,
+  registerObjectRowRef,
+  matchPingKey,
   getOverrideFlags,
   getOverrideTargets,
+  getProcessorTargets,
+  getProcessorFieldSummary,
   getOverrideValueMap,
   getEventOverrideFields,
   panelEditState,
   getPanelDirtyFields,
   getBaseEventFields,
   hasEditPermission,
+  showTestControls,
   openTrapComposerFromTest,
   getObjectDescription,
   isTestableObject,
@@ -107,8 +115,39 @@ export default function FcomObjectCard({
   getBaseEventDisplay,
   renderTrapVariables,
 }: FcomObjectCardProps) {
+  const processorFieldKeys = (() => {
+    if (!obj || typeof obj !== 'object') {
+      return [] as string[];
+    }
+    const keys = Object.keys(obj).filter((key) => /processor/i.test(key));
+    if (keys.length === 0) {
+      return [] as string[];
+    }
+    const preferredOrder = [
+      'preProcessors',
+      'preprocessors',
+      'postProcessors',
+      'postprocessors',
+      'processors',
+      'processor',
+    ];
+    const ordered: string[] = [];
+    preferredOrder.forEach((key) => {
+      if (keys.includes(key)) {
+        ordered.push(key);
+      }
+    });
+    keys.forEach((key) => {
+      if (!ordered.includes(key)) {
+        ordered.push(key);
+      }
+    });
+    return ordered;
+  })();
+
   const overrideFlags = getOverrideFlags(obj);
   const overrideTargets = getOverrideTargets(obj);
+  const processorTargets = getProcessorTargets(obj);
   const overrideValueMap = getOverrideValueMap(obj);
   const eventPanelKey = `${objectKey}:event`;
   const eventOverrideFields = getEventOverrideFields(obj);
@@ -122,16 +161,19 @@ export default function FcomObjectCard({
     ? panelDirtyFields.length
     : stagedDirtyFields.length;
   const baseFields = getBaseEventFields(obj, eventPanelKey);
+  const additionalFields = getAdditionalEventFields(obj, eventPanelKey);
+  const eventFields = [...baseFields, ...additionalFields];
   const objectDescription = getObjectDescription(obj);
 
   return (
     <div
+      ref={(node) => registerObjectRowRef(objectKey, node)}
       className={`object-card${highlightObjectKeys.includes(objectKey)
         ? ' object-card-highlight'
         : ''}${searchHighlightActive && highlightObjectKeys.length > 0 &&
           !highlightObjectKeys.includes(objectKey)
           ? ' object-card-dim'
-          : ''}`}
+          : ''}${matchPingKey === objectKey ? ' object-card-ping' : ''}`}
     >
       <div className="object-header">
         <div className="object-header-main">
@@ -153,17 +195,19 @@ export default function FcomObjectCard({
           )}
         </div>
         <div className="object-actions">
-          <button
-            type="button"
-            className="panel-edit-button"
-            onClick={() => openTrapComposerFromTest(obj)}
-            disabled={!isTestableObject(obj)}
-            title={isTestableObject(obj)
-              ? 'Send a test trap for this object'
-              : 'No test command found in this object'}
-          >
-            Test trap
-          </button>
+          {showTestControls && (
+            <button
+              type="button"
+              className="panel-edit-button"
+              onClick={() => openTrapComposerFromTest(obj)}
+              disabled={!isTestableObject(obj)}
+              title={isTestableObject(obj)
+                ? 'Send a test trap for this object'
+                : 'No test command found in this object'}
+            >
+              Test trap
+            </button>
+          )}
         </div>
       </div>
       <div
@@ -238,62 +282,13 @@ export default function FcomObjectCard({
           )}
         </div>
         <div className="object-grid">
-          <FcomEventPrimaryRow
-            baseFields={baseFields}
-            eventPanelKey={eventPanelKey}
-            obj={obj}
-            overrideTargets={overrideTargets}
-            overrideValueMap={overrideValueMap}
-            panelEditState={panelEditState}
-            hasEditPermission={hasEditPermission}
-            isFieldHighlighted={isFieldHighlighted}
-            renderFieldBadges={renderFieldBadges}
-            overrideTooltipHoverProps={overrideTooltipHoverProps}
-            openRemoveOverrideModal={openRemoveOverrideModal}
-            renderOverrideSummaryCard={renderOverrideSummaryCard}
-            isFieldDirty={isFieldDirty}
-            isFieldPendingRemoval={isFieldPendingRemoval}
-            isFieldNew={isFieldNew}
-            isFieldStagedDirty={isFieldStagedDirty}
-            isFieldStagedRemoved={isFieldStagedRemoved}
-            openBuilderForField={openBuilderForField}
-            isFieldLockedByBuilder={isFieldLockedByBuilder}
-            getEffectiveEventValue={getEffectiveEventValue}
-            getEditableValue={getEditableValue}
-            panelDrafts={panelDrafts}
-            handleEventInputChange={handleEventInputChange}
-            renderSummary={renderSummary}
-            renderValue={renderValue}
-          />
-          <FcomEventSecondaryRow
-            baseFields={baseFields}
-            eventPanelKey={eventPanelKey}
-            obj={obj}
-            overrideTargets={overrideTargets}
-            overrideValueMap={overrideValueMap}
-            panelEditState={panelEditState}
-            hasEditPermission={hasEditPermission}
-            isFieldHighlighted={isFieldHighlighted}
-            renderFieldBadges={renderFieldBadges}
-            overrideTooltipHoverProps={overrideTooltipHoverProps}
-            openRemoveOverrideModal={openRemoveOverrideModal}
-            renderOverrideSummaryCard={renderOverrideSummaryCard}
-            isFieldDirty={isFieldDirty}
-            isFieldPendingRemoval={isFieldPendingRemoval}
-            isFieldNew={isFieldNew}
-            isFieldStagedDirty={isFieldStagedDirty}
-            isFieldStagedRemoved={isFieldStagedRemoved}
-            openBuilderForField={openBuilderForField}
-            isFieldLockedByBuilder={isFieldLockedByBuilder}
-            panelDrafts={panelDrafts}
-            handleEventInputChange={handleEventInputChange}
-            renderValue={renderValue}
-          />
           <FcomEventAdditionalFields
-            additionalFields={getAdditionalEventFields(obj, eventPanelKey)}
+            additionalFields={eventFields}
             eventPanelKey={eventPanelKey}
             obj={obj}
             overrideTargets={overrideTargets}
+            processorTargets={processorTargets}
+            getProcessorFieldSummary={getProcessorFieldSummary}
             overrideValueMap={overrideValueMap}
             panelEditState={panelEditState}
             hasEditPermission={hasEditPermission}
@@ -318,30 +313,35 @@ export default function FcomObjectCard({
           />
         </div>
       </div>
-      <div
-        className={`object-panel${panelEditState[`${objectKey}:pre`]
-          ? ' object-panel-editing'
-          : ''}`}
-      >
-        <div className="object-panel-header">
-          <span className="object-panel-title">PreProcessors</span>
+      {processorFieldKeys.map((key) => (
+        <div
+          key={`${objectKey}:${key}`}
+          className={`object-panel${panelEditState[`${objectKey}:${key}`]
+            ? ' object-panel-editing'
+            : ''}`}
+        >
+          <div className="object-panel-header">
+            <span className="object-panel-title">{key}</span>
+          </div>
+          <div className="object-panel-body">
+            {renderValue((obj as any)?.[key])}
+          </div>
         </div>
-        <div className="object-panel-body">
-          {renderValue(obj?.preProcessors)}
+      ))}
+      {Array.isArray(obj?.trap?.variables) && obj.trap.variables.length > 0 ? (
+        <div
+          className={`object-panel${panelEditState[`${objectKey}:trap`]
+            ? ' object-panel-editing'
+            : ''}`}
+        >
+          <div className="object-panel-header">
+            <span className="object-panel-title">Trap Variables</span>
+          </div>
+          <div className="object-panel-body">
+            {renderTrapVariables(obj?.trap?.variables)}
+          </div>
         </div>
-      </div>
-      <div
-        className={`object-panel${panelEditState[`${objectKey}:trap`]
-          ? ' object-panel-editing'
-          : ''}`}
-      >
-        <div className="object-panel-header">
-          <span className="object-panel-title">Trap Variables</span>
-        </div>
-        <div className="object-panel-body">
-          {renderTrapVariables(obj?.trap?.variables)}
-        </div>
-      </div>
+      ) : null}
     </div>
   );
 }

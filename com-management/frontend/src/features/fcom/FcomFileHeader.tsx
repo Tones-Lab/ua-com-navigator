@@ -4,17 +4,15 @@ type FcomFileHeaderProps = {
   isFavorite: (type: 'file' | 'folder', pathId: string) => boolean;
   toggleFavorite: (favorite: { type: 'file' | 'folder'; pathId: string; label: string; node?: string }) => void;
   formatDisplayPath: (pathId?: string | null) => string;
-  schemaLoading: boolean;
-  schemaError: string | null;
-  validator: any;
-  jsonParseError: string | null;
-  validationErrors: Array<{ path: string; message: string }>;
-  setShowSchemaModal: (open: boolean) => void;
+  fileMethod: string | null;
+  fileSubMethod: string | null;
   overrideInfo: any | null;
+  hasLocalOverrides: boolean;
   viewMode: 'friendly' | 'preview';
   setViewMode: (mode: 'friendly' | 'preview') => void;
   openAdvancedFlowModal: (scope: 'global' | 'object', objectName?: string, focusTarget?: string | null) => void;
   hasEditPermission: boolean;
+  showTestControls: boolean;
   onTestFile: () => void;
   fileTestLoading: boolean;
   fileTestLabel: string;
@@ -28,6 +26,9 @@ type FcomFileHeaderProps = {
   saveError: string | null;
   saveSuccess: string | null;
   stagedToast: string | null;
+  highlightQuery: string | null;
+  highlightFileName: boolean;
+  fileNamePingActive: boolean;
 };
 
 export default function FcomFileHeader({
@@ -36,17 +37,15 @@ export default function FcomFileHeader({
   isFavorite,
   toggleFavorite,
   formatDisplayPath,
-  schemaLoading,
-  schemaError,
-  validator,
-  jsonParseError,
-  validationErrors,
-  setShowSchemaModal,
+  fileMethod,
+  fileSubMethod,
   overrideInfo,
+  hasLocalOverrides,
   viewMode,
   setViewMode,
   openAdvancedFlowModal,
   hasEditPermission,
+  showTestControls,
   onTestFile,
   fileTestLoading,
   fileTestLabel,
@@ -60,12 +59,55 @@ export default function FcomFileHeader({
   saveError,
   saveSuccess,
   stagedToast,
+  highlightQuery,
+  highlightFileName,
+  fileNamePingActive,
 }: FcomFileHeaderProps) {
+  const renderHighlightedText = (text: string) => {
+    if (!highlightQuery || !highlightFileName) {
+      return text;
+    }
+    const query = highlightQuery.trim();
+    if (!query) {
+      return text;
+    }
+    const lower = text.toLowerCase();
+    const lowerQuery = query.toLowerCase();
+    if (!lower.includes(lowerQuery)) {
+      return text;
+    }
+    const parts: JSX.Element[] = [];
+    let start = 0;
+    while (true) {
+      const idx = lower.indexOf(lowerQuery, start);
+      if (idx === -1) {
+        break;
+      }
+      if (idx > start) {
+        parts.push(<span key={`text-${idx}`}>{text.slice(start, idx)}</span>);
+      }
+      parts.push(
+        <span
+          key={`match-${idx}`}
+          className={`match-highlight${fileNamePingActive ? ' match-highlight-ping' : ''}`}
+        >
+          {text.slice(idx, idx + query.length)}
+        </span>,
+      );
+      start = idx + query.length;
+    }
+    if (start < text.length) {
+      parts.push(<span key="text-end">{text.slice(start)}</span>);
+    }
+    return parts;
+  };
   return (
     <>
       <div className="file-title">
         <strong>
-          {selectedFile?.PathName || 'Select a file'}
+          {selectedFile?.PathName
+            ? renderHighlightedText(selectedFile.PathName)
+            : 'Select a file'}
           {selectedFile && (
             <button
               type="button"
@@ -89,34 +131,13 @@ export default function FcomFileHeader({
           <span className="file-path">{formatDisplayPath(selectedFile.PathID)}</span>
         )}
       </div>
-      <div className="file-meta-row">
-        <span className="schema-status">
-          {schemaLoading && <span>Schema: Loading…</span>}
-          {schemaError && (
-            <button type="button" className="schema-issue" onClick={() => setShowSchemaModal(true)}>
-              Schema: Error
-            </button>
-          )}
-          {!schemaLoading && !schemaError && !validator && (
-            <button type="button" className="schema-issue" onClick={() => setShowSchemaModal(true)}>
-              Schema: Not available
-            </button>
-          )}
-          {!schemaLoading && !schemaError && validator && !jsonParseError && validationErrors.length === 0 && (
-            <span className="schema-valid" aria-label="Schema validated">
-              Schema: ✓
-            </span>
-          )}
-          {!schemaLoading && !schemaError && validator && (jsonParseError || validationErrors.length > 0) && (
-            <button type="button" className="schema-issue" onClick={() => setShowSchemaModal(true)}>
-              Schema: {jsonParseError ? 'JSON error' : `${validationErrors.length} issue(s)`}
-            </button>
-          )}
-        </span>
-      </div>
-      {overrideInfo?.overrideMeta?.pathName
-        && Array.isArray(overrideInfo?.overrides)
-        && overrideInfo.overrides.length > 0 && (
+        {(fileMethod || fileSubMethod) && (
+          <div className="file-meta-row">
+            {fileMethod && <span>Method: {fileMethod}</span>}
+            {fileSubMethod && <span>SubMethod: {fileSubMethod}</span>}
+          </div>
+        )}
+      {overrideInfo?.overrideMeta?.pathName && hasLocalOverrides && (
         <div className="override-meta-row">
           <span>
             Override file: {overrideInfo?.overrideMeta?.pathName || overrideInfo?.overrideFileName || '—'}
@@ -156,21 +177,23 @@ export default function FcomFileHeader({
                 Raw
               </span>
             </div>
-            <button
-              type="button"
-              className="action-link"
-              onClick={onTestFile}
-              disabled={!hasEditPermission || fileTestLoading}
-              title={hasEditPermission
-                ? ''
-                : 'Read-only access'}
-            >
-              {fileTestLoading
-                ? 'Testing…'
-                : fileTestLabel
-                  ? `Test All ${fileTestLabel} SNMP Traps`
-                  : 'Test SNMP File'}
-            </button>
+            {showTestControls && (
+              <button
+                type="button"
+                className="action-link"
+                onClick={onTestFile}
+                disabled={!hasEditPermission || fileTestLoading}
+                title={hasEditPermission
+                  ? ''
+                  : 'Read-only access'}
+              >
+                {fileTestLoading
+                  ? 'Testing…'
+                  : fileTestLabel
+                    ? `Test All ${fileTestLabel} SNMP Traps`
+                    : 'Test SNMP File'}
+              </button>
+            )}
             <button
               type="button"
               className="action-link"

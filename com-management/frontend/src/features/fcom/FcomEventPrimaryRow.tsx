@@ -5,6 +5,8 @@ type FcomEventPrimaryRowProps = {
   eventPanelKey: string;
   obj: any;
   overrideTargets: Set<string>;
+  processorTargets: Set<string>;
+  getProcessorFieldSummary: (obj: any, field: string) => string;
   overrideValueMap: Map<string, any>;
   panelEditState: Record<string, boolean>;
   hasEditPermission: boolean;
@@ -40,6 +42,8 @@ export default function FcomEventPrimaryRow({
   eventPanelKey,
   obj,
   overrideTargets,
+  processorTargets,
+  getProcessorFieldSummary,
   overrideValueMap,
   panelEditState,
   hasEditPermission,
@@ -161,37 +165,53 @@ export default function FcomEventPrimaryRow({
               const value = getEffectiveEventValue(obj, 'Summary');
               const editable = getEditableValue(value);
               const stagedRemoved = isFieldStagedRemoved(obj, 'Summary');
+              const isProcessorField = processorTargets.has('$.event.Summary');
+              const processorSummary = getProcessorFieldSummary(obj, 'Summary');
               return (
-                <input
-                  className={`${isFieldHighlighted(eventPanelKey, 'Summary')
-                    ? 'panel-input panel-input-warning'
-                    : 'panel-input'}${(isFieldPendingRemoval(eventPanelKey, 'Summary')
-                    || stagedRemoved)
-                    ? ' panel-input-removed'
-                    : ''}`}
-                  value={panelDrafts?.[eventPanelKey]?.event?.Summary ?? ''}
-                  onChange={(e) => handleEventInputChange(
-                    obj,
-                    eventPanelKey,
-                    'Summary',
-                    e.target.value,
-                    e.target.selectionStart,
-                    (e.nativeEvent as InputEvent | undefined)?.inputType,
-                  )}
-                  disabled={!editable.editable
-                    || isFieldLockedByBuilder(eventPanelKey, 'Summary')
-                    || (isFieldPendingRemoval(eventPanelKey, 'Summary')
-                      && isFieldNew(obj, 'Summary'))}
-                  title={
-                    !editable.editable
-                      ? 'Eval values cannot be edited yet'
-                      : isFieldLockedByBuilder(eventPanelKey, 'Summary')
-                        ? 'Finish or cancel the builder to edit other fields'
-                        : (isFieldPendingRemoval(eventPanelKey, 'Summary') || stagedRemoved)
-                          ? 'Marked for removal'
-                          : ''
-                  }
-                />
+                isProcessorField ? (
+                  <div
+                    className={`${isFieldHighlighted(eventPanelKey, 'Summary')
+                      ? 'panel-input panel-input-warning'
+                      : 'panel-input'} panel-input-processor${(isFieldPendingRemoval(eventPanelKey, 'Summary')
+                      || stagedRemoved)
+                      ? ' panel-input-removed'
+                      : ''}`}
+                    title="Value set by processor"
+                  >
+                    Processor{processorSummary ? ` • ${processorSummary}` : ''}
+                  </div>
+                ) : (
+                  <input
+                    className={`${isFieldHighlighted(eventPanelKey, 'Summary')
+                      ? 'panel-input panel-input-warning'
+                      : 'panel-input'}${(isFieldPendingRemoval(eventPanelKey, 'Summary')
+                      || stagedRemoved)
+                      ? ' panel-input-removed'
+                      : ''}`}
+                    value={panelDrafts?.[eventPanelKey]?.event?.Summary ?? ''}
+                    onChange={(e) => handleEventInputChange(
+                      obj,
+                      eventPanelKey,
+                      'Summary',
+                      e.target.value,
+                      e.target.selectionStart,
+                      (e.nativeEvent as InputEvent | undefined)?.inputType,
+                    )}
+                    disabled={!editable.editable
+                      || isFieldLockedByBuilder(eventPanelKey, 'Summary')
+                      || (isFieldPendingRemoval(eventPanelKey, 'Summary')
+                        && isFieldNew(obj, 'Summary'))}
+                    title={
+                      !editable.editable
+                        ? 'Eval values cannot be edited yet'
+                        : isFieldLockedByBuilder(eventPanelKey, 'Summary')
+                          ? 'Finish or cancel the builder to edit other fields'
+                          : (isFieldPendingRemoval(eventPanelKey, 'Summary') || stagedRemoved)
+                            ? 'Marked for removal'
+                            : ''
+                    }
+                  />
+                )
               );
             })()
           ) : (
@@ -291,31 +311,50 @@ export default function FcomEventPrimaryRow({
             )}
           </div>
           {panelEditState[eventPanelKey] ? (
-            <input
-              className={`${isFieldHighlighted(eventPanelKey, 'Severity')
-                ? 'panel-input panel-input-warning'
-                : 'panel-input'}${(isFieldPendingRemoval(eventPanelKey, 'Severity')
-                || isFieldStagedRemoved(obj, 'Severity'))
-                ? ' panel-input-removed'
-                : ''}`}
-              value={panelDrafts?.[eventPanelKey]?.event?.Severity ?? ''}
-              onChange={(e) => handleEventInputChange(
-                obj,
-                eventPanelKey,
-                'Severity',
-                e.target.value,
-                e.target.selectionStart,
-                (e.nativeEvent as InputEvent | undefined)?.inputType,
-              )}
-              disabled={isFieldLockedByBuilder(eventPanelKey, 'Severity')
-                || (isFieldPendingRemoval(eventPanelKey, 'Severity')
-                  && isFieldNew(obj, 'Severity'))}
-              title={isFieldLockedByBuilder(eventPanelKey, 'Severity')
-                ? 'Finish or cancel the builder to edit other fields'
-                : (isFieldPendingRemoval(eventPanelKey, 'Severity') || isFieldStagedRemoved(obj, 'Severity'))
-                  ? 'Marked for removal'
-                  : ''}
-            />
+            (() => {
+              const stagedRemoved = isFieldStagedRemoved(obj, 'Severity');
+              const isProcessorField = processorTargets.has('$.event.Severity');
+              const processorSummary = getProcessorFieldSummary(obj, 'Severity');
+              return isProcessorField ? (
+                <div
+                  className={`${isFieldHighlighted(eventPanelKey, 'Severity')
+                    ? 'panel-input panel-input-warning'
+                    : 'panel-input'} panel-input-processor${(isFieldPendingRemoval(eventPanelKey, 'Severity')
+                    || stagedRemoved)
+                    ? ' panel-input-removed'
+                    : ''}`}
+                  title="Value set by processor"
+                >
+                  Processor{processorSummary ? ` • ${processorSummary}` : ''}
+                </div>
+              ) : (
+                <input
+                  className={`${isFieldHighlighted(eventPanelKey, 'Severity')
+                    ? 'panel-input panel-input-warning'
+                    : 'panel-input'}${(isFieldPendingRemoval(eventPanelKey, 'Severity')
+                    || isFieldStagedRemoved(obj, 'Severity'))
+                    ? ' panel-input-removed'
+                    : ''}`}
+                  value={panelDrafts?.[eventPanelKey]?.event?.Severity ?? ''}
+                  onChange={(e) => handleEventInputChange(
+                    obj,
+                    eventPanelKey,
+                    'Severity',
+                    e.target.value,
+                    e.target.selectionStart,
+                    (e.nativeEvent as InputEvent | undefined)?.inputType,
+                  )}
+                  disabled={isFieldLockedByBuilder(eventPanelKey, 'Severity')
+                    || (isFieldPendingRemoval(eventPanelKey, 'Severity')
+                      && isFieldNew(obj, 'Severity'))}
+                  title={isFieldLockedByBuilder(eventPanelKey, 'Severity')
+                    ? 'Finish or cancel the builder to edit other fields'
+                    : (isFieldPendingRemoval(eventPanelKey, 'Severity') || isFieldStagedRemoved(obj, 'Severity'))
+                      ? 'Marked for removal'
+                      : ''}
+                />
+              );
+            })()
           ) : (
             <span className="value">
               {renderValue(

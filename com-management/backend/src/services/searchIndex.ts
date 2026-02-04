@@ -30,7 +30,7 @@ type SearchResult = {
   type: 'file' | 'folder';
   pathId: string;
   name: string;
-  source: 'name' | 'content';
+  source: 'name' | 'content' | 'both';
   matchCount?: number;
   matches?: Array<{ line: number; column: number; preview: string }>;
 };
@@ -267,7 +267,7 @@ class SearchIndexService {
     }
     const normalizedQuery = query.toLowerCase();
     const results: SearchResult[] = [];
-    const seen = new Set<string>();
+    const seen = new Map<string, number>();
 
     const includeName = scope === 'name' || scope === 'all';
     const includeContent = scope === 'content' || scope === 'all';
@@ -284,7 +284,7 @@ class SearchIndexService {
             name: entry.name,
             source: 'name',
           });
-          seen.add(entry.pathId);
+          seen.set(entry.pathId, results.length - 1);
           if (results.length >= limit) {
             return results;
           }
@@ -295,12 +295,21 @@ class SearchIndexService {
     if (includeContent) {
       for (const entry of this.index.contentEntries) {
         if (entry.contentLower.includes(normalizedQuery)) {
-          if (seen.has(entry.pathId)) {
-            continue;
-          }
           const idx = entry.contentLower.indexOf(normalizedQuery);
           const matchCount = countOccurrences(entry.contentLower, normalizedQuery);
           const matches = idx >= 0 ? [createSnippet(entry.content, idx)] : [];
+          if (seen.has(entry.pathId)) {
+            const index = seen.get(entry.pathId);
+            if (index !== undefined) {
+              results[index] = {
+                ...results[index],
+                source: results[index].source === 'name' ? 'both' : results[index].source,
+                matchCount,
+                matches,
+              };
+            }
+            continue;
+          }
           results.push({
             type: 'file',
             pathId: entry.pathId,
@@ -309,7 +318,7 @@ class SearchIndexService {
             matchCount,
             matches,
           });
-          seen.add(entry.pathId);
+          seen.set(entry.pathId, results.length - 1);
           if (results.length >= limit) {
             return results;
           }

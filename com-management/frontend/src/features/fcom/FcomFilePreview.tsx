@@ -18,17 +18,28 @@ type FcomFilePreviewProps = {
   handleJumpToMatch: (key: string) => void;
   handlePrevMatch: () => void;
   handleNextMatch: () => void;
+  overrideObjectKeys: string[];
+  overrideMatchIndex: number;
+  overrideObjectOptions: Array<{ key: string; label: string }>;
+  handlePrevOverride: () => void;
+  handleNextOverride: () => void;
+  handleJumpToOverride: (key: string) => void;
+  matchPingKey: string | null;
   getFriendlyObjects: (data: any) => any[];
   fileData: any;
   getOverrideFlags: (obj: any) => any;
   getOverrideTargets: (obj: any) => Set<string>;
+  getProcessorTargets: (obj: any) => Set<string>;
+  getProcessorFieldSummary: (obj: any, field: string) => string;
   getOverrideValueMap: (obj: any) => Map<string, any>;
   getObjectKey: (obj: any, idx: number) => string;
+  registerObjectRowRef: (key: string, node: HTMLDivElement | null) => void;
   getEventOverrideFields: (obj: any) => string[];
   panelEditState: Record<string, boolean>;
   getPanelDirtyFields: (obj: any, panelKey: string) => string[];
   getBaseEventFields: (obj: any, panelKey: string) => string[];
   hasEditPermission: boolean;
+  showTestControls: boolean;
   openTrapComposerFromTest: (obj: any) => void;
   getObjectDescription: (obj: any) => string;
   isTestableObject: (obj: any) => boolean;
@@ -94,17 +105,28 @@ export default function FcomFilePreview({
   handleJumpToMatch,
   handlePrevMatch,
   handleNextMatch,
+  overrideObjectKeys,
+  overrideMatchIndex,
+  overrideObjectOptions,
+  handlePrevOverride,
+  handleNextOverride,
+  handleJumpToOverride,
+  matchPingKey,
   getFriendlyObjects,
   fileData,
   getOverrideFlags,
   getOverrideTargets,
+  getProcessorTargets,
+  getProcessorFieldSummary,
   getOverrideValueMap,
   getObjectKey,
+  registerObjectRowRef,
   getEventOverrideFields,
   panelEditState,
   getPanelDirtyFields,
   getBaseEventFields,
   hasEditPermission,
+  showTestControls,
   openTrapComposerFromTest,
   getObjectDescription,
   isTestableObject,
@@ -189,6 +211,29 @@ export default function FcomFilePreview({
                   )}
                 </FcomMatchBar>
               )}
+              {overrideObjectKeys.length > 0 && (
+                <FcomMatchBar
+                  label={`Override ${overrideMatchIndex + 1} of ${overrideObjectKeys.length}`}
+                  onPrev={handlePrevOverride}
+                  onNext={handleNextOverride}
+                >
+                  {overrideObjectOptions.length > 0 && (
+                    <label className="match-jump">
+                      <span className="match-jump-label">Jump to</span>
+                      <select
+                        value={overrideObjectKeys[overrideMatchIndex] || ''}
+                        onChange={(e) => handleJumpToOverride(e.target.value)}
+                      >
+                        {overrideObjectOptions.map((option, index) => (
+                          <option key={option.key} value={option.key}>
+                            {index + 1}. {option.label}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                  )}
+                </FcomMatchBar>
+              )}
               {friendlyObjects.length === 0 ? (
                 <div className="empty-state">No objects found.</div>
               ) : (
@@ -197,19 +242,24 @@ export default function FcomFilePreview({
                   return (
                     <FcomObjectCard
                       key={obj?.['@objectName'] || idx}
+                      registerObjectRowRef={registerObjectRowRef}
                       obj={obj}
                       idx={idx}
                       objectKey={objectKey}
+                      matchPingKey={matchPingKey}
                       highlightObjectKeys={highlightObjectKeys}
                       searchHighlightActive={searchHighlightActive}
                       getOverrideFlags={getOverrideFlags}
                       getOverrideTargets={getOverrideTargets}
+                      getProcessorTargets={getProcessorTargets}
+                      getProcessorFieldSummary={getProcessorFieldSummary}
                       getOverrideValueMap={getOverrideValueMap}
                       getEventOverrideFields={getEventOverrideFields}
                       panelEditState={panelEditState}
                       getPanelDirtyFields={getPanelDirtyFields}
                       getBaseEventFields={getBaseEventFields}
                       hasEditPermission={hasEditPermission}
+                      showTestControls={showTestControls}
                       openTrapComposerFromTest={openTrapComposerFromTest}
                       getObjectDescription={getObjectDescription}
                       isTestableObject={isTestableObject}

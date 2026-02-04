@@ -1,4 +1,5 @@
 import path from 'path';
+import fs from 'fs';
 import logger from '../utils/logger';
 import { UAClient } from './ua';
 
@@ -9,6 +10,10 @@ const OVERRIDE_SUFFIX = '.override.json';
 const DEFAULT_REFRESH_INTERVAL_MS = 15 * 60 * 1000;
 const OVERVIEW_REFRESH_INTERVAL_MS = Number(process.env.OVERVIEW_REFRESH_INTERVAL_MS || DEFAULT_REFRESH_INTERVAL_MS);
 const OVERVIEW_CONCURRENCY = Math.max(1, Number(process.env.OVERVIEW_CONCURRENCY || 20));
+const OVERVIEW_OVERRIDE_CONCURRENCY = Math.max(1, Number(process.env.OVERVIEW_OVERRIDE_CONCURRENCY || 4));
+const OVERVIEW_OVERRIDE_TIMEOUT_MS = Math.max(0, Number(process.env.OVERVIEW_OVERRIDE_TIMEOUT_MS || 15000));
+const CACHE_DIR = process.env.COM_CACHE_DIR || path.resolve(process.cwd(), 'cache');
+const OVERVIEW_CACHE_FILE = path.join(CACHE_DIR, 'overview_index_cache.json');
 
 type OverviewCounts = {
   files: number;
@@ -125,6 +130,41 @@ const classifyObject = (obj: any) => {
 class OverviewIndexService {
   private states = new Map<string, OverviewState>();
 
+  hydrateFromDisk(payload: Record<string, { data: OverviewData; lastBuiltAt?: string | null; lastDurationMs?: number | null }>) {
+    Object.entries(payload).forEach(([serverId, value]) => {
+      if (!value?.data) {
+        return;
+      }
+      const state = this.getState(serverId);
+      state.data = value.data;
+      state.lastBuiltAt = value.lastBuiltAt ?? null;
+      state.lastDurationMs = value.lastDurationMs ?? null;
+      state.isBuilding = false;
+      state.lastError = null;
+      state.progress = {
+        phase: 'Loaded',
+        processed: 0,
+        total: 0,
+        unit: 'items',
+      };
+    });
+  }
+
+  snapshotForDisk() {
+    const payload: Record<string, { data: OverviewData; lastBuiltAt: string | null; lastDurationMs: number | null }> = {};
+    for (const [serverId, state] of this.states.entries()) {
+      if (!state.data) {
+        continue;
+      }
+      payload[serverId] = {
+        data: state.data,
+        lastBuiltAt: state.lastBuiltAt,
+        lastDurationMs: state.lastDurationMs,
+      };
+    }
+    return payload;
+  }
+
   private getState(serverId: string): OverviewState {
     if (!this.states.has(serverId)) {
       this.states.set(serverId, {
@@ -196,6 +236,7 @@ class OverviewIndexService {
       };
       this.scheduleNextRefresh(state, serverId, uaClient);
       logger.info(`Overview index rebuilt (${trigger}) in ${state.lastDurationMs}ms`);
+      persistOverviewCacheToDisk();
     } catch (error: any) {
       state.lastError = error?.message || 'Overview index rebuild failed';
       logger.error(`Overview index rebuild error: ${state.lastError}`);
@@ -336,6 +377,22 @@ class OverviewIndexService {
       });
     };
 
+    const collectEventOverrideTargets = (entry: any, objectName: string, targetKeys: Set<string>) => {
+      if (!entry || typeof entry !== 'object') {
+        return;
+      }
+      const eventPayload = entry.event;
+      if (!eventPayload || typeof eventPayload !== 'object') {
+        return;
+      }
+      Object.keys(eventPayload).forEach((key) => {
+        if (!key) {
+          return;
+        }
+        targetKeys.add(`${objectName}::$.event.${key}`);
+      });
+    };
+
     const isFolderEntry = (entry: any) => {
       const name = String(entry?.PathName || entry?.PathID || '').toLowerCase();
       return !name.endsWith('.json');
@@ -405,7 +462,14 @@ class OverviewIndexService {
 
     const buildOverrideCounts = async (pathId: string) => {
       try {
-        const response = await uaClient.readRule(pathId);
+        const response = await (OVERVIEW_OVERRIDE_TIMEOUT_MS
+          ? Promise.race([
+            uaClient.readRule(pathId),
+            new Promise((_, reject) => {
+              setTimeout(() => reject(new Error('Override read timeout')), OVERVIEW_OVERRIDE_TIMEOUT_MS);
+            }),
+          ])
+          : uaClient.readRule(pathId));
         const raw = extractRuleText(response);
         const text = typeof raw === 'string' ? raw : JSON.stringify(raw ?? []);
         const overrides = parseOverridePayload(text);
@@ -414,6 +478,7 @@ class OverviewIndexService {
           const objectName = entry?.['@objectName'] || '__global__';
           const processors = Array.isArray(entry?.processors) ? entry.processors : [];
           collectOverrideTargets(processors, objectName, targetKeys);
+          collectEventOverrideTargets(entry, objectName, targetKeys);
         });
         return targetKeys.size;
       } catch (error: any) {
@@ -424,7 +489,9 @@ class OverviewIndexService {
 
     const normalizeVendorName = (value: string) => value.trim().toLowerCase();
     const overrideCountsByProtocolVendor = new Map<string, { name: string; count: number; protocol: string }>();
+    const rootOverrideCounts: Array<{ name: string; count: number }> = [];
     const appliedOverrides = new Set<string>();
+    let unassignedOverrideCount = 0;
     const applyVendorOverride = (protocol: string, vendor: string) => {
       const vendorKey = normalizeVendorName(vendor);
       const lookupKey = `${protocol.toLowerCase()}::${vendorKey}`;
@@ -449,38 +516,60 @@ class OverviewIndexService {
       const overrideListing = await listDirectoryRecursive(overridesRoot);
       const overridesRootNormalized = normalizePathString(overridesRoot);
       const overrideFiles = overrideListing.filter((entry) => {
-        const fileName = normalizePathString(String(entry?.PathName || entry?.PathID || ''));
+        const fileName = normalizePathString(String(entry?.PathID || entry?.PathName || ''));
         return fileName && path.posix.basename(fileName).toLowerCase().endsWith(OVERRIDE_SUFFIX);
       });
       state.progress.phase = 'Scanning overrides';
       state.progress.processed = 0;
       state.progress.total = overrideFiles.length;
       state.progress.unit = 'overrides';
-      for (const overrideEntry of overrideFiles) {
-        const fileName = normalizePathString(String(overrideEntry?.PathName || overrideEntry?.PathID || ''));
-        if (!fileName) {
-          continue;
-        }
-        const baseName = path.posix.basename(fileName);
-        const relative = path.posix.relative(overridesRootNormalized, fileName);
-        if (!relative || relative.startsWith('..')) {
-          continue;
-        }
-        const parts = relative.split('/').filter(Boolean);
-        const protocol = parts.length > 1 ? parts[0] : '(root)';
-        const vendorName = baseName.replace(new RegExp(`${OVERRIDE_SUFFIX}$`, 'i'), '') || '(root)';
-        const overrideCount = await buildOverrideCounts(String(overrideEntry?.PathID || fileName));
-        const key = `${protocol.toLowerCase()}::${normalizeVendorName(vendorName)}`;
-        overrideCountsByProtocolVendor.set(key, {
-          name: vendorName,
-          count: overrideCount,
-          protocol,
+      const runOverridePool = async (items: typeof overrideFiles, concurrency: number) => {
+        let cursor = 0;
+        const workers = Array.from({ length: Math.min(concurrency, items.length) }, async () => {
+          while (cursor < items.length) {
+            const idx = cursor;
+            cursor += 1;
+            const overrideEntry = items[idx];
+            const fileName = normalizePathString(String(overrideEntry?.PathID || overrideEntry?.PathName || ''));
+            if (!fileName) {
+              state.progress.processed += 1;
+              continue;
+            }
+            const baseName = path.posix.basename(fileName);
+            const relative = path.posix.relative(overridesRootNormalized, fileName);
+            if (!relative || relative.startsWith('..')) {
+              state.progress.processed += 1;
+              continue;
+            }
+            const parts = relative.split('/').filter(Boolean);
+            const protocol = parts.length > 1 ? parts[0] : null;
+            const vendorName = baseName.replace(new RegExp(`${OVERRIDE_SUFFIX}$`, 'i'), '') || '(root)';
+            const overrideCount = await buildOverrideCounts(String(overrideEntry?.PathID || fileName));
+            if (protocol) {
+              const key = `${protocol.toLowerCase()}::${normalizeVendorName(vendorName)}`;
+              overrideCountsByProtocolVendor.set(key, {
+                name: vendorName,
+                count: overrideCount,
+                protocol,
+              });
+            } else {
+              rootOverrideCounts.push({ name: vendorName, count: overrideCount });
+            }
+            state.progress.processed += 1;
+          }
         });
-        state.progress.processed += 1;
-      }
+        await Promise.all(workers);
+      };
+
+      await runOverridePool(overrideFiles, OVERVIEW_OVERRIDE_CONCURRENCY);
     } catch (error: any) {
       logger.warn(`Overview overrides not found for ${overridesRoot}: ${error?.message || 'unknown error'}`);
     }
+
+    state.progress.phase = 'Listing folders';
+    state.progress.processed = 0;
+    state.progress.total = 0;
+    state.progress.unit = 'folders';
 
     const protocolEntries = await listDirectory(PATH_PREFIX);
     const protocolFolders = protocolEntries.filter((entry) => isFolderEntry(entry));
@@ -558,6 +647,19 @@ class OverviewIndexService {
       applyVendorOverride(pair.protocol, pair.vendor);
     }
 
+    rootOverrideCounts.forEach((entry) => {
+      const targetVendorKey = normalizeVendorName(entry.name);
+      const match = vendorPairs.find((pair) => normalizeVendorName(pair.vendor) === targetVendorKey);
+      if (match) {
+        recordCounts(match.protocol, match.vendor, {
+          ...createEmptyCounts(),
+          overrides: entry.count,
+        });
+      } else {
+        unassignedOverrideCount += entry.count;
+      }
+    });
+
     const protocols: ProtocolEntry[] = Array.from(protocolMap.entries())
       .map(([name, data]) => ({
         name,
@@ -572,12 +674,52 @@ class OverviewIndexService {
     for (const protocol of protocols) {
       addCounts(totals, protocol.counts);
     }
+    if (unassignedOverrideCount > 0) {
+      totals.overrides += unassignedOverrideCount;
+    }
 
     return { totals, protocols };
   }
 }
 
 const overviewIndexService = new OverviewIndexService();
+
+const ensureCacheDir = () => {
+  try {
+    fs.mkdirSync(CACHE_DIR, { recursive: true });
+  } catch {
+    // ignore
+  }
+};
+
+const loadOverviewCacheFromDisk = () => {
+  try {
+    if (!fs.existsSync(OVERVIEW_CACHE_FILE)) {
+      return;
+    }
+    const raw = fs.readFileSync(OVERVIEW_CACHE_FILE, 'utf-8');
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed === 'object' && parsed.states) {
+      overviewIndexService.hydrateFromDisk(parsed.states);
+    }
+  } catch {
+    // ignore
+  }
+};
+
+const persistOverviewCacheToDisk = () => {
+  try {
+    ensureCacheDir();
+    const payload = {
+      states: overviewIndexService.snapshotForDisk(),
+    };
+    fs.writeFileSync(OVERVIEW_CACHE_FILE, JSON.stringify(payload));
+  } catch (error: any) {
+    logger.warn(`Overview cache persist failed: ${error?.message || 'write error'}`);
+  }
+};
+
+loadOverviewCacheFromDisk();
 
 export const getOverviewStatus = (serverId: string) => overviewIndexService.getStatus(serverId);
 export const requestOverviewRebuild = (serverId: string, uaClient: UAClient) => overviewIndexService.requestRebuild(serverId, uaClient);

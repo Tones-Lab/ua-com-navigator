@@ -1,7 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
-import Ajv from 'ajv';
-import addFormats from 'ajv-formats';
 import { useSessionStore } from './stores';
 import api from './services/api';
 import AppTabs from './app/AppTabs';
@@ -88,9 +86,20 @@ export default function App() {
   const [searchHighlightActive, setSearchHighlightActive] = useState(false);
   const [highlightQuery, setHighlightQuery] = useState<string | null>(null);
   const [highlightPathId, setHighlightPathId] = useState<string | null>(null);
+  const [highlightMatchSource, setHighlightMatchSource] = useState<'name' | 'content' | 'both' | null>(null);
   const [highlightObjectKeys, setHighlightObjectKeys] = useState<string[]>([]);
   const [currentMatchIndex, setCurrentMatchIndex] = useState(0);
   const [matchObjectOptions, setMatchObjectOptions] = useState<Array<{ key: string; label: string }>>([]);
+  const [matchPingKey, setMatchPingKey] = useState<string | null>(null);
+  const [fileNamePingActive, setFileNamePingActive] = useState(false);
+  const matchPingTimeoutRef = useRef<number | null>(null);
+  const fileNamePingTimeoutRef = useRef<number | null>(null);
+  const matchPingSequenceRef = useRef<number[]>([]);
+  const fileNamePingSequenceRef = useRef<number[]>([]);
+  const lastLoadPingRef = useRef<{ fileId?: string; key?: string; mode?: 'match' | 'file' }>({});
+  const [overrideObjectKeys, setOverrideObjectKeys] = useState<string[]>([]);
+  const [overrideMatchIndex, setOverrideMatchIndex] = useState(0);
+  const [overrideObjectOptions, setOverrideObjectOptions] = useState<Array<{ key: string; label: string }>>([]);
   const [rawMatchPositions, setRawMatchPositions] = useState<number[]>([]);
   const [rawMatchIndex, setRawMatchIndex] = useState(0);
   const rawMatchRefs = useRef<Record<number, HTMLSpanElement | null>>({});
@@ -251,6 +260,9 @@ export default function App() {
     setOverviewError(null);
     try {
       if (options?.forceRebuild) {
+        setOverviewRebuildPending(true);
+        overviewRebuildStartRef.current = Date.now();
+        startOverviewStatusPolling();
         await api.rebuildOverviewIndex();
       }
       const [statusRes, dataRes] = await Promise.all([
@@ -441,6 +453,12 @@ export default function App() {
   const [browseData, setBrowseData] = useState<any>(null);
   const [browseNode, setBrowseNode] = useState<string | null>(null);
   const [entries, setEntries] = useState<any[]>([]);
+  const browseSnapshotRef = useRef<{
+    browseData: any;
+    browseNode: string | null;
+    entries: any[];
+    breadcrumbs: Array<{ label: string; node: string | null }>;
+  } | null>(null);
   const [favorites, setFavorites] = useState<Array<{ type: 'file' | 'folder'; pathId: string; label: string; node?: string }>>([]);
   const [favoritesLoading, setFavoritesLoading] = useState(false);
   const [favoritesError, setFavoritesError] = useState<string | null>(null);
@@ -483,6 +501,7 @@ export default function App() {
   const [breadcrumbs, setBreadcrumbs] = useState<Array<{ label: string; node: string | null }>>([
     { label: '/', node: null },
   ]);
+  const breadcrumbsRef = useRef(breadcrumbs);
   const [selectedFile, setSelectedFile] = useState<any>(null);
   const [fileData, setFileData] = useState<any>(null);
   const [fileLoading, setFileLoading] = useState(false);
@@ -510,7 +529,6 @@ export default function App() {
   const pulseTimeoutRef = useRef<number | null>(null);
   const [saveElapsed, setSaveElapsed] = useState(0);
   const [pendingNav, setPendingNav] = useState<null | (() => void)>(null);
-  const [showSchemaModal, setShowSchemaModal] = useState(false);
   const [panelEditState, setPanelEditState] = useState<Record<string, boolean>>({});
   const [panelDrafts, setPanelDrafts] = useState<Record<string, any>>({});
   const [panelEvalModes, setPanelEvalModes] = useState<Record<string, Record<string, boolean>>>({});
@@ -540,14 +558,6 @@ export default function App() {
     processorFields?: string[];
     objectName?: string;
   }>({ open: false });
-  const [schema, setSchema] = useState<any>(null);
-  const [schemaLoading, setSchemaLoading] = useState(false);
-  const [schemaError, setSchemaError] = useState<string | null>(null);
-  const [validationErrors, setValidationErrors] = useState<Array<{ path: string; message: string }>>([]);
-  const [jsonParseError, setJsonParseError] = useState<string | null>(null);
-  const [eventsSchemaFields, setEventsSchemaFields] = useState<string[]>([]);
-  const [eventsSchemaLoading, setEventsSchemaLoading] = useState(false);
-  const [eventsSchemaError, setEventsSchemaError] = useState<string | null>(null);
   const [showAddFieldModal, setShowAddFieldModal] = useState(false);
   const [addFieldSearch, setAddFieldSearch] = useState('');
   const [addFieldContext, setAddFieldContext] = useState<{ panelKey: string; obj: any } | null>(null);
@@ -576,10 +586,16 @@ export default function App() {
   const builderHistoryInitRef = useRef(false);
   const [showBuilderHelpModal, setShowBuilderHelpModal] = useState(false);
   const [pendingCancel, setPendingCancel] = useState<null | { type: 'panel' | 'builder'; panelKey?: string }>(null);
+  const [pendingAdvancedFlowClose, setPendingAdvancedFlowClose] = useState(false);
   const [processorStep, setProcessorStep] = useState<'select' | 'configure' | 'review'>('select');
   const [processorType, setProcessorType] = useState<string | null>(null);
   const [showProcessorJson, setShowProcessorJson] = useState(true);
   const [showAdvancedProcessorModal, setShowAdvancedProcessorModal] = useState(false);
+  const [advancedFlowDefaultTarget, setAdvancedFlowDefaultTarget] = useState<string | null>(null);
+  const [modalStack, setModalStack] = useState<string[]>([]);
+  const flowEditorModalRef = useRef<HTMLDivElement | null>(null);
+  const advancedFlowModalRef = useRef<HTMLDivElement | null>(null);
+  const trapModalRef = useRef<HTMLDivElement | null>(null);
   const [advancedProcessorSearch, setAdvancedProcessorSearch] = useState('');
   const [advancedProcessorScope, setAdvancedProcessorScope] = useState<'object' | 'global'>('object');
   const [advancedFlowTarget, setAdvancedFlowTarget] = useState<{
@@ -736,6 +752,7 @@ export default function App() {
     return `case-${switchCaseIdRef.current}`;
   };
   const createFlowNode = (payload: { nodeKind: 'processor' | 'if'; processorType?: string }): FlowNode => {
+    const fallbackTarget = advancedFlowDefaultTarget || '$.event.Field';
     if (payload.nodeKind === 'if') {
       return {
         id: nextFlowId(),
@@ -754,14 +771,14 @@ export default function App() {
         id: nextFlowId(),
         kind: 'processor',
         processorType: payload.processorType,
-        config: getDefaultProcessorConfig(payload.processorType, '$.event.Field'),
+        config: getDefaultProcessorConfig(payload.processorType, fallbackTarget),
       };
     }
     return {
       id: nextFlowId(),
       kind: 'processor',
       processorType: 'set',
-      config: getDefaultProcessorConfig('set', '$.event.Field'),
+      config: getDefaultProcessorConfig('set', fallbackTarget),
     };
   };
   const updateBranchInFlow = (
@@ -1990,22 +2007,6 @@ export default function App() {
     void loadMibPath('/');
   }, [activeApp, isAuthenticated, mibEntries.length, mibLoading]);
 
-  const ensureEventsSchema = async () => {
-    if (eventsSchemaLoading || eventsSchemaFields.length > 0) {
-      return;
-    }
-    setEventsSchemaLoading(true);
-    setEventsSchemaError(null);
-    try {
-      const resp = await api.getEventsSchema();
-      const fields = Array.isArray(resp.data?.fields) ? resp.data.fields.map(String) : [];
-      setEventsSchemaFields(fields);
-    } catch (err: any) {
-      setEventsSchemaError(err?.response?.data?.error || 'Failed to load Events schema');
-    } finally {
-      setEventsSchemaLoading(false);
-    }
-  };
   useEffect(() => {
     if (!saveLoading) {
       setSaveElapsed(0);
@@ -2043,11 +2044,6 @@ export default function App() {
       }
     };
   }, [stagedToast, toastPulseAfter]);
-  useEffect(() => {
-    if (showFieldReferenceModal || eventFieldPickerOpen) {
-      ensureEventsSchema();
-    }
-  }, [showFieldReferenceModal, eventFieldPickerOpen]);
   const isAnyPanelEditing = Object.values(panelEditState).some(Boolean);
 
   const triggerToast = (message: string, pulse = false) => {
@@ -2311,22 +2307,6 @@ export default function App() {
     return { rows, elseResult };
   };
 
-  const ajv = useMemo(() => {
-    const instance = new Ajv({ allErrors: true, strict: false });
-    addFormats(instance);
-    return instance;
-  }, []);
-
-  const validator = useMemo(() => {
-    if (!schema) {
-      return null;
-    }
-    try {
-      return ajv.compile(schema);
-    } catch {
-      return null;
-    }
-  }, [ajv, schema]);
 
   const serverOptions = useMemo(
     () => servers.map((srv) => ({
@@ -2390,60 +2370,6 @@ export default function App() {
     sessionStorage.setItem('com.activeApp', activeApp);
   }, [activeApp, isAuthenticated]);
 
-  useEffect(() => {
-    if (!isAuthenticated || schema || schemaLoading) {
-      return;
-    }
-    const loadSchema = async () => {
-      setSchemaError(null);
-      setSchemaLoading(true);
-      try {
-        const resp = await api.getSchema();
-        setSchema(resp.data);
-      } catch (err: any) {
-        setSchemaError(err?.response?.data?.error || 'Schema unavailable');
-      } finally {
-        setSchemaLoading(false);
-      }
-    };
-    void loadSchema();
-  }, [isAuthenticated, schema, schemaLoading]);
-
-  useEffect(() => {
-    if (!validator) {
-      setValidationErrors([]);
-      setJsonParseError(null);
-      return;
-    }
-    const text = editorText.trim();
-    if (!text) {
-      setValidationErrors([]);
-      setJsonParseError(null);
-      return;
-    }
-    try {
-      const parsed = JSON.parse(text);
-      setJsonParseError(null);
-      try {
-        const valid = validator(parsed);
-        if (!valid) {
-          const errors = (validator.errors || []).map((err) => ({
-            path: err.instancePath || '/',
-            message: err.message || 'Invalid value',
-          }));
-          setValidationErrors(errors);
-        } else {
-          setValidationErrors([]);
-        }
-      } catch (err: any) {
-        setValidationErrors([]);
-        setSchemaError(err?.message || 'Schema validation failed');
-      }
-    } catch (err: any) {
-      setJsonParseError(err?.message || 'Invalid JSON');
-      setValidationErrors([]);
-    }
-  }, [editorText, validator]);
 
   useEffect(() => {
     if (isAuthenticated && entries.length === 0 && !browseLoading && !urlHydrated.current) {
@@ -2497,6 +2423,10 @@ export default function App() {
 
     void loadNodeInternal(null, '/');
   }, [isAuthenticated]);
+
+  useEffect(() => {
+    breadcrumbsRef.current = breadcrumbs;
+  }, [breadcrumbs]);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -2884,10 +2814,22 @@ export default function App() {
     if (!isAuthenticated || !showUserMenu) {
       return;
     }
+    startOverviewStatusPolling();
+    startSearchStatusPolling();
+    startFolderStatusPolling();
     void refreshOverviewStatus();
     void refreshSearchStatus();
     void refreshFolderOverviewStatus();
   }, [isAuthenticated, showUserMenu]);
+
+  useEffect(() => {
+    if (showUserMenu) {
+      return;
+    }
+    stopOverviewStatusPolling();
+    stopSearchStatusPolling();
+    stopFolderStatusPolling();
+  }, [showUserMenu]);
 
   useEffect(() => {
     if (!isAuthenticated || !showPathModal) {
@@ -2932,7 +2874,15 @@ export default function App() {
 
   const loadNodeInternal = async (node: string | null, label?: string): Promise<boolean> => {
     setBrowseError(null);
+    browseSnapshotRef.current = {
+      browseData,
+      browseNode,
+      entries,
+      breadcrumbs: breadcrumbsRef.current,
+    };
     setBrowseLoading(true);
+    setBrowseData(null);
+    setEntries([]);
     try {
       const resp = await api.browsePath(browsePath, node ? { node } : undefined);
       setBrowseData(resp.data);
@@ -2948,6 +2898,12 @@ export default function App() {
       return true;
     } catch (err: any) {
       setBrowseError(err?.response?.data?.error || 'Failed to load files');
+      if (browseSnapshotRef.current) {
+        setBrowseData(browseSnapshotRef.current.browseData);
+        setEntries(browseSnapshotRef.current.entries);
+        setBrowseNode(browseSnapshotRef.current.browseNode);
+        setBreadcrumbs(browseSnapshotRef.current.breadcrumbs);
+      }
       return false;
     } finally {
       setBrowseLoading(false);
@@ -3025,6 +2981,7 @@ export default function App() {
       setHighlightObjectKeys([]);
       setCurrentMatchIndex(0);
       setSearchHighlightActive(false);
+      setHighlightMatchSource(null);
     }
     setSelectedFolder(null);
     setFolderOverview(null);
@@ -3113,6 +3070,7 @@ export default function App() {
     setHighlightObjectKeys([]);
     setCurrentMatchIndex(0);
     setSearchHighlightActive(false);
+    setHighlightMatchSource(null);
     setSelectedFile(null);
     setFileData(null);
     setOverrideInfo(null);
@@ -3122,7 +3080,7 @@ export default function App() {
     setFolderLoading(true);
     try {
       setBreadcrumbs(buildBreadcrumbsFromPath(entry.PathID));
-      await loadNodeInternal(entry.PathID, entry.PathName);
+      await loadNodeInternal(entry.PathID);
       const resp = await api.getFolderOverview(entry.PathID, 25);
       setFolderOverview(resp.data);
     } catch (err: any) {
@@ -3162,7 +3120,9 @@ export default function App() {
     if (query) {
       setHighlightQuery(query);
       setHighlightPathId(pathId);
-      setSearchHighlightActive(true);
+      const source = result?.source === 'both' ? 'both' : result?.source === 'name' ? 'name' : 'content';
+      setHighlightMatchSource(source);
+      setSearchHighlightActive(source === 'content' || source === 'both');
       highlightNextOpenRef.current = true;
     }
     await openFileFromUrl(pathId);
@@ -3981,6 +3941,42 @@ export default function App() {
     pendingOverrideSave || getBaseOverrides()
   );
 
+  const availableEventFields = useMemo(() => {
+    const fields = new Set<string>();
+    getFriendlyObjects(fileData).forEach((obj: any) => {
+      Object.keys(obj?.event || {}).forEach((field) => fields.add(field));
+    });
+    getWorkingOverrides().forEach((entry: any) => {
+      Object.keys(entry?.event || {}).forEach((field) => fields.add(field));
+    });
+    Object.values(panelAddedFields).forEach((list) => {
+      (list || []).forEach((field) => fields.add(field));
+    });
+    return Array.from(fields).sort((a, b) => a.localeCompare(b));
+  }, [fileData, overrideInfo, pendingOverrideSave, panelAddedFields]);
+
+  const hasLocalOverrides = useMemo(() => {
+    if (!selectedFile) {
+      return false;
+    }
+    const overrides = getWorkingOverrides();
+    if (!Array.isArray(overrides) || overrides.length === 0) {
+      return false;
+    }
+    const objectNames = new Set(
+      getFriendlyObjects(fileData)
+        .map((obj: any) => obj?.['@objectName'])
+        .filter(Boolean),
+    );
+    if (objectNames.size === 0) {
+      return false;
+    }
+    return overrides.some((entry: any) => {
+      const name = entry?.['@objectName'];
+      return name && objectNames.has(name);
+    });
+  }, [selectedFile, fileData, overrideInfo, pendingOverrideSave]);
+
   const overrideIndex = useMemo(() => {
     const entries = getWorkingOverrides();
     const map = new Map<string, any[]>();
@@ -4231,13 +4227,20 @@ export default function App() {
           targets.forEach((target) => {
             const thenValue = thenMap.get(target) ?? 'no change';
             const elseValue = elseMap.get(target) ?? 'no change';
-            map.set(target, `if (${condition}) then ${thenValue} else ${elseValue}`);
+            map.set(
+              target,
+              `if (${condition}) then ${formatOverrideValue(thenValue)} else ${formatOverrideValue(elseValue)}`,
+            );
           });
           return;
         }
         const target = getProcessorTargetField(processor);
         if (target) {
-          map.set(target, getProcessorDisplayValue(processor));
+          if (processor?.set) {
+            map.set(target, processor.set.source);
+          } else {
+            map.set(target, getProcessorDisplayValue(processor));
+          }
         }
       });
     };
@@ -4290,7 +4293,13 @@ export default function App() {
       title: string;
       objectName?: string;
       scope?: string;
-      fieldChanges: Array<{ target: string; action: 'added' | 'updated' | 'removed'; before?: any; after?: any }>;
+      fieldChanges: Array<{
+        target: string;
+        action: 'added' | 'updated' | 'removed';
+        before?: any;
+        after?: any;
+        origin: 'event' | 'processor';
+      }>;
       processorChanges: Array<{ action: 'added' | 'removed'; processor: any }>;
     }> = [];
 
@@ -4301,25 +4310,56 @@ export default function App() {
       const scope = stagedEntry?.scope || baseEntry?.scope;
       const baseProcessors = Array.isArray(baseEntry?.entry?.processors) ? baseEntry?.entry?.processors : [];
       const stagedProcessors = Array.isArray(stagedEntry?.entry?.processors) ? stagedEntry?.entry?.processors : [];
+      const baseEventOverrides = baseEntry?.entry?.event && typeof baseEntry.entry.event === 'object'
+        ? baseEntry.entry.event
+        : {};
+      const stagedEventOverrides = stagedEntry?.entry?.event && typeof stagedEntry.entry.event === 'object'
+        ? stagedEntry.entry.event
+        : {};
       const { targeted: baseTargeted, untargeted: baseUntargeted } = splitProcessors(baseProcessors);
       const { targeted: stagedTargeted, untargeted: stagedUntargeted } = splitProcessors(stagedProcessors);
       const baseTargetMap = getOverrideTargetMap(baseProcessors);
       const stagedTargetMap = getOverrideTargetMap(stagedProcessors);
-      const targets = new Set<string>([...baseTargetMap.keys(), ...stagedTargetMap.keys()]);
-      const fieldChanges: Array<{ target: string; action: 'added' | 'updated' | 'removed'; before?: any; after?: any }> = [];
+      const targets = new Set<string>([
+        ...baseTargetMap.keys(),
+        ...stagedTargetMap.keys(),
+        ...Object.keys(baseEventOverrides).map((field) => `$.event.${field}`),
+        ...Object.keys(stagedEventOverrides).map((field) => `$.event.${field}`),
+      ]);
+      const fieldChanges: Array<{
+        target: string;
+        action: 'added' | 'updated' | 'removed';
+        before?: any;
+        after?: any;
+        origin: 'event' | 'processor';
+      }> = [];
       targets.forEach((target) => {
-        const before = baseTargeted.get(target) ?? baseTargetMap.get(target);
-        const after = stagedTargeted.get(target) ?? stagedTargetMap.get(target);
-        if (before && after) {
+        const fieldName = target.replace('$.event.', '');
+        const hasBaseEvent = Object.prototype.hasOwnProperty.call(baseEventOverrides, fieldName);
+        const hasStagedEvent = Object.prototype.hasOwnProperty.call(stagedEventOverrides, fieldName);
+        const baseValue = objectName && target.startsWith('$.event.')
+          ? getBaseObjectValue(objectName, target)
+          : undefined;
+        const before = Object.prototype.hasOwnProperty.call(baseEventOverrides, fieldName)
+          ? baseEventOverrides[fieldName]
+          : baseTargeted.get(target) ?? baseTargetMap.get(target);
+        const after = Object.prototype.hasOwnProperty.call(stagedEventOverrides, fieldName)
+          ? stagedEventOverrides[fieldName]
+          : stagedTargeted.get(target) ?? stagedTargetMap.get(target);
+        const origin: 'event' | 'processor' = (hasBaseEvent || hasStagedEvent) ? 'event' : 'processor';
+        if (before !== undefined && after !== undefined) {
           if (stringifyProcessor(before) !== stringifyProcessor(after)) {
-            fieldChanges.push({ target, action: 'updated', before, after });
+            fieldChanges.push({ target, action: 'updated', before, after, origin });
           }
           return;
         }
-        if (before) {
-          fieldChanges.push({ target, action: 'removed', before });
-        } else if (after) {
-          fieldChanges.push({ target, action: 'added', after });
+        if (before !== undefined) {
+          fieldChanges.push({ target, action: 'removed', before, origin });
+        } else if (after !== undefined) {
+          const action: 'added' | 'updated' = origin === 'event' && baseValue !== undefined
+            ? 'updated'
+            : 'added';
+          fieldChanges.push({ target, action, after, origin });
         }
       });
 
@@ -4374,7 +4414,10 @@ export default function App() {
     const overrides = overrideIndex.get(objectName) || [];
     const processors = overrides.flatMap((entry: any) => (Array.isArray(entry?.processors) ? entry.processors : []));
     const targets = processors.map(getProcessorTargetField).filter(Boolean) as string[];
-    const event = targets.some((target) => target.startsWith('$.event.'));
+    const hasEventOverrides = overrides.some((entry: any) => (
+      entry?.event && typeof entry.event === 'object' && Object.keys(entry.event).length > 0
+    ));
+    const event = hasEventOverrides || targets.some((target) => target.startsWith('$.event.'));
     const trap = targets.some((target) => target.startsWith('$.trap.') || target.includes('trap.variables'));
     const pre = targets.some((target) => target.startsWith('$.preProcessors'));
     const hasProcessors = processors.length > 0;
@@ -4396,7 +4439,36 @@ export default function App() {
     const overrides = overrideIndex.get(objectName) || [];
     const processors = overrides.flatMap((entry: any) => (Array.isArray(entry?.processors) ? entry.processors : []));
     const targetMap = getOverrideTargetMap(processors);
+    overrides.forEach((entry: any) => {
+      const eventOverrides = entry?.event && typeof entry.event === 'object' ? entry.event : {};
+      Object.keys(eventOverrides).forEach((field) => {
+        targetMap.set(`$.event.${field}`, eventOverrides[field]);
+      });
+    });
     return new Set<string>(Array.from(targetMap.keys()));
+  };
+
+  const getProcessorTargets = (obj: any) => getDirectOverrideTargets(obj);
+
+  const getProcessorFieldSummary = (obj: any, field: string) => {
+    const objectName = obj?.['@objectName'];
+    if (!objectName) {
+      return '';
+    }
+    const overrides = overrideIndex.get(objectName) || [];
+    const processors = overrides.flatMap((entry: any) => (
+      Array.isArray(entry?.processors) ? entry.processors : []
+    ));
+    const target = `$.event.${field}`;
+    const processor = processors.find((proc: any) => getProcessorTargetField(proc) === target);
+    if (!processor) {
+      return '';
+    }
+    const summary = getProcessorSummaryLines(processor);
+    if (summary.length > 0) {
+      return summary.join(' • ');
+    }
+    return getProcessorDisplayValue(processor);
   };
 
   const getOverrideValueMap = (obj: any) => {
@@ -4406,7 +4478,14 @@ export default function App() {
     }
     const overrides = overrideIndex.get(objectName) || [];
     const processors = overrides.flatMap((entry: any) => (Array.isArray(entry?.processors) ? entry.processors : []));
-    return getOverrideTargetMap(processors);
+    const targetMap = getOverrideTargetMap(processors);
+    overrides.forEach((entry: any) => {
+      const eventOverrides = entry?.event && typeof entry.event === 'object' ? entry.event : {};
+      Object.keys(eventOverrides).forEach((field) => {
+        targetMap.set(`$.event.${field}`, eventOverrides[field]);
+      });
+    });
+    return targetMap;
   };
 
   const getBaseObjectValue = (objectName: string | undefined, target: string) => {
@@ -4521,7 +4600,9 @@ export default function App() {
     overrideTargets: Set<string>,
   ) => {
     const evalFlag = shouldShowEvalToggle(panelKey, field, obj);
-    const processorFlag = overrideTargets.has(`$.event.${field}`);
+    const hasOverride = overrideTargets.has(`$.event.${field}`);
+    const processorTargets = hasOverride ? getDirectOverrideTargets(obj) : new Set<string>();
+    const processorFlag = hasOverride && processorTargets.has(`$.event.${field}`);
     if (!evalFlag && !processorFlag) {
       return null;
     }
@@ -4656,8 +4737,18 @@ export default function App() {
     );
   };
 
-  const reservedEventFields = new Set(['EventID', 'EventKey', 'Method']);
-  const baseEventFieldOrder = ['Node', 'Summary', 'Severity', 'EventType', 'EventCategory', 'ExpireTime'];
+  const reservedEventFields = new Set<string>();
+  const baseEventFieldOrder = [
+    'Node',
+    'Summary',
+    'Severity',
+    'EventType',
+    'EventCategory',
+    'ExpireTime',
+    'Method',
+    'SubMethod',
+    'SubNode',
+  ];
   const eventFieldDescriptions: Record<string, string> = {
     EventID: 'Database-managed ID; do not set or change this value.',
     EventKey: 'Rules-set de-duplication key used to match events in the live table.',
@@ -4698,6 +4789,63 @@ export default function App() {
     ZoneID: 'Device zone identifier.',
   };
 
+  const fileMethodInfo = useMemo(() => {
+    const objects = getFriendlyObjects(fileData);
+    if (objects.length === 0) {
+      return {
+        method: null as string | null,
+        subMethod: null as string | null,
+        methodUniform: false,
+        subMethodUniform: false,
+      };
+    }
+    const methodValues = new Set<string>();
+    const subMethodValues = new Set<string>();
+    objects.forEach((obj: any) => {
+      const method = obj?.method ?? obj?.event?.Method;
+      const subMethod = obj?.event?.SubMethod ?? obj?.subMethod;
+      if (method) {
+        methodValues.add(String(method));
+      }
+      if (subMethod) {
+        subMethodValues.add(String(subMethod));
+      }
+    });
+    return {
+      method: methodValues.size === 1 ? Array.from(methodValues)[0] : null,
+      subMethod: subMethodValues.size === 1 ? Array.from(subMethodValues)[0] : null,
+      methodUniform: methodValues.size === 1,
+      subMethodUniform: subMethodValues.size === 1,
+    };
+  }, [fileData]);
+
+  const isTrapMethod = (value?: string | null) => (
+    typeof value === 'string' && value.toLowerCase().includes('trap')
+  );
+
+  const isTrapFileContext = useMemo(() => {
+    if (isTrapMethod(fileMethodInfo.method)) {
+      return true;
+    }
+    if (selectedFile?.PathID && String(selectedFile.PathID).toLowerCase().includes('/trap/')) {
+      return true;
+    }
+    const objects = getFriendlyObjects(fileData);
+    const methods = objects
+      .map((obj: any) => obj?.method ?? obj?.event?.Method)
+      .filter(Boolean)
+      .map((value: any) => String(value));
+    if (methods.length === 0) {
+      return false;
+    }
+    return methods.every((value) => isTrapMethod(value));
+  }, [fileMethodInfo.method, selectedFile?.PathID, fileData]);
+
+  const isTrapFolderContext = useMemo(() => {
+    const pathId = selectedFolder?.PathID || '';
+    return String(pathId).toLowerCase().includes('/trap/');
+  }, [selectedFolder?.PathID]);
+
   const getExistingEventFields = (obj: any, panelKey: string) => {
     const fields = new Set<string>();
     Object.keys(obj?.event || {}).forEach((field) => fields.add(field));
@@ -4709,7 +4857,14 @@ export default function App() {
 
   const getBaseEventFields = (obj: any, panelKey: string) => {
     const existing = getExistingEventFields(obj, panelKey);
-    return baseEventFieldOrder.filter((field) => existing.has(field));
+    const headerFields = new Set<string>();
+    if (fileMethodInfo.methodUniform && fileMethodInfo.method) {
+      headerFields.add('Method');
+    }
+    if (fileMethodInfo.subMethodUniform && fileMethodInfo.subMethod) {
+      headerFields.add('SubMethod');
+    }
+    return baseEventFieldOrder.filter((field) => existing.has(field) && !headerFields.has(field));
   };
 
   const getAdditionalEventFields = (obj: any, panelKey: string) => {
@@ -4734,7 +4889,6 @@ export default function App() {
     setAddFieldContext({ panelKey, obj });
     setShowAddFieldModal(true);
     setAddFieldSearch('');
-    ensureEventsSchema();
   };
 
   const addFieldToPanel = (field: string) => {
@@ -4968,6 +5122,9 @@ export default function App() {
       };
 
     let processors = Array.isArray(overrideEntry.processors) ? [...overrideEntry.processors] : [];
+    const eventOverrides: Record<string, any> = overrideEntry.event && typeof overrideEntry.event === 'object'
+      ? { ...overrideEntry.event }
+      : {};
 
     if (removalFields.size > 0) {
       processors = processors.filter((proc: any) => {
@@ -4978,31 +5135,32 @@ export default function App() {
         const field = target.replace('$.event.', '');
         return !removalFields.has(field);
       });
+      removalFields.forEach((field) => {
+        delete eventOverrides[field];
+      });
     }
 
     updates.forEach(({ field, value }) => {
       if (removalFields.has(field)) {
         return;
       }
+      eventOverrides[field] = value;
       const targetField = `$.event.${field}`;
-      const existingIdx = processors.findIndex((proc: any) => {
-        const target = getProcessorTargetField(proc);
-        return target === targetField && proc?.set;
-      });
-      const newProcessor = buildOverrideSetProcessor(field, value);
-      if (existingIdx >= 0) {
-        processors[existingIdx] = newProcessor;
-      } else {
-        processors.push(newProcessor);
-      }
+      processors = processors.filter((proc: any) => getProcessorTargetField(proc) !== targetField);
     });
 
-    if (processors.length === 0) {
+    const hasEventOverrides = Object.keys(eventOverrides).length > 0;
+    if (processors.length === 0 && !hasEventOverrides) {
       if (matchIndex >= 0) {
         baseOverrides.splice(matchIndex, 1);
       }
     } else {
       overrideEntry.processors = processors;
+      if (hasEventOverrides) {
+        overrideEntry.event = eventOverrides;
+      } else {
+        delete overrideEntry.event;
+      }
       if (matchIndex >= 0) {
         baseOverrides[matchIndex] = overrideEntry;
       } else {
@@ -5108,21 +5266,22 @@ export default function App() {
     if (!hasEditPermission || !panelEditState[panelKey]) {
       return;
     }
-    const fields = getEventOverrideFields(obj);
-    if (fields.length === 0) {
+    const objectName = obj?.['@objectName'];
+    if (!objectName) {
       return;
     }
-    const directTargets = getDirectOverrideTargets(obj);
+    const overrides = overrideIndex.get(objectName) || [];
+    const eventOverrideFields = new Set<string>();
+    overrides.forEach((entry: any) => {
+      const eventOverrides = entry?.event && typeof entry.event === 'object' ? entry.event : {};
+      Object.keys(eventOverrides).forEach((field) => eventOverrideFields.add(field));
+    });
+    const processorTargets = getDirectOverrideTargets(obj);
     const baseValues: Record<string, string> = {};
     const newFields: string[] = [];
     const removableFields: string[] = [];
     const processorFields: string[] = [];
-    fields.forEach((field) => {
-      const target = `$.event.${field}`;
-      if (!directTargets.has(target)) {
-        processorFields.push(field);
-        return;
-      }
+    eventOverrideFields.forEach((field) => {
       removableFields.push(field);
       const baseValue = getBaseEventDisplay(obj, field) || '—';
       if (baseValue === 'New') {
@@ -5132,6 +5291,14 @@ export default function App() {
         baseValues[field] = baseValue;
       }
     });
+    processorTargets.forEach((target) => {
+      if (target?.startsWith('$.event.')) {
+        processorFields.push(target.replace('$.event.', ''));
+      }
+    });
+    if (removableFields.length === 0 && processorFields.length === 0) {
+      return;
+    }
     setRemoveAllOverridesModal({
       open: true,
       panelKey,
@@ -5139,7 +5306,7 @@ export default function App() {
       baseValues,
       newFields,
       processorFields,
-      objectName: obj?.['@objectName'],
+      objectName,
     });
   };
 
@@ -5226,6 +5393,49 @@ export default function App() {
     scrollToRef(objectRowRefs.current[key]);
   };
 
+  const scrollToOverrideIndex = (index: number) => {
+    if (index < 0 || index >= overrideObjectKeys.length) {
+      return;
+    }
+    const key = overrideObjectKeys[index];
+    scrollToRef(objectRowRefs.current[key]);
+  };
+
+  const handlePrevOverride = () => {
+    if (overrideObjectKeys.length === 0) {
+      return;
+    }
+    setOverrideMatchIndex((prev) => {
+      const next = prev <= 0 ? overrideObjectKeys.length - 1 : prev - 1;
+      scrollToOverrideIndex(next);
+      return next;
+    });
+  };
+
+  const handleNextOverride = () => {
+    if (overrideObjectKeys.length === 0) {
+      return;
+    }
+    setOverrideMatchIndex((prev) => {
+      const next = prev >= overrideObjectKeys.length - 1 ? 0 : prev + 1;
+      scrollToOverrideIndex(next);
+      return next;
+    });
+  };
+
+  const handleJumpToOverride = (key: string) => {
+    const index = overrideObjectKeys.indexOf(key);
+    if (index === -1) {
+      return;
+    }
+    setOverrideMatchIndex(index);
+    scrollToOverrideIndex(index);
+  };
+
+  const registerObjectRowRef = (key: string, node: HTMLDivElement | null) => {
+    objectRowRefs.current[key] = node;
+  };
+
   const shouldHighlightTerm = () => Boolean(searchHighlightActive && highlightQuery);
 
   const renderHighlightedText = (text: string) => {
@@ -5252,7 +5462,10 @@ export default function App() {
         parts.push(text.slice(start, idx));
       }
       parts.push(
-        <span key={`match-${idx}`} className="match-highlight">
+        <span
+          key={`match-${idx}`}
+          className={`match-highlight${matchPingKey ? ' match-highlight-ping' : ''}`}
+        >
           {text.slice(idx, idx + query.length)}
         </span>,
       );
@@ -5262,6 +5475,97 @@ export default function App() {
       parts.push(text.slice(start));
     }
     return parts;
+  };
+
+  const highlightFileName = Boolean(
+    highlightQuery
+    && highlightMatchSource
+    && (highlightMatchSource === 'name' || highlightMatchSource === 'both')
+    && selectedFile?.PathID
+    && selectedFile.PathID === highlightPathId
+  );
+
+  const modalBaseZ = 1200;
+  const modalStepZ = 10;
+  const updateModalStack = (id: string, open: boolean) => {
+    setModalStack((prev) => {
+      if (open) {
+        return prev.includes(id) ? prev : [...prev, id];
+      }
+      return prev.filter((entry) => entry !== id);
+    });
+  };
+  const getModalOverlayStyle = (id: string, fallbackLevel = 0) => {
+    const index = modalStack.indexOf(id);
+    const level = index >= 0 ? index : fallbackLevel;
+    return { zIndex: modalBaseZ + level * modalStepZ };
+  };
+
+  const triggerValidationPulse = (container: HTMLElement | null) => {
+    if (!container) {
+      return;
+    }
+    const target = container.querySelector<HTMLElement>('[data-error="true"]');
+    if (!target) {
+      return;
+    }
+    target.classList.remove('input-pulse');
+    void target.offsetWidth;
+    target.classList.add('input-pulse');
+    target.focus();
+    window.setTimeout(() => target.classList.remove('input-pulse'), 800);
+  };
+
+  const triggerFlowErrorPulse = (container: HTMLElement | null) => {
+    if (!container) {
+      return;
+    }
+    const target = container.querySelector<HTMLElement>('.flow-node-error');
+    if (!target) {
+      return;
+    }
+    target.classList.remove('flow-node-pulse');
+    void target.offsetWidth;
+    target.classList.add('flow-node-pulse');
+    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    window.setTimeout(() => target.classList.remove('flow-node-pulse'), 800);
+  };
+
+  const clearPingSequence = (sequenceRef: React.MutableRefObject<number[]>) => {
+    sequenceRef.current.forEach((timeout) => window.clearTimeout(timeout));
+    sequenceRef.current = [];
+  };
+
+  const startMatchPingSequence = (key: string, count = 3) => {
+    clearPingSequence(matchPingSequenceRef);
+    let runCount = 0;
+    const trigger = () => {
+      setMatchPingKey(key);
+      matchPingSequenceRef.current.push(window.setTimeout(() => {
+        setMatchPingKey(null);
+        runCount += 1;
+        if (runCount < count) {
+          matchPingSequenceRef.current.push(window.setTimeout(trigger, 260));
+        }
+      }, 520));
+    };
+    trigger();
+  };
+
+  const startFileNamePingSequence = (count = 3) => {
+    clearPingSequence(fileNamePingSequenceRef);
+    let runCount = 0;
+    const trigger = () => {
+      setFileNamePingActive(true);
+      fileNamePingSequenceRef.current.push(window.setTimeout(() => {
+        setFileNamePingActive(false);
+        runCount += 1;
+        if (runCount < count) {
+          fileNamePingSequenceRef.current.push(window.setTimeout(trigger, 260));
+        }
+      }, 520));
+    };
+    trigger();
   };
 
   const renderValue = (
@@ -5576,6 +5880,8 @@ export default function App() {
               className="builder-select"
               value={value ? 'true' : 'false'}
               onChange={(e) => onConfigChange(field.key, e.target.value === 'true')}
+              data-error={errors.length > 0 ? 'true' : undefined}
+              aria-invalid={errors.length > 0}
             >
               <option value="false">false</option>
               <option value="true">true</option>
@@ -5610,6 +5916,8 @@ export default function App() {
               className="builder-select"
               value={String(value || '')}
               onChange={(e) => onConfigChange(field.key, e.target.value)}
+              data-error={errors.length > 0 ? 'true' : undefined}
+              aria-invalid={errors.length > 0}
             >
               {(field.options || []).map((option) => (
                 <option key={option.value} value={option.value}>{option.label}</option>
@@ -5625,6 +5933,8 @@ export default function App() {
                 e.target.selectionStart,
                 (e.nativeEvent as InputEvent | undefined)?.inputType,
               )}
+              data-error={errors.length > 0 ? 'true' : undefined}
+              aria-invalid={errors.length > 0}
             />
           ) : (
             <input
@@ -5636,6 +5946,8 @@ export default function App() {
                 e.target.selectionStart,
                 (e.nativeEvent as InputEvent | undefined)?.inputType,
               )}
+              data-error={errors.length > 0 ? 'true' : undefined}
+              aria-invalid={errors.length > 0}
             />
           )}
           {context === 'builder' && field.key === 'source' && builderTarget && (
@@ -6622,6 +6934,8 @@ export default function App() {
     event: React.DragEvent<HTMLElement>,
     path: FlowBranchPath,
     setNodes: React.Dispatch<React.SetStateAction<FlowNode[]>>,
+    scope: 'object' | 'global',
+    lane: 'object' | 'pre' | 'post',
   ) => {
     event.stopPropagation();
     event.preventDefault();
@@ -6641,7 +6955,15 @@ export default function App() {
     }
     if (payload.source === 'palette') {
       const newNode = createFlowNode(payload);
-      setNodes((prev) => appendNodeAtPath(prev, path, newNode));
+      setNodes((prev) => {
+        const next = appendNodeAtPath(prev, path, newNode);
+        const errorMap: FlowNodeErrorMap = {};
+        validateFlowNode(newNode, lane, errorMap);
+        if (errorMap[newNode.id]?.length) {
+          openFlowEditor(newNode.id, scope, lane, next, setNodes);
+        }
+        return next;
+      });
       return;
     }
     if (payload.source === 'flow' && payload.nodeId) {
@@ -6666,7 +6988,7 @@ export default function App() {
     <div
       className={`flow-lane${advancedFlowFocusTarget ? ' flow-lane-focused' : ''}`}
       onDragOver={handleFlowDragOver}
-      onDrop={(event) => handleFlowDrop(event, path, setNodes)}
+      onDrop={(event) => handleFlowDrop(event, path, setNodes, scope, lane)}
     >
       {nodes.length === 0 && (
         <div className="flow-empty">Drop processors here</div>
@@ -7057,6 +7379,17 @@ export default function App() {
     return object !== (advancedFlowBaseline.object || '');
   })();
 
+  const requestCloseAdvancedFlowModal = () => {
+    if (advancedFlowDirty) {
+      setPendingAdvancedFlowClose(true);
+      return;
+    }
+    setShowAdvancedProcessorModal(false);
+    setFlowEditor(null);
+    setFlowEditorDraft(null);
+    setAdvancedFlowDefaultTarget(null);
+  };
+
   const focusedFlowMatches = useMemo(() => {
     if (!advancedFlowFocusTarget) {
       return [] as FocusMatch[];
@@ -7116,17 +7449,19 @@ export default function App() {
   const stagedFieldChangeMap = useMemo(() => {
     const map = new Map<string, Map<string, 'added' | 'updated' | 'removed'>>();
     stagedDiff.sections.forEach((section) => {
-      if (!section.objectName) {
+      const objectName = section.objectName;
+      if (!objectName) {
         return;
       }
       section.fieldChanges.forEach((change) => {
-        if (!change.target?.startsWith('$.event.')) {
+        const target = change.target ?? '';
+        if (!target.startsWith('$.event.')) {
           return;
         }
-        const field = change.target.replace('$.event.', '');
-        const fieldMap = map.get(section.objectName) || new Map<string, 'added' | 'updated' | 'removed'>();
+        const field = target.replace('$.event.', '');
+        const fieldMap = map.get(objectName) || new Map<string, 'added' | 'updated' | 'removed'>();
         fieldMap.set(field, change.action);
-        map.set(section.objectName, fieldMap);
+        map.set(objectName, fieldMap);
       });
     });
     return map;
@@ -7280,6 +7615,7 @@ export default function App() {
       setAdvancedFlowFocusTarget(focusTargetField || null);
       setAdvancedFlowFocusIndex(0);
       setAdvancedFlowFocusOnly(false);
+      setAdvancedFlowDefaultTarget(focusTargetField || null);
       setShowAdvancedProcessorModal(true);
       return;
     }
@@ -7306,6 +7642,7 @@ export default function App() {
     setAdvancedFlowFocusTarget(focusTargetField || null);
     setAdvancedFlowFocusIndex(0);
     setAdvancedFlowFocusOnly(false);
+    setAdvancedFlowDefaultTarget(focusTargetField || null);
     setShowAdvancedProcessorModal(true);
   };
 
@@ -7424,6 +7761,7 @@ export default function App() {
       }
     }
     setShowAdvancedProcessorModal(false);
+    setAdvancedFlowDefaultTarget(null);
   };
 
   const handleBuilderSelect = (item: ProcessorCatalogItem, isEnabled: boolean) => {
@@ -8015,6 +8353,26 @@ export default function App() {
   }, [varModalOpen, varModalToken, varModalVars]);
 
   useEffect(() => {
+    updateModalStack('advancedFlow', showAdvancedProcessorModal);
+  }, [showAdvancedProcessorModal]);
+
+  useEffect(() => {
+    updateModalStack('flowEditor', Boolean(flowEditor && flowEditorDraft));
+  }, [flowEditor, flowEditorDraft]);
+
+  useEffect(() => {
+    updateModalStack('varModal', varModalOpen);
+  }, [varModalOpen]);
+
+  useEffect(() => {
+    updateModalStack('fieldReference', showFieldReferenceModal);
+  }, [showFieldReferenceModal]);
+
+  useEffect(() => {
+    updateModalStack('advancedFlowConfirm', pendingAdvancedFlowClose);
+  }, [pendingAdvancedFlowClose]);
+
+  useEffect(() => {
     if (!highlightQuery || !selectedFile || !searchHighlightActive) {
       setHighlightObjectKeys([]);
       setCurrentMatchIndex(0);
@@ -8046,6 +8404,34 @@ export default function App() {
     setCurrentMatchIndex(matches.length > 0 ? 0 : 0);
     setMatchObjectOptions(options);
   }, [fileData, highlightQuery, highlightPathId, selectedFile, searchHighlightActive]);
+
+  useEffect(() => {
+    if (!selectedFile) {
+      setOverrideObjectKeys([]);
+      setOverrideObjectOptions([]);
+      setOverrideMatchIndex(0);
+      return;
+    }
+    const objects = getFriendlyObjects(fileData);
+    const keys: string[] = [];
+    const options: Array<{ key: string; label: string }> = [];
+    objects.forEach((obj: any, idx: number) => {
+      if (!getOverrideFlags(obj).any) {
+        return;
+      }
+      const key = getObjectKey(obj, idx);
+      keys.push(key);
+      options.push({
+        key,
+        label: obj?.['@objectName'] || `Object ${idx + 1}`,
+      });
+    });
+    setOverrideObjectKeys(keys);
+    setOverrideObjectOptions(options);
+    setOverrideMatchIndex((prev) => (
+      keys.length === 0 ? 0 : Math.min(prev, keys.length - 1)
+    ));
+  }, [fileData, overrideInfo, pendingOverrideSave, selectedFile]);
 
   useEffect(() => {
     if (viewMode === 'friendly' || !searchHighlightActive || !highlightQuery) {
@@ -8091,6 +8477,65 @@ export default function App() {
     }
     scrollToMatchIndex(currentMatchIndex);
   }, [currentMatchIndex, highlightObjectKeys]);
+
+  useEffect(() => {
+    if (highlightObjectKeys.length === 0) {
+      return;
+    }
+    const key = highlightObjectKeys[currentMatchIndex];
+    if (!key) {
+      return;
+    }
+    setMatchPingKey(key);
+    if (matchPingTimeoutRef.current) {
+      window.clearTimeout(matchPingTimeoutRef.current);
+    }
+    matchPingTimeoutRef.current = window.setTimeout(() => {
+      setMatchPingKey(null);
+    }, 800);
+  }, [currentMatchIndex, highlightObjectKeys]);
+
+  useEffect(() => {
+    if (!highlightFileName || highlightObjectKeys.length > 0) {
+      return;
+    }
+    setFileNamePingActive(true);
+    if (fileNamePingTimeoutRef.current) {
+      window.clearTimeout(fileNamePingTimeoutRef.current);
+    }
+    fileNamePingTimeoutRef.current = window.setTimeout(() => {
+      setFileNamePingActive(false);
+    }, 800);
+  }, [highlightFileName, highlightObjectKeys, selectedFile]);
+
+  useEffect(() => {
+    if (!selectedFile?.PathID || fileLoading) {
+      return;
+    }
+    const currentFileId = selectedFile.PathID;
+    if (highlightObjectKeys.length > 0) {
+      const key = highlightObjectKeys[currentMatchIndex];
+      if (!key) {
+        return;
+      }
+      if (lastLoadPingRef.current.fileId === currentFileId
+        && lastLoadPingRef.current.key === key
+        && lastLoadPingRef.current.mode === 'match') {
+        return;
+      }
+      lastLoadPingRef.current = { fileId: currentFileId, key, mode: 'match' };
+      startMatchPingSequence(key, 3);
+      return;
+    }
+    if (highlightFileName) {
+      if (lastLoadPingRef.current.fileId === currentFileId
+        && lastLoadPingRef.current.mode === 'file') {
+        return;
+      }
+      lastLoadPingRef.current = { fileId: currentFileId, mode: 'file' };
+      startFileNamePingSequence(3);
+    }
+  }, [selectedFile, fileLoading, highlightObjectKeys, currentMatchIndex, highlightFileName]);
 
   useEffect(() => {
     if (!selectedFile?.PathID || highlightObjectKeys.length === 0) {
@@ -8567,14 +9012,15 @@ export default function App() {
         : renderJsonWithFocus(fullJson, focusedFlowJson)}
     </div>
   );
-  const getFieldChangeLabel = (change: { before?: any; after?: any; action: string }) => {
-    if (change.after && change.before) {
-      return 'Processor updated';
+  const getFieldChangeLabel = (change: { before?: any; after?: any; action: string; origin?: 'event' | 'processor' }) => {
+    const label = change.origin === 'processor' ? 'Processor' : 'Field';
+    if (change.action === 'updated') {
+      return `${label} updated`;
     }
-    if (change.after) {
-      return 'Processor added';
+    if (change.action === 'added') {
+      return `${label} added`;
     }
-    return 'Processor removed';
+    return `${label} removed`;
   };
 
   const builderSidebar = (
@@ -8754,29 +9200,28 @@ export default function App() {
                       formatDisplayPath={formatDisplayPath}
                       getSortIndicator={getSortIndicator}
                       hasEditPermission={hasEditPermission}
+                      showTestControls={isTrapFolderContext}
                       onTestVendor={handleTestVendorFiles}
                       onTestFile={runFileTest}
                       isVendorTesting={vendorTestLoading}
                       isFileTesting={isFileTestLoading}
                     />
                   )}
-                  <FcomFileHeader
+                    <FcomFileHeader
                     selectedFile={selectedFile}
                     browseNode={browseNode}
                     isFavorite={isFavorite}
                     toggleFavorite={toggleFavorite}
                     formatDisplayPath={formatDisplayPath}
-                    schemaLoading={schemaLoading}
-                    schemaError={schemaError}
-                    validator={validator}
-                    jsonParseError={jsonParseError}
-                    validationErrors={validationErrors}
-                    setShowSchemaModal={setShowSchemaModal}
+                      fileMethod={fileMethodInfo.method}
+                      fileSubMethod={fileMethodInfo.subMethod}
                     overrideInfo={overrideInfo}
+                    hasLocalOverrides={hasLocalOverrides}
                     viewMode={viewMode}
                     setViewMode={setViewMode}
                     openAdvancedFlowModal={openAdvancedFlowModal}
                     hasEditPermission={hasEditPermission}
+                    showTestControls={isTrapFileContext}
                     onTestFile={handleTestCurrentFile}
                     fileTestLoading={selectedFile?.PathID
                       ? isFileTestLoading(selectedFile.PathID)
@@ -8794,6 +9239,9 @@ export default function App() {
                     saveError={saveError}
                     saveSuccess={saveSuccess}
                     stagedToast={stagedToast}
+                    highlightQuery={highlightQuery}
+                    highlightFileName={highlightFileName}
+                    fileNamePingActive={fileNamePingActive}
                   />
                   <FcomFilePreview
                     selectedFile={selectedFile}
@@ -8810,17 +9258,28 @@ export default function App() {
                     handleJumpToMatch={handleJumpToMatch}
                     handlePrevMatch={handlePrevMatch}
                     handleNextMatch={handleNextMatch}
+                    overrideObjectKeys={overrideObjectKeys}
+                    overrideMatchIndex={overrideMatchIndex}
+                    overrideObjectOptions={overrideObjectOptions}
+                    handlePrevOverride={handlePrevOverride}
+                    handleNextOverride={handleNextOverride}
+                    handleJumpToOverride={handleJumpToOverride}
+                    matchPingKey={matchPingKey}
                     getFriendlyObjects={getFriendlyObjects}
                     fileData={fileData}
                     getOverrideFlags={getOverrideFlags}
                     getOverrideTargets={getOverrideTargets}
+                    getProcessorTargets={getProcessorTargets}
+                    getProcessorFieldSummary={getProcessorFieldSummary}
                     getOverrideValueMap={getOverrideValueMap}
                     getObjectKey={getObjectKey}
+                    registerObjectRowRef={registerObjectRowRef}
                     getEventOverrideFields={getEventOverrideFields}
                     panelEditState={panelEditState}
                     getPanelDirtyFields={getPanelDirtyFields}
                     getBaseEventFields={getBaseEventFields}
                     hasEditPermission={hasEditPermission}
+                      showTestControls={isTrapFileContext}
                     openTrapComposerFromTest={openTrapComposerFromTest}
                     getObjectDescription={getObjectDescription}
                     isTestableObject={isTestableObject}
@@ -9155,8 +9614,13 @@ export default function App() {
                     </div>
                   )}
                   {showAdvancedProcessorModal && (
-                    <div className="modal-overlay modal-overlay-top" role="dialog" aria-modal="true">
-                      <div className="modal modal-flow">
+                    <div
+                      className="modal-overlay modal-overlay-top"
+                      style={getModalOverlayStyle('advancedFlow', 0)}
+                      role="dialog"
+                      aria-modal="true"
+                    >
+                      <div className="modal modal-flow" ref={advancedFlowModalRef}>
                         <div className="flow-modal-header">
                           <h3>
                             {advancedProcessorScope === 'global'
@@ -9166,7 +9630,7 @@ export default function App() {
                           <button
                             type="button"
                             className="flow-modal-close"
-                            onClick={() => setShowAdvancedProcessorModal(false)}
+                            onClick={requestCloseAdvancedFlowModal}
                           >
                             Close
                           </button>
@@ -9301,15 +9765,25 @@ export default function App() {
                         <div className="modal-actions">
                           <button
                             type="button"
-                            onClick={() => setShowAdvancedProcessorModal(false)}
+                            onClick={requestCloseAdvancedFlowModal}
                           >
                             Close
                           </button>
                           <button
                             type="button"
-                            className="builder-card builder-card-primary"
-                            disabled={!advancedFlowDirty || flowErrorCount > 0 || !hasEditPermission}
-                            onClick={saveAdvancedFlow}
+                            aria-disabled={!advancedFlowDirty || flowErrorCount > 0 || !hasEditPermission}
+                            className={`builder-card builder-card-primary${(!advancedFlowDirty || flowErrorCount > 0 || !hasEditPermission)
+                              ? ' button-disabled'
+                              : ''}`}
+                            onClick={() => {
+                              if (!advancedFlowDirty || flowErrorCount > 0 || !hasEditPermission) {
+                                if (flowErrorCount > 0) {
+                                  triggerFlowErrorPulse(advancedFlowModalRef.current);
+                                }
+                                return;
+                              }
+                              saveAdvancedFlow();
+                            }}
                           >
                             Save Changes
                           </button>
@@ -9318,8 +9792,13 @@ export default function App() {
                     </div>
                   )}
                   {flowEditor && flowEditorDraft && (
-                    <div className="modal-overlay" role="dialog" aria-modal="true">
-                      <div className="modal modal-wide">
+                    <div
+                      className="modal-overlay modal-overlay-top"
+                      style={getModalOverlayStyle('flowEditor', 1)}
+                      role="dialog"
+                      aria-modal="true"
+                    >
+                      <div className="modal modal-wide" ref={flowEditorModalRef}>
                         <div className="flow-editor-header">
                           <h3>
                             Configure Processor
@@ -9719,12 +10198,14 @@ export default function App() {
                           </button>
                           <button
                             type="button"
-                            disabled={flowEditorHasErrors}
+                            aria-disabled={flowEditorHasErrors}
+                            className={`builder-card builder-card-primary${flowEditorHasErrors ? ' button-disabled' : ''}`}
                             onClick={() => {
                               if (!flowEditor || !flowEditorDraft) {
                                 return;
                               }
                               if (flowEditorHasErrors) {
+                                triggerValidationPulse(flowEditorModalRef.current);
                                 return;
                               }
                               const setNodes = flowEditor.setNodesOverride
@@ -9741,7 +10222,14 @@ export default function App() {
                     </div>
                   )}
                   {showFieldReferenceModal && (
-                    <div className="modal-overlay" role="dialog" aria-modal="true">
+                    <div
+                      className={`modal-overlay${(showAdvancedProcessorModal || flowEditor)
+                        ? ' modal-overlay-top'
+                        : ''}`}
+                      style={getModalOverlayStyle('fieldReference', 2)}
+                      role="dialog"
+                      aria-modal="true"
+                    >
                       <div className="modal modal-wide">
                         <h3>Field Reference</h3>
                         <div className="field-reference">
@@ -9758,14 +10246,14 @@ export default function App() {
                             </ul>
                           </div>
                           <div className="field-reference-section">
-                            <div className="field-reference-title">Event fields (UA schema)</div>
-                            {eventsSchemaFields.length === 0 ? (
+                            <div className="field-reference-title">Event fields (from this file)</div>
+                            {availableEventFields.length === 0 ? (
                               <div className="field-reference-empty">
-                                No schema fields loaded.
+                                No event fields found in this file.
                               </div>
                             ) : (
                               <div className="field-reference-grid">
-                                {eventsSchemaFields.map((field) => (
+                                {availableEventFields.map((field) => (
                                   <span
                                     key={field}
                                     className="field-reference-chip"
@@ -9903,35 +10391,6 @@ export default function App() {
                       <div className="floating-help-code">{processorTooltip.example}</div>
                     </div>
                   )}
-                  {showSchemaModal && (
-                    <div className="modal-overlay" role="dialog" aria-modal="true">
-                      <div className="modal">
-                        <h3>Schema issues</h3>
-                        {schemaError && <div className="error">Schema: {schemaError}</div>}
-                        {!schemaError && !validator && (
-                          <div className="error">Schema not available</div>
-                        )}
-                        {!schemaError && validator && jsonParseError && (
-                          <div className="error">JSON: {jsonParseError}</div>
-                        )}
-                        {!schemaError && validator && !jsonParseError && validationErrors.length > 0 && (
-                          <ul>
-                            {validationErrors.map((err, idx) => (
-                              <li key={`${err.path}-${idx}`}>
-                                <span className="validation-path">{err.path}</span>
-                                <span className="validation-message">{err.message}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        )}
-                        <div className="modal-actions">
-                          <button type="button" onClick={() => setShowSchemaModal(false)}>
-                            Close
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  )}
                   {panelNavWarning.open && (
                     <div className="modal-overlay" role="dialog" aria-modal="true">
                       <div className="modal">
@@ -9962,6 +10421,36 @@ export default function App() {
                               if (action) {
                                 action();
                               }
+                            }}
+                          >
+                            Discard
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  {pendingAdvancedFlowClose && (
+                    <div
+                      className="modal-overlay modal-overlay-top"
+                      style={getModalOverlayStyle('advancedFlowConfirm', 3)}
+                      role="dialog"
+                      aria-modal="true"
+                    >
+                      <div className="modal">
+                        <h3>Discard Advanced Flow changes?</h3>
+                        <p>You have unsaved Advanced Flow edits. Discard them?</p>
+                        <div className="modal-actions">
+                          <button type="button" onClick={() => setPendingAdvancedFlowClose(false)}>
+                            Cancel
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setPendingAdvancedFlowClose(false);
+                              setShowAdvancedProcessorModal(false);
+                              setFlowEditor(null);
+                              setFlowEditorDraft(null);
+                              setAdvancedFlowDefaultTarget(null);
                             }}
                           >
                             Discard
@@ -10019,53 +10508,61 @@ export default function App() {
                     <div className="modal-overlay" role="dialog" aria-modal="true">
                       <div className="modal modal-wide">
                         <h3>Add Event Field</h3>
-                        <p>Select a field from the Events schema to add to this object.</p>
+                        <p>Select a field from this file, or add a new one.</p>
                         <input
                           type="text"
                           placeholder="Search fields"
                           value={addFieldSearch}
                           onChange={(e) => setAddFieldSearch(e.target.value)}
                         />
-                        {eventsSchemaLoading && <div className="muted">Loading schema…</div>}
-                        {eventsSchemaError && <div className="error">{eventsSchemaError}</div>}
-                        {!eventsSchemaLoading && !eventsSchemaError && (
-                          <div className="add-field-list">
-                            {eventsSchemaFields
-                              .filter((field) => field.toLowerCase().includes(addFieldSearch.toLowerCase()))
-                              .map((field) => {
-                                const existingFields = new Set([
-                                  ...Object.keys(addFieldContext.obj?.event || {}),
-                                  ...(panelAddedFields[addFieldContext.panelKey] || []),
-                                ]);
-                                const isReserved = reservedEventFields.has(field);
-                                const isExisting = existingFields.has(field);
-                                const description = getEventFieldDescription(field);
-                                const titleParts = [
-                                  ...(isReserved ? ['Reserved field'] : []),
-                                  ...(isExisting ? ['Already present'] : []),
-                                  ...(description ? [description] : []),
-                                ];
-                                return (
-                                  <button
-                                    key={field}
-                                    type="button"
-                                    className={isReserved || isExisting
-                                      ? 'add-field-item add-field-item-disabled'
-                                      : 'add-field-item'}
-                                    onClick={() => {
-                                      if (!isReserved && !isExisting) {
-                                        addFieldToPanel(field);
-                                      }
-                                    }}
-                                    disabled={isReserved || isExisting}
-                                    title={titleParts.join(' • ')}
-                                  >
-                                    {field}
-                                  </button>
-                                );
-                              })}
-                          </div>
-                        )}
+                        <div className="add-field-list">
+                          {availableEventFields
+                            .filter((field) => field.toLowerCase().includes(addFieldSearch.toLowerCase()))
+                            .map((field) => {
+                              const existingFields = new Set([
+                                ...Object.keys(addFieldContext.obj?.event || {}),
+                                ...(panelAddedFields[addFieldContext.panelKey] || []),
+                              ]);
+                              const isReserved = reservedEventFields.has(field);
+                              const isExisting = existingFields.has(field);
+                              const description = getEventFieldDescription(field);
+                              const titleParts = [
+                                ...(isReserved ? ['Reserved field'] : []),
+                                ...(isExisting ? ['Already present'] : []),
+                                ...(description ? [description] : []),
+                              ];
+                              return (
+                                <button
+                                  key={field}
+                                  type="button"
+                                  className={isReserved || isExisting
+                                    ? 'add-field-item add-field-item-disabled'
+                                    : 'add-field-item'}
+                                  onClick={() => {
+                                    if (!isReserved && !isExisting) {
+                                      addFieldToPanel(field);
+                                    }
+                                  }}
+                                  disabled={isReserved || isExisting}
+                                  title={titleParts.join(' • ')}
+                                >
+                                  {field}
+                                </button>
+                              );
+                            })}
+                          {availableEventFields.length === 0 && (
+                            <div className="empty-state">No event fields found in this file.</div>
+                          )}
+                          {addFieldSearch.trim() && !availableEventFields.some((field) => field.toLowerCase() === addFieldSearch.trim().toLowerCase()) && (
+                            <button
+                              type="button"
+                              className="add-field-item"
+                              onClick={() => addFieldToPanel(addFieldSearch.trim())}
+                            >
+                              Add "{addFieldSearch.trim()}"
+                            </button>
+                          )}
+                        </div>
                         <div className="modal-actions">
                           <button type="button" onClick={() => setShowAddFieldModal(false)}>
                             Close
@@ -10119,7 +10616,12 @@ export default function App() {
               </div>
             )}
             {varModalOpen && (
-              <div className="modal-overlay" role="dialog" aria-modal="true">
+              <div
+                className="modal-overlay"
+                style={getModalOverlayStyle('varModal', 2)}
+                role="dialog"
+                aria-modal="true"
+              >
                 <div className="modal modal-wide">
                   <h3>
                     Trap variables ({varModalVars.length})
@@ -10205,32 +10707,33 @@ export default function App() {
                     value={eventFieldSearch}
                     onChange={(e) => setEventFieldSearch(e.target.value)}
                   />
-                  {eventsSchemaLoading && (
-                    <div className="muted">Loading schema…</div>
-                  )}
-                  {!eventsSchemaLoading && eventsSchemaError && (
-                    <div className="error">{eventsSchemaError}</div>
-                  )}
-                  {!eventsSchemaLoading && !eventsSchemaError && (
-                    <div className="add-field-list">
-                      {eventsSchemaFields
-                        .filter((field) => field.toLowerCase().includes(eventFieldSearch.trim().toLowerCase()))
-                        .map((field) => (
-                          <button
-                            type="button"
-                            key={field}
-                            className="add-field-item"
-                            onClick={() => handleEventFieldInsertSelect(field)}
-                            title={getEventFieldDescription(field)}
-                          >
-                            $.event.{field}
-                          </button>
-                        ))}
-                      {eventsSchemaFields.length === 0 && (
-                        <div className="empty-state">No schema fields loaded.</div>
-                      )}
-                    </div>
-                  )}
+                  <div className="add-field-list">
+                    {availableEventFields
+                      .filter((field) => field.toLowerCase().includes(eventFieldSearch.trim().toLowerCase()))
+                      .map((field) => (
+                        <button
+                          type="button"
+                          key={field}
+                          className="add-field-item"
+                          onClick={() => handleEventFieldInsertSelect(field)}
+                          title={getEventFieldDescription(field)}
+                        >
+                          $.event.{field}
+                        </button>
+                      ))}
+                    {availableEventFields.length === 0 && (
+                      <div className="empty-state">No event fields found in this file.</div>
+                    )}
+                    {eventFieldSearch.trim() && !availableEventFields.some((field) => field.toLowerCase() === eventFieldSearch.trim().toLowerCase()) && (
+                      <button
+                        type="button"
+                        className="add-field-item"
+                        onClick={() => handleEventFieldInsertSelect(eventFieldSearch.trim())}
+                      >
+                        Add "{eventFieldSearch.trim()}"
+                      </button>
+                    )}
+                  </div>
                   <div className="modal-actions">
                     <button type="button" onClick={() => {
                       setEventFieldPickerOpen(false);
@@ -10490,7 +10993,7 @@ export default function App() {
           )}
           {trapModalOpen && (
             <div className="modal-overlay" role="dialog" aria-modal="true">
-              <div className="modal modal-wide">
+              <div className="modal modal-wide" ref={trapModalRef}>
                 <h3>
                   {bulkTrapContext
                     ? `Sending ${bulkTrapContext.total} SNMP traps — ${bulkTrapContext.label}`
@@ -10603,6 +11106,8 @@ export default function App() {
                             setTrapManualOpen(false);
                           }
                         }}
+                        data-error={!trapHost ? 'true' : undefined}
+                        aria-invalid={!trapHost}
                       >
                         <option value="">Select a server</option>
                         {trapServerList.map((server) => (
@@ -10632,6 +11137,8 @@ export default function App() {
                           placeholder="10.0.0.10"
                           value={trapHost}
                           onChange={(e) => setTrapHost(e.target.value)}
+                          data-error={!trapHost ? 'true' : undefined}
+                          aria-invalid={!trapHost}
                         />
                       </label>
                       <label className="mib-field">
@@ -10683,6 +11190,8 @@ export default function App() {
                           type="text"
                           value={trapOid}
                           onChange={(e) => setTrapOid(e.target.value)}
+                          data-error={!trapOid ? 'true' : undefined}
+                          aria-invalid={!trapOid}
                         />
                       </label>
                     </div>
@@ -10765,11 +11274,28 @@ export default function App() {
                   </button>
                   <button
                     type="button"
-                    className="builder-card builder-card-primary"
-                    onClick={bulkTrapContext ? sendBulkTraps : sendTrap}
-                    disabled={trapSending || (bulkTrapContext
+                    aria-disabled={trapSending || (bulkTrapContext
                       ? (!trapHost || Boolean(bulkTrapSummary))
                       : (!trapHost || !trapOid))}
+                    className={`builder-card builder-card-primary${trapSending || (bulkTrapContext
+                      ? (!trapHost || Boolean(bulkTrapSummary))
+                      : (!trapHost || !trapOid))
+                      ? ' button-disabled'
+                      : ''}`}
+                    onClick={() => {
+                      const disabled = trapSending || (bulkTrapContext
+                        ? (!trapHost || Boolean(bulkTrapSummary))
+                        : (!trapHost || !trapOid));
+                      if (disabled) {
+                        triggerValidationPulse(trapModalRef.current);
+                        return;
+                      }
+                      if (bulkTrapContext) {
+                        sendBulkTraps();
+                        return;
+                      }
+                      sendTrap();
+                    }}
                   >
                     {trapSending ? 'Sending…' : bulkTrapContext ? 'Send Traps' : 'Send Trap'}
                   </button>
