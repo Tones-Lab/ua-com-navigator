@@ -15,7 +15,11 @@ type FcomBuilderSidebarProps = {
   builderFocus: 'literal' | 'eval' | 'processor' | null;
   isBuilderTargetReady: boolean;
   builderTypeLocked: 'literal' | 'eval' | 'processor' | null;
-  setBuilderSwitchModal: (value: { open: boolean; from: string; to: string }) => void;
+  setBuilderSwitchModal: Dispatch<SetStateAction<{
+    open: boolean;
+    from?: 'eval' | 'processor' | 'literal' | null;
+    to?: 'eval' | 'processor' | 'literal' | null;
+  }>>;
   applyBuilderTypeSwitch: (type: 'literal' | 'eval' | 'processor') => void;
   builderLiteralText: string;
   handleLiteralInputChange: (value: string, caret: number | null, inputType?: string) => void;
@@ -28,8 +32,31 @@ type FcomBuilderSidebarProps = {
   setShowAdvancedProcessorModal: (open: boolean) => void;
   builderConditions: Array<{ id: string; condition: any; result: string }>;
   setBuilderConditions: Dispatch<SetStateAction<Array<{ id: string; condition: any; result: string }>>>;
-  updateBuilderCondition: (rowId: string, conditionId: string, key: string, value: string) => void;
-  updateBuilderResult: (rowId: string, value: string) => void;
+  updateBuilderCondition: (
+    rowId: string,
+    conditionId: string,
+    key: 'left' | 'operator' | 'right',
+    value: string,
+  ) => void;
+  handleFriendlyConditionInputChange: (
+    rowId: string,
+    conditionId: string,
+    key: 'left' | 'right',
+    value: string,
+    caret: number | null,
+    inputType?: string,
+  ) => void;
+  handleFriendlyResultInputChange: (
+    rowId: string,
+    value: string,
+    caret: number | null,
+    inputType?: string,
+  ) => void;
+  handleFriendlyElseResultInputChange: (
+    value: string,
+    caret: number | null,
+    inputType?: string,
+  ) => void;
   removeBuilderRow: (rowId: string) => void;
   addBuilderRow: () => void;
   createConditionNode: () => any;
@@ -37,7 +64,6 @@ type FcomBuilderSidebarProps = {
   nextBuilderId: () => string;
   renderConditionNode: (rowId: string, condition: any, depth: number, isNested: boolean, groupCount: number) => ReactNode;
   builderElseResult: string;
-  setBuilderElseResult: (value: string) => void;
   friendlyPreview: string;
   applyFriendlyEval: () => void;
   formatEvalReadableList: (value: string) => string[];
@@ -66,16 +92,18 @@ type FcomBuilderSidebarProps = {
   renderProcessorHelp: (helpKey: string) => ReactNode;
   renderProcessorConfigFields: (
     processorType: string,
-    config: any,
-    onChange: (key: string, value: any) => void,
-    context: string,
+    config: Record<string, any>,
+    onChange: (key: string, value: string | boolean) => void,
+    context: 'flow' | 'builder',
+    fieldErrors?: Record<string, string[]>,
   ) => ReactNode;
   renderFlowList: (
-    items: any[],
-    context: { kind: string },
-    onChange: (updater: any) => void,
-    scope: string,
-    parentScope: string,
+    nodes: any[],
+    path: any,
+    setNodes: Dispatch<SetStateAction<any[]>>,
+    scope: 'object' | 'global',
+    lane: 'object' | 'pre' | 'post',
+    nodeErrorsMap?: Record<string, string[]>,
   ) => ReactNode;
   getProcessorCatalogLabel: (processorType: string) => string;
   getProcessorSummaryLines: (payload: any) => string[];
@@ -114,7 +142,9 @@ export default function FcomBuilderSidebar({
   builderConditions,
   setBuilderConditions,
   updateBuilderCondition,
-  updateBuilderResult,
+  handleFriendlyConditionInputChange,
+  handleFriendlyResultInputChange,
+  handleFriendlyElseResultInputChange,
   removeBuilderRow,
   addBuilderRow,
   createConditionNode,
@@ -122,7 +152,6 @@ export default function FcomBuilderSidebar({
   nextBuilderId,
   renderConditionNode,
   builderElseResult,
-  setBuilderElseResult,
   friendlyPreview,
   applyFriendlyEval,
   formatEvalReadableList,
@@ -223,13 +252,6 @@ export default function FcomBuilderSidebar({
               Cancel
             </button>
           )}
-          <button
-            type="button"
-            className="builder-toggle"
-            onClick={() => setBuilderOpen((prev) => !prev)}
-          >
-            {builderOpen ? 'Hide' : 'Show'}
-          </button>
         </div>
       </div>
       {builderOpen && (
@@ -378,11 +400,13 @@ export default function FcomBuilderSidebar({
                               <input
                                 className="builder-input"
                                 value={row.condition.left}
-                                onChange={(e) => updateBuilderCondition(
+                                onChange={(e) => handleFriendlyConditionInputChange(
                                   row.id,
                                   row.condition.id,
                                   'left',
                                   e.target.value,
+                                  e.target.selectionStart,
+                                  (e.nativeEvent as InputEvent | undefined)?.inputType,
                                 )}
                                 placeholder="$v1"
                                 disabled={!isBuilderTargetReady}
@@ -409,11 +433,13 @@ export default function FcomBuilderSidebar({
                               <input
                                 className="builder-input"
                                 value={row.condition.right}
-                                onChange={(e) => updateBuilderCondition(
+                                onChange={(e) => handleFriendlyConditionInputChange(
                                   row.id,
                                   row.condition.id,
                                   'right',
                                   e.target.value,
+                                  e.target.selectionStart,
+                                  (e.nativeEvent as InputEvent | undefined)?.inputType,
                                 )}
                                 placeholder="1"
                                 disabled={!isBuilderTargetReady}
@@ -423,7 +449,12 @@ export default function FcomBuilderSidebar({
                               <input
                                 className="builder-input builder-input-result"
                                 value={row.result}
-                                onChange={(e) => updateBuilderResult(row.id, e.target.value)}
+                                onChange={(e) => handleFriendlyResultInputChange(
+                                  row.id,
+                                  e.target.value,
+                                  e.target.selectionStart,
+                                  (e.nativeEvent as InputEvent | undefined)?.inputType,
+                                )}
                                 placeholder="result"
                                 disabled={!isBuilderTargetReady}
                                 title={row.result}
@@ -495,7 +526,12 @@ export default function FcomBuilderSidebar({
                               <input
                                 className="builder-input builder-input-result"
                                 value={row.result}
-                                onChange={(e) => updateBuilderResult(row.id, e.target.value)}
+                                onChange={(e) => handleFriendlyResultInputChange(
+                                  row.id,
+                                  e.target.value,
+                                  e.target.selectionStart,
+                                  (e.nativeEvent as InputEvent | undefined)?.inputType,
+                                )}
                                 placeholder="result"
                                 disabled={!isBuilderTargetReady}
                                 title={row.result}
@@ -528,7 +564,11 @@ export default function FcomBuilderSidebar({
                     <input
                       className="builder-input"
                       value={builderElseResult}
-                      onChange={(e) => setBuilderElseResult(e.target.value)}
+                      onChange={(e) => handleFriendlyElseResultInputChange(
+                        e.target.value,
+                        e.target.selectionStart,
+                        (e.nativeEvent as InputEvent | undefined)?.inputType,
+                      )}
                       placeholder="0"
                       disabled={!isBuilderTargetReady}
                     />

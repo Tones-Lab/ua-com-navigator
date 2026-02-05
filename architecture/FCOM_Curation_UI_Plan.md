@@ -79,6 +79,12 @@
     *   **Processor Summary UI:** Field-level processor overrides show a summary tooltip/card (type + key params), with a “View in Advanced Flow” link and optional JSON toggle.
     *   **Raw JSON Access:** The Advanced Flow modal keeps a JSON preview for power users. Friendly view avoids raw JSON unless explicitly requested.
 
+5.  **Pre/Post Processor Overrides (Base Pipeline Editing)**
+    *   Enable editing of object-level base pre/post processors via overrides only.
+    *   Reuse the Advanced Flow modal with lane selection (Pre/Post) and commit gating.
+    *   Preserve processor key casing from the base object (e.g., `preProcessors` vs `preprocessors`).
+    *   Reference: architecture/fcom-prepost-override-plan.md
+
 ---
 
 ## Phase 4: Cross-Environment Management

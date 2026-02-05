@@ -20,6 +20,7 @@ type FcomObjectCardProps = {
   getBaseEventFields: (obj: any, panelKey: string) => string[];
   hasEditPermission: boolean;
   showTestControls: boolean;
+  isTrapFileContext: boolean;
   openTrapComposerFromTest: (obj: any) => void;
   getObjectDescription: (obj: any) => string;
   isTestableObject: (obj: any) => boolean;
@@ -81,6 +82,7 @@ export default function FcomObjectCard({
   getBaseEventFields,
   hasEditPermission,
   showTestControls,
+  isTrapFileContext,
   openTrapComposerFromTest,
   getObjectDescription,
   isTestableObject,
@@ -192,6 +194,12 @@ export default function FcomObjectCard({
           </div>
           {objectDescription && (
             <div className="object-description">{objectDescription}</div>
+          )}
+          {isTrapFileContext && obj?.trap?.oid && (
+            <div className="object-description">
+              <span className="label">OID</span>{' '}
+              <span className="value monospace">{renderValue(obj?.trap?.oid)}</span>
+            </div>
           )}
         </div>
         <div className="object-actions">

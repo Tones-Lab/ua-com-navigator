@@ -19,7 +19,7 @@ type FcomBrowserPanelProps = {
   favoritesLoading: boolean;
   favoritesError: string | null;
   handleOpenFolder: (entry: any) => void;
-  openFileFromUrl: (pathId: string, node?: string | null) => void;
+  openFileFromUrl: (pathId: string, node?: string | null) => void | Promise<boolean>;
   handleOpenSearchResult: (result: any) => void;
   getParentLabel: (node?: string) => string;
   getParentPath: (node?: string) => string;

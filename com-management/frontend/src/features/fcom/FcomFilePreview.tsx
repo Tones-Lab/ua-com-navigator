@@ -40,6 +40,7 @@ type FcomFilePreviewProps = {
   getBaseEventFields: (obj: any, panelKey: string) => string[];
   hasEditPermission: boolean;
   showTestControls: boolean;
+  isTrapFileContext: boolean;
   openTrapComposerFromTest: (obj: any) => void;
   getObjectDescription: (obj: any) => string;
   isTestableObject: (obj: any) => boolean;
@@ -127,6 +128,7 @@ export default function FcomFilePreview({
   getBaseEventFields,
   hasEditPermission,
   showTestControls,
+  isTrapFileContext,
   openTrapComposerFromTest,
   getObjectDescription,
   isTestableObject,
@@ -260,6 +262,7 @@ export default function FcomFilePreview({
                       getBaseEventFields={getBaseEventFields}
                       hasEditPermission={hasEditPermission}
                       showTestControls={showTestControls}
+                      isTrapFileContext={isTrapFileContext}
                       openTrapComposerFromTest={openTrapComposerFromTest}
                       getObjectDescription={getObjectDescription}
                       isTestableObject={isTestableObject}

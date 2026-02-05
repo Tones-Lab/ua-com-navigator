@@ -4,6 +4,8 @@
 - ✅ Persist active tab across refresh (preserve current page instead of defaulting to Overview).
 - 🔥 Unify Global/Object processor palettes using a single registry source-of-truth.
   - Plan: architecture/processor-palette-unification-plan.md
+- 🔥 Editable pre/post processors via overrides (no base file edits).
+	- Plan: architecture/fcom-prepost-override-plan.md
 - ✅ Advanced Flow visibility + commit flow:
 	- ✅ Object header pills: Override + Advanced Flow when object processors exist.
 	- ✅ Global Advanced Flow badge in file header when pre/post flows exist.
@@ -188,7 +190,7 @@ BUG - P1-bug003 -Still not showing correct count of overrides in any of the revi
 
 ✅ - BUG - If i click on a FCOOM file - and open the builder in edit mode, then click away to a new file, the builder should close and not be open on the new file / page. 
 
-BUG - P0-bug001 - variables do not load the variables modal when typing $v_ - it should, but it doesn't.
+✅ - BUG - P0-bug001 - variables do not load the variables modal when typing $v_ - it should, but it doesn't.
 
 Need more testing. What can we do? Need CoPilot to suggest testing options we can use for a UI etc. What is possible?
 
@@ -204,7 +206,9 @@ Need more testing. What can we do? Need CoPilot to suggest testing options we ca
 
 FEATURE - P0-feature004 - PCOM (performance COM) should be supported.
 
-BUG - I am using CloudFlare tunnel to open access to the UA-COM Management application externally. I use the hostname of ua-com.ccfc1986.us pointing to the internal IP of the server 192.168.3.42 on port 5173. However, when i try to login i get a CORS error. Is there a way we can resolve this issue on the server / application side? 
+✅ BUG - I am using CloudFlare tunnel to open access to the UA-COM Management application externally. I use the hostname of ua-com.ccfc1986.us pointing to the internal IP of the server 192.168.3.42 on port 5173. However, when i try to login i get a CORS error. Is there a way we can resolve this issue on the server / application side? 
+
+Feature - /root/navigator/architecture/FCOM_Curation_UI_Plan.md
 
 Global overrides - need ability to re-create a 'customer.rules' use case
 
@@ -212,12 +216,85 @@ Global overrides - need ability to re-create a 'customer.rules' use case
 
 Feature - ability to restart FCOM processing microservice from the UI. check with TM if this might be possible. 
 
+Feature - Better parsing of preprocesor and postprocessor for files outside of trap - things like syslog seem to use them etc.
+
 BUG - try to reproduct where builder is bar on right is shown, but not in the context of a field edit (all fields are editable, and no field is selected in the builder - shouldnt happen)
 
-BUG - should remove hide button from the builder. we have the close, that is enough and hide is confusing.
+✅ BUG - should remove hide button from the builder. we have the close, that is enough and hide is confusing.
 
-FEATURE - default to friendly editor in the eval creation builder
+✅ FEATURE - default to friendly editor in the eval creation builder
 
-BUG - need to highlight the staged work to be saved better
+✅ BUG - need to highlight the staged work to be saved better
 
-FEATURE - on nav away during staged save, user clicks cancel to keep working or save - highlight/flash the save button
+✅ FEATURE - on nav away during staged save, user clicks cancel to keep working or save - highlight/flash the save button
+
+✅ BUG - Change to have fields read dynamically from file clicked, current seems to have OID always, even if not a native field in the COM (like the Aruba file) - when editing a syslog com, there should be no OID... same with other protocol. Right now, FCOM is very focused on trap definitions, but they really need to be generic as much as possible
+
+FEATURE - Show an end to end view of all your rules and processing. So a user can understand where a message would get routed in the file / processing. Example - send/mimic trap - and this would show a flow dashboard, and the processing logic / routing for easier debugging and troubleshooting. This would require fcom processor expertise. 
+
+FEATURE - support v2 and v3 processors. needs to review docs (have the CoPilot do this) - review and find the differences and make sure we are backward/forward compatible in the viewing and editing for all versions (v1, v2, v3) - others?
+ - https://docs.oracle.com/en/industries/communications/unified-assurance/6.1.1/implementation-guide/microservice/core/fcom-processor.html#kv
+
+MIB BROWSER - major feature list
+Mib browser should show mapping to fcom::trap or PCOM::SNMP
+
+Each object just validate against PCOM and fcom files. Mib browser is SNMP so that's the trap and SNMP folders. 
+
+If it exists, flag it, and link to the com (f or p) directly within COM curation app. 
+
+If the object is a notification type, or poller type, and isn't covered in the com definitions, highlight it (!) and have an AI assistant / clippy! Help define it. Ok, this is PCOM, object name is cisco900TotalMemory. Pass this to an LLm model (could we call my chat agent /chat and have a custom tool for this). It pulls back all the metric types, tries to find a match, if found, use that data to generate PCOM snippet required and this would be an override for metric for that vendor.
+
+Same for trap (but much easier - may not need AI assistant) as it's pretty straight forward to process the min data, generate the JSOn FCOM stub - (better yet the UI elements in my editor) and save to an override file for that vendor.
+
+If an event - need to figure out how to call the test creation piece, to generate the "test" command accurately so it can go in the JSON (maybe this is a custom field we add so users can update the tests - for broken default tests or add their own!)
+
+
+Order of Priorites for 2/5/2025
+✅ BUG P0-bug001: $v_ variables modal not loading.
+Blocks core editing workflow; high frequency.
+
+BUG: builder shows on right with no field context.
+Confusing and risks wrong edits.
+
+✅ BUG: staged work highlight insufficient.
+Risk of losing changes; affects trust.
+
+✅ FEATURE: nav away during staged save -> flash save + confirm keep working/save.
+Prevents accidental loss; complements #3.
+
+✅ FEATURE: default to friendly editor in eval builder.
+Reduces friction; improves success rate.
+
+✅ BUG: remove “hide” button from builder.
+Low risk UX cleanup.
+
+FEATURE: better parsing of pre/post processors for non-trap files.
+Important, but more scope; value after core editing UX fixes.
+
+FEATURE: restart FCOM processing microservice from UI (check with TM).
+Potentially valuable, but gated by feasibility and security.
+
+FEATURE - audit each com file type - and specify if any COM's require special treatment - like SNMP Traps, have an OID value, that isn't a field, but is a critical and useful field that should be shown. other protocols etc may have simialr requirements. 
+
+Dependency Modernization and Cleanup:
+
+**Observation**: The frontend uses both react and preact, which is unconventional and can lead to confusion and larger bundle sizes.
+**Suggestion:**: Audit the frontend dependencies. Standardize on a single framework (React or Preact) if possible by upgrading the Oracle JET library to a version with better native React support. Use a tool like npm-check-updates to identify and update outdated packages across both frontend and backend for performance and security benefits.
+Enhance Testing Strategy:
+
+**Observation**: The project's backlog.md explicitly calls out the need for a better testing strategy, especially for the UI.
+**Suggestion:**: For the frontend, introduce Vitest with React Testing Library for component-level unit testing. For end-to-end testing, adopt a framework like Cypress or Playwright to automate user workflows, which will improve code quality and prevent regressions.
+Automate Code Quality and Formatting:
+
+**Observation**: While ESLint is used, there is no automated code formatter like Prettier, which can lead to inconsistent code style.
+**Suggestion:**: Integrate Prettier and configure it to work with ESLint to enforce a consistent code style. Use a pre-commit hook with a tool like Husky to automatically run linting and formatting checks before commits, ensuring all code adheres to the defined standards.
+Implement LLM-Powered Features:
+
+**Observation**: The backlog includes a P1 feature for an "LLM assistant" to provide suggestions and help with COM file creation.
+**Suggestion:** Prioritize the implementation of the LLM assistant. This could be a significant value-add for users by providing in-context help for the complex FCOM/PCOM processors. Start by building the backend integration and a simple chat interface, then expand to features like AI-powered validation of COM files.
+Improve Backend API Security and Performance:
+
+**Observation**: The backend uses standard security middleware, but there are opportunities for enhancement. The backlog also mentions a need for caching.
+**Suggestion:**:
+Security: Implement rate limiting on the login endpoint and add more robust input validation on all API endpoints.
+Performance: Implement a comprehensive caching layer with a tool like Redis for frequently accessed data, such as COM files, MIB data, and user permissions, to reduce load on the backend and improve UI responsiveness.
