@@ -122,6 +122,10 @@
 	- Doc: architecture/backlog-search-navigation.md
 - ✅ Edit safety enhancements (dirty indicators + builder undo/redo):
 	- Doc: architecture/backlog-edit-safety.md
+- v2/v3 override support (prefer v3 for new overrides):
+	- Add v3 authoring mode (JSON Patch) with validation and preview/diff.
+	- Keep v2 editor for legacy overrides; allow explicit version selection.
+	- Enforce scope rules (no $.event.* in pre) across both versions.
 - Responsive FCOM browser layout tweaks:
 	- Enforce min-heights for folder/file navigation and search results (show at least 3 results); allow left panel to scroll if needed.
 	- Make search bar sticky within the left panel on small screens.
@@ -179,8 +183,6 @@ Tony Manual Edits - Features and Bug list
 FEATURE - P2-feature002 - New Feature - need to add details MIB browser ASAP, that integrates with FCOM and PCOM (to be created).
 
 FEATURE - P2-feature003 - NEW FEATURE - Guided edit mode with 'highlight' section, and explain. this passes code into AI etc using the FCOM and documentation as reference. Then helps provide guidance and best action/steps$A1BASEDIR/bin/sdk/MIB2FCOM --in=<MIB_name>.mib --out=<MIB_name>-FCOM.json --use_parent_mibs
-
-FEATURE - P5-feature001 - ask AI to validate the COM created -- is this possible?
 
 ✅ - FEATURE - 
 	create a 'send all traps' feature - that sends all traps in a given FCOM file to a selected server.  This is useful for testing large sets of traps quickly.
@@ -249,7 +251,8 @@ Each object just validate against PCOM and fcom files. Mib browser is SNMP so th
 
 If it exists, flag it, and link to the com (f or p) directly within COM curation app. 
 
-If the object is a notification type, or poller type, and isn't covered in the com definitions, highlight it (!) and have an AI assistant / clippy! Help define it. Ok, this is PCOM, object name is cisco900TotalMemory. Pass this to an LLm model (could we call my chat agent /chat and have a custom tool for this). It pulls back all the metric types, tries to find a match, if found, use that data to generate PCOM snippet required and this would be an override for metric for that vendor.
+FEATURE - If the object is a notification type, or poller type, and isn't covered in the com definitions, highlight it (!) and have an AI assistant / clippy! Help define it. Ok, this is PCOM, object name is cisco900TotalMemory. Pass this to an LLm model (could we call my chat agent /chat and have a custom tool for this). It pulls back all the metric types, tries to find a match, if found, use that data to generate PCOM snippet required and this would be an override for metric for that vendor.
+	- the AI / LLM ? needs to be internal somehow. Figure out a solution for me.
 
 Same for trap (but much easier - may not need AI assistant) as it's pretty straight forward to process the min data, generate the JSOn FCOM stub - (better yet the UI elements in my editor) and save to an override file for that vendor.
 
