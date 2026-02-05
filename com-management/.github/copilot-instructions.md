@@ -6,9 +6,9 @@
 - Auth is cookie-based sessions (HTTP-only `FCOM_SESSION_ID`) stored in memory maps; restarts clear sessions. See [backend/src/services/sessionStore.ts](../backend/src/services/sessionStore.ts) and [backend/src/routes/auth.ts](../backend/src/routes/auth.ts).
 
 ## Key workflows
-- Dev: `yarn dev` at repo root runs backend + frontend workspaces. Scripts defined in [package.json](../package.json).
-- Backend dev/build/test: `yarn workspace backend dev|build|test|lint` (see [backend/package.json](../backend/package.json)).
-- Frontend dev/build: `yarn workspace frontend dev|build|lint` (see [frontend/package.json](../frontend/package.json)).
+- Dev: `npm run dev` at repo root runs backend + frontend workspaces. Scripts defined in [package.json](../package.json).
+- Backend dev/build/test: `npm run -w backend dev|build|test|lint` (see [backend/package.json](../backend/package.json)).
+- Frontend dev/build: `npm run -w frontend dev|build|lint` (see [frontend/package.json](../frontend/package.json)).
 
 ## Project-specific patterns
 - Backend uses HTTPS if SSL certs exist (env `SSL_KEY_PATH`/`SSL_CERT_PATH`), otherwise HTTP; CORS allowlist is in [backend/src/server.ts](../backend/src/server.ts).

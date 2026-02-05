@@ -59,7 +59,7 @@ com-management/
 ### Prerequisites
 
 - Node.js 18+
-- npm 9+ or Yarn 3+
+- npm 9+
 
 ### Install
 
@@ -82,7 +82,7 @@ cd ../frontend && npm run dev -- --host 0.0.0.0 --port 5173
 
 ```bash
 cd /root/navigator/com-management
-yarn dev
+npm run dev
 ```
 
 ## Configuration

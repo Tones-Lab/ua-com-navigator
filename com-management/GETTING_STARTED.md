@@ -5,7 +5,7 @@ This guide helps you run the COM Management app locally and understand the minim
 ## Prerequisites
 
 - Node.js 18+
-- npm 9+ or Yarn 3+
+- npm 9+
 
 ## Install dependencies
 
