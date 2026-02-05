@@ -2711,6 +2711,12 @@
   box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
   position: relative;
   isolation: isolate;
+  z-index: 0;
+}
+
+.object-card:hover,
+.object-card:focus-within {
+  z-index: 4;
 }
 
 .object-header {
@@ -2791,9 +2797,9 @@
 }
 
 .override-summary-card {
-  position: absolute;
-  top: 130%;
-  left: 0;
+  position: fixed;
+  top: var(--override-tooltip-top, 0px);
+  left: var(--override-tooltip-left, 0px);
   min-width: 220px;
   max-width: 360px;
   background: #ffffff;
@@ -2802,15 +2808,15 @@
   border-radius: 10px;
   padding: 0.6rem 0.75rem;
   opacity: 0;
-  transform: translateY(-6px);
+  transform: translateY(var(--override-tooltip-shift, 0));
   pointer-events: none;
-  z-index: 20;
+  z-index: 2000;
+  transition: opacity 0.15s ease;
 }
 
 .override-summary:hover .override-summary-card,
 .override-summary:focus-within .override-summary-card {
   opacity: 1;
-  transform: translateY(0);
   pointer-events: auto;
 }
 
@@ -4594,12 +4600,6 @@
   position: relative;
 }
 
-.eval-label-hover .override-summary-card {
-  top: auto;
-  bottom: 100%;
-  left: 0;
-  margin-bottom: 0.5rem;
-}
 
 .eval-label-icon {
   font-size: 0.75rem;

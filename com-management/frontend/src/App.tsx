@@ -110,6 +110,7 @@ export default function App() {
   const lastSelectedFileRef = useRef<string | null>(null);
   const friendlyViewRef = useRef<HTMLDivElement | null>(null);
   const friendlyMainRef = useRef<HTMLDivElement | null>(null);
+  const activeOverrideTooltipRef = useRef<HTMLElement | null>(null);
   const [browsePath] = useState('/');
   const [overviewStatus, setOverviewStatus] = useState<any | null>(null);
   const [overviewData, setOverviewData] = useState<any | null>(null);
@@ -527,6 +528,9 @@ export default function App() {
   const reviewModalOpenRef = useRef(false);
   const unsavedChangesRef = useRef(false);
   const pulseTimeoutRef = useRef<number | null>(null);
+  const reviewPulseIntervalRef = useRef<number | null>(null);
+  const reviewPulseTimeoutRef = useRef<number | null>(null);
+  const stagedPulseActiveRef = useRef(false);
   const [saveElapsed, setSaveElapsed] = useState(0);
   const [pendingNav, setPendingNav] = useState<null | (() => void)>(null);
   const [panelEditState, setPanelEditState] = useState<Record<string, boolean>>({});
@@ -573,6 +577,11 @@ export default function App() {
     value: string;
     replaceStart: number;
     replaceEnd: number;
+    meta?: {
+      rowId?: string;
+      nodeId?: string;
+      key?: 'left' | 'right' | 'result' | 'else';
+    };
   } | null>(null);
   const [builderOpen, setBuilderOpen] = useState(true);
   const [builderTarget, setBuilderTarget] = useState<{ panelKey: string; field: string } | null>(null);
@@ -2098,21 +2107,15 @@ export default function App() {
     if (inputType && !inputType.startsWith('insert')) {
       return;
     }
-    const varMatch = getVarInsertMatch(value, cursorIndex);
-    if (varMatch) {
-      const obj = getObjectByPanelKey(builderTarget.panelKey);
-      const trapVars = obj?.trap?.variables || [];
-      setVarModalVars(Array.isArray(trapVars) ? trapVars : []);
-      setVarInsertContext({
-        panelKey: builderTarget.panelKey,
-        field: 'processorSource',
-        value,
-        replaceStart: varMatch.replaceStart,
-        replaceEnd: varMatch.replaceEnd,
-      });
-      setVarModalMode('insert');
-      setVarModalOpen(true);
-      setVarModalToken(varMatch.token);
+    const obj = getObjectByPanelKey(builderTarget.panelKey);
+    const trapVars = obj?.trap?.variables || [];
+    if (tryOpenVarInsertModal({
+      panelKey: builderTarget.panelKey,
+      field: 'processorSource',
+      value,
+      cursorIndex,
+      trapVars,
+    })) {
       return;
     }
     const eventMatch = getEventFieldInsertMatch(value, cursorIndex);
@@ -2172,20 +2175,15 @@ export default function App() {
     if (inputType && !inputType.startsWith('insert')) {
       return;
     }
-    const varMatch = getVarInsertMatch(value, cursorIndex);
-    if (varMatch) {
-      const obj = getObjectByPanelKey(builderTarget.panelKey);
-      setVarModalToken(varMatch.token);
-      setVarModalVars(Array.isArray(obj?.trap?.variables) ? obj.trap.variables : []);
-      setVarInsertContext({
-        panelKey: builderTarget.panelKey,
-        field: 'builderRegular',
-        value,
-        replaceStart: varMatch.replaceStart,
-        replaceEnd: varMatch.replaceEnd,
-      });
-      setVarModalMode('insert');
-      setVarModalOpen(true);
+    const obj = getObjectByPanelKey(builderTarget.panelKey);
+    const trapVars = obj?.trap?.variables || [];
+    if (tryOpenVarInsertModal({
+      panelKey: builderTarget.panelKey,
+      field: 'builderRegular',
+      value,
+      cursorIndex,
+      trapVars,
+    })) {
       return;
     }
     const eventMatch = getEventFieldInsertMatch(value, cursorIndex);
@@ -2478,7 +2476,7 @@ export default function App() {
     }
   };
 
-  const handleLogout = async () => {
+  const handleLogoutInternal = async () => {
     try {
       await api.logout();
     } catch {
@@ -2506,6 +2504,12 @@ export default function App() {
     }
   };
 
+  const handleLogout = () => {
+    confirmDiscardIfDirty(() => {
+      void handleLogoutInternal();
+    });
+  };
+
   useEffect(() => {
     if (selectedFile) {
       return;
@@ -2531,13 +2535,13 @@ export default function App() {
     return true;
   };
 
-  const isFavorite = (pathId: string, type: 'file' | 'folder') => (
+  const isFavorite = (type: 'file' | 'folder', pathId: string) => (
     favorites.some((fav) => fav.pathId === pathId && fav.type === type)
   );
 
   const toggleFavorite = async (favorite: { type: 'file' | 'folder'; pathId: string; label: string; node?: string }) => {
     try {
-      if (isFavorite(favorite.pathId, favorite.type)) {
+      if (isFavorite(favorite.type, favorite.pathId)) {
         const resp = await api.removeFavorite({ type: favorite.type, pathId: favorite.pathId });
         setFavorites(resp.data?.favorites || []);
       } else {
@@ -2758,7 +2762,7 @@ export default function App() {
     sessionStorage.removeItem('fcom.search.query');
   };
 
-  const handleResetNavigation = async () => {
+  const handleResetNavigationInternal = async () => {
     handleClearSearch();
     setSearchScope('all');
     sessionStorage.removeItem('fcom.search.scope');
@@ -2780,6 +2784,21 @@ export default function App() {
     setMatchObjectOptions([]);
     setSearchHighlightActive(false);
     await loadNodeInternal(null, '/');
+  };
+
+  const handleResetNavigation = () => {
+    confirmDiscardIfDirty(() => {
+      void handleResetNavigationInternal();
+    });
+  };
+
+  const handleAppTabChange = (next: AppTab) => {
+    if (next === activeApp) {
+      return;
+    }
+    confirmDiscardIfDirty(() => {
+      setActiveApp(next);
+    });
   };
 
   useEffect(() => {
@@ -3090,7 +3109,7 @@ export default function App() {
     }
   };
 
-  const openFileFromUrl = async (fileId: string, nodeParam?: string | null) => {
+  const openFileFromUrlInternal = async (fileId: string, nodeParam?: string | null) => {
     const fileName = fileId.split('/').pop() || fileId;
     const derivedParent = fileId.split('/').slice(0, -1).join('/');
     const parentNode = nodeParam || derivedParent;
@@ -3111,21 +3130,29 @@ export default function App() {
     }
   };
 
+  const openFileFromUrl = async (fileId: string, nodeParam?: string | null) => (
+    confirmDiscardIfDirty(() => {
+      void openFileFromUrlInternal(fileId, nodeParam);
+    })
+  );
+
   const handleOpenSearchResult = async (result: any) => {
     const pathId = result?.pathId || result?.path || '';
     if (!pathId) {
       return;
     }
     const query = searchQuery.trim();
-    if (query) {
-      setHighlightQuery(query);
-      setHighlightPathId(pathId);
-      const source = result?.source === 'both' ? 'both' : result?.source === 'name' ? 'name' : 'content';
-      setHighlightMatchSource(source);
-      setSearchHighlightActive(source === 'content' || source === 'both');
-      highlightNextOpenRef.current = true;
-    }
-    await openFileFromUrl(pathId);
+    confirmDiscardIfDirty(() => {
+      if (query) {
+        setHighlightQuery(query);
+        setHighlightPathId(pathId);
+        const source = result?.source === 'both' ? 'both' : result?.source === 'name' ? 'name' : 'content';
+        setHighlightMatchSource(source);
+        setSearchHighlightActive(source === 'content' || source === 'both');
+        highlightNextOpenRef.current = true;
+      }
+      void openFileFromUrlInternal(pathId);
+    });
   };
 
   const splitCommandLine = (input: string) => {
@@ -3823,8 +3850,12 @@ export default function App() {
     await sendBulkTraps();
   };
 
-  const favoritesFiles = favorites.filter((fav) => fav.type === 'file');
-  const favoritesFolders = favorites.filter((fav) => fav.type === 'folder');
+  const favoritesFiles = favorites.filter((fav): fav is { type: 'file'; pathId: string; label: string; node?: string } => (
+    fav.type === 'file'
+  ));
+  const favoritesFolders = favorites.filter((fav): fav is { type: 'folder'; pathId: string; label: string } => (
+    fav.type === 'folder'
+  ));
   const filteredMibDefinitions = useMemo(() => (
     mibDefinitions.filter((entry) => (
       String(entry?.name || '').toLowerCase().includes(mibDefinitionSearch.trim().toLowerCase())
@@ -4593,6 +4624,36 @@ export default function App() {
     isEvalMode(panelKey, field) || isEvalValue(getEffectiveEventValue(obj, field))
   );
 
+  const positionOverrideTooltip = (target: EventTarget | null) => {
+    if (!(target instanceof HTMLElement) || typeof window === 'undefined') {
+      return;
+    }
+    const rect = target.getBoundingClientRect();
+    const padding = 12;
+    const maxWidth = 360;
+    const maxLeft = Math.max(padding, window.innerWidth - maxWidth - padding);
+    const left = Math.min(Math.max(rect.left, padding), maxLeft);
+    const preferAbove = target.classList.contains('eval-label-hover');
+    const top = preferAbove ? rect.top - 8 : rect.bottom + 8;
+    target.style.setProperty('--override-tooltip-left', `${left}px`);
+    target.style.setProperty('--override-tooltip-top', `${top}px`);
+    target.style.setProperty('--override-tooltip-shift', preferAbove ? '-100%' : '0');
+  };
+
+  useEffect(() => {
+    const handleScrollOrResize = () => {
+      if (activeOverrideTooltipRef.current) {
+        positionOverrideTooltip(activeOverrideTooltipRef.current);
+      }
+    };
+    window.addEventListener('scroll', handleScrollOrResize, true);
+    window.addEventListener('resize', handleScrollOrResize);
+    return () => {
+      window.removeEventListener('scroll', handleScrollOrResize, true);
+      window.removeEventListener('resize', handleScrollOrResize);
+    };
+  }, []);
+
   const renderFieldBadges = (
     panelKey: string,
     field: string,
@@ -4617,19 +4678,28 @@ export default function App() {
     ));
     const processorSummary = processor ? getProcessorSummaryLines(processor) : [];
     const overrideHoverProps = {
-      onMouseEnter: () => {
+      onMouseEnter: (event: any) => {
+        activeOverrideTooltipRef.current = event.currentTarget;
+        positionOverrideTooltip(event.currentTarget);
         setSuppressVarTooltip(true);
         setSuppressEvalTooltip(true);
       },
+      onMouseMove: (event: any) => {
+        positionOverrideTooltip(event.currentTarget);
+      },
       onMouseLeave: () => {
+        activeOverrideTooltipRef.current = null;
         setSuppressVarTooltip(false);
         setSuppressEvalTooltip(false);
       },
-      onFocus: () => {
+      onFocus: (event: any) => {
+        activeOverrideTooltipRef.current = event.currentTarget;
+        positionOverrideTooltip(event.currentTarget);
         setSuppressVarTooltip(true);
         setSuppressEvalTooltip(true);
       },
       onBlur: () => {
+        activeOverrideTooltipRef.current = null;
         setSuppressVarTooltip(false);
         setSuppressEvalTooltip(false);
       },
@@ -4674,19 +4744,28 @@ export default function App() {
   };
 
   const overrideTooltipHoverProps = {
-    onMouseEnter: () => {
+    onMouseEnter: (event: any) => {
+      activeOverrideTooltipRef.current = event.currentTarget;
+      positionOverrideTooltip(event.currentTarget);
       setSuppressVarTooltip(true);
       setSuppressEvalTooltip(true);
     },
+    onMouseMove: (event: any) => {
+      positionOverrideTooltip(event.currentTarget);
+    },
     onMouseLeave: () => {
+      activeOverrideTooltipRef.current = null;
       setSuppressVarTooltip(false);
       setSuppressEvalTooltip(false);
     },
-    onFocus: () => {
+    onFocus: (event: any) => {
+      activeOverrideTooltipRef.current = event.currentTarget;
+      positionOverrideTooltip(event.currentTarget);
       setSuppressVarTooltip(true);
       setSuppressEvalTooltip(true);
     },
     onBlur: () => {
+      activeOverrideTooltipRef.current = null;
       setSuppressVarTooltip(false);
       setSuppressEvalTooltip(false);
     },
@@ -4838,7 +4917,7 @@ export default function App() {
     if (methods.length === 0) {
       return false;
     }
-    return methods.every((value) => isTrapMethod(value));
+    return methods.every((value: string) => isTrapMethod(value));
   }, [fileMethodInfo.method, selectedFile?.PathID, fileData]);
 
   const isTrapFolderContext = useMemo(() => {
@@ -5633,13 +5712,50 @@ export default function App() {
     };
   };
 
+  const tryOpenVarInsertModal = (params: {
+    panelKey: string;
+    field: string;
+    value: string;
+    cursorIndex: number | null;
+    trapVars: any[];
+    meta?: {
+      rowId?: string;
+      nodeId?: string;
+      key?: 'left' | 'right' | 'result' | 'else';
+    };
+  }) => {
+    const match = getVarInsertMatch(params.value, params.cursorIndex);
+    if (!match) {
+      return false;
+    }
+    setVarModalVars(Array.isArray(params.trapVars) ? params.trapVars : []);
+    setVarInsertContext({
+      panelKey: params.panelKey,
+      field: params.field,
+      value: params.value,
+      replaceStart: match.replaceStart,
+      replaceEnd: match.replaceEnd,
+      meta: params.meta,
+    });
+    setVarModalMode('insert');
+    setVarModalOpen(true);
+    setVarModalToken(match.token);
+    return true;
+  };
+
   const handleVarInsertSelect = (token: string) => {
     if (!varInsertContext) {
       return;
     }
-    const { panelKey, field, value, replaceStart, replaceEnd } = varInsertContext;
+    const { panelKey, field, value, replaceStart, replaceEnd, meta } = varInsertContext;
     const nextValue = `${value.slice(0, replaceStart)}${token}${value.slice(replaceEnd)}`;
-    if (panelKey === '__flow__') {
+    if (meta?.key === 'else') {
+      setBuilderElseResult(nextValue);
+    } else if (meta?.key === 'result' && meta.rowId) {
+      updateBuilderResult(meta.rowId, nextValue);
+    } else if ((meta?.key === 'left' || meta?.key === 'right') && meta.rowId && meta.nodeId) {
+      updateBuilderCondition(meta.rowId, meta.nodeId, meta.key, nextValue);
+    } else if (panelKey === '__flow__') {
       setFlowEditorDraft((prev) => {
         if (!prev) {
           return prev;
@@ -6048,22 +6164,15 @@ export default function App() {
     if (inputType && !inputType.startsWith('insert')) {
       return;
     }
-
-    const varMatch = getVarInsertMatch(value, cursorIndex);
-    if (varMatch) {
-      const obj = builderTarget ? getObjectByPanelKey(builderTarget.panelKey) : null;
-      const trapVars = obj?.trap?.variables || [];
-      setVarModalVars(Array.isArray(trapVars) ? trapVars : []);
-      setVarInsertContext({
-        panelKey: '__flow__',
-        field: fieldKey,
-        value,
-        replaceStart: varMatch.replaceStart,
-        replaceEnd: varMatch.replaceEnd,
-      });
-      setVarModalMode('insert');
-      setVarModalOpen(true);
-      setVarModalToken(varMatch.token);
+    const obj = builderTarget ? getObjectByPanelKey(builderTarget.panelKey) : null;
+    const trapVars = obj?.trap?.variables || [];
+    if (tryOpenVarInsertModal({
+      panelKey: '__flow__',
+      field: fieldKey,
+      value,
+      cursorIndex,
+      trapVars,
+    })) {
       return;
     }
 
@@ -6094,35 +6203,30 @@ export default function App() {
     if (inputType && !inputType.startsWith('insert')) {
       return;
     }
-    const match = getVarInsertMatch(value, cursorIndex);
-    if (!match) {
-      const eventMatch = getEventFieldInsertMatch(value, cursorIndex);
-      if (!eventMatch) {
-        return;
-      }
-      setEventFieldSearch(eventMatch.query || '');
-      setEventFieldInsertContext({
-        panelKey: builderTarget.panelKey,
-        field: 'builderLiteral',
-        value,
-        replaceStart: eventMatch.replaceStart,
-        replaceEnd: eventMatch.replaceEnd,
-      });
-      setEventFieldPickerOpen(true);
-      return;
-    }
     const obj = getObjectByPanelKey(builderTarget.panelKey);
-    setVarModalToken(match.token);
-    setVarModalVars(Array.isArray(obj?.trap?.variables) ? obj.trap.variables : []);
-    setVarModalMode('insert');
-    setVarInsertContext({
+    const trapVars = obj?.trap?.variables || [];
+    if (tryOpenVarInsertModal({
       panelKey: builderTarget.panelKey,
       field: 'builderLiteral',
       value,
-      replaceStart: match.replaceStart,
-      replaceEnd: match.replaceEnd,
+      cursorIndex,
+      trapVars,
+    })) {
+      return;
+    }
+    const eventMatch = getEventFieldInsertMatch(value, cursorIndex);
+    if (!eventMatch) {
+      return;
+    }
+    setEventFieldSearch(eventMatch.query || '');
+    setEventFieldInsertContext({
+      panelKey: builderTarget.panelKey,
+      field: 'builderLiteral',
+      value,
+      replaceStart: eventMatch.replaceStart,
+      replaceEnd: eventMatch.replaceEnd,
     });
-    setVarModalOpen(true);
+    setEventFieldPickerOpen(true);
   };
 
   const handleEventInputChange = (
@@ -6147,19 +6251,14 @@ export default function App() {
     if (inputType && !inputType.startsWith('insert')) {
       return;
     }
-    const match = getVarInsertMatch(value, cursorIndex);
-    if (match) {
-      setVarModalToken(match.token);
-      setVarModalVars(Array.isArray(obj?.trap?.variables) ? obj.trap.variables : []);
-      setVarModalMode('insert');
-      setVarInsertContext({
-        panelKey,
-        field,
-        value,
-        replaceStart: match.replaceStart,
-        replaceEnd: match.replaceEnd,
-      });
-      setVarModalOpen(true);
+    const trapVars = obj?.trap?.variables || [];
+    if (tryOpenVarInsertModal({
+      panelKey,
+      field,
+      value,
+      cursorIndex,
+      trapVars,
+    })) {
       return;
     }
 
@@ -6230,7 +6329,7 @@ export default function App() {
         setBuilderConditions(parsed.rows);
         setBuilderElseResult(parsed.elseResult);
       } else {
-        setBuilderMode('regular');
+        setBuilderMode('friendly');
       }
       setBuilderRegularText(evalText);
       return;
@@ -6305,7 +6404,7 @@ export default function App() {
     }));
   };
 
-  const isBuilderTargetReady = builderTarget && panelEditState[builderTarget.panelKey];
+  const isBuilderTargetReady = Boolean(builderTarget && panelEditState[builderTarget.panelKey]);
   const isFieldLockedByBuilder = (panelKey: string, field: string) => (
     Boolean(builderTarget
       && panelEditState[builderTarget.panelKey]
@@ -6525,7 +6624,7 @@ export default function App() {
     }
     if (target === 'eval') {
       const baseValue = getCurrentFieldValue(obj, builderTarget.panelKey, builderTarget.field);
-      setBuilderMode('regular');
+      setBuilderMode('friendly');
       setBuilderRegularText(baseValue);
       setBuilderFocus('eval');
     }
@@ -7446,6 +7545,53 @@ export default function App() {
   const workingOverrides = getWorkingOverrides();
   const stagedDiff = diffOverrides(baseOverrides, workingOverrides);
   const hasStagedChanges = stagedDiff.totalChanges > 0;
+  useEffect(() => {
+    if (!hasStagedChanges || !hasEditPermission) {
+      if (reviewPulseIntervalRef.current) {
+        window.clearInterval(reviewPulseIntervalRef.current);
+        reviewPulseIntervalRef.current = null;
+      }
+      if (reviewPulseTimeoutRef.current) {
+        window.clearTimeout(reviewPulseTimeoutRef.current);
+        reviewPulseTimeoutRef.current = null;
+      }
+      stagedPulseActiveRef.current = false;
+      setReviewCtaPulse(false);
+      return;
+    }
+
+    const triggerPulse = () => {
+      setReviewCtaPulse(true);
+      if (reviewPulseTimeoutRef.current) {
+        window.clearTimeout(reviewPulseTimeoutRef.current);
+      }
+      reviewPulseTimeoutRef.current = window.setTimeout(() => {
+        setReviewCtaPulse(false);
+      }, 1400);
+    };
+
+    if (!stagedPulseActiveRef.current) {
+      triggerPulse();
+      stagedPulseActiveRef.current = true;
+    }
+
+    if (!reviewPulseIntervalRef.current) {
+      reviewPulseIntervalRef.current = window.setInterval(triggerPulse, 6000);
+    }
+
+    return () => {
+      if (reviewPulseIntervalRef.current) {
+        window.clearInterval(reviewPulseIntervalRef.current);
+        reviewPulseIntervalRef.current = null;
+      }
+      if (reviewPulseTimeoutRef.current) {
+        window.clearTimeout(reviewPulseTimeoutRef.current);
+        reviewPulseTimeoutRef.current = null;
+      }
+      stagedPulseActiveRef.current = false;
+      setReviewCtaPulse(false);
+    };
+  }, [hasStagedChanges, hasEditPermission]);
   const stagedFieldChangeMap = useMemo(() => {
     const map = new Map<string, Map<string, 'added' | 'updated' | 'removed'>>();
     stagedDiff.sections.forEach((section) => {
@@ -7589,10 +7735,14 @@ export default function App() {
     setExpandedOriginals({});
   }, [showReviewModal, reviewStep, stagedDiff.sections]);
 
-  const openAdvancedFlowModal = (
+  const openAdvancedFlowModal: (
     scope: 'object' | 'global',
-    objectNameOverride?: string,
+    objectNameOverride?: string | null,
     focusTargetField?: string | null,
+  ) => void = (
+    scope,
+    objectNameOverride,
+    focusTargetField,
   ) => {
     if (!hasEditPermission) {
       return;
@@ -7977,6 +8127,91 @@ export default function App() {
     )));
   };
 
+  const handleFriendlyConditionInputChange = (
+    rowId: string,
+    nodeId: string,
+    key: 'left' | 'right',
+    value: string,
+    cursorIndex: number | null,
+    inputType?: string,
+  ) => {
+    updateBuilderCondition(rowId, nodeId, key, value);
+    if (!builderTarget) {
+      return;
+    }
+    if (inputType && !inputType.startsWith('insert')) {
+      return;
+    }
+    const obj = getObjectByPanelKey(builderTarget.panelKey);
+    const trapVars = obj?.trap?.variables || [];
+    tryOpenVarInsertModal({
+      panelKey: builderTarget.panelKey,
+      field: 'builderCondition',
+      value,
+      cursorIndex,
+      trapVars,
+      meta: {
+        rowId,
+        nodeId,
+        key,
+      },
+    });
+  };
+
+  const handleFriendlyResultInputChange = (
+    rowId: string,
+    value: string,
+    cursorIndex: number | null,
+    inputType?: string,
+  ) => {
+    updateBuilderResult(rowId, value);
+    if (!builderTarget) {
+      return;
+    }
+    if (inputType && !inputType.startsWith('insert')) {
+      return;
+    }
+    const obj = getObjectByPanelKey(builderTarget.panelKey);
+    const trapVars = obj?.trap?.variables || [];
+    tryOpenVarInsertModal({
+      panelKey: builderTarget.panelKey,
+      field: 'builderResult',
+      value,
+      cursorIndex,
+      trapVars,
+      meta: {
+        rowId,
+        key: 'result',
+      },
+    });
+  };
+
+  const handleFriendlyElseResultInputChange = (
+    value: string,
+    cursorIndex: number | null,
+    inputType?: string,
+  ) => {
+    setBuilderElseResult(value);
+    if (!builderTarget) {
+      return;
+    }
+    if (inputType && !inputType.startsWith('insert')) {
+      return;
+    }
+    const obj = getObjectByPanelKey(builderTarget.panelKey);
+    const trapVars = obj?.trap?.variables || [];
+    tryOpenVarInsertModal({
+      panelKey: builderTarget.panelKey,
+      field: 'builderElse',
+      value,
+      cursorIndex,
+      trapVars,
+      meta: {
+        key: 'else',
+      },
+    });
+  };
+
   const addBuilderRow = () => {
     setBuilderConditions((prev) => ([
       ...prev,
@@ -8041,7 +8276,14 @@ export default function App() {
           <input
             className="builder-input"
             value={node.left}
-            onChange={(e) => updateBuilderCondition(rowId, node.id, 'left', e.target.value)}
+            onChange={(e) => handleFriendlyConditionInputChange(
+              rowId,
+              node.id,
+              'left',
+              e.target.value,
+              e.target.selectionStart,
+              (e.nativeEvent as InputEvent | undefined)?.inputType,
+            )}
             placeholder="$v1"
             disabled={!isBuilderTargetReady}
             title={node.left}
@@ -8062,7 +8304,14 @@ export default function App() {
           <input
             className="builder-input"
             value={node.right}
-            onChange={(e) => updateBuilderCondition(rowId, node.id, 'right', e.target.value)}
+            onChange={(e) => handleFriendlyConditionInputChange(
+              rowId,
+              node.id,
+              'right',
+              e.target.value,
+              e.target.selectionStart,
+              (e.nativeEvent as InputEvent | undefined)?.inputType,
+            )}
             placeholder="1"
             disabled={!isBuilderTargetReady}
             title={node.right}
@@ -8287,7 +8536,7 @@ export default function App() {
     setVarModalOpen(true);
   };
 
-  const renderSummary = (value: any, trapVars: any[], options?: { suppressEvalTooltip?: boolean }) => {
+  const renderSummary = (value: any, trapVars: any[] = [], options?: { suppressEvalTooltip?: boolean }) => {
     if (value && typeof value === 'object' && typeof value.eval === 'string') {
       return renderEvalDisplay(value.eval, trapVars, !options?.suppressEvalTooltip);
     }
@@ -8837,19 +9086,28 @@ export default function App() {
           <span
             className="eval-label eval-label-hover override-summary"
             tabIndex={0}
-            onMouseEnter={() => {
+            onMouseEnter={(event) => {
+              activeOverrideTooltipRef.current = event.currentTarget;
+              positionOverrideTooltip(event.currentTarget);
               setSuppressVarTooltip(true);
               setSuppressEvalTooltip(false);
             }}
+            onMouseMove={(event) => {
+              positionOverrideTooltip(event.currentTarget);
+            }}
             onMouseLeave={() => {
+              activeOverrideTooltipRef.current = null;
               setSuppressVarTooltip(false);
               setSuppressEvalTooltip(false);
             }}
-            onFocus={() => {
+            onFocus={(event) => {
+              activeOverrideTooltipRef.current = event.currentTarget;
+              positionOverrideTooltip(event.currentTarget);
               setSuppressVarTooltip(true);
               setSuppressEvalTooltip(false);
             }}
             onBlur={() => {
+              activeOverrideTooltipRef.current = null;
               setSuppressVarTooltip(false);
               setSuppressEvalTooltip(false);
             }}
@@ -9053,7 +9311,9 @@ export default function App() {
       builderConditions={builderConditions}
       setBuilderConditions={setBuilderConditions}
       updateBuilderCondition={updateBuilderCondition}
-      updateBuilderResult={updateBuilderResult}
+      handleFriendlyConditionInputChange={handleFriendlyConditionInputChange}
+      handleFriendlyResultInputChange={handleFriendlyResultInputChange}
+      handleFriendlyElseResultInputChange={handleFriendlyElseResultInputChange}
       removeBuilderRow={removeBuilderRow}
       addBuilderRow={addBuilderRow}
       createConditionNode={createConditionNode}
@@ -9061,7 +9321,6 @@ export default function App() {
       nextBuilderId={nextBuilderId}
       renderConditionNode={renderConditionNode}
       builderElseResult={builderElseResult}
-      setBuilderElseResult={setBuilderElseResult}
       friendlyPreview={friendlyPreview}
       applyFriendlyEval={applyFriendlyEval}
       formatEvalReadableList={formatEvalReadableList}
@@ -9105,7 +9364,7 @@ export default function App() {
         <header className="app-header">
           <h1>COM Curation &amp; Management</h1>
           {isAuthenticated && (
-            <AppTabs activeApp={activeApp} onChange={setActiveApp} />
+            <AppTabs activeApp={activeApp} onChange={handleAppTabChange} />
           )}
           {isAuthenticated && (
             <div className="header-actions">
@@ -9280,6 +9539,7 @@ export default function App() {
                     getBaseEventFields={getBaseEventFields}
                     hasEditPermission={hasEditPermission}
                       showTestControls={isTrapFileContext}
+                    isTrapFileContext={isTrapFileContext}
                     openTrapComposerFromTest={openTrapComposerFromTest}
                     getObjectDescription={getObjectDescription}
                     isTestableObject={isTestableObject}
