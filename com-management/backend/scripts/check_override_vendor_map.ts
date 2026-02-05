@@ -94,7 +94,10 @@ const listDirectory = async (client: UAClient, node: string) => {
 const main = async () => {
   const config = buildUaConfig();
   const client = new UAClient(config);
-  const pathPrefix = (process.env.COMS_PATH_PREFIX ?? DEFAULT_PATH_PREFIX).replace(/^\/+|\/+$/g, '');
+  const pathPrefix = (process.env.COMS_PATH_PREFIX ?? DEFAULT_PATH_PREFIX).replace(
+    /^\/+|\/+$/g,
+    '',
+  );
   const primaryOverridesRoot = `${pathPrefix}/overrides`;
   const legacyOverridesRoot = pathPrefix.includes('/_objects')
     ? `${pathPrefix.replace('/_objects', '')}/overrides`
@@ -111,7 +114,11 @@ const main = async () => {
         return;
       }
       const vendorName = baseName.replace(new RegExp(`${OVERRIDE_SUFFIX}$`, 'i'), '');
-      overrideVendors.set(normalizeVendor(vendorName), { name: vendorName, file: baseName, root: overridesRoot });
+      overrideVendors.set(normalizeVendor(vendorName), {
+        name: vendorName,
+        file: baseName,
+        root: overridesRoot,
+      });
     });
   }
 
@@ -120,7 +127,10 @@ const main = async () => {
   const vendorToProtocols = new Map<string, Set<string>>();
 
   for (const protocolEntry of protocolFolders) {
-    const protocolName = String(protocolEntry?.PathName || protocolEntry?.PathID || '').split('/').pop() || '';
+    const protocolName =
+      String(protocolEntry?.PathName || protocolEntry?.PathID || '')
+        .split('/')
+        .pop() || '';
     if (!protocolName || protocolName.toLowerCase() === 'overrides') {
       continue;
     }
@@ -143,7 +153,9 @@ const main = async () => {
     .filter(([key]) => !vendorToProtocols.has(key))
     .map(([, entry]) => entry);
 
-  const matchedCount = Array.from(overrideVendors.keys()).filter((key) => vendorToProtocols.has(key)).length;
+  const matchedCount = Array.from(overrideVendors.keys()).filter((key) =>
+    vendorToProtocols.has(key),
+  ).length;
 
   // Output summary
   // eslint-disable-next-line no-console

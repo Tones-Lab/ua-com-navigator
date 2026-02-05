@@ -21,7 +21,9 @@ export default function AppTabs({ activeApp, onChange }: AppTabsProps) {
         <button
           key={tab.key}
           type="button"
-          className={activeApp === tab.key ? 'app-nav-button app-nav-button-active' : 'app-nav-button'}
+          className={
+            activeApp === tab.key ? 'app-nav-button app-nav-button-active' : 'app-nav-button'
+          }
           onClick={() => onChange(tab.key)}
           role="tab"
           aria-selected={activeApp === tab.key}

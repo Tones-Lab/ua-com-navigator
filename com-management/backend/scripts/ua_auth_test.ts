@@ -56,9 +56,7 @@ const main = async () => {
     process.exit(1);
   }
 
-  const baseURL = (port === '443' || port === '80')
-    ? `https://${host}`
-    : `https://${host}:${port}`;
+  const baseURL = port === '443' || port === '80' ? `https://${host}` : `https://${host}:${port}`;
   const config: AxiosRequestConfig = {
     baseURL,
     timeout,

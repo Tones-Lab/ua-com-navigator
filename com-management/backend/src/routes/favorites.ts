@@ -1,7 +1,12 @@
 import { Router, Request, Response } from 'express';
 import logger from '../utils/logger';
 import { getSession } from '../services/sessionStore';
-import { addFavorite, getFavorites, removeFavorite, FavoriteItem } from '../services/favoritesStore';
+import {
+  addFavorite,
+  getFavorites,
+  removeFavorite,
+  FavoriteItem,
+} from '../services/favoritesStore';
 
 const router = Router();
 

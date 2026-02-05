@@ -91,39 +91,39 @@ Backend configuration is driven by environment variables (see [backend/.env.exam
 
 ### Backend env vars
 
-| Variable | Default | Description |
-|---|---|---|
-| PORT | 3001 | API port |
-| NODE_ENV | development | Node environment |
-| FRONTEND_URL | https://localhost:5173 | Allowed CORS origin |
-| LOG_LEVEL | info | Logger level |
-| SSL_KEY_PATH | /opt/assure1/etc/ssl/Web.key | Enable HTTPS if key+cert exist |
-| SSL_CERT_PATH | /opt/assure1/etc/ssl/Web.crt | Enable HTTPS if key+cert exist |
-| COOKIE_SECURE | false | Force secure session cookies |
-| UA_AUTH_BASIC_ENABLED | true | Enable basic auth |
-| UA_AUTH_CERT_ENABLED | true | Enable certificate auth |
-| UA_TLS_INSECURE | false | Allow insecure TLS when calling UA |
-| UA_TLS_CERT_PATH |  | Client cert path (UA calls) |
-| UA_TLS_KEY_PATH |  | Client key path (UA calls) |
-| UA_TLS_CA_PATH |  | CA bundle path (UA calls) |
-| COMS_ROOT | /root/navigator/coms | Local COMs root for indexing/search |
-| COMS_PATH_PREFIX | id-core/default/processing/event/fcom/_objects | Path prefix applied to search results |
-| SEARCH_MAX_CONTENT_BYTES | 5242880 | Max file bytes indexed for content search |
-| EVENTS_SCHEMA_TTL_MS | 900000 | Cache TTL for event schema |
-| EVENTS_SCHEMA_PATH | backend/data/events-schema.json | Fallback schema path |
-| FOLDER_OVERVIEW_TTL_MS | 600000 | Folder overview cache TTL |
-| OVERVIEW_PAGE_LIMIT | 500 | UA page size for overview indexing |
-| OVERVIEW_REFRESH_INTERVAL_MS | 3600000 | Overview refresh interval |
-| UA_DB_QUERY_ENDPOINT | /database/queryTools/executeQuery | UA DB query endpoint |
-| UA_DB_QUERY_NAME | Event | UA query DB name |
-| UA_DB_QUERY_ID |  | UA query DB id |
-| UA_DB_QUERY_SHARD |  | UA query shard id |
-| UA_DB_QUERY_LIMIT | 100 | UA query limit |
-| A1BASEDIR | /opt/assure1 | UA base directory for MIB tooling |
-| UA_MIB_DIR | $A1BASEDIR/distrib/mibs | MIB root for browsing |
-| UA_MIB2FCOM_BIN | $A1BASEDIR/bin/sdk/MIB2FCOM | MIB2FCOM binary path |
-| UA_SNMP_TRAP_CMD | snmptrap | snmptrap executable |
-| MIBS |  | Extra MIB search path for SNMP tools |
+| Variable                     | Default                                         | Description                               |
+| ---------------------------- | ----------------------------------------------- | ----------------------------------------- |
+| PORT                         | 3001                                            | API port                                  |
+| NODE_ENV                     | development                                     | Node environment                          |
+| FRONTEND_URL                 | https://localhost:5173                          | Allowed CORS origin                       |
+| LOG_LEVEL                    | info                                            | Logger level                              |
+| SSL_KEY_PATH                 | /opt/assure1/etc/ssl/Web.key                    | Enable HTTPS if key+cert exist            |
+| SSL_CERT_PATH                | /opt/assure1/etc/ssl/Web.crt                    | Enable HTTPS if key+cert exist            |
+| COOKIE_SECURE                | false                                           | Force secure session cookies              |
+| UA_AUTH_BASIC_ENABLED        | true                                            | Enable basic auth                         |
+| UA_AUTH_CERT_ENABLED         | true                                            | Enable certificate auth                   |
+| UA_TLS_INSECURE              | false                                           | Allow insecure TLS when calling UA        |
+| UA_TLS_CERT_PATH             |                                                 | Client cert path (UA calls)               |
+| UA_TLS_KEY_PATH              |                                                 | Client key path (UA calls)                |
+| UA_TLS_CA_PATH               |                                                 | CA bundle path (UA calls)                 |
+| COMS_ROOT                    | /root/navigator/coms                            | Local COMs root for indexing/search       |
+| COMS_PATH_PREFIX             | id-core/default/processing/event/fcom/\_objects | Path prefix applied to search results     |
+| SEARCH_MAX_CONTENT_BYTES     | 5242880                                         | Max file bytes indexed for content search |
+| EVENTS_SCHEMA_TTL_MS         | 900000                                          | Cache TTL for event schema                |
+| EVENTS_SCHEMA_PATH           | backend/data/events-schema.json                 | Fallback schema path                      |
+| FOLDER_OVERVIEW_TTL_MS       | 600000                                          | Folder overview cache TTL                 |
+| OVERVIEW_PAGE_LIMIT          | 500                                             | UA page size for overview indexing        |
+| OVERVIEW_REFRESH_INTERVAL_MS | 3600000                                         | Overview refresh interval                 |
+| UA_DB_QUERY_ENDPOINT         | /database/queryTools/executeQuery               | UA DB query endpoint                      |
+| UA_DB_QUERY_NAME             | Event                                           | UA query DB name                          |
+| UA_DB_QUERY_ID               |                                                 | UA query DB id                            |
+| UA_DB_QUERY_SHARD            |                                                 | UA query shard id                         |
+| UA_DB_QUERY_LIMIT            | 100                                             | UA query limit                            |
+| A1BASEDIR                    | /opt/assure1                                    | UA base directory for MIB tooling         |
+| UA_MIB_DIR                   | $A1BASEDIR/distrib/mibs                         | MIB root for browsing                     |
+| UA_MIB2FCOM_BIN              | $A1BASEDIR/bin/sdk/MIB2FCOM                     | MIB2FCOM binary path                      |
+| UA_SNMP_TRAP_CMD             | snmptrap                                        | snmptrap executable                       |
+| MIBS                         |                                                 | Extra MIB search path for SNMP tools      |
 
 Frontend configuration is code‑driven; no env vars are required by default.
 

@@ -1,6 +1,10 @@
 import { Router, Request, Response } from 'express';
 import { getCredentials, getServer, getSession } from '../services/sessionStore';
-import { getOverviewStatus, overviewIndex, requestOverviewRebuild } from '../services/overviewIndex';
+import {
+  getOverviewStatus,
+  overviewIndex,
+  requestOverviewRebuild,
+} from '../services/overviewIndex';
 import { UAClient } from '../services/ua';
 
 const router = Router();

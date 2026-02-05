@@ -39,25 +39,29 @@ app.disable('etag');
 // Middleware
 app.use(helmet());
 const defaultFrontend = useHttps ? 'https://localhost:5173' : 'http://localhost:5173';
-const allowedOrigins = new Set([
-  process.env.FRONTEND_URL,
-  defaultFrontend,
-  'https://lab-ua-tony02.tony.lab:5173',
-  'http://lab-ua-tony02.tony.lab:5173',
-  'https://ua-com.ccfc1986.us',
-  'http://ua-com.ccfc1986.us',
-].filter(Boolean) as string[]);
+const allowedOrigins = new Set(
+  [
+    process.env.FRONTEND_URL,
+    defaultFrontend,
+    'https://lab-ua-tony02.tony.lab:5173',
+    'http://lab-ua-tony02.tony.lab:5173',
+    'https://ua-com.ccfc1986.us',
+    'http://ua-com.ccfc1986.us',
+  ].filter(Boolean) as string[],
+);
 
-app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.has(origin)) {
-      callback(null, true);
-      return;
-    }
-    callback(new Error(`CORS blocked for origin: ${origin}`));
-  },
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.has(origin)) {
+        callback(null, true);
+        return;
+      }
+      callback(new Error(`CORS blocked for origin: ${origin}`));
+    },
+    credentials: true,
+  }),
+);
 app.use((req: Request, res: Response, next: NextFunction) => {
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
   res.setHeader('Pragma', 'no-cache');

@@ -187,7 +187,11 @@ export class UAClient {
   /**
    * Compare two revisions of a rules file
    */
-  async diffRules(id: string, revisionA: string = 'HEAD', revisionB: string = 'WORKING'): Promise<any> {
+  async diffRules(
+    id: string,
+    revisionA: string = 'HEAD',
+    revisionB: string = 'WORKING',
+  ): Promise<any> {
     try {
       logger.info(`[UA] Diffing rule: ${id}, ${revisionA} vs ${revisionB}`);
       const response = await this.client.get('/rule/Rules/readDiff', {
@@ -269,7 +273,12 @@ export class UAClient {
   /**
    * Create a new rules file
    */
-  async createRule(name: string, content: any, path: string = '/', commitMessage?: string): Promise<any> {
+  async createRule(
+    name: string,
+    content: any,
+    path: string = '/',
+    commitMessage?: string,
+  ): Promise<any> {
     try {
       logger.info(`[UA] Creating rule: ${name} at ${path}`);
       const normalizedContent = (() => {
@@ -340,9 +349,10 @@ export class UAClient {
   async downloadRule(id: string): Promise<Buffer> {
     try {
       logger.info(`[UA] Downloading rule: ${id}`);
-      const response = await this.client.post('/rule/Rules/executeDownload', 
+      const response = await this.client.post(
+        '/rule/Rules/executeDownload',
         { id },
-        { responseType: 'arraybuffer' }
+        { responseType: 'arraybuffer' },
       );
       return Buffer.from(response.data);
     } catch (error: any) {

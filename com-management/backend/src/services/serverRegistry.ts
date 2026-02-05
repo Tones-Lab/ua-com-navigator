@@ -49,5 +49,4 @@ const uaServers: Map<string, UAServer> = new Map([
 
 export const listServers = (): UAServer[] => Array.from(uaServers.values());
 
-export const getServerById = (serverId: string): UAServer | undefined =>
-  uaServers.get(serverId);
+export const getServerById = (serverId: string): UAServer | undefined => uaServers.get(serverId);

@@ -13,8 +13,14 @@ const CACHE_TTL_MS = Number(process.env.FOLDER_OVERVIEW_TTL_MS || 10 * 60 * 1000
 const DEFAULT_PATH_PREFIX = 'id-core/default/processing/event/fcom/_objects';
 const PATH_PREFIX = (process.env.COMS_PATH_PREFIX ?? DEFAULT_PATH_PREFIX).replace(/^\/+|\/+$/g, '');
 const FOLDER_OVERVIEW_PAGE_LIMIT = Number(process.env.FOLDER_OVERVIEW_PAGE_LIMIT || 500);
-const FOLDER_OVERVIEW_CONCURRENCY = Math.max(1, Number(process.env.FOLDER_OVERVIEW_CONCURRENCY || 20));
-const FOLDER_OVERVIEW_FILE_CONCURRENCY = Math.max(1, Number(process.env.FOLDER_OVERVIEW_FILE_CONCURRENCY || 20));
+const FOLDER_OVERVIEW_CONCURRENCY = Math.max(
+  1,
+  Number(process.env.FOLDER_OVERVIEW_CONCURRENCY || 20),
+);
+const FOLDER_OVERVIEW_FILE_CONCURRENCY = Math.max(
+  1,
+  Number(process.env.FOLDER_OVERVIEW_FILE_CONCURRENCY || 20),
+);
 const CACHE_DIR = process.env.COM_CACHE_DIR || path.resolve(process.cwd(), 'cache');
 const FOLDER_CACHE_FILE = path.join(CACHE_DIR, 'folder_overview_cache.json');
 const overviewCache = new Map<string, { data: any; fetchedAt: number }>();
@@ -120,7 +126,8 @@ const requireSession = (req: Request, res: Response) => {
 };
 
 const parseRuleText = (payload: any) => {
-  const ruleText = payload?.data?.[0]?.RuleText ?? payload?.RuleText ?? payload?.content?.data?.[0]?.RuleText;
+  const ruleText =
+    payload?.data?.[0]?.RuleText ?? payload?.RuleText ?? payload?.content?.data?.[0]?.RuleText;
   if (typeof ruleText === 'string') {
     try {
       return JSON.parse(ruleText);
@@ -138,12 +145,11 @@ const getEventFields = (obj: any) => {
   return typeof obj.event === 'object' && obj.event ? obj.event : {};
 };
 
-const extractRuleText = (payload: any) => (
-  payload?.data?.[0]?.RuleText
-  ?? payload?.RuleText
-  ?? payload?.content?.data?.[0]?.RuleText
-  ?? payload
-);
+const extractRuleText = (payload: any) =>
+  payload?.data?.[0]?.RuleText ??
+  payload?.RuleText ??
+  payload?.content?.data?.[0]?.RuleText ??
+  payload;
 
 const parseOverridePayload = (ruleText: string) => {
   const trimmed = ruleText.trim();
@@ -192,27 +198,39 @@ const getProcessorTargetField = (processor: any) => {
   return null;
 };
 
-const collectOverrideTargets = (
-  processors: any[],
-  objectName: string,
-  targetKeys: Set<string>,
-) => {
+const collectOverrideTargets = (processors: any[], objectName: string, targetKeys: Set<string>) => {
   (processors || []).forEach((processor: any) => {
     if (!processor || typeof processor !== 'object') {
       return;
     }
     if (processor.if) {
       const payload = processor.if;
-      collectOverrideTargets(Array.isArray(payload.processors) ? payload.processors : [], objectName, targetKeys);
-      collectOverrideTargets(Array.isArray(payload.else) ? payload.else : [], objectName, targetKeys);
+      collectOverrideTargets(
+        Array.isArray(payload.processors) ? payload.processors : [],
+        objectName,
+        targetKeys,
+      );
+      collectOverrideTargets(
+        Array.isArray(payload.else) ? payload.else : [],
+        objectName,
+        targetKeys,
+      );
     }
     if (processor.foreach?.processors) {
-      collectOverrideTargets(Array.isArray(processor.foreach.processors) ? processor.foreach.processors : [], objectName, targetKeys);
+      collectOverrideTargets(
+        Array.isArray(processor.foreach.processors) ? processor.foreach.processors : [],
+        objectName,
+        targetKeys,
+      );
     }
     if (Array.isArray(processor.switch?.case)) {
       processor.switch.case.forEach((entry: any) => {
         collectOverrideTargets(
-          Array.isArray(entry?.then) ? entry.then : Array.isArray(entry?.processors) ? entry.processors : [],
+          Array.isArray(entry?.then)
+            ? entry.then
+            : Array.isArray(entry?.processors)
+              ? entry.processors
+              : [],
           objectName,
           targetKeys,
         );
@@ -244,7 +262,10 @@ const collectEventOverrideTargets = (entry: any, objectName: string, targetKeys:
   });
 };
 
-const getCachedCountsForNode = (overviewData: OverviewData | null, node: string): OverviewCounts | null => {
+const getCachedCountsForNode = (
+  overviewData: OverviewData | null,
+  node: string,
+): OverviewCounts | null => {
   if (!overviewData) {
     return null;
   }
@@ -252,7 +273,9 @@ const getCachedCountsForNode = (overviewData: OverviewData | null, node: string)
   if (parts.length === 0) {
     return null;
   }
-  const protocolMap = new Map(overviewData.protocols.map((protocol) => [protocol.name.toLowerCase(), protocol]));
+  const protocolMap = new Map(
+    overviewData.protocols.map((protocol) => [protocol.name.toLowerCase(), protocol]),
+  );
   const protocolIndex = parts.findIndex((segment) => protocolMap.has(segment.toLowerCase()));
   if (protocolIndex === -1) {
     return null;
@@ -298,12 +321,16 @@ const buildFolderOverview = async (
       objectCount: cachedCounts?.objects ?? 0,
       schemaErrorCount: 0,
       unknownFieldCount: 0,
-      overrideCount: cachedCounts?.overrides ?? await getOverrideCountForNode(uaClient, node),
+      overrideCount: cachedCounts?.overrides ?? (await getOverrideCountForNode(uaClient, node)),
       topFiles: [],
       cachedAt: new Date().toISOString(),
     };
   }
-  const files = entries.filter((item: any) => String(item.PathName || '').toLowerCase().endsWith('.json'));
+  const files = entries.filter((item: any) =>
+    String(item.PathName || '')
+      .toLowerCase()
+      .endsWith('.json'),
+  );
 
   let fileCount = files.length;
   let objectCount = 0;
@@ -311,7 +338,13 @@ const buildFolderOverview = async (
   let unknownFieldCount = 0;
   const overrideCount = cachedCounts ? 0 : await getOverrideCountForNode(uaClient, node);
 
-  const rows: Array<{ file: string; pathId: string; schemaErrors: number; unknownFields: number; objects: number }> = [];
+  const rows: Array<{
+    file: string;
+    pathId: string;
+    schemaErrors: number;
+    unknownFields: number;
+    objects: number;
+  }> = [];
 
   const processFile = async (entry: any) => {
     const fileId = entry.PathID;
@@ -321,7 +354,11 @@ const buildFolderOverview = async (
       if (!content) {
         return null;
       }
-      const objects = Array.isArray(content?.objects) ? content.objects : Array.isArray(content) ? content : [];
+      const objects = Array.isArray(content?.objects)
+        ? content.objects
+        : Array.isArray(content)
+          ? content
+          : [];
       const valid = validate(content);
       const errors = valid ? 0 : (validate.errors || []).length;
 
@@ -373,7 +410,7 @@ const buildFolderOverview = async (
   const useConcurrency = files.length > 5;
   const processed = useConcurrency
     ? await runFilePool(files, FOLDER_OVERVIEW_FILE_CONCURRENCY)
-    : (await runFilePool(files, 1));
+    : await runFilePool(files, 1);
 
   for (const result of processed) {
     objectCount += result.objectCount;
@@ -383,7 +420,7 @@ const buildFolderOverview = async (
   }
 
   const ranked = rows
-    .sort((a, b) => (b.schemaErrors + b.unknownFields) - (a.schemaErrors + a.unknownFields))
+    .sort((a, b) => b.schemaErrors + b.unknownFields - (a.schemaErrors + a.unknownFields))
     .slice(0, limit);
 
   return {
@@ -407,11 +444,11 @@ const resolveOverridePathFromNode = (node: string) => {
   }
   const objectsIndex = parts.indexOf('_objects', fcomIndex + 1);
   const methodBaseIndex = objectsIndex !== -1 ? objectsIndex : fcomIndex;
-  const methodIndex = parts.findIndex((segment, idx) => idx > methodBaseIndex && (segment === 'trap' || segment === 'syslog'));
+  const methodIndex = parts.findIndex(
+    (segment, idx) => idx > methodBaseIndex && (segment === 'trap' || segment === 'syslog'),
+  );
   const protocol = methodIndex !== -1 ? parts[methodIndex] : null;
-  const vendor = methodIndex !== -1
-    ? parts[methodIndex + 1]
-    : parts[methodBaseIndex + 1];
+  const vendor = methodIndex !== -1 ? parts[methodIndex + 1] : parts[methodBaseIndex + 1];
 
   if (!vendor) {
     return null;
@@ -487,7 +524,10 @@ const rebuildAllFolderOverviews = async (
   const vendorNodes: string[] = [];
 
   for (const protocolEntry of protocolFolders) {
-    const protocolName = String(protocolEntry?.PathName || protocolEntry?.PathID || '').split('/').pop() || '';
+    const protocolName =
+      String(protocolEntry?.PathName || protocolEntry?.PathID || '')
+        .split('/')
+        .pop() || '';
     if (!protocolName || protocolName.toLowerCase() === 'overrides') {
       continue;
     }
@@ -496,7 +536,9 @@ const rebuildAllFolderOverviews = async (
     try {
       protocolListing = await listDirectory(uaClient, protocolNode);
     } catch (error: any) {
-      logger.warn(`Folder overview protocol scan failed for ${protocolNode}: ${error?.message || 'list error'}`);
+      logger.warn(
+        `Folder overview protocol scan failed for ${protocolNode}: ${error?.message || 'list error'}`,
+      );
       continue;
     }
     for (const entry of protocolListing) {
@@ -532,7 +574,9 @@ const rebuildAllFolderOverviews = async (
           const cacheKey = `${vendorNode}:${limit}`;
           nextCache.set(cacheKey, { data, fetchedAt: Date.now() });
         } catch (error: any) {
-          logger.warn(`Folder overview build failed for ${vendorNode}: ${error?.message || 'build error'}`);
+          logger.warn(
+            `Folder overview build failed for ${vendorNode}: ${error?.message || 'build error'}`,
+          );
         } finally {
           buildProgress.processed += 1;
         }
@@ -580,9 +624,8 @@ router.get('/overview/status', (req: Request, res: Response) => {
     return;
   }
   const entries = Array.from(overviewCache.values());
-  const lastBuiltAtMs = entries.length > 0
-    ? Math.max(...entries.map((entry) => entry.fetchedAt))
-    : null;
+  const lastBuiltAtMs =
+    entries.length > 0 ? Math.max(...entries.map((entry) => entry.fetchedAt)) : null;
   res.json({
     isReady: entries.length > 0,
     isBuilding,

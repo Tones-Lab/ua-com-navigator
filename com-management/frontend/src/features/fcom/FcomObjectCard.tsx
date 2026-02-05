@@ -31,10 +31,20 @@ type FcomObjectCardProps = {
   saveEventEdit: (obj: any, panelKey: string) => void;
   requestCancelEventEdit: (obj: any, panelKey: string) => void;
   isFieldHighlighted: (panelKey: string, field: string) => boolean;
-  renderFieldBadges: (panelKey: string, field: string, obj: any, overrideTargets: Set<string>) => ReactNode;
+  renderFieldBadges: (
+    panelKey: string,
+    field: string,
+    obj: any,
+    overrideTargets: Set<string>,
+  ) => ReactNode;
   overrideTooltipHoverProps: any;
   openRemoveOverrideModal: (obj: any, field: string, panelKey: string) => void;
-  renderOverrideSummaryCard: (obj: any, overrideValueMap: Map<string, any>, fields: string[], title: string) => ReactNode;
+  renderOverrideSummaryCard: (
+    obj: any,
+    overrideValueMap: Map<string, any>,
+    fields: string[],
+    title: string,
+  ) => ReactNode;
   isFieldDirty: (obj: any, panelKey: string, field: string) => boolean;
   isFieldPendingRemoval: (panelKey: string, field: string) => boolean;
   isFieldNew: (obj: any, field: string) => boolean;
@@ -156,9 +166,7 @@ export default function FcomObjectCard({
   const panelDirtyFields = panelEditState[eventPanelKey]
     ? getPanelDirtyFields(obj, eventPanelKey)
     : [];
-  const stagedDirtyFields = panelEditState[eventPanelKey]
-    ? []
-    : getStagedDirtyFields(obj);
+  const stagedDirtyFields = panelEditState[eventPanelKey] ? [] : getStagedDirtyFields(obj);
   const unsavedCount = panelEditState[eventPanelKey]
     ? panelDirtyFields.length
     : stagedDirtyFields.length;
@@ -170,12 +178,15 @@ export default function FcomObjectCard({
   return (
     <div
       ref={(node) => registerObjectRowRef(objectKey, node)}
-      className={`object-card${highlightObjectKeys.includes(objectKey)
-        ? ' object-card-highlight'
-        : ''}${searchHighlightActive && highlightObjectKeys.length > 0 &&
-          !highlightObjectKeys.includes(objectKey)
+      className={`object-card${
+        highlightObjectKeys.includes(objectKey) ? ' object-card-highlight' : ''
+      }${
+        searchHighlightActive &&
+        highlightObjectKeys.length > 0 &&
+        !highlightObjectKeys.includes(objectKey)
           ? ' object-card-dim'
-          : ''}${matchPingKey === objectKey ? ' object-card-ping' : ''}`}
+          : ''
+      }${matchPingKey === objectKey ? ' object-card-ping' : ''}`}
     >
       <div className="object-header">
         <div className="object-header-main">
@@ -192,9 +203,7 @@ export default function FcomObjectCard({
               <span className="pill match-pill">Match</span>
             )}
           </div>
-          {objectDescription && (
-            <div className="object-description">{objectDescription}</div>
-          )}
+          {objectDescription && <div className="object-description">{objectDescription}</div>}
           {isTrapFileContext && obj?.trap?.oid && (
             <div className="object-description">
               <span className="label">OID</span>{' '}
@@ -209,9 +218,11 @@ export default function FcomObjectCard({
               className="panel-edit-button"
               onClick={() => openTrapComposerFromTest(obj)}
               disabled={!isTestableObject(obj)}
-              title={isTestableObject(obj)
-                ? 'Send a test trap for this object'
-                : 'No test command found in this object'}
+              title={
+                isTestableObject(obj)
+                  ? 'Send a test trap for this object'
+                  : 'No test command found in this object'
+              }
             >
               Test trap
             </button>
@@ -219,22 +230,16 @@ export default function FcomObjectCard({
         </div>
       </div>
       <div
-        className={`object-panel${panelEditState[eventPanelKey]
-          ? ' object-panel-editing'
-          : ''}`}
+        className={`object-panel${panelEditState[eventPanelKey] ? ' object-panel-editing' : ''}`}
       >
         <div className="object-panel-header">
           <div className="panel-title-group">
             <span className="object-panel-title">Event</span>
             {eventOverrideFields.length > 0 && (
-              <span className="pill override-pill">
-                Overrides ({eventOverrideFields.length})
-              </span>
+              <span className="pill override-pill">Overrides ({eventOverrideFields.length})</span>
             )}
             {unsavedCount > 0 && (
-              <span className="pill unsaved-pill">
-                Unsaved ({unsavedCount})
-              </span>
+              <span className="pill unsaved-pill">Unsaved ({unsavedCount})</span>
             )}
           </div>
           {hasEditPermission && !panelEditState[eventPanelKey] && (
@@ -262,9 +267,11 @@ export default function FcomObjectCard({
                 className="panel-edit-button"
                 onClick={() => openAddFieldModal(eventPanelKey, obj)}
                 disabled={builderTarget?.panelKey === eventPanelKey}
-                title={builderTarget?.panelKey === eventPanelKey
-                  ? 'Finish or cancel the builder to add fields'
-                  : ''}
+                title={
+                  builderTarget?.panelKey === eventPanelKey
+                    ? 'Finish or cancel the builder to add fields'
+                    : ''
+                }
               >
                 Add Field
               </button>
@@ -273,9 +280,7 @@ export default function FcomObjectCard({
                 className="panel-edit-button"
                 onClick={() => saveEventEdit(obj, eventPanelKey)}
                 disabled={panelDirtyFields.length === 0}
-                title={panelDirtyFields.length === 0
-                  ? 'No changes to save'
-                  : ''}
+                title={panelDirtyFields.length === 0 ? 'No changes to save' : ''}
               >
                 Save
               </button>
@@ -324,30 +329,26 @@ export default function FcomObjectCard({
       {processorFieldKeys.map((key) => (
         <div
           key={`${objectKey}:${key}`}
-          className={`object-panel${panelEditState[`${objectKey}:${key}`]
-            ? ' object-panel-editing'
-            : ''}`}
+          className={`object-panel${
+            panelEditState[`${objectKey}:${key}`] ? ' object-panel-editing' : ''
+          }`}
         >
           <div className="object-panel-header">
             <span className="object-panel-title">{key}</span>
           </div>
-          <div className="object-panel-body">
-            {renderValue((obj as any)?.[key])}
-          </div>
+          <div className="object-panel-body">{renderValue((obj as any)?.[key])}</div>
         </div>
       ))}
       {Array.isArray(obj?.trap?.variables) && obj.trap.variables.length > 0 ? (
         <div
-          className={`object-panel${panelEditState[`${objectKey}:trap`]
-            ? ' object-panel-editing'
-            : ''}`}
+          className={`object-panel${
+            panelEditState[`${objectKey}:trap`] ? ' object-panel-editing' : ''
+          }`}
         >
           <div className="object-panel-header">
             <span className="object-panel-title">Trap Variables</span>
           </div>
-          <div className="object-panel-body">
-            {renderTrapVariables(obj?.trap?.variables)}
-          </div>
+          <div className="object-panel-body">{renderTrapVariables(obj?.trap?.variables)}</div>
         </div>
       ) : null}
     </div>

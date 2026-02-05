@@ -44,7 +44,9 @@ export default function OverviewPage({
           <div className="overview-card-header">
             <div>
               <h2>FCOM Overview</h2>
-              <p className="overview-subtitle">File, object, and vendor rollups from FCOM folders.</p>
+              <p className="overview-subtitle">
+                File, object, and vendor rollups from FCOM folders.
+              </p>
               <div className="overview-cache-status">
                 {overviewStatus?.isBuilding
                   ? 'Cache: Refreshing'
@@ -160,7 +162,9 @@ export default function OverviewPage({
                         <div className="overview-protocol-meta">
                           <span>Files {formatOverviewNumber(protocol.counts?.files || 0)}</span>
                           <span>Objects {formatOverviewNumber(protocol.counts?.objects || 0)}</span>
-                          <span>Overrides {formatOverviewNumber(protocol.counts?.overrides || 0)}</span>
+                          <span>
+                            Overrides {formatOverviewNumber(protocol.counts?.overrides || 0)}
+                          </span>
                         </div>
                       </div>
                       <div className="overview-table-wrapper">
@@ -173,7 +177,12 @@ export default function OverviewPage({
                                   className="table-sort-button"
                                   onClick={() => toggleOverviewSort('vendor')}
                                 >
-                                  Vendor {getSortIndicator(overviewVendorSort.key, 'vendor', overviewVendorSort.direction)}
+                                  Vendor{' '}
+                                  {getSortIndicator(
+                                    overviewVendorSort.key,
+                                    'vendor',
+                                    overviewVendorSort.direction,
+                                  )}
                                 </button>
                               </th>
                               <th>
@@ -182,7 +191,12 @@ export default function OverviewPage({
                                   className="table-sort-button"
                                   onClick={() => toggleOverviewSort('files')}
                                 >
-                                  Files {getSortIndicator(overviewVendorSort.key, 'files', overviewVendorSort.direction)}
+                                  Files{' '}
+                                  {getSortIndicator(
+                                    overviewVendorSort.key,
+                                    'files',
+                                    overviewVendorSort.direction,
+                                  )}
                                 </button>
                               </th>
                               <th>
@@ -191,7 +205,12 @@ export default function OverviewPage({
                                   className="table-sort-button"
                                   onClick={() => toggleOverviewSort('overrides')}
                                 >
-                                  Overrides {getSortIndicator(overviewVendorSort.key, 'overrides', overviewVendorSort.direction)}
+                                  Overrides{' '}
+                                  {getSortIndicator(
+                                    overviewVendorSort.key,
+                                    'overrides',
+                                    overviewVendorSort.direction,
+                                  )}
                                 </button>
                               </th>
                               <th>
@@ -200,7 +219,12 @@ export default function OverviewPage({
                                   className="table-sort-button"
                                   onClick={() => toggleOverviewSort('objects')}
                                 >
-                                  Objects {getSortIndicator(overviewVendorSort.key, 'objects', overviewVendorSort.direction)}
+                                  Objects{' '}
+                                  {getSortIndicator(
+                                    overviewVendorSort.key,
+                                    'objects',
+                                    overviewVendorSort.direction,
+                                  )}
                                 </button>
                               </th>
                               <th>
@@ -209,7 +233,12 @@ export default function OverviewPage({
                                   className="table-sort-button"
                                   onClick={() => toggleOverviewSort('variables')}
                                 >
-                                  Variables {getSortIndicator(overviewVendorSort.key, 'variables', overviewVendorSort.direction)}
+                                  Variables{' '}
+                                  {getSortIndicator(
+                                    overviewVendorSort.key,
+                                    'variables',
+                                    overviewVendorSort.direction,
+                                  )}
                                 </button>
                               </th>
                               <th>
@@ -218,7 +247,12 @@ export default function OverviewPage({
                                   className="table-sort-button"
                                   onClick={() => toggleOverviewSort('evalObjects')}
                                 >
-                                  Eval {getSortIndicator(overviewVendorSort.key, 'evalObjects', overviewVendorSort.direction)}
+                                  Eval{' '}
+                                  {getSortIndicator(
+                                    overviewVendorSort.key,
+                                    'evalObjects',
+                                    overviewVendorSort.direction,
+                                  )}
                                 </button>
                               </th>
                               <th>
@@ -227,7 +261,12 @@ export default function OverviewPage({
                                   className="table-sort-button"
                                   onClick={() => toggleOverviewSort('processorObjects')}
                                 >
-                                  Processor {getSortIndicator(overviewVendorSort.key, 'processorObjects', overviewVendorSort.direction)}
+                                  Processor{' '}
+                                  {getSortIndicator(
+                                    overviewVendorSort.key,
+                                    'processorObjects',
+                                    overviewVendorSort.direction,
+                                  )}
                                 </button>
                               </th>
                               <th>
@@ -236,7 +275,12 @@ export default function OverviewPage({
                                   className="table-sort-button"
                                   onClick={() => toggleOverviewSort('literalObjects')}
                                 >
-                                  Literal {getSortIndicator(overviewVendorSort.key, 'literalObjects', overviewVendorSort.direction)}
+                                  Literal{' '}
+                                  {getSortIndicator(
+                                    overviewVendorSort.key,
+                                    'literalObjects',
+                                    overviewVendorSort.direction,
+                                  )}
                                 </button>
                               </th>
                             </tr>
@@ -248,7 +292,9 @@ export default function OverviewPage({
                                   <button
                                     type="button"
                                     className="folder-link overview-folder-link"
-                                    onClick={() => handleOverviewFolderClick(protocol.name, vendor.name)}
+                                    onClick={() =>
+                                      handleOverviewFolderClick(protocol.name, vendor.name)
+                                    }
                                   >
                                     {vendor.name}
                                   </button>
@@ -258,7 +304,9 @@ export default function OverviewPage({
                                 <td>{formatOverviewNumber(vendor.counts?.objects || 0)}</td>
                                 <td>{formatOverviewNumber(vendor.counts?.variables || 0)}</td>
                                 <td>{formatOverviewNumber(vendor.counts?.evalObjects || 0)}</td>
-                                <td>{formatOverviewNumber(vendor.counts?.processorObjects || 0)}</td>
+                                <td>
+                                  {formatOverviewNumber(vendor.counts?.processorObjects || 0)}
+                                </td>
                                 <td>{formatOverviewNumber(vendor.counts?.literalObjects || 0)}</td>
                               </tr>
                             ))}
@@ -284,9 +332,7 @@ export default function OverviewPage({
               <p className="overview-subtitle">Work in progress.</p>
             </div>
           </div>
-          <div className="overview-empty">
-            PCOM reporting is coming soon.
-          </div>
+          <div className="overview-empty">PCOM reporting is coming soon.</div>
         </section>
       </div>
     </div>

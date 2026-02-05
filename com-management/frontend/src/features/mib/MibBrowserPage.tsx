@@ -50,11 +50,7 @@ export default function MibBrowserPage({
           <div className="panel-header">
             <div className="panel-title-row">
               <h2>MIB Browser</h2>
-              <button
-                type="button"
-                className="ghost-button"
-                onClick={() => loadMibPath(mibPath)}
-              >
+              <button type="button" className="ghost-button" onClick={() => loadMibPath(mibPath)}>
                 Refresh
               </button>
             </div>
@@ -108,7 +104,9 @@ export default function MibBrowserPage({
                     <button
                       type="button"
                       className={isFolder ? 'browse-link' : 'browse-link file-link'}
-                      onClick={() => (isFolder ? loadMibPath(entry.PathID) : handleOpenMibEntry(entry))}
+                      onClick={() =>
+                        isFolder ? loadMibPath(entry.PathID) : handleOpenMibEntry(entry)
+                      }
                     >
                       <span className="browse-icon" aria-hidden="true">
                         {isFolder ? '📁' : '📄'}
@@ -139,9 +137,7 @@ export default function MibBrowserPage({
           {mibDetailsLoading ? (
             <div className="empty-state">Loading details…</div>
           ) : selectedMibEntry && mibDetails ? (
-            <div className="mib-details">
-              {renderMibDetails(mibDetails)}
-            </div>
+            <div className="mib-details">{renderMibDetails(mibDetails)}</div>
           ) : (
             <div className="empty-state">Select a MIB entry to view details.</div>
           )}

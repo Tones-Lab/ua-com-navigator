@@ -2,7 +2,12 @@ type FcomFileHeaderProps = {
   selectedFile: any | null;
   browseNode: string | null;
   isFavorite: (type: 'file' | 'folder', pathId: string) => boolean;
-  toggleFavorite: (favorite: { type: 'file' | 'folder'; pathId: string; label: string; node?: string }) => void;
+  toggleFavorite: (favorite: {
+    type: 'file' | 'folder';
+    pathId: string;
+    label: string;
+    node?: string;
+  }) => void;
   formatDisplayPath: (pathId?: string | null) => string;
   fileMethod: string | null;
   fileSubMethod: string | null;
@@ -10,7 +15,11 @@ type FcomFileHeaderProps = {
   hasLocalOverrides: boolean;
   viewMode: 'friendly' | 'preview';
   setViewMode: (mode: 'friendly' | 'preview') => void;
-  openAdvancedFlowModal: (scope: 'global' | 'object', objectName?: string, focusTarget?: string | null) => void;
+  openAdvancedFlowModal: (
+    scope: 'global' | 'object',
+    objectName?: string,
+    focusTarget?: string | null,
+  ) => void;
   hasEditPermission: boolean;
   showTestControls: boolean;
   onTestFile: () => void;
@@ -105,21 +114,21 @@ export default function FcomFileHeader({
     <>
       <div className="file-title">
         <strong>
-          {selectedFile?.PathName
-            ? renderHighlightedText(selectedFile.PathName)
-            : 'Select a file'}
+          {selectedFile?.PathName ? renderHighlightedText(selectedFile.PathName) : 'Select a file'}
           {selectedFile && (
             <button
               type="button"
-              className={isFavorite(selectedFile.PathID, 'file')
-                ? 'star-button star-active'
-                : 'star-button'}
-              onClick={() => toggleFavorite({
-                type: 'file',
-                pathId: selectedFile.PathID,
-                label: selectedFile.PathName,
-                node: browseNode || undefined,
-              })}
+              className={
+                isFavorite(selectedFile.PathID, 'file') ? 'star-button star-active' : 'star-button'
+              }
+              onClick={() =>
+                toggleFavorite({
+                  type: 'file',
+                  pathId: selectedFile.PathID,
+                  label: selectedFile.PathName,
+                  node: browseNode || undefined,
+                })
+              }
               aria-label="Toggle favorite file"
               title="Toggle favorite file"
             >
@@ -131,20 +140,22 @@ export default function FcomFileHeader({
           <span className="file-path">{formatDisplayPath(selectedFile.PathID)}</span>
         )}
       </div>
-        {(fileMethod || fileSubMethod) && (
-          <div className="file-meta-row">
-            {fileMethod && <span>Method: {fileMethod}</span>}
-            {fileSubMethod && <span>SubMethod: {fileSubMethod}</span>}
-          </div>
-        )}
+      {(fileMethod || fileSubMethod) && (
+        <div className="file-meta-row">
+          {fileMethod && <span>Method: {fileMethod}</span>}
+          {fileSubMethod && <span>SubMethod: {fileSubMethod}</span>}
+        </div>
+      )}
       {overrideInfo?.overrideMeta?.pathName && hasLocalOverrides && (
         <div className="override-meta-row">
           <span>
-            Override file: {overrideInfo?.overrideMeta?.pathName || overrideInfo?.overrideFileName || '—'}
+            Override file:{' '}
+            {overrideInfo?.overrideMeta?.pathName || overrideInfo?.overrideFileName || '—'}
           </span>
           <span>
             Revision:{' '}
-            {overrideInfo?.overrideMeta?.revision && /^[0-9]+$/.test(String(overrideInfo.overrideMeta.revision))
+            {overrideInfo?.overrideMeta?.revision &&
+            /^[0-9]+$/.test(String(overrideInfo.overrideMeta.revision))
               ? `r${overrideInfo.overrideMeta.revision}`
               : overrideInfo?.overrideMeta?.revision || '—'}
           </span>
@@ -156,7 +167,11 @@ export default function FcomFileHeader({
         {selectedFile ? (
           <>
             <div className="view-toggle">
-              <span className={viewMode === 'friendly' ? 'view-toggle-label active' : 'view-toggle-label'}>
+              <span
+                className={
+                  viewMode === 'friendly' ? 'view-toggle-label active' : 'view-toggle-label'
+                }
+              >
                 Friendly
               </span>
               <label className="switch" aria-label="Toggle friendly/raw view">
@@ -173,7 +188,11 @@ export default function FcomFileHeader({
                 />
                 <span className="slider" />
               </label>
-              <span className={viewMode !== 'friendly' ? 'view-toggle-label active' : 'view-toggle-label'}>
+              <span
+                className={
+                  viewMode !== 'friendly' ? 'view-toggle-label active' : 'view-toggle-label'
+                }
+              >
                 Raw
               </span>
             </div>
@@ -183,9 +202,7 @@ export default function FcomFileHeader({
                 className="action-link"
                 onClick={onTestFile}
                 disabled={!hasEditPermission || fileTestLoading}
-                title={hasEditPermission
-                  ? ''
-                  : 'Read-only access'}
+                title={hasEditPermission ? '' : 'Read-only access'}
               >
                 {fileTestLoading
                   ? 'Testing…'
@@ -213,11 +230,13 @@ export default function FcomFileHeader({
                 setShowReviewModal(true);
               }}
               disabled={!hasStagedChanges || !hasEditPermission}
-              title={hasStagedChanges
-                ? `${stagedDiff.totalChanges} staged change(s)`
-                : hasEditPermission
-                  ? 'No staged changes'
-                  : 'Read-only access'}
+              title={
+                hasStagedChanges
+                  ? `${stagedDiff.totalChanges} staged change(s)`
+                  : hasEditPermission
+                    ? 'No staged changes'
+                    : 'Read-only access'
+              }
             >
               Review & Save{hasStagedChanges ? ` (${stagedDiff.totalChanges})` : ''}
             </button>

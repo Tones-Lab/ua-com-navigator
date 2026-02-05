@@ -207,9 +207,12 @@ class SearchIndexService {
     }
     const nextAt = alignToNextMinute(Date.now() + intervalMs);
     this.nextRefreshAt = new Date(nextAt).toISOString();
-    this.refreshTimer = setTimeout(() => {
-      void this.rebuildIndex('schedule');
-    }, Math.max(0, nextAt - Date.now()));
+    this.refreshTimer = setTimeout(
+      () => {
+        void this.rebuildIndex('schedule');
+      },
+      Math.max(0, nextAt - Date.now()),
+    );
   }
 
   requestRebuild() {
@@ -224,9 +227,10 @@ class SearchIndexService {
       return;
     }
     const normalized = normalizePathId(pathId);
-    const prefixed = PATH_PREFIX && !normalized.startsWith(`${PATH_PREFIX}/`)
-      ? `${PATH_PREFIX}/${normalized}`
-      : normalized;
+    const prefixed =
+      PATH_PREFIX && !normalized.startsWith(`${PATH_PREFIX}/`)
+        ? `${PATH_PREFIX}/${normalized}`
+        : normalized;
     const text = typeof content === 'string' ? content : JSON.stringify(content, null, 2);
     const name = getNameFromPath(prefixed);
     const nameLower = name.toLowerCase();
@@ -274,7 +278,10 @@ class SearchIndexService {
 
     if (includeName) {
       for (const entry of this.index.nameEntries) {
-        if (entry.nameLower.includes(normalizedQuery) || entry.pathLower.includes(normalizedQuery)) {
+        if (
+          entry.nameLower.includes(normalizedQuery) ||
+          entry.pathLower.includes(normalizedQuery)
+        ) {
           if (seen.has(entry.pathId)) {
             continue;
           }

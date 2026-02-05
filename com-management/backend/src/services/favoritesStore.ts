@@ -41,13 +41,16 @@ const writeStore = (state: FavoritesState) => {
   }
 };
 
-
 export const getFavorites = (user: string, serverId: string): FavoriteItem[] => {
   const state = readStore();
   return state[user]?.[serverId] ?? [];
 };
 
-export const addFavorite = (user: string, serverId: string, favorite: FavoriteItem): FavoriteItem[] => {
+export const addFavorite = (
+  user: string,
+  serverId: string,
+  favorite: FavoriteItem,
+): FavoriteItem[] => {
   const state = readStore();
   if (!state[user]) {
     state[user] = {};
@@ -55,7 +58,9 @@ export const addFavorite = (user: string, serverId: string, favorite: FavoriteIt
   if (!state[user][serverId]) {
     state[user][serverId] = [];
   }
-  const exists = state[user][serverId].some((item) => item.pathId === favorite.pathId && item.type === favorite.type);
+  const exists = state[user][serverId].some(
+    (item) => item.pathId === favorite.pathId && item.type === favorite.type,
+  );
   if (!exists) {
     state[user][serverId].push(favorite);
     writeStore(state);
@@ -63,7 +68,11 @@ export const addFavorite = (user: string, serverId: string, favorite: FavoriteIt
   return state[user][serverId];
 };
 
-export const removeFavorite = (user: string, serverId: string, favorite: FavoriteItem): FavoriteItem[] => {
+export const removeFavorite = (
+  user: string,
+  serverId: string,
+  favorite: FavoriteItem,
+): FavoriteItem[] => {
   const state = readStore();
   if (!state[user] || !state[user][serverId]) {
     return [];

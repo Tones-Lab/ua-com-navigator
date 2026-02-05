@@ -52,16 +52,11 @@ const uaConfig: UaConfig = {
 
 const client = new UAClient(uaConfig);
 
-const normalizePathString = (value: string) => (
-  path.posix.normalize(String(value || '').replace(/\\/g, '/')).replace(/^\/+/, '')
-);
+const normalizePathString = (value: string) =>
+  path.posix.normalize(String(value || '').replace(/\\/g, '/')).replace(/^\/+/, '');
 
-const extractRuleText = (data: any) => (
-  data?.content?.data?.[0]?.RuleText
-  ?? data?.data?.[0]?.RuleText
-  ?? data?.RuleText
-  ?? data
-);
+const extractRuleText = (data: any) =>
+  data?.content?.data?.[0]?.RuleText ?? data?.data?.[0]?.RuleText ?? data?.RuleText ?? data;
 
 const parseOverridePayload = (ruleText: string) => {
   const trimmed = ruleText.trim();
@@ -108,27 +103,39 @@ const getProcessorTargetField = (processor: any) => {
   return null;
 };
 
-const collectOverrideTargets = (
-  processors: any[],
-  objectName: string,
-  targetKeys: Set<string>,
-) => {
+const collectOverrideTargets = (processors: any[], objectName: string, targetKeys: Set<string>) => {
   (processors || []).forEach((processor: any) => {
     if (!processor || typeof processor !== 'object') {
       return;
     }
     if (processor.if) {
       const payload = processor.if;
-      collectOverrideTargets(Array.isArray(payload.processors) ? payload.processors : [], objectName, targetKeys);
-      collectOverrideTargets(Array.isArray(payload.else) ? payload.else : [], objectName, targetKeys);
+      collectOverrideTargets(
+        Array.isArray(payload.processors) ? payload.processors : [],
+        objectName,
+        targetKeys,
+      );
+      collectOverrideTargets(
+        Array.isArray(payload.else) ? payload.else : [],
+        objectName,
+        targetKeys,
+      );
     }
     if (processor.foreach?.processors) {
-      collectOverrideTargets(Array.isArray(processor.foreach.processors) ? processor.foreach.processors : [], objectName, targetKeys);
+      collectOverrideTargets(
+        Array.isArray(processor.foreach.processors) ? processor.foreach.processors : [],
+        objectName,
+        targetKeys,
+      );
     }
     if (Array.isArray(processor.switch?.case)) {
       processor.switch.case.forEach((entry: any) => {
         collectOverrideTargets(
-          Array.isArray(entry?.then) ? entry.then : Array.isArray(entry?.processors) ? entry.processors : [],
+          Array.isArray(entry?.then)
+            ? entry.then
+            : Array.isArray(entry?.processors)
+              ? entry.processors
+              : [],
           objectName,
           targetKeys,
         );
@@ -183,7 +190,10 @@ const listDirectoryRecursive = async (node: string) => {
 };
 
 const main = async () => {
-  const pathPrefix = (process.env.COMS_PATH_PREFIX ?? DEFAULT_PATH_PREFIX).replace(/^\/+|\/+$/g, '');
+  const pathPrefix = (process.env.COMS_PATH_PREFIX ?? DEFAULT_PATH_PREFIX).replace(
+    /^\/+|\/+$/g,
+    '',
+  );
   const primaryOverridesRoot = `${pathPrefix}/overrides`;
   const legacyOverridesRoot = pathPrefix.includes('/_objects')
     ? `${pathPrefix.replace('/_objects', '')}/overrides`
@@ -211,7 +221,9 @@ const main = async () => {
     });
 
     for (const overrideEntry of overrideFiles) {
-      const fileName = normalizePathString(String(overrideEntry?.PathName || overrideEntry?.PathID || ''));
+      const fileName = normalizePathString(
+        String(overrideEntry?.PathName || overrideEntry?.PathID || ''),
+      );
       const pathId = String(overrideEntry?.PathID || fileName);
       if (!fileName) {
         continue;

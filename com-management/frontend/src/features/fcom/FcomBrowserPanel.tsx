@@ -168,11 +168,16 @@ export default function FcomBrowserPanel({
                           <button
                             type="button"
                             className="quick-link"
-                            onClick={() => handleOpenFolder({ PathID: fav.pathId, PathName: fav.label })}
+                            onClick={() =>
+                              handleOpenFolder({ PathID: fav.pathId, PathName: fav.label })
+                            }
                           >
                             {fav.label}
                             {getParentLabel(getParentPath(fav.pathId)) && (
-                              <span className="favorite-parent"> - ({getParentLabel(getParentPath(fav.pathId))})</span>
+                              <span className="favorite-parent">
+                                {' '}
+                                - ({getParentLabel(getParentPath(fav.pathId))})
+                              </span>
                             )}
                           </button>
                         </li>
@@ -195,7 +200,10 @@ export default function FcomBrowserPanel({
                           >
                             {fav.label}
                             {fav.node && (
-                              <span className="favorite-parent"> - ({getParentLabel(fav.node)})</span>
+                              <span className="favorite-parent">
+                                {' '}
+                                - ({getParentLabel(fav.node)})
+                              </span>
                             )}
                           </button>
                         </li>

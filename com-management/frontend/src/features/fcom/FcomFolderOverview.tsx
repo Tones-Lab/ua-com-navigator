@@ -7,7 +7,10 @@ type FcomFolderOverviewProps = {
   folderTableFilter: string;
   setFolderTableFilter: (value: string) => void;
   toggleFolderSort: (key: 'file' | 'objects' | 'schemaErrors' | 'unknownFields') => void;
-  folderTableSort: { key: 'file' | 'objects' | 'schemaErrors' | 'unknownFields'; direction: 'asc' | 'desc' };
+  folderTableSort: {
+    key: 'file' | 'objects' | 'schemaErrors' | 'unknownFields';
+    direction: 'asc' | 'desc';
+  };
   folderTableRows: any[];
   formatOverviewNumber: (value: number) => string;
   formatDisplayPath: (pathId?: string | null) => string;
@@ -59,9 +62,7 @@ export default function FcomFolderOverview({
             className="action-link"
             onClick={onTestVendor}
             disabled={!hasEditPermission || isVendorTesting}
-            title={hasEditPermission
-              ? ''
-              : 'Read-only access'}
+            title={hasEditPermission ? '' : 'Read-only access'}
           >
             {isVendorTesting ? 'Testing…' : 'Test Vendor SNMP Traps (All Files)'}
           </button>
@@ -123,7 +124,8 @@ export default function FcomFolderOverview({
                         className="table-sort-button"
                         onClick={() => toggleFolderSort('file')}
                       >
-                        File {getSortIndicator(folderTableSort.key, 'file', folderTableSort.direction)}
+                        File{' '}
+                        {getSortIndicator(folderTableSort.key, 'file', folderTableSort.direction)}
                       </button>
                     </th>
                     <th>
@@ -132,7 +134,12 @@ export default function FcomFolderOverview({
                         className="table-sort-button"
                         onClick={() => toggleFolderSort('objects')}
                       >
-                        Objects {getSortIndicator(folderTableSort.key, 'objects', folderTableSort.direction)}
+                        Objects{' '}
+                        {getSortIndicator(
+                          folderTableSort.key,
+                          'objects',
+                          folderTableSort.direction,
+                        )}
                       </button>
                     </th>
                     <th>
@@ -141,7 +148,12 @@ export default function FcomFolderOverview({
                         className="table-sort-button"
                         onClick={() => toggleFolderSort('schemaErrors')}
                       >
-                        Schema {getSortIndicator(folderTableSort.key, 'schemaErrors', folderTableSort.direction)}
+                        Schema{' '}
+                        {getSortIndicator(
+                          folderTableSort.key,
+                          'schemaErrors',
+                          folderTableSort.direction,
+                        )}
                       </button>
                     </th>
                     <th>
@@ -150,7 +162,12 @@ export default function FcomFolderOverview({
                         className="table-sort-button"
                         onClick={() => toggleFolderSort('unknownFields')}
                       >
-                        Unknown {getSortIndicator(folderTableSort.key, 'unknownFields', folderTableSort.direction)}
+                        Unknown{' '}
+                        {getSortIndicator(
+                          folderTableSort.key,
+                          'unknownFields',
+                          folderTableSort.direction,
+                        )}
                       </button>
                     </th>
                     {showTestControls && <th>Test</th>}
@@ -169,10 +186,10 @@ export default function FcomFolderOverview({
                             type="button"
                             className="ghost-button"
                             onClick={() => row.pathId && onTestFile(row.pathId, row.file)}
-                            disabled={!row.pathId || !hasEditPermission || isFileTesting(row.pathId)}
-                            title={hasEditPermission
-                              ? ''
-                              : 'Read-only access'}
+                            disabled={
+                              !row.pathId || !hasEditPermission || isFileTesting(row.pathId)
+                            }
+                            title={hasEditPermission ? '' : 'Read-only access'}
                           >
                             {isFileTesting(row.pathId) ? 'Testing…' : 'Test SNMP File'}
                           </button>

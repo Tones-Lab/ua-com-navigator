@@ -39,11 +39,11 @@ const resolveOverrideLocation = (fileId: string) => {
   }
 
   const basePath = parts.slice(0, fcomIndex + 1).join('/');
-  const methodIndex = parts.findIndex((segment, idx) => idx > fcomIndex && (segment === 'trap' || segment === 'syslog'));
+  const methodIndex = parts.findIndex(
+    (segment, idx) => idx > fcomIndex && (segment === 'trap' || segment === 'syslog'),
+  );
   const method = methodIndex !== -1 ? parts[methodIndex] : undefined;
-  const vendor = methodIndex !== -1
-    ? parts[methodIndex + 1]
-    : parts[fcomIndex + 1];
+  const vendor = methodIndex !== -1 ? parts[methodIndex + 1] : parts[fcomIndex + 1];
 
   if (!vendor) {
     throw new Error('Unable to resolve vendor from file path');
@@ -200,12 +200,13 @@ const main = async () => {
         ? await client.listRules('/', 500, attempt.node, true)
         : await client.listRules(attempt.path || '/', 500, undefined, true);
       const entries = Array.isArray(listing?.data) ? listing.data : [];
-      const match = entries.find((item: any) => (
-        item?.PathName === resolved.overrideFileName
-        || item?.PathID === overridePath
-        || item?.PathID === overridePathWithSlash
-        || String(item?.PathID || '').endsWith(`/${resolved.overrideFileName}`)
-      ));
+      const match = entries.find(
+        (item: any) =>
+          item?.PathName === resolved.overrideFileName ||
+          item?.PathID === overridePath ||
+          item?.PathID === overridePathWithSlash ||
+          String(item?.PathID || '').endsWith(`/${resolved.overrideFileName}`),
+      );
       console.log(`\nListing (${attempt.label}) entries:`, entries.length);
       console.log('Listing entry:', match || '—');
       if (!listingMatch && match) {
@@ -260,7 +261,10 @@ const main = async () => {
   const revisionTargets: Array<{ label: string; id: string }> = [];
   if (listingMatch?.PathID) {
     revisionTargets.push({ label: 'PathID', id: String(listingMatch.PathID) });
-    revisionTargets.push({ label: 'PathID-no-id', id: String(listingMatch.PathID).replace(/^id-/, '') });
+    revisionTargets.push({
+      label: 'PathID-no-id',
+      id: String(listingMatch.PathID).replace(/^id-/, ''),
+    });
   }
   revisionTargets.push({ label: 'overridePath', id: overridePath });
   revisionTargets.push({ label: 'overridePathWithSlash', id: overridePathWithSlash });
@@ -281,7 +285,10 @@ const main = async () => {
   }
   if (listingMatch?.PathName) {
     rawHistoryParams.push({ label: 'id=PathName', params: { id: String(listingMatch.PathName) } });
-    rawHistoryParams.push({ label: 'PathName=PathName', params: { PathName: String(listingMatch.PathName) } });
+    rawHistoryParams.push({
+      label: 'PathName=PathName',
+      params: { PathName: String(listingMatch.PathName) },
+    });
   }
   rawHistoryParams.push({ label: 'id=overridePath', params: { id: overridePath } });
   rawHistoryParams.push({ label: 'id=/overridePath', params: { id: overridePathWithSlash } });
@@ -290,7 +297,10 @@ const main = async () => {
   rawHistoryParams.push({ label: 'path=overridePath', params: { path: overridePath } });
   rawHistoryParams.push({ label: 'path=/overridePath', params: { path: overridePathWithSlash } });
   if (listingMatch?.PathID) {
-    rawHistoryParams.push({ label: 'PathID=PathID', params: { PathID: String(listingMatch.PathID) } });
+    rawHistoryParams.push({
+      label: 'PathID=PathID',
+      params: { PathID: String(listingMatch.PathID) },
+    });
   }
 
   console.log('\nRaw readRevisionHistory probes:');
@@ -310,7 +320,11 @@ const main = async () => {
       const latest = entries[0];
       console.log(`\nreadRevisionHistory (${probe.label}) entries:`, entries.length);
       if (latest) {
-        const revisionName = latest.RevisionName ?? latest.revisionName ?? latest.RevisionLabel ?? latest.revisionLabel;
+        const revisionName =
+          latest.RevisionName ??
+          latest.revisionName ??
+          latest.RevisionLabel ??
+          latest.revisionLabel;
         const revisionText = typeof revisionName === 'string' ? revisionName : '';
         const revisionMatch = revisionText.match(/r(\d+)/i);
         const bracketMatches = revisionText.match(/\[([^\]]+)\]/g) || [];
@@ -321,15 +335,34 @@ const main = async () => {
         console.log('Latest history fields:', {
           Revision: latest.Revision ?? latest.revision ?? latest.LastRevision ?? latest.Rev,
           Date: latest.Date ?? latest.date ?? latest.ModificationTime ?? latest.Modified,
-          Author: latest.Author ?? latest.author ?? latest.User ?? latest.ModifiedBy ?? latest.LastModifiedBy,
-          Message: latest.Message ?? latest.message ?? latest.Comment ?? latest.comment ?? latest.CommitLog,
+          Author:
+            latest.Author ??
+            latest.author ??
+            latest.User ??
+            latest.ModifiedBy ??
+            latest.LastModifiedBy,
+          Message:
+            latest.Message ??
+            latest.message ??
+            latest.Comment ??
+            latest.comment ??
+            latest.CommitLog,
           RevisionName: revisionName,
           ParsedRevision: parsedRevision,
           ParsedDate: parsedDate,
           ParsedUser: parsedUser,
         });
-        const message = String(latest.Message ?? latest.message ?? latest.Comment ?? latest.comment ?? latest.CommitLog ?? '');
-        const bracketUserMatch = message.match(/\[([^\]]+)\]/) || (revisionName ? String(revisionName).match(/\[([^\]]+)\]/) : null);
+        const message = String(
+          latest.Message ??
+            latest.message ??
+            latest.Comment ??
+            latest.comment ??
+            latest.CommitLog ??
+            '',
+        );
+        const bracketUserMatch =
+          message.match(/\[([^\]]+)\]/) ||
+          (revisionName ? String(revisionName).match(/\[([^\]]+)\]/) : null);
         if (bracketUserMatch) {
           console.log('First bracket token from message:', bracketUserMatch[1].trim());
         }

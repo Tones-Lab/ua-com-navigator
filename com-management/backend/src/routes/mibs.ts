@@ -42,17 +42,19 @@ const resolveSafePath = (targetPath: string) => {
 
 const listEntries = async (dirPath: string) => {
   const items = await fs.readdir(dirPath, { withFileTypes: true });
-  const entries = await Promise.all(items.map(async (entry) => {
-    const fullPath = path.join(dirPath, entry.name);
-    const stats = await fs.stat(fullPath);
-    return {
-      name: entry.name,
-      path: fullPath.replace(path.resolve(MIB_ROOT), '') || '/',
-      isDir: entry.isDirectory(),
-      size: stats.size,
-      modified: stats.mtime.toISOString(),
-    };
-  }));
+  const entries = await Promise.all(
+    items.map(async (entry) => {
+      const fullPath = path.join(dirPath, entry.name);
+      const stats = await fs.stat(fullPath);
+      return {
+        name: entry.name,
+        path: fullPath.replace(path.resolve(MIB_ROOT), '') || '/',
+        isDir: entry.isDirectory(),
+        size: stats.size,
+        modified: stats.mtime.toISOString(),
+      };
+    }),
+  );
   return entries.sort((a, b) => {
     if (a.isDir !== b.isDir) {
       return a.isDir ? -1 : 1;
@@ -185,7 +187,9 @@ const parseMibDefinitions = (content: string) => {
 router.get('/browse', async (req: Request, res: Response) => {
   try {
     const requestedPath = String(req.query.path || '').trim();
-    const search = String(req.query.search || '').trim().toLowerCase();
+    const search = String(req.query.search || '')
+      .trim()
+      .toLowerCase();
     const limit = Math.max(1, Number(req.query.limit) || 30);
     const offset = Math.max(0, Number(req.query.offset) || 0);
     const basePath = requestedPath ? resolveSafePath(requestedPath) : path.resolve(MIB_ROOT);
@@ -225,7 +229,13 @@ router.get('/search', async (req: Request, res: Response) => {
     const limit = Math.max(1, Number(req.query.limit) || 30);
     const offset = Math.max(0, Number(req.query.offset) || 0);
     const needle = query.toLowerCase();
-    const results: Array<{ name: string; path: string; isDir: boolean; size: number; modified: string }> = [];
+    const results: Array<{
+      name: string;
+      path: string;
+      isDir: boolean;
+      size: number;
+      modified: string;
+    }> = [];
     let matches = 0;
     let hasMore = false;
 
@@ -325,14 +335,12 @@ router.post('/mib2fcom', async (req: Request, res: Response) => {
     }
     const resolvedInput = resolveSafePath(String(inputPath));
     const stat = await fs.stat(resolvedInput);
-    const outName = outputName || `${path.basename(resolvedInput).replace(/\.(mib|txt)$/i, '')}-FCOM.json`;
+    const outName =
+      outputName || `${path.basename(resolvedInput).replace(/\.(mib|txt)$/i, '')}-FCOM.json`;
     const outDir = await fs.mkdtemp(path.join(os.tmpdir(), 'mib2fcom-'));
     const outPath = path.join(outDir, outName);
 
-    const args = [
-      `--in=${stat.isDirectory() ? '.' : resolvedInput}`,
-      `--out=${outPath}`,
-    ];
+    const args = [`--in=${stat.isDirectory() ? '.' : resolvedInput}`, `--out=${outPath}`];
     if (useParentMibs) {
       args.push('--use_parent_mibs');
     }
@@ -402,23 +410,29 @@ router.post('/trap/send', async (req: Request, res: Response) => {
       return nextArgs;
     };
 
-    const execTrap = (trapArgs: string[]) => new Promise<void>((resolve, reject) => {
-      execFile(TRAP_CMD, trapArgs, {
-        env: {
-          ...process.env,
-          MIBDIRS: MIB_ROOT,
-          MIBS: mibModule ? String(mibModule) : (process.env.MIBS || ''),
-        },
-      }, (error, stdout, stderr) => {
-        if (error) {
-          (error as any).stdout = stdout;
-          (error as any).stderr = stderr;
-          reject(error);
-          return;
-        }
-        resolve();
+    const execTrap = (trapArgs: string[]) =>
+      new Promise<void>((resolve, reject) => {
+        execFile(
+          TRAP_CMD,
+          trapArgs,
+          {
+            env: {
+              ...process.env,
+              MIBDIRS: MIB_ROOT,
+              MIBS: mibModule ? String(mibModule) : process.env.MIBS || '',
+            },
+          },
+          (error, stdout, stderr) => {
+            if (error) {
+              (error as any).stdout = stdout;
+              (error as any).stderr = stderr;
+              reject(error);
+              return;
+            }
+            resolve();
+          },
+        );
       });
-    });
 
     const inferTypeFromError = (stderr: string) => {
       const match = stderr.match(/Type of attribute is\s+([A-Za-z0-9\-\s]+),/i);

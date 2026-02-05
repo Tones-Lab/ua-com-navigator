@@ -38,7 +38,11 @@ router.get('/', (req: Request, res: Response) => {
   if (!requireSession(req, res)) {
     return;
   }
-  const { q = '', scope = 'all', limit = '200' } = req.query as {
+  const {
+    q = '',
+    scope = 'all',
+    limit = '200',
+  } = req.query as {
     q?: string;
     scope?: SearchScope;
     limit?: string;
@@ -52,7 +56,8 @@ router.get('/', (req: Request, res: Response) => {
     });
   }
 
-  const scopeValue: SearchScope = scope === 'name' || scope === 'content' || scope === 'all' ? scope : 'all';
+  const scopeValue: SearchScope =
+    scope === 'name' || scope === 'content' || scope === 'all' ? scope : 'all';
   const results = searchIndex().search(String(q), scopeValue, Number(limit) || 200);
   logger.info(`Search query="${q}" scope=${scopeValue} results=${results.length}`);
   res.json({

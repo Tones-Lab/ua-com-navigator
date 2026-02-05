@@ -16,14 +16,14 @@ npm install
 
 ## Configure the backend
 
-1) Copy the template:
+1. Copy the template:
 
 ```bash
 cd /root/navigator/com-management/backend
 cp .env.example .env
 ```
 
-2) Edit .env as needed (see variable details in [README.md](README.md)).
+2. Edit .env as needed (see variable details in [README.md](README.md)).
 
 Minimum values to verify:
 
@@ -54,10 +54,10 @@ Open: https://localhost:5173 (recommended)
 
 ## Login flow
 
-1) Select a UA server
-2) Choose auth type (basic or certificate)
-3) Provide credentials or certificate paths
-4) Backend sets FCOM_SESSION_ID cookie
+1. Select a UA server
+2. Choose auth type (basic or certificate)
+3. Provide credentials or certificate paths
+4. Backend sets FCOM_SESSION_ID cookie
 
 ## Smoke test
 

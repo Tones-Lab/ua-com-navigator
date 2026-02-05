@@ -26,9 +26,8 @@ const uaClient = new UAClient({
   insecure_tls: (process.env.UA_TLS_INSECURE ?? 'false').toLowerCase() === 'true',
 });
 
-const normalizePathString = (value: string) => (
-  path.posix.normalize(String(value || '').replace(/\\/g, '/')).replace(/^\/+/, '')
-);
+const normalizePathString = (value: string) =>
+  path.posix.normalize(String(value || '').replace(/\\/g, '/')).replace(/^\/+/, '');
 
 const overridesRoot = PATH_PREFIX.includes('/_objects')
   ? `${PATH_PREFIX.replace('/_objects', '')}/overrides`
@@ -82,12 +81,8 @@ const listDirectoryRecursive = async (node: string) => {
   return all;
 };
 
-const extractRuleText = (data: any) => (
-  data?.content?.data?.[0]?.RuleText
-  ?? data?.data?.[0]?.RuleText
-  ?? data?.RuleText
-  ?? data
-);
+const extractRuleText = (data: any) =>
+  data?.content?.data?.[0]?.RuleText ?? data?.data?.[0]?.RuleText ?? data?.RuleText ?? data;
 
 const main = async () => {
   const start = Date.now();
@@ -102,7 +97,9 @@ const main = async () => {
   });
 
   for (const overrideEntry of overrideFiles) {
-    const fileName = normalizePathString(String(overrideEntry?.PathName || overrideEntry?.PathID || ''));
+    const fileName = normalizePathString(
+      String(overrideEntry?.PathName || overrideEntry?.PathID || ''),
+    );
     if (!fileName) {
       continue;
     }
@@ -122,17 +119,23 @@ const main = async () => {
   const avgRead = timings.readCalls ? Math.round(timings.readMs / timings.readCalls) : 0;
 
   // eslint-disable-next-line no-console
-  console.log(JSON.stringify({
-    overridesRoot,
-    overrideFiles: overrideFiles.length,
-    listCalls: timings.listCalls,
-    listMs: timings.listMs,
-    avgListMs: avgList,
-    readCalls: timings.readCalls,
-    readMs: timings.readMs,
-    avgReadMs: avgRead,
-    totalMs,
-  }, null, 2));
+  console.log(
+    JSON.stringify(
+      {
+        overridesRoot,
+        overrideFiles: overrideFiles.length,
+        listCalls: timings.listCalls,
+        listMs: timings.listMs,
+        avgListMs: avgList,
+        readCalls: timings.readCalls,
+        readMs: timings.readMs,
+        avgReadMs: avgRead,
+        totalMs,
+      },
+      null,
+      2,
+    ),
+  );
 };
 
 main().catch((error) => {

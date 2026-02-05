@@ -190,7 +190,12 @@ class ApiClient {
     return this.client.get('/favorites');
   }
 
-  async addFavorite(favorite: { type: 'file' | 'folder'; pathId: string; label: string; node?: string }) {
+  async addFavorite(favorite: {
+    type: 'file' | 'folder';
+    pathId: string;
+    label: string;
+    node?: string;
+  }) {
     return this.client.post('/favorites', favorite);
   }
 

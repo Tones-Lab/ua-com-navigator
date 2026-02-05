@@ -8,9 +8,8 @@ import { clearSession, getSession, setSession } from '../services/sessionStore';
 
 const router = Router();
 
-const getNestedValue = (source: any, path: string) => (
-  path.split('.').reduce((acc, key) => (acc == null ? undefined : acc[key]), source)
-);
+const getNestedValue = (source: any, path: string) =>
+  path.split('.').reduce((acc, key) => (acc == null ? undefined : acc[key]), source);
 
 const parsePermissionFlag = (value: any) => {
   if (typeof value === 'boolean') {
@@ -68,7 +67,7 @@ router.post('/login', async (req: Request, res: Response) => {
 
     const basicEnabled = (process.env.UA_AUTH_BASIC_ENABLED ?? 'true').toLowerCase() === 'true';
     const certEnabled = (process.env.UA_AUTH_CERT_ENABLED ?? 'true').toLowerCase() === 'true';
-    
+
     // Validate required fields
     if (!authReq.server_id || !authReq.auth_type) {
       return res.status(400).json({ error: 'Missing server_id or auth_type' });
@@ -109,7 +108,9 @@ router.post('/login', async (req: Request, res: Response) => {
       insecure_tls: insecureTls,
     });
 
-    logger.info(`Authenticating ${authReq.username || 'cert user'} against server ${server.server_id}`);
+    logger.info(
+      `Authenticating ${authReq.username || 'cert user'} against server ${server.server_id}`,
+    );
 
     let uaLoginData: any = null;
     if (authReq.auth_type === 'basic') {
@@ -139,7 +140,8 @@ router.post('/login', async (req: Request, res: Response) => {
 
     // Set HTTP-only cookie
     const forwardedProto = req.headers['x-forwarded-proto'];
-    const isSecure = req.secure || forwardedProto === 'https' || process.env.COOKIE_SECURE === 'true';
+    const isSecure =
+      req.secure || forwardedProto === 'https' || process.env.COOKIE_SECURE === 'true';
 
     res.cookie('FCOM_SESSION_ID', sessionId, {
       httpOnly: true,

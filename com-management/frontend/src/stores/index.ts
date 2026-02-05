@@ -56,6 +56,5 @@ export const useEditorStore = create<EditorState>((set) => ({
       openFileId: null,
       unsavedChanges: false,
     }),
-  setUnsavedChanges: (hasChanges) =>
-    set({ unsavedChanges: hasChanges }),
+  setUnsavedChanges: (hasChanges) => set({ unsavedChanges: hasChanges }),
 }));

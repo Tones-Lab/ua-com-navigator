@@ -145,7 +145,9 @@ router.post('/save', async (req: Request, res: Response) => {
     const listing = parentNode
       ? await uaClient.listRules('/', 500, parentNode)
       : await uaClient.listRules('/', 500);
-    const entry = listing?.data?.find((item: any) => item.PathName === String(file_id).split('/').pop());
+    const entry = listing?.data?.find(
+      (item: any) => item.PathName === String(file_id).split('/').pop(),
+    );
     const newEtag = crypto.createHash('md5').update(JSON.stringify(content)).digest('hex');
     res.json({
       file_id: String(file_id),
@@ -189,7 +191,9 @@ router.post('/:file_id/save', async (req: Request, res: Response) => {
     const listing = parentNode
       ? await uaClient.listRules('/', 500, parentNode)
       : await uaClient.listRules('/', 500);
-    const entry = listing?.data?.find((item: any) => item.PathName === String(file_id).split('/').pop());
+    const entry = listing?.data?.find(
+      (item: any) => item.PathName === String(file_id).split('/').pop(),
+    );
     const newEtag = crypto.createHash('md5').update(JSON.stringify(content)).digest('hex');
     res.json({
       file_id: file_id,

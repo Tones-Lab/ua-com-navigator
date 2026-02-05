@@ -15,11 +15,13 @@ type FcomBuilderSidebarProps = {
   builderFocus: 'literal' | 'eval' | 'processor' | null;
   isBuilderTargetReady: boolean;
   builderTypeLocked: 'literal' | 'eval' | 'processor' | null;
-  setBuilderSwitchModal: Dispatch<SetStateAction<{
-    open: boolean;
-    from?: 'eval' | 'processor' | 'literal' | null;
-    to?: 'eval' | 'processor' | 'literal' | null;
-  }>>;
+  setBuilderSwitchModal: Dispatch<
+    SetStateAction<{
+      open: boolean;
+      from?: 'eval' | 'processor' | 'literal' | null;
+      to?: 'eval' | 'processor' | 'literal' | null;
+    }>
+  >;
   applyBuilderTypeSwitch: (type: 'literal' | 'eval' | 'processor') => void;
   builderLiteralText: string;
   handleLiteralInputChange: (value: string, caret: number | null, inputType?: string) => void;
@@ -31,7 +33,9 @@ type FcomBuilderSidebarProps = {
   setAdvancedProcessorScope: (scope: 'object' | 'global') => void;
   setShowAdvancedProcessorModal: (open: boolean) => void;
   builderConditions: Array<{ id: string; condition: any; result: string }>;
-  setBuilderConditions: Dispatch<SetStateAction<Array<{ id: string; condition: any; result: string }>>>;
+  setBuilderConditions: Dispatch<
+    SetStateAction<Array<{ id: string; condition: any; result: string }>>
+  >;
   updateBuilderCondition: (
     rowId: string,
     conditionId: string,
@@ -62,7 +66,13 @@ type FcomBuilderSidebarProps = {
   createConditionNode: () => any;
   createGroupNode: () => any;
   nextBuilderId: () => string;
-  renderConditionNode: (rowId: string, condition: any, depth: number, isNested: boolean, groupCount: number) => ReactNode;
+  renderConditionNode: (
+    rowId: string,
+    condition: any,
+    depth: number,
+    isNested: boolean,
+    groupCount: number,
+  ) => ReactNode;
   builderElseResult: string;
   friendlyPreview: string;
   applyFriendlyEval: () => void;
@@ -72,7 +82,11 @@ type FcomBuilderSidebarProps = {
   clearRegularEval: () => void;
   applyRegularEval: () => void;
   applyBuilderTemplate: (template: string) => void;
-  openAdvancedFlowModal: (scope: 'object' | 'global', objectName?: string | null, field?: string | null) => void;
+  openAdvancedFlowModal: (
+    scope: 'object' | 'global',
+    objectName?: string | null,
+    field?: string | null,
+  ) => void;
   processorStep: 'select' | 'configure' | 'review';
   setProcessorStep: (step: 'select' | 'configure' | 'review') => void;
   processorType: string | null;
@@ -199,12 +213,8 @@ export default function FcomBuilderSidebar({
           <div className="builder-target">
             {builderTarget ? (
               <div className="builder-target-row">
-                <span className="builder-target-badge">
-                  Editing: {builderTarget.field}
-                </span>
-                {builderDirty && (
-                  <span className="pill unsaved-pill">Unsaved</span>
-                )}
+                <span className="builder-target-badge">Editing: {builderTarget.field}</span>
+                {builderDirty && <span className="pill unsaved-pill">Unsaved</span>}
               </div>
             ) : (
               <span className="builder-target-empty">Select a field to begin</span>
@@ -244,11 +254,7 @@ export default function FcomBuilderSidebar({
             </button>
           )}
           {builderTarget && (
-            <button
-              type="button"
-              className="builder-cancel-button"
-              onClick={requestCancelBuilder}
-            >
+            <button type="button" className="builder-cancel-button" onClick={requestCancelBuilder}>
               Cancel
             </button>
           )}
@@ -274,9 +280,9 @@ export default function FcomBuilderSidebar({
             <div className="builder-focus-row">
               <button
                 type="button"
-                className={builderFocus === 'literal'
-                  ? 'builder-card builder-card-selected'
-                  : 'builder-card'}
+                className={
+                  builderFocus === 'literal' ? 'builder-card builder-card-selected' : 'builder-card'
+                }
                 disabled={!isBuilderTargetReady || builderTypeLocked === 'literal'}
                 onClick={() => {
                   if (builderTypeLocked && builderTypeLocked !== 'literal') {
@@ -290,9 +296,9 @@ export default function FcomBuilderSidebar({
               </button>
               <button
                 type="button"
-                className={builderFocus === 'eval'
-                  ? 'builder-card builder-card-selected'
-                  : 'builder-card'}
+                className={
+                  builderFocus === 'eval' ? 'builder-card builder-card-selected' : 'builder-card'
+                }
                 disabled={!isBuilderTargetReady || builderTypeLocked === 'eval'}
                 onClick={() => {
                   if (builderTypeLocked && builderTypeLocked !== 'eval') {
@@ -306,9 +312,11 @@ export default function FcomBuilderSidebar({
               </button>
               <button
                 type="button"
-                className={builderFocus === 'processor'
-                  ? 'builder-card builder-card-selected'
-                  : 'builder-card'}
+                className={
+                  builderFocus === 'processor'
+                    ? 'builder-card builder-card-selected'
+                    : 'builder-card'
+                }
                 disabled={!isBuilderTargetReady || builderTypeLocked === 'processor'}
                 onClick={() => {
                   if (builderTypeLocked && builderTypeLocked !== 'processor') {
@@ -330,11 +338,13 @@ export default function FcomBuilderSidebar({
                   className="builder-textarea"
                   placeholder="Enter literal value"
                   value={builderLiteralText}
-                  onChange={(e) => handleLiteralInputChange(
-                    e.target.value,
-                    e.target.selectionStart,
-                    (e.nativeEvent as InputEvent | undefined)?.inputType,
-                  )}
+                  onChange={(e) =>
+                    handleLiteralInputChange(
+                      e.target.value,
+                      e.target.selectionStart,
+                      (e.nativeEvent as InputEvent | undefined)?.inputType,
+                    )
+                  }
                   disabled={!isBuilderTargetReady}
                 />
               </div>
@@ -357,18 +367,22 @@ export default function FcomBuilderSidebar({
                 <div className="builder-mode-toggle">
                   <button
                     type="button"
-                    className={builderMode === 'friendly'
-                      ? 'builder-mode-button builder-mode-button-active'
-                      : 'builder-mode-button'}
+                    className={
+                      builderMode === 'friendly'
+                        ? 'builder-mode-button builder-mode-button-active'
+                        : 'builder-mode-button'
+                    }
                     onClick={() => setBuilderMode('friendly')}
                   >
                     Friendly
                   </button>
                   <button
                     type="button"
-                    className={builderMode === 'regular'
-                      ? 'builder-mode-button builder-mode-button-active'
-                      : 'builder-mode-button'}
+                    className={
+                      builderMode === 'regular'
+                        ? 'builder-mode-button builder-mode-button-active'
+                        : 'builder-mode-button'
+                    }
                     onClick={() => setBuilderMode('regular')}
                   >
                     Regular
@@ -400,14 +414,16 @@ export default function FcomBuilderSidebar({
                               <input
                                 className="builder-input"
                                 value={row.condition.left}
-                                onChange={(e) => handleFriendlyConditionInputChange(
-                                  row.id,
-                                  row.condition.id,
-                                  'left',
-                                  e.target.value,
-                                  e.target.selectionStart,
-                                  (e.nativeEvent as InputEvent | undefined)?.inputType,
-                                )}
+                                onChange={(e) =>
+                                  handleFriendlyConditionInputChange(
+                                    row.id,
+                                    row.condition.id,
+                                    'left',
+                                    e.target.value,
+                                    e.target.selectionStart,
+                                    (e.nativeEvent as InputEvent | undefined)?.inputType,
+                                  )
+                                }
                                 placeholder="$v1"
                                 disabled={!isBuilderTargetReady}
                                 title={row.condition.left}
@@ -415,12 +431,14 @@ export default function FcomBuilderSidebar({
                               <select
                                 className="builder-select"
                                 value={row.condition.operator}
-                                onChange={(e) => updateBuilderCondition(
-                                  row.id,
-                                  row.condition.id,
-                                  'operator',
-                                  e.target.value,
-                                )}
+                                onChange={(e) =>
+                                  updateBuilderCondition(
+                                    row.id,
+                                    row.condition.id,
+                                    'operator',
+                                    e.target.value,
+                                  )
+                                }
                                 disabled={!isBuilderTargetReady}
                               >
                                 <option value="==">==</option>
@@ -433,14 +451,16 @@ export default function FcomBuilderSidebar({
                               <input
                                 className="builder-input"
                                 value={row.condition.right}
-                                onChange={(e) => handleFriendlyConditionInputChange(
-                                  row.id,
-                                  row.condition.id,
-                                  'right',
-                                  e.target.value,
-                                  e.target.selectionStart,
-                                  (e.nativeEvent as InputEvent | undefined)?.inputType,
-                                )}
+                                onChange={(e) =>
+                                  handleFriendlyConditionInputChange(
+                                    row.id,
+                                    row.condition.id,
+                                    'right',
+                                    e.target.value,
+                                    e.target.selectionStart,
+                                    (e.nativeEvent as InputEvent | undefined)?.inputType,
+                                  )
+                                }
                                 placeholder="1"
                                 disabled={!isBuilderTargetReady}
                                 title={row.condition.right}
@@ -449,12 +469,14 @@ export default function FcomBuilderSidebar({
                               <input
                                 className="builder-input builder-input-result"
                                 value={row.result}
-                                onChange={(e) => handleFriendlyResultInputChange(
-                                  row.id,
-                                  e.target.value,
-                                  e.target.selectionStart,
-                                  (e.nativeEvent as InputEvent | undefined)?.inputType,
-                                )}
+                                onChange={(e) =>
+                                  handleFriendlyResultInputChange(
+                                    row.id,
+                                    e.target.value,
+                                    e.target.selectionStart,
+                                    (e.nativeEvent as InputEvent | undefined)?.inputType,
+                                  )
+                                }
                                 placeholder="result"
                                 disabled={!isBuilderTargetReady}
                                 title={row.result}
@@ -475,19 +497,21 @@ export default function FcomBuilderSidebar({
                                 className="builder-link"
                                 onClick={() => {
                                   const newChild = createConditionNode();
-                                  setBuilderConditions((prev) => prev.map((item) => (
-                                    item.id === row.id
-                                      ? {
-                                        ...item,
-                                        condition: {
-                                          id: nextBuilderId(),
-                                          type: 'group',
-                                          operator: 'AND',
-                                          children: [item.condition, newChild],
-                                        },
-                                      }
-                                      : item
-                                  )));
+                                  setBuilderConditions((prev) =>
+                                    prev.map((item) =>
+                                      item.id === row.id
+                                        ? {
+                                            ...item,
+                                            condition: {
+                                              id: nextBuilderId(),
+                                              type: 'group',
+                                              operator: 'AND',
+                                              children: [item.condition, newChild],
+                                            },
+                                          }
+                                        : item,
+                                    ),
+                                  );
                                 }}
                                 disabled={!isBuilderTargetReady}
                               >
@@ -498,19 +522,21 @@ export default function FcomBuilderSidebar({
                                 className="builder-link"
                                 onClick={() => {
                                   const newGroup = createGroupNode();
-                                  setBuilderConditions((prev) => prev.map((item) => (
-                                    item.id === row.id
-                                      ? {
-                                        ...item,
-                                        condition: {
-                                          id: nextBuilderId(),
-                                          type: 'group',
-                                          operator: 'AND',
-                                          children: [item.condition, newGroup],
-                                        },
-                                      }
-                                      : item
-                                  )));
+                                  setBuilderConditions((prev) =>
+                                    prev.map((item) =>
+                                      item.id === row.id
+                                        ? {
+                                            ...item,
+                                            condition: {
+                                              id: nextBuilderId(),
+                                              type: 'group',
+                                              operator: 'AND',
+                                              children: [item.condition, newGroup],
+                                            },
+                                          }
+                                        : item,
+                                    ),
+                                  );
                                 }}
                                 disabled={!isBuilderTargetReady}
                               >
@@ -526,12 +552,14 @@ export default function FcomBuilderSidebar({
                               <input
                                 className="builder-input builder-input-result"
                                 value={row.result}
-                                onChange={(e) => handleFriendlyResultInputChange(
-                                  row.id,
-                                  e.target.value,
-                                  e.target.selectionStart,
-                                  (e.nativeEvent as InputEvent | undefined)?.inputType,
-                                )}
+                                onChange={(e) =>
+                                  handleFriendlyResultInputChange(
+                                    row.id,
+                                    e.target.value,
+                                    e.target.selectionStart,
+                                    (e.nativeEvent as InputEvent | undefined)?.inputType,
+                                  )
+                                }
                                 placeholder="result"
                                 disabled={!isBuilderTargetReady}
                                 title={row.result}
@@ -564,11 +592,13 @@ export default function FcomBuilderSidebar({
                     <input
                       className="builder-input"
                       value={builderElseResult}
-                      onChange={(e) => handleFriendlyElseResultInputChange(
-                        e.target.value,
-                        e.target.selectionStart,
-                        (e.nativeEvent as InputEvent | undefined)?.inputType,
-                      )}
+                      onChange={(e) =>
+                        handleFriendlyElseResultInputChange(
+                          e.target.value,
+                          e.target.selectionStart,
+                          (e.nativeEvent as InputEvent | undefined)?.inputType,
+                        )
+                      }
                       placeholder="0"
                       disabled={!isBuilderTargetReady}
                     />
@@ -590,9 +620,7 @@ export default function FcomBuilderSidebar({
                   )}
                   <div className="builder-preview">
                     <div className="builder-preview-label">Preview</div>
-                    <div className="builder-preview-value">
-                      {friendlyPreview || '—'}
-                    </div>
+                    <div className="builder-preview-value">{friendlyPreview || '—'}</div>
                     {friendlyPreview && (
                       <details className="builder-preview-details">
                         <summary>Expanded view</summary>
@@ -612,11 +640,13 @@ export default function FcomBuilderSidebar({
                       className="builder-textarea"
                       placeholder="Enter raw eval expression"
                       value={builderRegularText}
-                      onChange={(e) => handleRegularEvalInputChange(
-                        e.target.value,
-                        e.target.selectionStart,
-                        (e.nativeEvent as InputEvent | undefined)?.inputType,
-                      )}
+                      onChange={(e) =>
+                        handleRegularEvalInputChange(
+                          e.target.value,
+                          e.target.selectionStart,
+                          (e.nativeEvent as InputEvent | undefined)?.inputType,
+                        )
+                      }
                       disabled={!isBuilderTargetReady}
                     />
                     {builderRegularText && (
@@ -708,19 +738,22 @@ export default function FcomBuilderSidebar({
                       const isActive = processorStep === stepItem.key;
                       const isConfigureReady = Boolean(processorType);
                       const isReviewReady = Boolean(processorPayload);
-                      const isEnabled = stepItem.key === 'select'
-                        || (stepItem.key === 'configure' && isConfigureReady)
-                        || (stepItem.key === 'review' && isReviewReady);
-                      const isComplete = stepItem.key === 'select'
-                        ? isConfigureReady
-                        : stepItem.key === 'configure'
-                          ? isReviewReady
-                          : false;
-                      const title = stepItem.key === 'configure' && !isConfigureReady
-                        ? 'Select a processor to enable.'
-                        : stepItem.key === 'review' && !isReviewReady
-                          ? 'Complete configuration to enable.'
-                          : '';
+                      const isEnabled =
+                        stepItem.key === 'select' ||
+                        (stepItem.key === 'configure' && isConfigureReady) ||
+                        (stepItem.key === 'review' && isReviewReady);
+                      const isComplete =
+                        stepItem.key === 'select'
+                          ? isConfigureReady
+                          : stepItem.key === 'configure'
+                            ? isReviewReady
+                            : false;
+                      const title =
+                        stepItem.key === 'configure' && !isConfigureReady
+                          ? 'Select a processor to enable.'
+                          : stepItem.key === 'review' && !isReviewReady
+                            ? 'Complete configuration to enable.'
+                            : '';
                       return (
                         <button
                           key={stepItem.key}
@@ -753,9 +786,9 @@ export default function FcomBuilderSidebar({
                           <div key={item.id} className="processor-card">
                             <button
                               type="button"
-                              className={isSelected
-                                ? 'builder-card builder-card-selected'
-                                : 'builder-card'}
+                              className={
+                                isSelected ? 'builder-card builder-card-selected' : 'builder-card'
+                              }
                               onClick={() => handleBuilderSelect(item, isEnabled)}
                               disabled={!isEnabled}
                             >
@@ -780,10 +813,11 @@ export default function FcomBuilderSidebar({
                           {renderProcessorConfigFields(
                             processorType,
                             builderProcessorConfig,
-                            (key, value) => setBuilderProcessorConfig((prev: any) => ({
-                              ...prev,
-                              [key]: value,
-                            })),
+                            (key, value) =>
+                              setBuilderProcessorConfig((prev: any) => ({
+                                ...prev,
+                                [key]: value,
+                              })),
                             'builder',
                           )}
                           {processorType === 'foreach' && (
@@ -801,7 +835,11 @@ export default function FcomBuilderSidebar({
                                   {builderPaletteItems.map((item) => (
                                     <option
                                       key={`${item.nodeKind}-${item.processorType || 'if'}`}
-                                      value={item.nodeKind === 'if' ? 'if' : (item.processorType as string)}
+                                      value={
+                                        item.nodeKind === 'if'
+                                          ? 'if'
+                                          : (item.processorType as string)
+                                      }
                                     >
                                       {item.label}
                                     </option>
@@ -811,7 +849,8 @@ export default function FcomBuilderSidebar({
                                   type="button"
                                   className="builder-card"
                                   onClick={() => {
-                                    const node = createFlowNodeFromPaletteValue(builderNestedAddType);
+                                    const node =
+                                      createFlowNodeFromPaletteValue(builderNestedAddType);
                                     setBuilderProcessorConfig((prev: any) => {
                                       const current = Array.isArray(prev.processors)
                                         ? prev.processors
@@ -836,9 +875,10 @@ export default function FcomBuilderSidebar({
                                     const current = Array.isArray(prev.processors)
                                       ? prev.processors
                                       : [];
-                                    const next = typeof updater === 'function'
-                                      ? (updater as (items: any[]) => any[])(current)
-                                      : updater;
+                                    const next =
+                                      typeof updater === 'function'
+                                        ? (updater as (items: any[]) => any[])(current)
+                                        : updater;
                                     return {
                                       ...prev,
                                       processors: next,
@@ -856,178 +896,197 @@ export default function FcomBuilderSidebar({
                               <div className="flow-switch-cases">
                                 {(Array.isArray(builderProcessorConfig.cases)
                                   ? builderProcessorConfig.cases
-                                  : []).map((item: any) => (
-                                    <div key={item.id} className="flow-switch-case">
-                                      <div className="flow-switch-case-row">
-                                        <label className="builder-label">Match</label>
-                                        <input
-                                          className="builder-input"
-                                          value={item.match ?? ''}
-                                          onChange={(e) => setBuilderProcessorConfig((prev: any) => {
+                                  : []
+                                ).map((item: any) => (
+                                  <div key={item.id} className="flow-switch-case">
+                                    <div className="flow-switch-case-row">
+                                      <label className="builder-label">Match</label>
+                                      <input
+                                        className="builder-input"
+                                        value={item.match ?? ''}
+                                        onChange={(e) =>
+                                          setBuilderProcessorConfig((prev: any) => {
                                             const cases = Array.isArray(prev.cases)
                                               ? prev.cases
                                               : [];
                                             return {
                                               ...prev,
-                                              cases: cases.map((entry: any) => (
+                                              cases: cases.map((entry: any) =>
                                                 entry.id === item.id
                                                   ? { ...entry, match: e.target.value }
-                                                  : entry
-                                              )),
+                                                  : entry,
+                                              ),
                                             };
-                                          })}
-                                        />
-                                      </div>
-                                      <div className="flow-switch-case-row">
-                                        <label className="builder-label">Operator (optional)</label>
-                                        <input
-                                          className="builder-input"
-                                          value={item.operator ?? ''}
-                                          onChange={(e) => setBuilderProcessorConfig((prev: any) => {
+                                          })
+                                        }
+                                      />
+                                    </div>
+                                    <div className="flow-switch-case-row">
+                                      <label className="builder-label">Operator (optional)</label>
+                                      <input
+                                        className="builder-input"
+                                        value={item.operator ?? ''}
+                                        onChange={(e) =>
+                                          setBuilderProcessorConfig((prev: any) => {
                                             const cases = Array.isArray(prev.cases)
                                               ? prev.cases
                                               : [];
                                             return {
                                               ...prev,
-                                              cases: cases.map((entry: any) => (
+                                              cases: cases.map((entry: any) =>
                                                 entry.id === item.id
                                                   ? { ...entry, operator: e.target.value }
-                                                  : entry
-                                              )),
+                                                  : entry,
+                                              ),
                                             };
-                                          })}
-                                        />
-                                      </div>
-                                      <div className="flow-switch-case-row">
-                                        <label className="builder-label">Processors</label>
-                                        <div className="builder-inline-actions">
-                                          <select
-                                            className="builder-select"
-                                            value={builderSwitchCaseAddType[item.id] || builderNestedAddType}
-                                            onChange={(e) => setBuilderSwitchCaseAddType((prev) => ({
+                                          })
+                                        }
+                                      />
+                                    </div>
+                                    <div className="flow-switch-case-row">
+                                      <label className="builder-label">Processors</label>
+                                      <div className="builder-inline-actions">
+                                        <select
+                                          className="builder-select"
+                                          value={
+                                            builderSwitchCaseAddType[item.id] ||
+                                            builderNestedAddType
+                                          }
+                                          onChange={(e) =>
+                                            setBuilderSwitchCaseAddType((prev) => ({
                                               ...prev,
                                               [item.id]: e.target.value,
-                                            }))}
-                                          >
-                                            {builderPaletteItems.map((paletteItem) => (
-                                              <option
-                                                key={`${paletteItem.nodeKind}-${paletteItem.processorType || 'if'}`}
-                                                value={paletteItem.nodeKind === 'if'
+                                            }))
+                                          }
+                                        >
+                                          {builderPaletteItems.map((paletteItem) => (
+                                            <option
+                                              key={`${paletteItem.nodeKind}-${paletteItem.processorType || 'if'}`}
+                                              value={
+                                                paletteItem.nodeKind === 'if'
                                                   ? 'if'
-                                                  : (paletteItem.processorType as string)}
-                                              >
-                                                {paletteItem.label}
-                                              </option>
-                                            ))}
-                                          </select>
-                                          <button
-                                            type="button"
-                                            className="builder-card"
-                                            onClick={() => {
-                                              const choice = builderSwitchCaseAddType[item.id] || builderNestedAddType;
-                                              const node = createFlowNodeFromPaletteValue(choice);
-                                              setBuilderProcessorConfig((prev: any) => {
-                                                const cases = Array.isArray(prev.cases)
-                                                  ? prev.cases
-                                                  : [];
-                                                return {
-                                                  ...prev,
-                                                  cases: cases.map((entry: any) => (
-                                                    entry.id === item.id
-                                                      ? {
+                                                  : (paletteItem.processorType as string)
+                                              }
+                                            >
+                                              {paletteItem.label}
+                                            </option>
+                                          ))}
+                                        </select>
+                                        <button
+                                          type="button"
+                                          className="builder-card"
+                                          onClick={() => {
+                                            const choice =
+                                              builderSwitchCaseAddType[item.id] ||
+                                              builderNestedAddType;
+                                            const node = createFlowNodeFromPaletteValue(choice);
+                                            setBuilderProcessorConfig((prev: any) => {
+                                              const cases = Array.isArray(prev.cases)
+                                                ? prev.cases
+                                                : [];
+                                              return {
+                                                ...prev,
+                                                cases: cases.map((entry: any) =>
+                                                  entry.id === item.id
+                                                    ? {
                                                         ...entry,
                                                         processors: [
-                                                          ...(Array.isArray(entry.processors) ? entry.processors : []),
+                                                          ...(Array.isArray(entry.processors)
+                                                            ? entry.processors
+                                                            : []),
                                                           node,
                                                         ],
                                                       }
-                                                      : entry
-                                                  )),
-                                                };
-                                              });
-                                            }}
-                                          >
-                                            Add processor
-                                          </button>
-                                        </div>
-                                        {renderFlowList(
-                                          Array.isArray(item.processors) ? item.processors : [],
-                                          { kind: 'root' },
-                                          (updater) => {
-                                            setBuilderProcessorConfig((prev: any) => {
-                                              const cases = Array.isArray(prev.cases)
-                                                ? prev.cases
-                                                : [];
-                                              return {
-                                                ...prev,
-                                                cases: cases.map((entry: any) => {
-                                                  if (entry.id !== item.id) {
-                                                    return entry;
-                                                  }
-                                                  const current = Array.isArray(entry.processors)
-                                                    ? entry.processors
-                                                    : [];
-                                                  const next = typeof updater === 'function'
-                                                    ? (updater as (items: any[]) => any[])(current)
-                                                    : updater;
-                                                  return {
-                                                    ...entry,
-                                                    processors: next,
-                                                  };
-                                                }),
+                                                    : entry,
+                                                ),
                                               };
-                                            });
-                                          },
-                                          'object',
-                                          'object',
-                                        )}
-                                      </div>
-                                      <div className="flow-switch-case-row">
-                                        <button
-                                          type="button"
-                                          className="builder-link"
-                                          onClick={() => {
-                                            setBuilderProcessorConfig((prev: any) => {
-                                              const cases = Array.isArray(prev.cases)
-                                                ? prev.cases
-                                                : [];
-                                              return {
-                                                ...prev,
-                                                cases: cases.filter((entry: any) => entry.id !== item.id),
-                                              };
-                                            });
-                                            setBuilderSwitchCaseAddType((prev) => {
-                                              const next = { ...prev };
-                                              delete next[item.id];
-                                              return next;
                                             });
                                           }}
                                         >
-                                          Remove case
+                                          Add processor
                                         </button>
                                       </div>
+                                      {renderFlowList(
+                                        Array.isArray(item.processors) ? item.processors : [],
+                                        { kind: 'root' },
+                                        (updater) => {
+                                          setBuilderProcessorConfig((prev: any) => {
+                                            const cases = Array.isArray(prev.cases)
+                                              ? prev.cases
+                                              : [];
+                                            return {
+                                              ...prev,
+                                              cases: cases.map((entry: any) => {
+                                                if (entry.id !== item.id) {
+                                                  return entry;
+                                                }
+                                                const current = Array.isArray(entry.processors)
+                                                  ? entry.processors
+                                                  : [];
+                                                const next =
+                                                  typeof updater === 'function'
+                                                    ? (updater as (items: any[]) => any[])(current)
+                                                    : updater;
+                                                return {
+                                                  ...entry,
+                                                  processors: next,
+                                                };
+                                              }),
+                                            };
+                                          });
+                                        },
+                                        'object',
+                                        'object',
+                                      )}
                                     </div>
-                                  ))}
+                                    <div className="flow-switch-case-row">
+                                      <button
+                                        type="button"
+                                        className="builder-link"
+                                        onClick={() => {
+                                          setBuilderProcessorConfig((prev: any) => {
+                                            const cases = Array.isArray(prev.cases)
+                                              ? prev.cases
+                                              : [];
+                                            return {
+                                              ...prev,
+                                              cases: cases.filter(
+                                                (entry: any) => entry.id !== item.id,
+                                              ),
+                                            };
+                                          });
+                                          setBuilderSwitchCaseAddType((prev) => {
+                                            const next = { ...prev };
+                                            delete next[item.id];
+                                            return next;
+                                          });
+                                        }}
+                                      >
+                                        Remove case
+                                      </button>
+                                    </div>
+                                  </div>
+                                ))}
                                 <button
                                   type="button"
                                   className="builder-link"
-                                  onClick={() => setBuilderProcessorConfig((prev: any) => {
-                                    const cases = Array.isArray(prev.cases)
-                                      ? prev.cases
-                                      : [];
-                                    return {
-                                      ...prev,
-                                      cases: [
-                                        ...cases,
-                                        {
-                                          id: nextSwitchCaseId(),
-                                          match: '',
-                                          operator: '',
-                                          processors: [],
-                                        },
-                                      ],
-                                    };
-                                  })}
+                                  onClick={() =>
+                                    setBuilderProcessorConfig((prev: any) => {
+                                      const cases = Array.isArray(prev.cases) ? prev.cases : [];
+                                      return {
+                                        ...prev,
+                                        cases: [
+                                          ...cases,
+                                          {
+                                            id: nextSwitchCaseId(),
+                                            match: '',
+                                            operator: '',
+                                            processors: [],
+                                          },
+                                        ],
+                                      };
+                                    })
+                                  }
                                 >
                                   Add case
                                 </button>
@@ -1045,9 +1104,11 @@ export default function FcomBuilderSidebar({
                                   {builderPaletteItems.map((paletteItem) => (
                                     <option
                                       key={`${paletteItem.nodeKind}-${paletteItem.processorType || 'if'}`}
-                                      value={paletteItem.nodeKind === 'if'
-                                        ? 'if'
-                                        : (paletteItem.processorType as string)}
+                                      value={
+                                        paletteItem.nodeKind === 'if'
+                                          ? 'if'
+                                          : (paletteItem.processorType as string)
+                                      }
                                     >
                                       {paletteItem.label}
                                     </option>
@@ -1057,7 +1118,9 @@ export default function FcomBuilderSidebar({
                                   type="button"
                                   className="builder-card"
                                   onClick={() => {
-                                    const node = createFlowNodeFromPaletteValue(builderSwitchDefaultAddType);
+                                    const node = createFlowNodeFromPaletteValue(
+                                      builderSwitchDefaultAddType,
+                                    );
                                     setBuilderProcessorConfig((prev: any) => {
                                       const current = Array.isArray(prev.defaultProcessors)
                                         ? prev.defaultProcessors
@@ -1082,9 +1145,10 @@ export default function FcomBuilderSidebar({
                                     const current = Array.isArray(prev.defaultProcessors)
                                       ? prev.defaultProcessors
                                       : [];
-                                    const next = typeof updater === 'function'
-                                      ? (updater as (items: any[]) => any[])(current)
-                                      : updater;
+                                    const next =
+                                      typeof updater === 'function'
+                                        ? (updater as (items: any[]) => any[])(current)
+                                        : updater;
                                     return {
                                       ...prev,
                                       defaultProcessors: next,

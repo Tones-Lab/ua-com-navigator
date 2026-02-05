@@ -2,9 +2,7 @@ import fs from 'fs';
 import path from 'path';
 
 const [baseArg, limitArg] = process.argv.slice(2);
-const baseDir = baseArg
-  ? path.resolve(baseArg)
-  : path.resolve(process.cwd(), '..', '..', 'coms');
+const baseDir = baseArg ? path.resolve(baseArg) : path.resolve(process.cwd(), '..', '..', 'coms');
 const limit = Number(limitArg) || 10;
 
 const splitCommandLine = (input: string) => {
@@ -29,7 +27,7 @@ const splitCommandLine = (input: string) => {
       inDouble = !inDouble;
       continue;
     }
-    if (char === '\'' && !inDouble) {
+    if (char === "'" && !inDouble) {
       inSingle = !inSingle;
       continue;
     }

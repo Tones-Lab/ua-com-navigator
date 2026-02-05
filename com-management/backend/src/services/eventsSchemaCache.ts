@@ -9,7 +9,8 @@ interface CachedSchema {
 }
 
 const CACHE_TTL_MS = Number(process.env.EVENTS_SCHEMA_TTL_MS || 15 * 60 * 1000);
-const FALLBACK_PATH = process.env.EVENTS_SCHEMA_PATH || path.resolve(process.cwd(), 'data', 'events-schema.json');
+const FALLBACK_PATH =
+  process.env.EVENTS_SCHEMA_PATH || path.resolve(process.cwd(), 'data', 'events-schema.json');
 
 let cache: CachedSchema | null = null;
 
@@ -39,7 +40,9 @@ const parseFields = (result: any): string[] => {
   }
   const rows = result?.data || result?.rows || result?.result || result?.results;
   if (Array.isArray(rows)) {
-    const fields = rows.map((row) => row.Field || row.field || row.COLUMN_NAME || row.column || row.name).filter(Boolean);
+    const fields = rows
+      .map((row) => row.Field || row.field || row.COLUMN_NAME || row.column || row.name)
+      .filter(Boolean);
     return fields.map(String);
   }
   if (Array.isArray(result?.columns)) {

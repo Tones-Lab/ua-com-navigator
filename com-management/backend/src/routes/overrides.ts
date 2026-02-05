@@ -63,11 +63,11 @@ const resolveOverrideLocation = (fileId: string) => {
   const objectsIndex = parts.indexOf('_objects', fcomIndex + 1);
   const basePath = parts.slice(0, fcomIndex + 1).join('/');
   const methodBaseIndex = objectsIndex !== -1 ? objectsIndex : fcomIndex;
-  const methodIndex = parts.findIndex((segment, idx) => idx > methodBaseIndex && (segment === 'trap' || segment === 'syslog'));
+  const methodIndex = parts.findIndex(
+    (segment, idx) => idx > methodBaseIndex && (segment === 'trap' || segment === 'syslog'),
+  );
   const method = methodIndex !== -1 ? parts[methodIndex] : undefined;
-  const vendor = methodIndex !== -1
-    ? parts[methodIndex + 1]
-    : parts[methodBaseIndex + 1];
+  const vendor = methodIndex !== -1 ? parts[methodIndex + 1] : parts[methodBaseIndex + 1];
 
   if (!vendor) {
     throw new Error('Unable to resolve vendor from file path');
@@ -88,10 +88,8 @@ const resolveOverrideLocation = (fileId: string) => {
 };
 
 const extractRuleText = (data: any) => {
-  const ruleText = data?.content?.data?.[0]?.RuleText
-    ?? data?.data?.[0]?.RuleText
-    ?? data?.RuleText
-    ?? data;
+  const ruleText =
+    data?.content?.data?.[0]?.RuleText ?? data?.data?.[0]?.RuleText ?? data?.RuleText ?? data;
   return typeof ruleText === 'string' ? ruleText : JSON.stringify(ruleText ?? []);
 };
 
@@ -146,16 +144,24 @@ const buildOverrideMetaFromHistory = (history: any, resolved: any) => {
   return {
     pathId: resolved.overridePath,
     pathName: resolved.overrideFileName,
-    revision: latest.LastRevision ?? latest.Revision ?? latest.Rev ?? latest.revision ?? latest.commit_id,
-    modified: latest.ModificationTime ?? latest.LastModified ?? latest.Modified ?? latest.Date ?? latest.date ?? latest.timestamp,
-    modifiedBy: latest.ModifiedBy
-      ?? latest.LastModifiedBy
-      ?? latest.Modifier
-      ?? latest.User
-      ?? latest.Author
-      ?? latest.author
-      ?? latest.username
-      ?? latest.user,
+    revision:
+      latest.LastRevision ?? latest.Revision ?? latest.Rev ?? latest.revision ?? latest.commit_id,
+    modified:
+      latest.ModificationTime ??
+      latest.LastModified ??
+      latest.Modified ??
+      latest.Date ??
+      latest.date ??
+      latest.timestamp,
+    modifiedBy:
+      latest.ModifiedBy ??
+      latest.LastModifiedBy ??
+      latest.Modifier ??
+      latest.User ??
+      latest.Author ??
+      latest.author ??
+      latest.username ??
+      latest.user,
   };
 };
 
@@ -179,23 +185,29 @@ router.get('/', async (req: Request, res: Response) => {
       try {
         const listing = await uaClient.listRules('/', 500, resolved.overrideRoot, true);
         const entries = Array.isArray(listing?.data) ? listing.data : [];
-        const entry = entries.find((item: any) => (
-          item?.PathName === resolved.overrideFileName
-          || item?.PathID === resolved.overridePath
-          || String(item?.PathID || '').endsWith(`/${resolved.overrideFileName}`)
-        ));
+        const entry = entries.find(
+          (item: any) =>
+            item?.PathName === resolved.overrideFileName ||
+            item?.PathID === resolved.overridePath ||
+            String(item?.PathID || '').endsWith(`/${resolved.overrideFileName}`),
+        );
         if (entry) {
           overrideMeta = {
             ...(overrideMeta || {}),
             pathId: entry.PathID ?? overrideMeta?.pathId,
             pathName: entry.PathName ?? overrideMeta?.pathName,
             revision: overrideMeta?.revision ?? entry.LastRevision ?? entry.Revision ?? entry.Rev,
-            modified: overrideMeta?.modified ?? entry.ModificationTime ?? entry.LastModified ?? entry.Modified,
-            modifiedBy: overrideMeta?.modifiedBy
-              ?? entry.ModifiedBy
-              ?? entry.LastModifiedBy
-              ?? entry.Modifier
-              ?? entry.User,
+            modified:
+              overrideMeta?.modified ??
+              entry.ModificationTime ??
+              entry.LastModified ??
+              entry.Modified,
+            modifiedBy:
+              overrideMeta?.modifiedBy ??
+              entry.ModifiedBy ??
+              entry.LastModifiedBy ??
+              entry.Modifier ??
+              entry.User,
           };
         }
         if (entry?.PathID) {
@@ -203,7 +215,11 @@ router.get('/', async (req: Request, res: Response) => {
             const history = await uaClient.getHistoryByNode(String(entry.PathID), 1, 0);
             const entriesHistory = extractHistoryEntries(history);
             const latest = entriesHistory[0];
-            const revisionName = latest?.RevisionName ?? latest?.revisionName ?? latest?.RevisionLabel ?? latest?.revisionLabel;
+            const revisionName =
+              latest?.RevisionName ??
+              latest?.revisionName ??
+              latest?.RevisionLabel ??
+              latest?.revisionLabel;
             if (typeof revisionName === 'string') {
               const parsed = parseRevisionName(revisionName);
               if (parsed.user) {
@@ -214,11 +230,15 @@ router.get('/', async (req: Request, res: Response) => {
               }
             }
           } catch (error: any) {
-            logger.warn(`Override history lookup failed for ${entry.PathID}: ${error?.message || 'unknown error'}`);
+            logger.warn(
+              `Override history lookup failed for ${entry.PathID}: ${error?.message || 'unknown error'}`,
+            );
           }
         }
       } catch (error: any) {
-        logger.warn(`Override meta lookup failed for ${resolved.overrideRoot}: ${error?.message || 'unknown error'}`);
+        logger.warn(
+          `Override meta lookup failed for ${resolved.overrideRoot}: ${error?.message || 'unknown error'}`,
+        );
       }
       return res.json({
         ...resolved,
@@ -229,7 +249,9 @@ router.get('/', async (req: Request, res: Response) => {
         exists: Boolean(overrideMeta),
       });
     } catch (error: any) {
-      logger.warn(`Override read failed for ${resolved.overridePath}: ${error?.message || 'unknown error'}`);
+      logger.warn(
+        `Override read failed for ${resolved.overridePath}: ${error?.message || 'unknown error'}`,
+      );
       return res.json({
         ...resolved,
         overrides: [],
@@ -270,9 +292,10 @@ router.post('/save', async (req: Request, res: Response) => {
       });
     }
 
-    const payload = overrideFormat === 'object' && overrides.length === 1
-      ? JSON.stringify(overrides[0], null, 2)
-      : JSON.stringify(overrides, null, 2);
+    const payload =
+      overrideFormat === 'object' && overrides.length === 1
+        ? JSON.stringify(overrides[0], null, 2)
+        : JSON.stringify(overrides, null, 2);
     const response = await uaClient.updateRule(resolved.overridePath, payload, commit_message);
 
     const etag = crypto.createHash('md5').update(payload).digest('hex');
@@ -280,23 +303,29 @@ router.post('/save', async (req: Request, res: Response) => {
     try {
       const listing = await uaClient.listRules('/', 500, resolved.overrideRoot, true);
       const entries = Array.isArray(listing?.data) ? listing.data : [];
-      const entry = entries.find((item: any) => (
-        item?.PathName === resolved.overrideFileName
-        || item?.PathID === resolved.overridePath
-        || String(item?.PathID || '').endsWith(`/${resolved.overrideFileName}`)
-      ));
+      const entry = entries.find(
+        (item: any) =>
+          item?.PathName === resolved.overrideFileName ||
+          item?.PathID === resolved.overridePath ||
+          String(item?.PathID || '').endsWith(`/${resolved.overrideFileName}`),
+      );
       if (entry) {
         overrideMeta = {
           ...(overrideMeta || {}),
           pathId: entry.PathID ?? overrideMeta?.pathId,
           pathName: entry.PathName ?? overrideMeta?.pathName,
           revision: overrideMeta?.revision ?? entry.LastRevision ?? entry.Revision ?? entry.Rev,
-          modified: overrideMeta?.modified ?? entry.ModificationTime ?? entry.LastModified ?? entry.Modified,
-          modifiedBy: overrideMeta?.modifiedBy
-            ?? entry.ModifiedBy
-            ?? entry.LastModifiedBy
-            ?? entry.Modifier
-            ?? entry.User,
+          modified:
+            overrideMeta?.modified ??
+            entry.ModificationTime ??
+            entry.LastModified ??
+            entry.Modified,
+          modifiedBy:
+            overrideMeta?.modifiedBy ??
+            entry.ModifiedBy ??
+            entry.LastModifiedBy ??
+            entry.Modifier ??
+            entry.User,
         };
       }
       if (entry?.PathID) {
@@ -304,7 +333,11 @@ router.post('/save', async (req: Request, res: Response) => {
           const history = await uaClient.getHistoryByNode(String(entry.PathID), 1, 0);
           const entriesHistory = extractHistoryEntries(history);
           const latest = entriesHistory[0];
-          const revisionName = latest?.RevisionName ?? latest?.revisionName ?? latest?.RevisionLabel ?? latest?.revisionLabel;
+          const revisionName =
+            latest?.RevisionName ??
+            latest?.revisionName ??
+            latest?.RevisionLabel ??
+            latest?.revisionLabel;
           if (typeof revisionName === 'string') {
             const parsed = parseRevisionName(revisionName);
             if (parsed.user) {
@@ -315,11 +348,15 @@ router.post('/save', async (req: Request, res: Response) => {
             }
           }
         } catch (error: any) {
-          logger.warn(`Override history lookup failed for ${entry.PathID}: ${error?.message || 'unknown error'}`);
+          logger.warn(
+            `Override history lookup failed for ${entry.PathID}: ${error?.message || 'unknown error'}`,
+          );
         }
       }
     } catch (error: any) {
-      logger.warn(`Override meta lookup failed for ${resolved.overrideRoot}: ${error?.message || 'unknown error'}`);
+      logger.warn(
+        `Override meta lookup failed for ${resolved.overrideRoot}: ${error?.message || 'unknown error'}`,
+      );
     }
     res.json({
       ...resolved,
