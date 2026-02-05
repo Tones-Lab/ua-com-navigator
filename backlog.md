@@ -281,27 +281,9 @@ Important, but more scope; value after core editing UX fixes.
 FEATURE: restart FCOM processing microservice from UI (check with TM).
 Potentially valuable, but gated by feasibility and security.
 
-FEATURE - audit each com file type - and specify if any COM's require special treatment - like SNMP Traps, have an OID value, that isn't a field, but is a critical and useful field that should be shown. other protocols etc may have simialr requirements. 
+FEATURE - audit each com file type - and specify if any COM's require special treatment - like SNMP Traps, have an OID value, that isn't a field, but is a critical and useful field that should be shown. other protocols etc may have similar requirements.
 
-Dependency Modernization and Cleanup:
-
-**Observation**: The frontend uses both react and preact, which is unconventional and can lead to confusion and larger bundle sizes.
-**Suggestion:**: Audit the frontend dependencies. Standardize on a single framework (React or Preact) if possible by upgrading the Oracle JET library to a version with better native React support. Use a tool like npm-check-updates to identify and update outdated packages across both frontend and backend for performance and security benefits.
-Enhance Testing Strategy:
-
-**Observation**: The project's backlog.md explicitly calls out the need for a better testing strategy, especially for the UI.
-**Suggestion:**: For the frontend, introduce Vitest with React Testing Library for component-level unit testing. For end-to-end testing, adopt a framework like Cypress or Playwright to automate user workflows, which will improve code quality and prevent regressions.
-Automate Code Quality and Formatting:
-
-**Observation**: While ESLint is used, there is no automated code formatter like Prettier, which can lead to inconsistent code style.
-**Suggestion:**: Integrate Prettier and configure it to work with ESLint to enforce a consistent code style. Use a pre-commit hook with a tool like Husky to automatically run linting and formatting checks before commits, ensuring all code adheres to the defined standards.
-Implement LLM-Powered Features:
-
-**Observation**: The backlog includes a P1 feature for an "LLM assistant" to provide suggestions and help with COM file creation.
-**Suggestion:** Prioritize the implementation of the LLM assistant. This could be a significant value-add for users by providing in-context help for the complex FCOM/PCOM processors. Start by building the backend integration and a simple chat interface, then expand to features like AI-powered validation of COM files.
-Improve Backend API Security and Performance:
-
-**Observation**: The backend uses standard security middleware, but there are opportunities for enhancement. The backlog also mentions a need for caching.
-**Suggestion:**:
-Security: Implement rate limiting on the login endpoint and add more robust input validation on all API endpoints.
-Performance: Implement a comprehensive caching layer with a tool like Redis for frequently accessed data, such as COM files, MIB data, and user permissions, to reduce load on the backend and improve UI responsiveness.
+Dependency modernization/testing/formatting/LLM assistant items are already tracked under P1.
+Backend hardening follow-ups:
+- Rate limit auth endpoints; tighten input validation.
+- Add caching (Redis) for COM files, MIB data, and user permissions.
