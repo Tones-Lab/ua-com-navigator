@@ -4684,6 +4684,9 @@ export default function App() {
   };
 
   const getEffectiveEventValue = (obj: any, field: string) => {
+    if (field === trapOidField) {
+      return obj?.trap?.oid;
+    }
     const overrides = getOverrideValueMap(obj);
     const target = `$.event.${field}`;
     if (overrides.has(target)) {
@@ -4959,6 +4962,7 @@ export default function App() {
   };
 
   const reservedEventFields = new Set<string>();
+  const trapOidField = 'OID';
   const baseEventFieldOrder = [
     'Node',
     'Summary',
@@ -4995,6 +4999,7 @@ export default function App() {
     Node: 'Device name (often DNS), derived from IP lookup.',
     OrigSeverity: 'Original severity at creation.',
     OwnerName: 'Current owner/assignee username.',
+    OID: 'Trap OID derived from the trap definition.',
     RootCauseFlag: 'Flag indicating the event is a root cause.',
     RootCauseID: 'EventID of the root cause event.',
     Score: 'Ranking score (often Severity × Priority).',
@@ -5090,13 +5095,19 @@ export default function App() {
   const getAdditionalEventFields = (obj: any, panelKey: string) => {
     const existing = Array.from(getExistingEventFields(obj, panelKey));
     const baseFields = new Set(getBaseEventFields(obj, panelKey));
-    return existing.filter((field) => !baseFields.has(field) && !reservedEventFields.has(field));
+    const additional = existing.filter(
+      (field) => !baseFields.has(field) && !reservedEventFields.has(field),
+    );
+    if (isTrapFileContext && obj?.trap?.oid && !additional.includes(trapOidField)) {
+      additional.push(trapOidField);
+    }
+    return additional;
   };
 
-  const getEventFieldList = (obj: any, panelKey: string) => [
-    ...getBaseEventFields(obj, panelKey),
-    ...getAdditionalEventFields(obj, panelKey),
-  ];
+  const getEventFieldList = (obj: any, panelKey: string) =>
+    [...getBaseEventFields(obj, panelKey), ...getAdditionalEventFields(obj, panelKey)].filter(
+      (field) => field !== trapOidField,
+    );
 
   const formatEventFieldLabel = (field: string) => field.replace(/([a-z])([A-Z])/g, '$1 $2');
   const getEventFieldDescription = (field: string) => eventFieldDescriptions[field] || '';
