@@ -138,5 +138,5 @@ const normalizeBrokerServers = (payload: any): UAServer[] => {
         svn_url: svnUrl,
       };
     })
-    .filter((entry): entry is UAServer => Boolean(entry));
+    .filter((entry: UAServer | null): entry is UAServer => Boolean(entry));
 };
