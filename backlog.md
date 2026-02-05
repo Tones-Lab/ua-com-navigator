@@ -23,6 +23,10 @@
 - Processor required fields audit:
 	- Review required field rules per processor (including if/else).
 	- Enforce required inputs in builder + validation messaging.
+- v2/v3 override support (prefer v3 for new overrides):
+	- Add v3 authoring mode (JSON Patch) with validation and preview/diff.
+	- Keep v2 editor for legacy overrides; allow explicit version selection.
+	- Enforce scope rules (no $.event.* in pre) across both versions.
 - Validate UA REST API endpoints and parameters against a real UA server.
 - Confirm auth flows (basic + certificate) and session handling.
 - Derive initial FCOM JSON Schema from representative /coms/trap files.
@@ -122,10 +126,6 @@
 	- Doc: architecture/backlog-search-navigation.md
 - ✅ Edit safety enhancements (dirty indicators + builder undo/redo):
 	- Doc: architecture/backlog-edit-safety.md
-- v2/v3 override support (prefer v3 for new overrides):
-	- Add v3 authoring mode (JSON Patch) with validation and preview/diff.
-	- Keep v2 editor for legacy overrides; allow explicit version selection.
-	- Enforce scope rules (no $.event.* in pre) across both versions.
 - Responsive FCOM browser layout tweaks:
 	- Enforce min-heights for folder/file navigation and search results (show at least 3 results); allow left panel to scroll if needed.
 	- Make search bar sticky within the left panel on small screens.
