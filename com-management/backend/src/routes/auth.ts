@@ -4,6 +4,7 @@ import logger from '../utils/logger';
 import { v4 as uuidv4 } from 'uuid';
 import UAClient from '../services/ua';
 import { getServerById } from '../services/serverRegistry';
+import { ensureCacheWarmupFromSession } from '../services/cacheWarmup';
 import { clearSession, getSession, setSession } from '../services/sessionStore';
 
 const router = Router();
@@ -137,6 +138,7 @@ router.post('/login', async (req: Request, res: Response) => {
     };
 
     setSession(session, authReq, server);
+    ensureCacheWarmupFromSession(uaClient, server.server_id);
 
     // Set HTTP-only cookie
     const forwardedProto = req.headers['x-forwarded-proto'];
