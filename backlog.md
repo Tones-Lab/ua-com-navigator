@@ -35,7 +35,7 @@
 ## Next (P1)
 - Testing & quality:
 	- 🧪 UI testing strategy (Vitest + RTL; Playwright/Cypress for E2E).
-	- 🧼 Code formatting automation (Prettier + ESLint + Husky/lint-staged).
+	- ✅ Code formatting automation (Prettier + ESLint + Husky/lint-staged).
 - 🔧 Dependency refresh plan (controlled updates).
 	- Plan: architecture/dependency-refresh-plan.md
 - ✅ File browser tree with search/filters.

@@ -1,3 +1,5 @@
+const prettier = require('eslint-config-prettier');
+
 module.exports = [
   {
     ignores: ['dist', 'node_modules'],
@@ -16,4 +18,5 @@ module.exports = [
     },
     rules: {},
   },
+  prettier,
 ];
