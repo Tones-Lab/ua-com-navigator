@@ -23,7 +23,11 @@ import overridesRoutes from './routes/overrides';
 import brokerRoutes from './routes/broker';
 import mibRoutes from './routes/mibs';
 import overviewRoutes from './routes/overview';
+import { rebuildAllFolderOverviewCaches } from './routes/folders';
+import UAClient from './services/ua';
+import { overviewIndex } from './services/overviewIndex';
 import { startSearchIndexing } from './services/searchIndex';
+import { getServerById, listServers } from './services/serverRegistry';
 
 dotenv.config();
 
@@ -32,6 +36,10 @@ const port = process.env.PORT || 3001;
 const sslKeyPath = process.env.SSL_KEY_PATH || '/opt/assure1/etc/ssl/Web.key';
 const sslCertPath = process.env.SSL_CERT_PATH || '/opt/assure1/etc/ssl/Web.crt';
 const useHttps = fs.existsSync(sslKeyPath) && fs.existsSync(sslCertPath);
+const DEFAULT_CACHE_REFRESH_INTERVAL_MS = 10 * 60 * 1000;
+const CACHE_REFRESH_INTERVAL_MS = Number(
+  process.env.CACHE_REFRESH_INTERVAL_MS || DEFAULT_CACHE_REFRESH_INTERVAL_MS,
+);
 
 app.set('trust proxy', 1);
 app.disable('etag');
@@ -123,5 +131,64 @@ if (useHttps) {
 }
 
 startSearchIndexing();
+
+const buildBootstrapClient = () => {
+  const serverId = process.env.UA_BOOTSTRAP_SERVER_ID || listServers()[0]?.server_id;
+  const server = serverId ? getServerById(serverId) : listServers()[0];
+  if (!server) {
+    logger.warn('Cache warmup skipped: no UA server configured.');
+    return null;
+  }
+
+  const authMethod = process.env.UA_BOOTSTRAP_AUTH_METHOD || 'basic';
+  const username = process.env.UA_BOOTSTRAP_USERNAME;
+  const password = process.env.UA_BOOTSTRAP_PASSWORD;
+  const certPath = process.env.UA_BOOTSTRAP_CERT_PATH;
+  const keyPath = process.env.UA_BOOTSTRAP_KEY_PATH;
+  const caCertPath = process.env.UA_BOOTSTRAP_CA_CERT_PATH;
+  const insecureTls = (process.env.UA_TLS_INSECURE ?? 'false').toLowerCase() === 'true';
+
+  if (authMethod === 'certificate') {
+    if (!certPath || !keyPath) {
+      logger.warn('Cache warmup skipped: missing certificate credentials.');
+      return null;
+    }
+  } else if (!username || !password) {
+    logger.warn('Cache warmup skipped: missing username/password credentials.');
+    return null;
+  }
+
+  const uaClient = new UAClient({
+    hostname: server.hostname,
+    port: server.port,
+    auth_method: authMethod as 'basic' | 'certificate',
+    username,
+    password,
+    cert_path: certPath,
+    key_path: keyPath,
+    ca_cert_path: caCertPath,
+    insecure_tls: insecureTls,
+  });
+
+  return { uaClient, serverId: server.server_id };
+};
+
+const startCacheWarmup = () => {
+  const bootstrap = buildBootstrapClient();
+  if (!bootstrap) {
+    return;
+  }
+
+  const { uaClient, serverId } = bootstrap;
+  void overviewIndex().rebuildIndex(serverId, uaClient, 'startup');
+  void rebuildAllFolderOverviewCaches(uaClient, serverId, 25);
+
+  setInterval(() => {
+    void overviewIndex().rebuildIndex(serverId, uaClient, 'schedule');
+    void rebuildAllFolderOverviewCaches(uaClient, serverId, 25);
+  }, CACHE_REFRESH_INTERVAL_MS);
+};
+
+startCacheWarmup();
 
 export default app;

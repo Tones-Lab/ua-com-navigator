@@ -7,6 +7,10 @@ const MAX_CONTENT_BYTES = Number(process.env.SEARCH_MAX_CONTENT_BYTES || 5 * 102
 const DEFAULT_PATH_PREFIX = 'id-core/default/processing/event/fcom/_objects';
 const PATH_PREFIX = (process.env.COMS_PATH_PREFIX ?? DEFAULT_PATH_PREFIX).replace(/^\/+|\/+$/g, '');
 const IGNORED_DIRS = new Set(['.git', '.svn', 'node_modules']);
+const DEFAULT_REFRESH_INTERVAL_MS = 10 * 60 * 1000;
+const SEARCH_REFRESH_INTERVAL_MS = Number(
+  process.env.SEARCH_REFRESH_INTERVAL_MS || DEFAULT_REFRESH_INTERVAL_MS,
+);
 
 type SearchScope = 'name' | 'content' | 'all';
 
@@ -64,16 +68,6 @@ type SearchIndexStatus = {
     contentFiles: number;
     totalBytes: number;
   };
-};
-
-const getRefreshIntervalMs = (durationMs: number) => {
-  if (durationMs <= 30_000) {
-    return 15 * 60 * 1000;
-  }
-  if (durationMs <= 5 * 60 * 1000) {
-    return 30 * 60 * 1000;
-  }
-  return 60 * 60 * 1000;
 };
 
 const alignToNextMinute = (timestampMs: number) => {
@@ -190,8 +184,7 @@ class SearchIndexService {
         total: this.progress.total || this.progress.processed,
         unit: this.progress.unit,
       };
-      const interval = getRefreshIntervalMs(this.lastDurationMs);
-      this.scheduleNextRefresh(interval);
+      this.scheduleNextRefresh(SEARCH_REFRESH_INTERVAL_MS);
       logger.info(`Search index rebuilt (${trigger}) in ${this.lastDurationMs}ms`);
     } catch (error: any) {
       this.lastError = error?.message || 'Search index rebuild failed';

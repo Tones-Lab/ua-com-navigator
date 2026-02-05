@@ -3,7 +3,9 @@ import crypto from 'crypto';
 import logger from '../utils/logger';
 import UAClient from '../services/ua';
 import { getCredentials, getServer, getSession } from '../services/sessionStore';
+import { refreshOverviewNode } from '../services/overviewIndex';
 import { searchIndex } from '../services/searchIndex';
+import { refreshFolderOverviewForNode } from './folders';
 
 const router = Router();
 
@@ -31,6 +33,20 @@ const getUaClientFromSession = (req: Request): UAClient => {
     ca_cert_path: auth.ca_cert_path,
     insecure_tls: insecureTls,
   });
+};
+
+const getServerIdFromSession = (req: Request): string => {
+  const sessionId = req.cookies.FCOM_SESSION_ID;
+  if (!sessionId) {
+    throw new Error('No active session');
+  }
+
+  const server = getServer(sessionId);
+  if (!server) {
+    throw new Error('Session not found or expired');
+  }
+
+  return server.server_id;
 };
 
 const requireEditPermission = (req: Request, res: Response): boolean => {
@@ -135,6 +151,7 @@ router.post('/save', async (req: Request, res: Response) => {
     logger.info(`Saving file: ${file_id}, message: ${commit_message}`);
 
     const uaClient = getUaClientFromSession(req);
+    const serverId = getServerIdFromSession(req);
     const data = await uaClient.updateRule(String(file_id), content, commit_message);
     try {
       await searchIndex().updateFileFromContent(String(file_id), content);
@@ -142,6 +159,18 @@ router.post('/save', async (req: Request, res: Response) => {
       logger.warn(`Search index update failed: ${err?.message || 'unknown error'}`);
     }
     const parentNode = String(file_id).split('/').slice(0, -1).join('/');
+    if (parentNode) {
+      try {
+        await refreshFolderOverviewForNode(uaClient, serverId, parentNode, 25);
+      } catch (err: any) {
+        logger.warn(`Folder cache refresh failed: ${err?.message || 'unknown error'}`);
+      }
+      try {
+        await refreshOverviewNode(serverId, uaClient, parentNode);
+      } catch (err: any) {
+        logger.warn(`Overview cache refresh failed: ${err?.message || 'unknown error'}`);
+      }
+    }
     const listing = parentNode
       ? await uaClient.listRules('/', 500, parentNode)
       : await uaClient.listRules('/', 500);
@@ -181,6 +210,7 @@ router.post('/:file_id/save', async (req: Request, res: Response) => {
     logger.info(`Saving file: ${file_id}, message: ${commit_message}`);
 
     const uaClient = getUaClientFromSession(req);
+    const serverId = getServerIdFromSession(req);
     const data = await uaClient.updateRule(file_id, content, commit_message);
     try {
       await searchIndex().updateFileFromContent(String(file_id), content);
@@ -188,6 +218,18 @@ router.post('/:file_id/save', async (req: Request, res: Response) => {
       logger.warn(`Search index update failed: ${err?.message || 'unknown error'}`);
     }
     const parentNode = String(file_id).split('/').slice(0, -1).join('/');
+    if (parentNode) {
+      try {
+        await refreshFolderOverviewForNode(uaClient, serverId, parentNode, 25);
+      } catch (err: any) {
+        logger.warn(`Folder cache refresh failed: ${err?.message || 'unknown error'}`);
+      }
+      try {
+        await refreshOverviewNode(serverId, uaClient, parentNode);
+      } catch (err: any) {
+        logger.warn(`Overview cache refresh failed: ${err?.message || 'unknown error'}`);
+      }
+    }
     const listing = parentNode
       ? await uaClient.listRules('/', 500, parentNode)
       : await uaClient.listRules('/', 500);

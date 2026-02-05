@@ -595,6 +595,28 @@ const rebuildAllFolderOverviews = async (
   }
 };
 
+export const refreshFolderOverviewForNode = async (
+  uaClient: UAClient,
+  serverId: string,
+  node: string,
+  limit: number = 25,
+) => {
+  const cachedCounts = getCachedCountsForNode(overviewIndex().getData(serverId), node);
+  const data = await buildFolderOverview(uaClient, node, limit, cachedCounts);
+  overviewCache.set(`${node}:${limit}`, { data, fetchedAt: Date.now() });
+  persistFolderCacheToDisk();
+  return data;
+};
+
+export const rebuildAllFolderOverviewCaches = async (
+  uaClient: UAClient,
+  serverId: string,
+  limit: number = 25,
+) => {
+  await rebuildAllFolderOverviews(uaClient, limit, overviewIndex().getData(serverId));
+  persistFolderCacheToDisk();
+};
+
 router.get('/overview', async (req: Request, res: Response) => {
   try {
     const { node, limit = '25' } = req.query as { node?: string; limit?: string };
