@@ -26,7 +26,6 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { has
   }
 
   componentDidCatch(error: Error, info: React.ErrorInfo) {
-    // eslint-disable-next-line no-console
     console.error('UI crash:', error, info);
   }
   render() {
@@ -2463,12 +2462,10 @@ export default function App() {
 
       const resp = await api.login(serverId, authType, credentials);
       // Debug: log login response payload (omit credentials)
-      // eslint-disable-next-line no-console
       console.info('Login response:', resp?.data);
       setSession(resp.data);
       setActiveApp('overview');
     } catch (err: any) {
-      // eslint-disable-next-line no-console
       console.error('Login error:', err?.response?.data || err);
       setError(err?.response?.data?.error || 'Login failed');
     } finally {
@@ -3379,7 +3376,6 @@ export default function App() {
         parsed,
       });
     });
-    // eslint-disable-next-line no-console
     console.info(`[TrapTest] ${sourceLabel}: objects=${objects.length}, tests=${items.length}, missing=${missing}, invalid=${invalid}`);
     return { items, missing, invalid };
   };
@@ -3802,7 +3798,6 @@ export default function App() {
         await api.sendTrap(payload);
         passed += 1;
       } catch (err: any) {
-        // eslint-disable-next-line no-console
         console.warn('[TrapTest] send failed', {
           objectName: item.objectName,
           sourceLabel: item.sourceLabel,
