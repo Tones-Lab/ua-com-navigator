@@ -807,8 +807,16 @@ class OverviewIndexService {
       );
     }
 
+    state.progress = {
+      phase: 'Scanning folders',
+      processed: 0,
+      total: 0,
+      unit: 'folders',
+    };
+
     const protocolEntries = await listDirectory(PATH_PREFIX);
     const protocolFolders = protocolEntries.filter((entry) => isFolderEntry(entry));
+    state.progress.total = protocolFolders.length;
     const fileEntries: Array<{ pathId: string; protocol: string; vendor: string }> = [];
     const vendorPairs: Array<{ protocol: string; vendor: string }> = [];
     const vendorKeySet = new Set<string>();
@@ -819,6 +827,7 @@ class OverviewIndexService {
           .split('/')
           .pop() || '';
       if (!protocolName || protocolName.toLowerCase() === 'overrides') {
+        state.progress.processed += 1;
         continue;
       }
       const protocolNode = String(protocolEntry?.PathID || `${PATH_PREFIX}/${protocolName}`);
@@ -858,6 +867,8 @@ class OverviewIndexService {
           });
         }
       }
+
+      state.progress.processed += 1;
     }
 
     state.progress.phase = 'Scanning objects';

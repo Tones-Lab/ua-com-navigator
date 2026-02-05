@@ -613,8 +613,20 @@ export const rebuildAllFolderOverviewCaches = async (
   serverId: string,
   limit: number = 25,
 ) => {
-  await rebuildAllFolderOverviews(uaClient, limit, overviewIndex().getData(serverId));
-  persistFolderCacheToDisk();
+  isBuilding = true;
+  buildProgress = {
+    phase: 'Starting',
+    processed: 0,
+    total: 0,
+    unit: 'folders',
+  };
+  try {
+    await rebuildAllFolderOverviews(uaClient, limit, overviewIndex().getData(serverId));
+    persistFolderCacheToDisk();
+  } finally {
+    buildProgress.phase = 'Completed';
+    isBuilding = false;
+  }
 };
 
 router.get('/overview', async (req: Request, res: Response) => {
