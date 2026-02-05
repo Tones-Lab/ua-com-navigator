@@ -2,6 +2,8 @@
 
 ## Now (P0)
 - ✅ Persist active tab across refresh (preserve current page instead of defaulting to Overview).
+- 🔥 Framework modernization (OJET-first, single runtime).
+	- Plan: architecture/framework-modernization-plan.md
 - 🔥 Unify Global/Object processor palettes using a single registry source-of-truth.
   - Plan: architecture/processor-palette-unification-plan.md
 - 🔥 Editable pre/post processors via overrides (no base file edits).
