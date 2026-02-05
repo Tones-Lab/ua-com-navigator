@@ -33,6 +33,9 @@
 - Docs reference: see architecture/fcom-processor-docs-summary.md (UA FCOM processor/override specs).
 
 ## Next (P1)
+- Testing & quality:
+	- 🧪 UI testing strategy (Vitest + RTL; Playwright/Cypress for E2E).
+	- 🧼 Code formatting automation (Prettier + ESLint + Husky/lint-staged).
 - ✅ File browser tree with search/filters.
 - ✅ File preview pane.
 - ✅ Favorites (server-side, per-user, per-server):
