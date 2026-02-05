@@ -33,6 +33,8 @@
 - `npm run -w frontend build`
 - `npm run -w frontend lint`
 
+**Status:** Completed (2026-02-05)
+
 ### Batch 2: Backend Tooling (Low Risk)
 - TypeScript
 - ESLint + @typescript-eslint/*
@@ -43,6 +45,8 @@
 - `npm run -w backend build`
 - `npm run -w backend lint`
 
+**Status:** Completed (2026-02-05)
+
 ### Batch 3: Runtime Libraries (Moderate Risk)
 - React + react-dom (keep 18.x unless a clear need to move)
 - OJET (`@oracle/oraclejet`)
@@ -51,12 +55,16 @@
 - `npm run -w frontend build`
 - Manual UI smoke: login, file open, edit, save
 
+**Status:** Builds completed (2026-02-05); manual UI smoke pending
+
 ### Batch 4: Shared Libraries (Moderate Risk)
 - axios, ajv, ajv-formats
 
 **Verify:**
 - Run frontend build + backend build
 - Spot-check API calls (auth + file open)
+
+**Status:** Builds completed (2026-02-05); API spot-check pending
 
 ## Rollback Strategy
 - Revert the specific batch commit.
@@ -72,3 +80,7 @@
 - Builds and lint pass for frontend + backend.
 - No runtime regressions in core flows.
 - OJET styling remains consistent.
+
+## Current Status Summary
+- Batches 1-4 completed for dependency updates and builds on 2026-02-05.
+- Manual UI smoke and API spot-checks are still pending.
