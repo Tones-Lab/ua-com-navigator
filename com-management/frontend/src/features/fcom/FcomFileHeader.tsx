@@ -121,7 +121,7 @@ export default function FcomFileHeader({
             <button
               type="button"
               className={
-                isFavorite(selectedFile.PathID, 'file') ? 'star-button star-active' : 'star-button'
+                isFavorite('file', selectedFile.PathID) ? 'star-button star-active' : 'star-button'
               }
               onClick={() =>
                 toggleFavorite({
