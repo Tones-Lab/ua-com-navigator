@@ -1,7 +1,7 @@
-import { createClient, RedisClientType } from 'redis';
+import { createClient } from 'redis';
 import logger from '../utils/logger';
 
-type RedisClient = RedisClientType;
+type RedisClient = ReturnType<typeof createClient>;
 
 let client: RedisClient | null = null;
 let connectPromise: Promise<RedisClient> | null = null;
@@ -23,7 +23,7 @@ const buildRedisClient = () => {
     socket: {
       host,
       port,
-      tls: useTls ? {} : undefined,
+      tls: useTls || undefined,
     },
     username,
     password,
