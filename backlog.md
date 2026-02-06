@@ -17,7 +17,7 @@
 - ✅ Processor override summaries in Friendly view:
 	- Tooltip/card summary for field-level processors (type + key params).
 	- “View in Advanced Flow” link + optional JSON toggle.
-- RBAC gating for edit/execute:
+- ✅ RBAC gating for edit/execute:
 	- Call UA roles/permissions API on login.
 	- Verify user has edit + execute permissions on rules ACL.
 	- Enable UI edit mode only when permissions allow (including field-level edits and new fields).
@@ -32,6 +32,7 @@
 - Confirm auth flows (basic + certificate) and session handling.
 - Derive initial FCOM JSON Schema from representative /coms/trap files.
 - Obtain and document COM JSON Schema (FCOM/PCOM) source-of-truth.
+	- schema files DO exist for processors - they are available as MSA configs - could be grabbed - need more deep dive around this
 - Implement UA REST API integration in backend (replace mock routes).
 - Build login UI (Oracle JET) with server selection and auth type.
 - Cert-based auth cleanup: confirm UA cert→user mapping and enable certificate auth (currently 401).
@@ -284,17 +285,32 @@ Important, but more scope; value after core editing UX fixes.
 FEATURE: restart FCOM processing microservice from UI (check with TM).
 Potentially valuable, but gated by feasibility and security.
 
-FEATURE - audit each com file type - and specify if any COM's require special treatment - like SNMP Traps, have an OID value, that isn't a field, but is a critical and useful field that should be shown. other protocols etc may have similar requirements.
+✅ FEATURE - audit each com file type - and specify if any COM's require special treatment - like SNMP Traps, have an OID value, that isn't a field, but is a critical and useful field that should be shown. other protocols etc may have similar requirements.
 
 Dependency modernization/testing/formatting/LLM assistant items are already tracked under P1.
 Backend hardening follow-ups:
 - Rate limit auth endpoints; tighten input validation.
 - Add caching (Redis) for COM files, MIB data, and user permissions.
 
-FEATURE - add ability to 'restart' fcom-processor via REST API calls. Will need to read installed helm charts. Using this full out the correct name for the fcom-processor. Then we will call the uninstall helm chart API. Then redeploy the same fcom-processor with default settings. 
+BUG: Search index is global, not scoped by server/session.
+This risks users seeing search results from a different UA server or a stale local COMS tree. Fix by storing search indexes per server_id (and optionally per env) and keying rebuild/status/results by that scope; when no server is selected, return a clear empty-state.
+
+BUG: Cache warmup uses a single timer for all servers.
+In multi-server deployments, the first session to warm caches blocks other servers from warming, so users can see stale or missing overview/folder counts. Fix by tracking warmup timers per server_id and running refresh cycles independently per server.
+
+✅ FEATURE - add ability to 'restart' fcom-processor via REST API calls. Will need to read installed helm charts. Using this full out the correct name for the fcom-processor. Then we will call the uninstall helm chart API. Then redeploy the same fcom-processor with default settings. 
 	- https://docs.oracle.com/en/industries/communications/unified-assurance/6.1.1/rest-api/op-api-microservice-deploy-readforinstalled-get.html
 	- https://docs.oracle.com/en/industries/communications/unified-assurance/6.1.1/rest-api/op-api-microservice-deploy-id-delete.html
 	- https://docs.oracle.com/en/industries/communications/unified-assurance/6.1.1/rest-api/op-api-microservice-deploy-post.html
 The ability to redeploy the microservice should only be enabled 'after' a user has reviewed and committed changes to a file. The button to redeploy should show up to the left of the username in the header panel. Once a user has clicked the button and confirmed (via a modal popup) they want to redploy, if the whole process is successful, remove the button from view. We could do this using a 'dirty' like flag - when a user has submitted, set flat to dirty, show button, and on successful redeploy, set to clean, remove button.
 
+AUTH UI CLEANUP (best-practice UX):
+Hide the auth-type selector and default to basic auth to reduce login clutter and decision fatigue. The UI should submit a hidden auth_type=basic field, keep only username/password inputs visible, and avoid exposing certificate fields unless explicitly enabled by config or feature flag for advanced users.
+
+REDEPLOY BUTTON GATING (multi-user safe):
+Gate the redeploy button behind a per-session + per-server dirty flag set only after a successful save/commit. Store the flag in sessionStorage keyed by server_id and session_id (not localStorage), clear it on redeploy success and logout, and never auto-enable on login to avoid cross-user leakage.
+
 FEATURE - enhance logging and failures. have a health check for all REST API's required to be UP and functional. If any of those API's fails, make a warning in the header and disable user access to the area(s) that are broken and display an error message that masks those UI's. Something like 'Contact your administrator'. If the REST API for broker/servers fail, show a 'warning' on the home page. And show the other hard coded defaults (this should be pulled from .env - and be something like server=exmaple.server.com, ussr=user_name, password=user_pass) - other values like the full API path are the same across UA versions.
+
+Steps Required to deploy fcom-processor always in debug to help testing:
+
