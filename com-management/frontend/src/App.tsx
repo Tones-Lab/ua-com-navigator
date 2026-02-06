@@ -58,12 +58,8 @@ export default function App() {
     useSessionStore();
   const [activeApp, setActiveApp] = useState<AppTab>('overview');
   const [serverId, setServerId] = useState('');
-  const [authType, setAuthType] = useState<'basic' | 'certificate'>('basic');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [certPath, setCertPath] = useState('');
-  const [keyPath, setKeyPath] = useState('');
-  const [caPath, setCaPath] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [browseLoading, setBrowseLoading] = useState(false);
@@ -2435,13 +2431,23 @@ export default function App() {
     [servers],
   );
 
-  const authOptions = useMemo(
-    () => [
-      { value: 'basic', label: 'Basic (username/password)' },
-      { value: 'certificate', label: 'Certificate' },
-    ],
-    [],
-  );
+  const redeployStorageKey = useMemo(() => {
+    const sessionId = session?.session_id || session?.user || 'anonymous';
+    const serverKey = session?.server_id || serverId || 'unknown-server';
+    return `fcom.redeployReady.${serverKey}.${sessionId}`;
+  }, [serverId, session?.server_id, session?.session_id, session?.user]);
+
+  const setRedeployReadyState = (next: boolean) => {
+    setRedeployReady(next);
+    if (!isAuthenticated) {
+      return;
+    }
+    if (next) {
+      sessionStorage.setItem(redeployStorageKey, 'true');
+    } else {
+      sessionStorage.removeItem(redeployStorageKey);
+    }
+  };
 
   useEffect(() => {
     const init = async () => {
@@ -2471,6 +2477,7 @@ export default function App() {
       urlHydrated.current = false;
       setEventsSchemaFields([]);
       setRedeployReady(false);
+      sessionStorage.removeItem(redeployStorageKey);
       setRedeployModalOpen(false);
       setRedeployLoading(false);
       setRedeployError(null);
@@ -2478,10 +2485,12 @@ export default function App() {
   }, [isAuthenticated]);
 
   useEffect(() => {
-    if (isAuthenticated) {
-      setRedeployReady(true);
+    if (!isAuthenticated) {
+      return;
     }
-  }, [isAuthenticated]);
+    const stored = sessionStorage.getItem(redeployStorageKey);
+    setRedeployReady(stored === 'true');
+  }, [isAuthenticated, redeployStorageKey]);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -2608,12 +2617,10 @@ export default function App() {
     setLoading(true);
 
     try {
-      const credentials =
-        authType === 'basic'
-          ? { username, password }
-          : { cert_path: certPath, key_path: keyPath, ca_cert_path: caPath || undefined };
+      const effectiveAuthType: 'basic' = 'basic';
+      const credentials = { username, password };
 
-      const resp = await api.login(serverId, authType, credentials);
+      const resp = await api.login(serverId, effectiveAuthType, credentials);
       // Debug: log login response payload (omit credentials)
       console.info('Login response:', resp?.data);
       setSession(resp.data);
@@ -2644,6 +2651,7 @@ export default function App() {
       setSaveSuccess(null);
       setStagedToast(null);
       setRedeployReady(false);
+      sessionStorage.removeItem(redeployStorageKey);
       setRedeployModalOpen(false);
       setRedeployLoading(false);
       setRedeployError(null);
@@ -4105,7 +4113,7 @@ export default function App() {
       const commit = message.trim();
       const resp = await api.saveFile(selectedFile.PathID, content, etag, commit);
       setSaveSuccess('Saved successfully');
-      setRedeployReady(true);
+      setRedeployReadyState(true);
       setRedeployPulse(true);
       triggerToast(`File saved: ${formatDisplayPath(selectedFile.PathID)}`);
       setOriginalText(editorText);
@@ -4173,7 +4181,7 @@ export default function App() {
       setSaveSuccess(
         'Overrides saved. Literal changes are stored as processors. Restart FCOM Processor required.',
       );
-      setRedeployReady(true);
+      setRedeployReadyState(true);
       setRedeployPulse(true);
       triggerToast(
         `Overrides committed for ${formatDisplayPath(selectedFile.PathID)} (restart required)`,
@@ -4218,6 +4226,7 @@ export default function App() {
       await api.getMicroserviceHealth();
       await api.redeployFcomProcessor();
       setRedeployPulse(false);
+      setRedeployReadyState(false);
       setRedeployModalOpen(false);
       triggerToast('FCOM Processor redeployed', true);
     } catch (err: any) {
@@ -12487,67 +12496,24 @@ export default function App() {
                     </select>
                   </label>
 
-                  <label>
-                    Auth type
-                    <select
-                      value={authType}
-                      onChange={(e) => setAuthType(e.target.value as 'basic' | 'certificate')}
-                    >
-                      {authOptions.map((opt) => (
-                        <option key={opt.value} value={opt.value}>
-                          {opt.label}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
+                  <input type="hidden" name="authType" value="basic" />
 
-                  {authType === 'basic' ? (
-                    <>
-                      <label>
-                        Username
-                        <input
-                          type="text"
-                          value={username}
-                          onChange={(e) => setUsername(e.target.value)}
-                        />
-                      </label>
-                      <label>
-                        Password
-                        <input
-                          type="password"
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
-                        />
-                      </label>
-                    </>
-                  ) : (
-                    <>
-                      <label>
-                        Certificate path
-                        <input
-                          type="text"
-                          value={certPath}
-                          onChange={(e) => setCertPath(e.target.value)}
-                        />
-                      </label>
-                      <label>
-                        Key path
-                        <input
-                          type="text"
-                          value={keyPath}
-                          onChange={(e) => setKeyPath(e.target.value)}
-                        />
-                      </label>
-                      <label>
-                        CA bundle path (optional)
-                        <input
-                          type="text"
-                          value={caPath}
-                          onChange={(e) => setCaPath(e.target.value)}
-                        />
-                      </label>
-                    </>
-                  )}
+                  <label>
+                    Username
+                    <input
+                      type="text"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                    />
+                  </label>
+                  <label>
+                    Password
+                    <input
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
+                  </label>
 
                   {error && <div className="error">{error}</div>}
                   <button type="submit" disabled={loading || !serverId}>

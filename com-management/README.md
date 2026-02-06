@@ -162,6 +162,29 @@ Key locations:
 
 Sessions are tracked by the FCOM_SESSION_ID cookie. The backend enforces read‑only sessions when UA permissions do not allow edits; the UI mirrors this by disabling edit controls.
 
+## Favorites backup & restore (critical)
+
+Favorites are stored in Redis. Use the helper scripts in backend/scripts to export and restore them when validating persistence or recovering from data loss.
+
+Export current favorites to a JSON backup:
+
+```bash
+cd /root/navigator/com-management/backend
+npx tsx scripts/export_favorites_from_redis.ts
+```
+
+Restore favorites from a JSON backup:
+
+```bash
+cd /root/navigator/com-management/backend
+FAVORITES_JSON_PATH=/absolute/path/to/favorites.backup.json npx tsx scripts/migrate_favorites_to_redis.ts
+```
+
+Defaults and overrides:
+
+- Export path default: backend/data/favorites.backup.json (override with FAVORITES_EXPORT_PATH)
+- Import path default: backend/data/favorites.json (override with FAVORITES_JSON_PATH)
+
 ## Overrides model
 
 Overrides are stored under:
