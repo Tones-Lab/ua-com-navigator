@@ -117,13 +117,6 @@ export default function FcomEventAdditionalFields({
                                 ? ' pill-removed'
                                 : ''
                             }`}
-                            title={
-                              panelEditState[eventPanelKey] &&
-                              (isFieldPendingRemoval(eventPanelKey, field) || stagedRemoved) &&
-                              !isFieldNew(obj, field)
-                                ? 'Will revert to Original value'
-                                : `Original is: ${getBaseEventDisplay(obj, field)}`
-                            }
                           >
                             Override
                             {hasEditPermission &&

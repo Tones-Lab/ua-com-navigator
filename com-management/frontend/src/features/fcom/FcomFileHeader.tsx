@@ -12,6 +12,7 @@ type FcomFileHeaderProps = {
   fileMethod: string | null;
   fileSubMethod: string | null;
   overrideInfo: any | null;
+  overrideError: string | null;
   hasLocalOverrides: boolean;
   viewMode: 'friendly' | 'preview';
   setViewMode: (mode: 'friendly' | 'preview') => void;
@@ -49,6 +50,7 @@ export default function FcomFileHeader({
   fileMethod,
   fileSubMethod,
   overrideInfo,
+  overrideError,
   hasLocalOverrides,
   viewMode,
   setViewMode,
@@ -163,6 +165,7 @@ export default function FcomFileHeader({
           <span>Modified by: {overrideInfo?.overrideMeta?.modifiedBy || '—'}</span>
         </div>
       )}
+      {overrideError && <div className="error">{overrideError}</div>}
       <div className="action-row">
         {selectedFile ? (
           <>

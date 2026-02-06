@@ -1,6 +1,7 @@
 # Project Backlog
 
 ## Now (P0)
+- ✅ Feature - ability to restart FCOM processing microservice from the UI.
 - ✅ Persist active tab across refresh (preserve current page instead of defaulting to Overview).
 - 🔥 Framework modernization (OJET-first, single runtime).
 	- Plan: architecture/framework-modernization-plan.md
@@ -223,7 +224,6 @@ Global overrides - need ability to re-create a 'customer.rules' use case
 
 ✅ Feature - add ability to 'find next' override - override may exist, but be at bottom of file. if file knows an override exists, click next to see next override in file, or highlight the scroll bar (like you do in vscode or whatever) - to highlight where overrides are in the file. 
 
-Feature - ability to restart FCOM processing microservice from the UI. check with TM if this might be possible. 
 
 Feature - Better parsing of preprocesor and postprocessor for files outside of trap - things like syslog seem to use them etc.
 
@@ -290,3 +290,11 @@ Dependency modernization/testing/formatting/LLM assistant items are already trac
 Backend hardening follow-ups:
 - Rate limit auth endpoints; tighten input validation.
 - Add caching (Redis) for COM files, MIB data, and user permissions.
+
+FEATURE - add ability to 'restart' fcom-processor via REST API calls. Will need to read installed helm charts. Using this full out the correct name for the fcom-processor. Then we will call the uninstall helm chart API. Then redeploy the same fcom-processor with default settings. 
+	- https://docs.oracle.com/en/industries/communications/unified-assurance/6.1.1/rest-api/op-api-microservice-deploy-readforinstalled-get.html
+	- https://docs.oracle.com/en/industries/communications/unified-assurance/6.1.1/rest-api/op-api-microservice-deploy-id-delete.html
+	- https://docs.oracle.com/en/industries/communications/unified-assurance/6.1.1/rest-api/op-api-microservice-deploy-post.html
+The ability to redeploy the microservice should only be enabled 'after' a user has reviewed and committed changes to a file. The button to redeploy should show up to the left of the username in the header panel. Once a user has clicked the button and confirmed (via a modal popup) they want to redploy, if the whole process is successful, remove the button from view. We could do this using a 'dirty' like flag - when a user has submitted, set flat to dirty, show button, and on successful redeploy, set to clean, remove button.
+
+FEATURE - enhance logging and failures. have a health check for all REST API's required to be UP and functional. If any of those API's fails, make a warning in the header and disable user access to the area(s) that are broken and display an error message that masks those UI's. Something like 'Contact your administrator'. If the REST API for broker/servers fail, show a 'warning' on the home page. And show the other hard coded defaults (this should be pulled from .env - and be something like server=exmaple.server.com, ussr=user_name, password=user_pass) - other values like the full API path are the same across UA versions.

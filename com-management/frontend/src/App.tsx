@@ -168,6 +168,7 @@ export default function App() {
   const [trapManualOpen, setTrapManualOpen] = useState(false);
   const [trapSending, setTrapSending] = useState(false);
   const [trapError, setTrapError] = useState<string | null>(null);
+  const [redeployPulse, setRedeployPulse] = useState(false);
   const [recentTargets, setRecentTargets] = useState<string[]>([]);
   const [folderOverviewStatus, setFolderOverviewStatus] = useState<any | null>(null);
   const [fileTestLoading, setFileTestLoading] = useState<Record<string, boolean>>({});
@@ -256,6 +257,16 @@ export default function App() {
       // ignore storage errors
     }
   }, [recentTargets]);
+
+  useEffect(() => {
+    if (!redeployPulse) {
+      return;
+    }
+    const timeout = window.setTimeout(() => {
+      setRedeployPulse(false);
+    }, 3200);
+    return () => window.clearTimeout(timeout);
+  }, [redeployPulse]);
 
   const formatOverviewNumber = (value: number) => new Intl.NumberFormat().format(value);
 
@@ -547,10 +558,16 @@ export default function App() {
   const reviewPulseTimeoutRef = useRef<number | null>(null);
   const stagedPulseActiveRef = useRef(false);
   const [saveElapsed, setSaveElapsed] = useState(0);
+  const [redeployElapsed, setRedeployElapsed] = useState(0);
   const [pendingNav, setPendingNav] = useState<null | (() => void)>(null);
   const [panelEditState, setPanelEditState] = useState<Record<string, boolean>>({});
   const [panelDrafts, setPanelDrafts] = useState<Record<string, any>>({});
   const [panelEvalModes, setPanelEvalModes] = useState<Record<string, Record<string, boolean>>>({});
+  const [redeployReady, setRedeployReady] = useState(false);
+  const [redeployModalOpen, setRedeployModalOpen] = useState(false);
+  const [redeployLoading, setRedeployLoading] = useState(false);
+  const [redeployError, setRedeployError] = useState<string | null>(null);
+  const [eventsSchemaFields, setEventsSchemaFields] = useState<string[]>([]);
   const [overrideInfo, setOverrideInfo] = useState<any | null>(null);
   const [overrideLoading, setOverrideLoading] = useState(false);
   const [overrideError, setOverrideError] = useState<string | null>(null);
@@ -2117,6 +2134,17 @@ export default function App() {
     return () => window.clearInterval(interval);
   }, [saveLoading]);
   useEffect(() => {
+    if (!redeployLoading) {
+      setRedeployElapsed(0);
+      return;
+    }
+    setRedeployElapsed(0);
+    const interval = window.setInterval(() => {
+      setRedeployElapsed((prev) => prev + 1);
+    }, 1000);
+    return () => window.clearInterval(interval);
+  }, [redeployLoading]);
+  useEffect(() => {
     if (!stagedToast) {
       return;
     }
@@ -2441,7 +2469,34 @@ export default function App() {
   useEffect(() => {
     if (!isAuthenticated) {
       urlHydrated.current = false;
+      setEventsSchemaFields([]);
+      setRedeployReady(false);
+      setRedeployModalOpen(false);
+      setRedeployLoading(false);
+      setRedeployError(null);
     }
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      setRedeployReady(true);
+    }
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      return;
+    }
+    const loadEventsSchema = async () => {
+      try {
+        const resp = await api.getEventsSchema();
+        const fields = Array.isArray(resp.data?.fields) ? resp.data.fields : [];
+        setEventsSchemaFields(fields.map(String));
+      } catch {
+        setEventsSchemaFields([]);
+      }
+    };
+    loadEventsSchema();
   }, [isAuthenticated]);
 
   useEffect(() => {
@@ -2588,6 +2643,10 @@ export default function App() {
       setSaveError(null);
       setSaveSuccess(null);
       setStagedToast(null);
+      setRedeployReady(false);
+      setRedeployModalOpen(false);
+      setRedeployLoading(false);
+      setRedeployError(null);
       setSelectedFolder(null);
       setFolderOverview(null);
       setEntries([]);
@@ -3130,7 +3189,24 @@ export default function App() {
       setBreadcrumbs(buildBreadcrumbsFromPath(entry.PathID));
     }
     try {
-      const resp = await api.readFile(entry.PathID);
+      const retryMessage = 'Failed to parse rules file... retrying in 1 second';
+      const readWithRetry = async () => {
+        let attempt = 0;
+        while (attempt < 3) {
+          try {
+            return await api.readFile(entry.PathID);
+          } catch (error) {
+            attempt += 1;
+            if (attempt >= 3) {
+              throw error;
+            }
+            setFileError(retryMessage);
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+          }
+        }
+        return await api.readFile(entry.PathID);
+      };
+      const resp = await readWithRetry();
       setFileData(resp.data);
       setOverrideLoading(true);
       try {
@@ -3432,6 +3508,7 @@ export default function App() {
     setTrapObjectName(String(obj?.['@objectName'] || obj?.name || ''));
     setTrapHost('');
     setTrapPort(162);
+    let nextHost = '';
     if (parsed.version) {
       setTrapVersion(parsed.version);
     }
@@ -3440,7 +3517,8 @@ export default function App() {
     }
     if (parsed.host) {
       const [hostValue, portValue] = parsed.host.split(':');
-      setTrapHost(hostValue || parsed.host);
+      nextHost = hostValue || parsed.host;
+      setTrapHost(nextHost);
       if (portValue && Number(portValue)) {
         setTrapPort(Number(portValue));
       }
@@ -3452,7 +3530,7 @@ export default function App() {
     );
     setTrapManualOpen(false);
     setTrapModalOpen(true);
-    await loadBrokerServers();
+    await loadBrokerServers({ currentHost: nextHost, forceDefault: true });
   };
 
   const buildTrapTestItems = (objects: any[], sourceLabel: string) => {
@@ -3530,7 +3608,7 @@ export default function App() {
     setBulkTrapSummary(null);
     setBulkTrapShowAllFailures(false);
     setTrapModalOpen(true);
-    await loadBrokerServers();
+    await loadBrokerServers({ currentHost: '', forceDefault: true });
   };
 
   const isFileTestLoading = (fileId?: string) =>
@@ -3783,12 +3861,43 @@ export default function App() {
     }
   };
 
-  const loadBrokerServers = async () => {
+  const loadBrokerServers = async (options?: {
+    currentHost?: string | null;
+    forceDefault?: boolean;
+  }) => {
     setTrapServerError(null);
     try {
       const resp = await api.getBrokerServers();
-      const data = Array.isArray(resp.data?.data) ? resp.data.data : [];
+      type BrokerServer = Record<string, unknown>;
+      const data: BrokerServer[] = Array.isArray(resp.data?.data)
+        ? (resp.data.data as BrokerServer[])
+        : [];
       setTrapServerList(data);
+      const currentHost = options?.currentHost ?? trapHost;
+      const allowDefault = options?.forceDefault ? !currentHost : !trapHost;
+      if (allowDefault && data.length > 0) {
+        const activeServerId = String(session?.server_id || serverId || '').trim();
+        const getServerId = (entry: BrokerServer) =>
+          String(
+            entry?.ServerID ?? entry?.server_id ?? entry?.id ?? entry?.ID ?? entry?.ServerName ?? '',
+          ).trim();
+        const getServerHost = (entry: BrokerServer) =>
+          String(
+            entry?.ServerHostFQDN ??
+              entry?.ServerName ??
+              entry?.server_host_fqdn ??
+              entry?.server_name ??
+              entry?.hostname ??
+              entry?.host ??
+              '',
+          ).trim();
+        const matchedServer = activeServerId ? data.find((entry) => getServerId(entry) === activeServerId) : null;
+        const fallbackServer = matchedServer || (data.length === 1 ? data[0] : null);
+        const hostValue = fallbackServer ? getServerHost(fallbackServer) : '';
+        if (hostValue) {
+          setTrapHost(hostValue);
+        }
+      }
       if (data.length === 0) {
         setTrapManualOpen(true);
       }
@@ -3813,7 +3922,7 @@ export default function App() {
       setTrapMibModule('');
     }
     setTrapModalOpen(true);
-    await loadBrokerServers();
+    await loadBrokerServers({ currentHost: '', forceDefault: true });
   };
 
   const addRecentTarget = (hostValue: string) => {
@@ -3996,6 +4105,8 @@ export default function App() {
       const commit = message.trim();
       const resp = await api.saveFile(selectedFile.PathID, content, etag, commit);
       setSaveSuccess('Saved successfully');
+      setRedeployReady(true);
+      setRedeployPulse(true);
       triggerToast(`File saved: ${formatDisplayPath(selectedFile.PathID)}`);
       setOriginalText(editorText);
       const refreshed = await api.readFile(selectedFile.PathID);
@@ -4026,6 +4137,22 @@ export default function App() {
     await saveWithContent(content, message);
   };
 
+  const isTransientSocketError = (err: any) => {
+    if (!err) {
+      return false;
+    }
+    const message = String(err?.message || err?.toString?.() || '').toLowerCase();
+    const code = String(err?.code || '').toLowerCase();
+    const hasResponse = Boolean(err?.response);
+    if (hasResponse) {
+      return false;
+    }
+    if (code.includes('econnreset') || code.includes('econnaborted') || code.includes('etimedout')) {
+      return true;
+    }
+    return message.includes('network error') || message.includes('socket');
+  };
+
   const handleSaveOverrides = async (message: string) => {
     if (!selectedFile || !pendingOverrideSave) {
       return;
@@ -4043,7 +4170,11 @@ export default function App() {
         message.trim(),
       );
       setOverrideInfo(resp.data);
-      setSaveSuccess('Overrides saved. Restart FCOM Processor required.');
+      setSaveSuccess(
+        'Overrides saved. Literal changes are stored as processors. Restart FCOM Processor required.',
+      );
+      setRedeployReady(true);
+      setRedeployPulse(true);
       triggerToast(
         `Overrides committed for ${formatDisplayPath(selectedFile.PathID)} (restart required)`,
       );
@@ -4052,10 +4183,48 @@ export default function App() {
       setPanelOverrideRemovals({});
       setPanelNavWarning({ open: false, fields: {} });
     } catch (err: any) {
-      setSaveError(err?.response?.data?.error || 'Failed to save overrides');
+      if (isTransientSocketError(err) && selectedFile?.PathID) {
+        setSaveError('Save completed, but the connection dropped. Refreshing overrides…');
+        try {
+          const refreshed = await api.getOverrides(selectedFile.PathID);
+          setOverrideInfo(refreshed.data);
+          setSaveError(null);
+          triggerToast('Connection recovered. Overrides refreshed.', true);
+        } catch (refreshError: any) {
+          setSaveError(
+            refreshError?.response?.data?.error ||
+              'Connection dropped and override refresh failed. Please refresh the page.',
+          );
+        }
+      } else {
+        setSaveError(err?.response?.data?.error || 'Failed to save overrides');
+      }
     } finally {
       setSaveLoading(false);
       setPendingOverrideSave(null);
+    }
+  };
+
+  const handleRedeployFcomProcessor = async () => {
+    if (redeployLoading) {
+      return;
+    }
+    if (!ensureEditPermission()) {
+      return;
+    }
+    setRedeployLoading(true);
+    setRedeployError(null);
+    try {
+      await api.getMicroserviceHealth();
+      await api.redeployFcomProcessor();
+      setRedeployPulse(false);
+      setRedeployModalOpen(false);
+      triggerToast('FCOM Processor redeployed', true);
+    } catch (err: any) {
+      const message = err?.response?.data?.error || 'Failed to redeploy FCOM Processor';
+      setRedeployError(message);
+    } finally {
+      setRedeployLoading(false);
     }
   };
 
@@ -4079,6 +4248,9 @@ export default function App() {
     if (Array.isArray(content)) {
       return content;
     }
+    if (content && typeof content === 'object') {
+      return [content];
+    }
     return [];
   };
 
@@ -4098,6 +4270,9 @@ export default function App() {
 
   const availableEventFields = useMemo(() => {
     const fields = new Set<string>();
+    if (eventsSchemaFields.length > 0) {
+      eventsSchemaFields.forEach((field) => fields.add(field));
+    }
     getFriendlyObjects(fileData).forEach((obj: any) => {
       Object.keys(obj?.event || {}).forEach((field) => fields.add(field));
     });
@@ -4108,7 +4283,7 @@ export default function App() {
       (list || []).forEach((field) => fields.add(field));
     });
     return Array.from(fields).sort((a, b) => a.localeCompare(b));
-  }, [fileData, overrideInfo, pendingOverrideSave, panelAddedFields]);
+  }, [eventsSchemaFields, fileData, overrideInfo, pendingOverrideSave, panelAddedFields]);
 
   const hasLocalOverrides = useMemo(() => {
     if (!selectedFile) {
@@ -4473,14 +4648,10 @@ export default function App() {
       const stagedProcessors = Array.isArray(stagedEntry?.entry?.processors)
         ? stagedEntry?.entry?.processors
         : [];
-      const baseEventOverrides =
-        baseEntry?.entry?.event && typeof baseEntry.entry.event === 'object'
-          ? baseEntry.entry.event
-          : {};
-      const stagedEventOverrides =
-        stagedEntry?.entry?.event && typeof stagedEntry.entry.event === 'object'
-          ? stagedEntry.entry.event
-          : {};
+      const baseEventOverrides = baseEntry?.entry ? getOverrideEventMap(baseEntry.entry) : {};
+      const stagedEventOverrides = stagedEntry?.entry
+        ? getOverrideEventMap(stagedEntry.entry)
+        : {};
       const { targeted: baseTargeted, untargeted: baseUntargeted } =
         splitProcessors(baseProcessors);
       const { targeted: stagedTargeted, untargeted: stagedUntargeted } =
@@ -4572,6 +4743,57 @@ export default function App() {
     return { sections, totalChanges, editedObjects };
   };
 
+  const getBaseObjectByName = (objectName?: string) => {
+    if (!objectName) {
+      return null;
+    }
+    return (
+      getFriendlyObjects(fileData).find((item: any) => item?.['@objectName'] === objectName) ||
+      null
+    );
+  };
+
+  const stringifyOverrideValue = (value: any) => {
+    if (value === undefined) {
+      return 'undefined';
+    }
+    if (value === null) {
+      return 'null';
+    }
+    if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+      return String(value);
+    }
+    try {
+      return JSON.stringify(value);
+    } catch {
+      return String(value);
+    }
+  };
+
+  const areOverrideValuesEqual = (left: any, right: any) =>
+    stringifyOverrideValue(left) === stringifyOverrideValue(right);
+
+  const getOverrideEventMap = (entry: any) => {
+    if (!entry || typeof entry !== 'object') {
+      return {} as Record<string, any>;
+    }
+    const objectName = entry?.['@objectName'];
+    const baseObj = getBaseObjectByName(objectName);
+    const baseEvent =
+      baseObj?.event && typeof baseObj.event === 'object' ? baseObj.event : ({} as any);
+    const eventOverrides =
+      entry?.event && typeof entry.event === 'object' ? entry.event : ({} as any);
+    const diff: Record<string, any> = {};
+    Object.keys(eventOverrides).forEach((field) => {
+      const overrideValue = eventOverrides[field];
+      const baseValue = baseEvent[field];
+      if (!areOverrideValuesEqual(overrideValue, baseValue)) {
+        diff[field] = overrideValue;
+      }
+    });
+    return diff;
+  };
+
   const getOverrideFlags = (obj: any) => {
     const objectName = obj?.['@objectName'];
     if (!objectName) {
@@ -4588,10 +4810,10 @@ export default function App() {
       Array.isArray(entry?.processors) ? entry.processors : [],
     );
     const targets = processors.map(getProcessorTargetField).filter(Boolean) as string[];
-    const hasEventOverrides = overrides.some(
-      (entry: any) =>
-        entry?.event && typeof entry.event === 'object' && Object.keys(entry.event).length > 0,
-    );
+    const hasEventOverrides = overrides.some((entry: any) => {
+      const diff = getOverrideEventMap(entry);
+      return Object.keys(diff).length > 0;
+    });
     const event = hasEventOverrides || targets.some((target) => target.startsWith('$.event.'));
     const trap = targets.some(
       (target) => target.startsWith('$.trap.') || target.includes('trap.variables'),
@@ -4619,7 +4841,7 @@ export default function App() {
     );
     const targetMap = getOverrideTargetMap(processors);
     overrides.forEach((entry: any) => {
-      const eventOverrides = entry?.event && typeof entry.event === 'object' ? entry.event : {};
+      const eventOverrides = getOverrideEventMap(entry);
       Object.keys(eventOverrides).forEach((field) => {
         targetMap.set(`$.event.${field}`, eventOverrides[field]);
       });
@@ -4661,7 +4883,7 @@ export default function App() {
     );
     const targetMap = getOverrideTargetMap(processors);
     overrides.forEach((entry: any) => {
-      const eventOverrides = entry?.event && typeof entry.event === 'object' ? entry.event : {};
+      const eventOverrides = getOverrideEventMap(entry);
       Object.keys(eventOverrides).forEach((field) => {
         targetMap.set(`$.event.${field}`, eventOverrides[field]);
       });
@@ -4673,9 +4895,7 @@ export default function App() {
     if (!objectName || !target) {
       return undefined;
     }
-    const obj = getFriendlyObjects(fileData).find(
-      (item: any) => item?.['@objectName'] === objectName,
-    );
+    const obj = getBaseObjectByName(objectName);
     if (!obj) {
       return undefined;
     }
@@ -5343,7 +5563,6 @@ export default function App() {
       (entry: any) =>
         entry?.['@objectName'] === objectName && entry?.method === method && entry?.scope === scope,
     );
-
     const overrideEntry =
       matchIndex >= 0
         ? { ...baseOverrides[matchIndex] }
@@ -5359,10 +5578,6 @@ export default function App() {
           };
 
     let processors = Array.isArray(overrideEntry.processors) ? [...overrideEntry.processors] : [];
-    const eventOverrides: Record<string, any> =
-      overrideEntry.event && typeof overrideEntry.event === 'object'
-        ? { ...overrideEntry.event }
-        : {};
 
     if (removalFields.size > 0) {
       processors = processors.filter((proc: any) => {
@@ -5373,32 +5588,23 @@ export default function App() {
         const field = target.replace('$.event.', '');
         return !removalFields.has(field);
       });
-      removalFields.forEach((field) => {
-        delete eventOverrides[field];
-      });
     }
 
     updates.forEach(({ field, value }) => {
       if (removalFields.has(field)) {
         return;
       }
-      eventOverrides[field] = value;
       const targetField = `$.event.${field}`;
       processors = processors.filter((proc: any) => getProcessorTargetField(proc) !== targetField);
+      processors.push(buildOverrideSetProcessor(field, value));
     });
 
-    const hasEventOverrides = Object.keys(eventOverrides).length > 0;
-    if (processors.length === 0 && !hasEventOverrides) {
+    if (processors.length === 0) {
       if (matchIndex >= 0) {
         baseOverrides.splice(matchIndex, 1);
       }
     } else {
       overrideEntry.processors = processors;
-      if (hasEventOverrides) {
-        overrideEntry.event = eventOverrides;
-      } else {
-        delete overrideEntry.event;
-      }
       if (matchIndex >= 0) {
         baseOverrides[matchIndex] = overrideEntry;
       } else {
@@ -5515,7 +5721,7 @@ export default function App() {
     const overrides = overrideIndex.get(objectName) || [];
     const eventOverrideFields = new Set<string>();
     overrides.forEach((entry: any) => {
-      const eventOverrides = entry?.event && typeof entry.event === 'object' ? entry.event : {};
+      const eventOverrides = getOverrideEventMap(entry);
       Object.keys(eventOverrides).forEach((field) => eventOverrideFields.add(field));
     });
     const processorTargets = getDirectOverrideTargets(obj);
@@ -9118,19 +9324,40 @@ export default function App() {
     }
     const count = variables.length;
     return (
-      <button
-        type="button"
-        className="builder-link"
-        onClick={() => {
-          setVarModalToken(null);
-          setVarModalVars(variables);
-          setVarModalMode('view');
-          setVarInsertContext(null);
-          setVarModalOpen(true);
-        }}
-      >
-        {count} available variable{count === 1 ? '' : 's'}
-      </button>
+      <details className="trap-vars">
+        <summary>
+          {count} available variable{count === 1 ? '' : 's'}
+        </summary>
+        <div className="trap-vars-list">
+          {variables.map((variable: any, index: number) => {
+            const token = `$v${index + 1}`;
+            return (
+              <div className="trap-var" key={variable?.name || variable?.oid || index}>
+                <div className="trap-var-title">
+                  <span className="trap-var-name">{renderValue(variable?.name)}</span>
+                  <span className="pill">{token}</span>
+                  {variable?.valueType && <span className="pill">{variable.valueType}</span>}
+                </div>
+                <div className="trap-var-grid">
+                  <div className="trap-var-col">
+                    <div className="trap-var-row">
+                      <span className="label">OID</span>
+                      <span className="value monospace">{renderValue(variable?.oid)}</span>
+                    </div>
+                    <div className="trap-var-row">
+                      <span className="label">Description</span>
+                      <span className="value">{formatDescription(variable?.description)}</span>
+                    </div>
+                  </div>
+                  <div className="trap-var-col">
+                    {renderEnums(variable?.enums) || <span className="muted">No enums</span>}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </details>
     );
   };
 
@@ -9616,6 +9843,22 @@ export default function App() {
           {isAuthenticated && <AppTabs activeApp={activeApp} onChange={handleAppTabChange} />}
           {isAuthenticated && (
             <div className="header-actions">
+              {redeployReady && (
+                <button
+                  type="button"
+                  className={`search-button redeploy-button${
+                    redeployPulse ? ' redeploy-pulse' : ''
+                  }`}
+                  onClick={() => {
+                    setRedeployError(null);
+                    setRedeployModalOpen(true);
+                  }}
+                  disabled={!hasEditPermission}
+                  title={hasEditPermission ? '' : 'Read-only access'}
+                >
+                  Redeploy FCOM Processor
+                </button>
+              )}
               <button
                 type="button"
                 className="user-menu-button"
@@ -9725,6 +9968,7 @@ export default function App() {
                           fileMethod={fileMethodInfo.method}
                           fileSubMethod={fileMethodInfo.subMethod}
                           overrideInfo={overrideInfo}
+                          overrideError={overrideError}
                           hasLocalOverrides={hasLocalOverrides}
                           viewMode={viewMode}
                           setViewMode={setViewMode}
@@ -10154,6 +10398,18 @@ export default function App() {
                                     placeholder="Enter commit message here"
                                     value={commitMessage}
                                     onChange={(e) => setCommitMessage(e.target.value)}
+                                    onKeyDown={(e) => {
+                                      if (e.key !== 'Enter') {
+                                        return;
+                                      }
+                                      e.preventDefault();
+                                      if (saveLoading || !hasEditPermission) {
+                                        return;
+                                      }
+                                      handleSaveOverrides(commitMessage);
+                                      setShowReviewModal(false);
+                                      setReviewStep('review');
+                                    }}
                                     disabled={!hasEditPermission}
                                   />
                                   <div className="modal-actions">
@@ -10175,6 +10431,41 @@ export default function App() {
                                   </div>
                                 </>
                               )}
+                            </div>
+                          </div>
+                        )}
+                        {redeployModalOpen && (
+                          <div className="modal-overlay" role="dialog" aria-modal="true">
+                            <div className="modal">
+                              <h3>Redeploy FCOM Processor</h3>
+                              <p>
+                                This will uninstall and redeploy the FCOM Processor microservice
+                                using the currently installed Helm chart.
+                              </p>
+                              {redeployError && (
+                                <div className="error-message">{redeployError}</div>
+                              )}
+                              <div className="modal-actions">
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    if (!redeployLoading) {
+                                      setRedeployModalOpen(false);
+                                      setRedeployError(null);
+                                    }
+                                  }}
+                                >
+                                  Cancel
+                                </button>
+                                <button
+                                  type="button"
+                                  className="builder-card builder-card-primary"
+                                  onClick={handleRedeployFcomProcessor}
+                                  disabled={redeployLoading || !hasEditPermission}
+                                >
+                                  {redeployLoading ? 'Redeploying…' : 'Redeploy'}
+                                </button>
+                              </div>
                             </div>
                           </div>
                         )}
@@ -11244,6 +11535,21 @@ export default function App() {
                                 <div className="save-overlay-title">Saving changes…</div>
                                 <div className="save-overlay-subtitle">
                                   Please wait{saveElapsed ? ` • ${saveElapsed}s` : ''}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                        {redeployLoading && (
+                          <div className="save-overlay" aria-live="polite" aria-busy="true">
+                            <div className="save-overlay-card">
+                              <div className="save-spinner" aria-hidden="true" />
+                              <div>
+                                <div className="save-overlay-title">
+                                  Redeploying FCOM Processor…
+                                </div>
+                                <div className="save-overlay-subtitle">
+                                  Please wait{redeployElapsed ? ` • ${redeployElapsed}s` : ''}
                                 </div>
                               </div>
                             </div>

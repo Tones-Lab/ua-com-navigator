@@ -185,6 +185,14 @@ class ApiClient {
     return this.client.get('/events/schema');
   }
 
+  async redeployFcomProcessor() {
+    return this.client.post('/microservice/redeploy-fcom');
+  }
+
+  async getMicroserviceHealth() {
+    return this.client.get('/microservice/health');
+  }
+
   // Favorites
   async getFavorites() {
     return this.client.get('/favorites');
