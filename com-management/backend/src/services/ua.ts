@@ -278,9 +278,11 @@ export class UAClient {
     content: any,
     path: string = '/',
     commitMessage?: string,
+    clonedPath?: string,
   ): Promise<any> {
     try {
-      logger.info(`[UA] Creating rule: ${name} at ${path}`);
+      const targetPath = clonedPath || path;
+      logger.info(`[UA] Creating rule: ${name} at ${targetPath}`);
       const normalizedContent = (() => {
         if (typeof content === 'string') {
           return { RuleText: content };
@@ -296,12 +298,13 @@ export class UAClient {
 
       const response = await this.client.post('/rule/Rules', {
         PathName: name,
+        ClonedPath: targetPath,
         RuleText: normalizedContent.RuleText ?? normalizedContent,
         CommitLog: commitMessage,
         commit_message: commitMessage,
         message: commitMessage,
         comment: commitMessage,
-        path,
+        path: targetPath,
         name,
       });
       return response.data;
@@ -339,6 +342,27 @@ export class UAClient {
       return response.data;
     } catch (error: any) {
       logger.error(`[UA] Error creating folder: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
+   * Create a folder within a rules node.
+   */
+  async createFolderInNode(
+    nodePath: string,
+    folderName: string,
+    commitMessage?: string,
+  ): Promise<any> {
+    try {
+      logger.info(`[UA] Creating folder ${folderName} in ${nodePath}`);
+      const response = await this.client.post(`/rule/rules/executeCreateFolder/${nodePath}`, {
+        CommitLog: commitMessage,
+        FolderName: folderName,
+      });
+      return response.data;
+    } catch (error: any) {
+      logger.error(`[UA] Error creating folder in node: ${error.message}`);
       throw error;
     }
   }
@@ -397,6 +421,121 @@ export class UAClient {
       return response.data;
     } catch (error: any) {
       logger.error(`[UA] Error fetching broker servers: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
+   * Get installed Helm charts (microservices).
+   */
+  async getInstalledHelmCharts(
+    page: number = 1,
+    start: number = 0,
+    limit: number = 25,
+  ): Promise<any> {
+    try {
+      logger.info('[UA] Fetching installed Helm charts');
+      const response = await this.client.get('/microservice/Deploy/readForInstalled', {
+        params: { page, start, limit },
+      });
+      return response.data;
+    } catch (error: any) {
+      logger.error(`[UA] Error fetching installed Helm charts: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
+   * Get microservice clusters.
+   */
+  async getMicroserviceClusters(start: number = 0, limit: number = 100): Promise<any> {
+    try {
+      logger.info('[UA] Fetching microservice clusters');
+      const response = await this.client.get('/microservice/Clusters', {
+        params: { start, limit },
+      });
+      return response.data;
+    } catch (error: any) {
+      logger.error(`[UA] Error fetching microservice clusters: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
+   * Get namespaces for a cluster.
+   */
+  async getClusterNamespaces(cluster: string, start: number = 0, limit: number = 200): Promise<any> {
+    try {
+      logger.info('[UA] Fetching cluster namespaces');
+      const response = await this.client.get('/microservice/Deploy/readClusterData', {
+        params: { Cluster: cluster, start, limit },
+      });
+      return response.data;
+    } catch (error: any) {
+      logger.error(`[UA] Error fetching cluster namespaces: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
+   * Uninstall a Helm chart by deploy id.
+   */
+  async uninstallHelmChart(deployId: string): Promise<any> {
+    try {
+      logger.info(`[UA] Uninstalling Helm chart: ${deployId}`);
+      const response = await this.client.delete(`/microservice/deploy/${deployId}`);
+      return response.data;
+    } catch (error: any) {
+      logger.error(`[UA] Error uninstalling Helm chart: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
+   * Deploy a Helm chart.
+   */
+  async deployHelmChart(payload: {
+    Cluster: string;
+    Namespace: string;
+    Helmchart: string;
+    ReleaseName: string;
+    Version: string;
+    CustomValues?: string;
+  }): Promise<any> {
+    try {
+      logger.info(`[UA] Deploying Helm chart: ${payload.Helmchart}`);
+      const response = await this.client.post('/microservice/Deploy', payload);
+      return response.data;
+    } catch (error: any) {
+      logger.error(`[UA] Error deploying Helm chart: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
+   * Get current value settings for a Helm chart by deploy id.
+   */
+  async getHelmChartValues(params: {
+    cluster: string;
+    namespace: string;
+    helmchart: string;
+    releaseName: string;
+    version: string;
+  }): Promise<any> {
+    try {
+      logger.info('[UA] Fetching Helm chart values');
+      const response = await this.client.get('/microservice/Deploy', {
+        params: {
+          Cluster: params.cluster,
+          Namespace: params.namespace,
+          Helmchart: params.helmchart,
+          ReleaseName: params.releaseName,
+          Version: params.version,
+        },
+      });
+      return response.data;
+    } catch (error: any) {
+      logger.error(`[UA] Error fetching Helm chart values: ${error.message}`);
       throw error;
     }
   }

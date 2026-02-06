@@ -157,9 +157,37 @@ const parseOverridePayload = (ruleText: string) => {
     return parsed;
   }
   if (parsed && typeof parsed === 'object') {
+    if (Object.keys(parsed).length === 0) {
+      return [] as any[];
+    }
     return [parsed];
   }
   return [] as any[];
+};
+
+const decodeJsonPointerSegment = (segment: string) =>
+  segment.replace(/~1/g, '/').replace(/~0/g, '~');
+
+const getJsonPointerEventPath = (value?: string | null) => {
+  if (!value || typeof value !== 'string') {
+    return null;
+  }
+  const normalized = value.startsWith('#') ? value.slice(1) : value;
+  if (!normalized.startsWith('/event')) {
+    return null;
+  }
+  const remainder = normalized.slice('/event'.length);
+  if (!remainder) {
+    return '$.event';
+  }
+  const parts = remainder
+    .split('/')
+    .filter(Boolean)
+    .map(decodeJsonPointerSegment);
+  if (parts.length === 0) {
+    return '$.event';
+  }
+  return `$.event.${parts.join('.')}`;
 };
 
 const getProcessorTargetField = (processor: any) => {
@@ -202,6 +230,10 @@ const collectOverrideTargets = (
   (processors || []).forEach((processor: any) => {
     if (!processor || typeof processor !== 'object') {
       return;
+    }
+    const patchTarget = getJsonPointerEventPath(processor?.path);
+    if (patchTarget) {
+      targetKeys.add(`${objectName}::${patchTarget}`);
     }
     if (processor.if) {
       const payload = processor.if;
@@ -534,7 +566,7 @@ class OverviewIndexService {
         return null;
       }
       if (protocol) {
-        return `${basePath}/overrides/${protocol}/${vendor}.override.json`;
+        return `${basePath}/overrides/${vendor}.${protocol}.override.json`;
       }
       return `${basePath}/overrides/${vendor}.override.json`;
     };
@@ -777,10 +809,14 @@ class OverviewIndexService {
               state.progress.processed += 1;
               continue;
             }
-            const parts = relative.split('/').filter(Boolean);
-            const protocol = parts.length > 1 ? parts[0] : null;
-            const vendorName =
+            const baseStem =
               baseName.replace(new RegExp(`${OVERRIDE_SUFFIX}$`, 'i'), '') || '(root)';
+            const nameParts = baseStem.split('.').filter(Boolean);
+            const lastPart = nameParts.length > 1 ? nameParts[nameParts.length - 1] : '';
+            const protocol = ['trap', 'syslog'].includes(lastPart.toLowerCase())
+              ? lastPart
+              : null;
+            const vendorName = protocol ? nameParts.slice(0, -1).join('.') : baseStem;
             const overrideCount = await buildOverrideCounts(
               String(overrideEntry?.PathID || fileName),
             );

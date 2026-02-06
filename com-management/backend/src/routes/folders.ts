@@ -161,9 +161,37 @@ const parseOverridePayload = (ruleText: string) => {
     return parsed;
   }
   if (parsed && typeof parsed === 'object') {
+    if (Object.keys(parsed).length === 0) {
+      return [] as any[];
+    }
     return [parsed];
   }
   return [] as any[];
+};
+
+const decodeJsonPointerSegment = (segment: string) =>
+  segment.replace(/~1/g, '/').replace(/~0/g, '~');
+
+const getJsonPointerEventPath = (value?: string | null) => {
+  if (!value || typeof value !== 'string') {
+    return null;
+  }
+  const normalized = value.startsWith('#') ? value.slice(1) : value;
+  if (!normalized.startsWith('/event')) {
+    return null;
+  }
+  const remainder = normalized.slice('/event'.length);
+  if (!remainder) {
+    return '$.event';
+  }
+  const parts = remainder
+    .split('/')
+    .filter(Boolean)
+    .map(decodeJsonPointerSegment);
+  if (parts.length === 0) {
+    return '$.event';
+  }
+  return `$.event.${parts.join('.')}`;
 };
 
 const getProcessorTargetField = (processor: any) => {
@@ -202,6 +230,10 @@ const collectOverrideTargets = (processors: any[], objectName: string, targetKey
   (processors || []).forEach((processor: any) => {
     if (!processor || typeof processor !== 'object') {
       return;
+    }
+    const patchTarget = getJsonPointerEventPath(processor?.path);
+    if (patchTarget) {
+      targetKeys.add(`${objectName}::${patchTarget}`);
     }
     if (processor.if) {
       const payload = processor.if;
@@ -443,22 +475,16 @@ const resolveOverridePathFromNode = (node: string) => {
     return null;
   }
   const objectsIndex = parts.indexOf('_objects', fcomIndex + 1);
-  const methodBaseIndex = objectsIndex !== -1 ? objectsIndex : fcomIndex;
-  const methodIndex = parts.findIndex(
-    (segment, idx) => idx > methodBaseIndex && (segment === 'trap' || segment === 'syslog'),
-  );
-  const protocol = methodIndex !== -1 ? parts[methodIndex] : null;
-  const vendor = methodIndex !== -1 ? parts[methodIndex + 1] : parts[methodBaseIndex + 1];
+  const methodIndex = objectsIndex !== -1 ? objectsIndex + 1 : fcomIndex + 1;
+  const protocol = parts[methodIndex] || null;
+  const vendor = parts[methodIndex + 1];
 
-  if (!vendor) {
+  if (!protocol || !vendor) {
     return null;
   }
 
   const basePath = parts.slice(0, fcomIndex + 1).join('/');
-  if (protocol) {
-    return `${basePath}/overrides/${protocol}/${vendor}.override.json`;
-  }
-  return `${basePath}/overrides/${vendor}.override.json`;
+  return `${basePath}/overrides/${vendor}.${protocol}.override.json`;
 };
 
 const getOverrideCountForNode = async (uaClient: UAClient, node: string) => {

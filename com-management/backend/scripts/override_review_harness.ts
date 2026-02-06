@@ -68,9 +68,37 @@ const parseOverridePayload = (ruleText: string) => {
     return { overrides: parsed, format: 'array' as const };
   }
   if (parsed && typeof parsed === 'object') {
+    if (Object.keys(parsed).length === 0) {
+      return { overrides: [], format: 'object' as const };
+    }
     return { overrides: [parsed], format: 'object' as const };
   }
   throw new Error('Override file must be a JSON array or object at the root');
+};
+
+const decodeJsonPointerSegment = (segment: string) =>
+  segment.replace(/~1/g, '/').replace(/~0/g, '~');
+
+const getJsonPointerEventPath = (value?: string | null) => {
+  if (!value || typeof value !== 'string') {
+    return null;
+  }
+  const normalized = value.startsWith('#') ? value.slice(1) : value;
+  if (!normalized.startsWith('/event')) {
+    return null;
+  }
+  const remainder = normalized.slice('/event'.length);
+  if (!remainder) {
+    return '$.event';
+  }
+  const parts = remainder
+    .split('/')
+    .filter(Boolean)
+    .map(decodeJsonPointerSegment);
+  if (parts.length === 0) {
+    return '$.event';
+  }
+  return `$.event.${parts.join('.')}`;
 };
 
 const getProcessorTargetField = (processor: any) => {
@@ -78,6 +106,7 @@ const getProcessorTargetField = (processor: any) => {
     return null;
   }
   const keys = [
+    'set',
     'add',
     'drop',
     'tag',
@@ -107,6 +136,10 @@ const collectOverrideTargets = (processors: any[], objectName: string, targetKey
   (processors || []).forEach((processor: any) => {
     if (!processor || typeof processor !== 'object') {
       return;
+    }
+    const patchTarget = getJsonPointerEventPath(processor?.path);
+    if (patchTarget) {
+      targetKeys.add(`${objectName}::${patchTarget}`);
     }
     if (processor.if) {
       const payload = processor.if;

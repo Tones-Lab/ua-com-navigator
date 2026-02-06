@@ -3,6 +3,8 @@ import crypto from 'crypto';
 import logger from '../utils/logger';
 import UAClient from '../services/ua';
 import { getCredentials, getServer, getSession } from '../services/sessionStore';
+import { refreshOverviewNode } from '../services/overviewIndex';
+import { refreshFolderOverviewForNode } from './folders';
 
 const router = Router();
 
@@ -50,7 +52,30 @@ const requireEditPermission = (req: Request, res: Response): boolean => {
   return true;
 };
 
+const getServerIdFromSession = (req: Request): string => {
+  const sessionId = req.cookies.FCOM_SESSION_ID;
+  if (!sessionId) {
+    throw new Error('No active session');
+  }
+  const server = getServer(sessionId);
+  if (!server) {
+    throw new Error('Session not found or expired');
+  }
+  return server.server_id;
+};
+
 const normalizePath = (pathValue: string) => pathValue.replace(/^\/+/, '').replace(/\/+$/, '');
+
+const toIdCorePath = (pathValue: string) => {
+  const normalized = normalizePath(pathValue);
+  if (normalized.startsWith('id-core/')) {
+    return normalized;
+  }
+  if (normalized.startsWith('core/')) {
+    return `id-core/${normalized.slice('core/'.length)}`;
+  }
+  return normalized;
+};
 
 const resolveOverrideLocation = (fileId: string) => {
   const normalized = normalizePath(fileId);
@@ -62,20 +87,21 @@ const resolveOverrideLocation = (fileId: string) => {
 
   const objectsIndex = parts.indexOf('_objects', fcomIndex + 1);
   const basePath = parts.slice(0, fcomIndex + 1).join('/');
-  const methodBaseIndex = objectsIndex !== -1 ? objectsIndex : fcomIndex;
-  const methodIndex = parts.findIndex(
-    (segment, idx) => idx > methodBaseIndex && (segment === 'trap' || segment === 'syslog'),
-  );
-  const method = methodIndex !== -1 ? parts[methodIndex] : undefined;
-  const vendor = methodIndex !== -1 ? parts[methodIndex + 1] : parts[methodBaseIndex + 1];
+  const methodIndex = objectsIndex !== -1 ? objectsIndex + 1 : fcomIndex + 1;
+  const method = parts[methodIndex];
+  const vendor = parts[methodIndex + 1];
 
-  if (!vendor) {
-    throw new Error('Unable to resolve vendor from file path');
+  if (!method || !vendor) {
+    throw new Error('Unable to resolve method or vendor from file path');
   }
 
   const overrideRoot = `${basePath}/overrides`;
-  const overrideFileName = `${vendor}.override.json`;
+  const overrideFileName = method
+    ? `${vendor}.${method}.override.json`
+    : `${vendor}.override.json`;
   const overridePath = `${overrideRoot}/${overrideFileName}`;
+  const overrideRootId = toIdCorePath(overrideRoot);
+  const overridePathId = `${overrideRootId}/${overrideFileName}`;
 
   return {
     basePath,
@@ -84,6 +110,8 @@ const resolveOverrideLocation = (fileId: string) => {
     overrideRoot,
     overrideFileName,
     overridePath,
+    overrideRootId,
+    overridePathId,
   };
 };
 
@@ -93,16 +121,52 @@ const extractRuleText = (data: any) => {
   return typeof ruleText === 'string' ? ruleText : JSON.stringify(ruleText ?? []);
 };
 
+const buildRuleTextDiagnostics = (data: any) => {
+  const ruleText =
+    data?.content?.data?.[0]?.RuleText ?? data?.data?.[0]?.RuleText ?? data?.RuleText;
+  const responseKeys = data && typeof data === 'object' ? Object.keys(data) : [];
+  return {
+    responseKeys,
+    hasRuleText: typeof ruleText === 'string',
+    ruleTextType: typeof ruleText,
+  };
+};
+
+const isOverrideEntry = (entry: any) =>
+  entry && typeof entry === 'object' && String(entry._type || '').toLowerCase() === 'override';
+
+const isLikelyListResponse = (data: any) => {
+  if (!data || typeof data !== 'object') {
+    return false;
+  }
+  if (!Array.isArray(data?.data)) {
+    return false;
+  }
+  const hasMessage = typeof data?.message === 'string' || typeof data?.Message === 'string';
+  const hasSuccess = typeof data?.success === 'boolean' || typeof data?.Success === 'boolean';
+  return hasMessage || hasSuccess;
+};
+
+const isValidOverridePayload = (payload: any) => {
+  if (Array.isArray(payload)) {
+    return payload.every(isOverrideEntry);
+  }
+  return isOverrideEntry(payload);
+};
+
 const parseOverridePayload = (ruleText: string) => {
   const trimmed = ruleText.trim();
   if (!trimmed) {
-    return { overrides: [], format: 'array' as const };
+    return { overrides: [], format: 'object' as const };
   }
   const parsed = JSON.parse(trimmed);
   if (Array.isArray(parsed)) {
     return { overrides: parsed, format: 'array' as const };
   }
   if (parsed && typeof parsed === 'object') {
+    if (Object.keys(parsed).length === 0) {
+      return { overrides: [], format: 'object' as const };
+    }
     return { overrides: [parsed], format: 'object' as const };
   }
   throw new Error('Override file must be a JSON array or object at the root');
@@ -117,6 +181,15 @@ const parseRevisionName = (revisionName: string) => {
     date: bracketValues.length > 0 ? bracketValues[0] : undefined,
     user: bracketValues.length > 1 ? bracketValues[1] : undefined,
   };
+};
+
+const isMissingRule = (error: any) => {
+  const status = error?.response?.status;
+  if (status === 404) {
+    return true;
+  }
+  const message = String(error?.message || '').toLowerCase();
+  return message.includes('not found');
 };
 
 const extractHistoryEntries = (history: any) => {
@@ -174,10 +247,33 @@ router.get('/', async (req: Request, res: Response) => {
 
     const resolved = resolveOverrideLocation(String(file_id));
     const uaClient = getUaClientFromSession(req);
+    const serverId = getServerIdFromSession(req);
 
     try {
-      const data = await uaClient.readRule(resolved.overridePath, 'HEAD');
-      const ruleText = extractRuleText(data);
+      const data = await uaClient.readRule(resolved.overridePathId, 'HEAD');
+      const ruleText =
+        data?.content?.data?.[0]?.RuleText ?? data?.data?.[0]?.RuleText ?? data?.RuleText;
+      if (typeof ruleText !== 'string') {
+        if (isLikelyListResponse(data)) {
+          return res.json({
+            ...resolved,
+            overrides: [],
+            overrideMeta: null,
+            etag: null,
+            exists: false,
+          });
+        }
+        const diagnostics = buildRuleTextDiagnostics(data);
+        return res.status(400).json({
+          error:
+            'Override load aborted: response did not include RuleText. Check the last call details.',
+          lastCall: {
+            action: 'readRule',
+            path: resolved.overridePathId,
+            diagnostics,
+          },
+        });
+      }
       const parsed = parseOverridePayload(ruleText);
       const overrides = parsed.overrides;
       const etag = crypto.createHash('md5').update(ruleText).digest('hex');
@@ -275,33 +371,158 @@ router.post('/save', async (req: Request, res: Response) => {
     if (!file_id || !Array.isArray(overrides) || commit_message === undefined) {
       return res.status(400).json({ error: 'Missing file_id, overrides, or commit_message' });
     }
-
-    const resolved = resolveOverrideLocation(String(file_id));
-    const uaClient = getUaClientFromSession(req);
-
-    let overrideFormat: 'array' | 'object' = 'array';
-    try {
-      const data = await uaClient.readRule(resolved.overridePath, 'HEAD');
-      const ruleText = extractRuleText(data);
-      const parsed = parseOverridePayload(ruleText);
-      overrideFormat = parsed.format;
-    } catch {
-      return res.status(409).json({
-        error: 'Override file not found. Create it manually before saving overrides.',
-        overridePath: resolved.overridePath,
+    if (overrides.length !== 1) {
+      return res.status(400).json({
+        error: 'Override file must contain a single override object.',
       });
     }
 
-    const payload =
-      overrideFormat === 'object' && overrides.length === 1
-        ? JSON.stringify(overrides[0], null, 2)
-        : JSON.stringify(overrides, null, 2);
-    const response = await uaClient.updateRule(resolved.overridePath, payload, commit_message);
+    const resolved = resolveOverrideLocation(String(file_id));
+    const uaClient = getUaClientFromSession(req);
+    const serverId = getServerIdFromSession(req);
+
+    const ensureOverrideFolder = async () => {
+      try {
+        const listing = await uaClient.listRules('/', 1, resolved.overrideRootId, true);
+        if (listing?.success === false) {
+          throw new Error(listing?.message || 'Override folder missing');
+        }
+        return;
+      } catch {
+        const parentNode = resolved.overrideRootId.replace(/\/?overrides$/, '');
+        const createResp = await uaClient.createFolderInNode(
+          parentNode,
+          'overrides',
+          commit_message,
+        );
+        if (createResp?.success === false) {
+          return res.status(403).json({
+            error: createResp?.message || 'Override folder create failed.',
+            lastCall: {
+              action: 'createFolder',
+              path: parentNode,
+              folderName: 'overrides',
+            },
+          });
+        }
+      }
+    };
+
+    const ensureResult = await ensureOverrideFolder();
+    if (ensureResult) {
+      return;
+    }
+
+    if (!isOverrideEntry(overrides[0])) {
+      return res.status(400).json({
+        error: 'Override payload must be a single override object (_type: override).',
+      });
+    }
+
+    const payload = JSON.stringify(overrides[0], null, 2);
+    let response: any;
+    let created = false;
+    try {
+      const existing = await uaClient.readRule(resolved.overridePathId, 'HEAD');
+      const diagnostics = buildRuleTextDiagnostics(existing);
+      const ruleText =
+        existing?.content?.data?.[0]?.RuleText ??
+        existing?.data?.[0]?.RuleText ??
+        existing?.RuleText ??
+        null;
+      if (!diagnostics.hasRuleText || typeof ruleText !== 'string') {
+        if (!isLikelyListResponse(existing)) {
+          return res.status(400).json({
+            error:
+              'Override save aborted: existing file content is not a rule text payload. Check the last call details.',
+            lastCall: {
+              action: 'readRule',
+              path: resolved.overridePathId,
+              diagnostics,
+            },
+          });
+        }
+        response = await uaClient.createRule(
+          resolved.overrideFileName,
+          payload,
+          resolved.overrideRootId,
+          commit_message,
+          resolved.overrideRootId,
+        );
+        if (response?.success === false) {
+          return res.status(403).json({
+            error: response?.message || 'Override create failed: permission required.',
+            lastCall: {
+              action: 'createRule',
+              path: resolved.overrideRoot,
+              fileName: resolved.overrideFileName,
+            },
+          });
+        }
+        created = true;
+      } else {
+        try {
+          const parsed = JSON.parse(ruleText.trim() || 'null');
+          if (
+            parsed &&
+            typeof parsed === 'object' &&
+            !Array.isArray(parsed) &&
+            Object.keys(parsed).length === 0
+          ) {
+            // Treat empty objects as missing override content so saves can proceed.
+          } else if (!isValidOverridePayload(parsed)) {
+            return res.status(400).json({
+              error:
+                'Override save aborted: existing file content does not look like override JSON. Check the last call details.',
+              lastCall: {
+                action: 'readRule',
+                path: resolved.overridePath,
+                diagnostics,
+              },
+            });
+          }
+        } catch (parseError: any) {
+          return res.status(400).json({
+            error:
+              'Override save aborted: existing file content is not valid JSON. Check the last call details.',
+            lastCall: {
+              action: 'readRule',
+              path: resolved.overridePath,
+              diagnostics,
+              parseError: parseError?.message || 'Failed to parse JSON',
+            },
+          });
+        }
+        response = await uaClient.updateRule(resolved.overridePathId, payload, commit_message);
+      }
+    } catch (error: any) {
+      if (!isMissingRule(error)) {
+        throw error;
+      }
+      response = await uaClient.createRule(
+        resolved.overrideFileName,
+        payload,
+        resolved.overrideRootId,
+        commit_message,
+        resolved.overrideRootId,
+      );
+      if (response?.success === false) {
+        return res.status(403).json({
+          error: response?.message || 'Override create failed: permission required.',
+          lastCall: {
+            action: 'createRule',
+            path: resolved.overrideRoot,
+            fileName: resolved.overrideFileName,
+          },
+        });
+      }
+      created = true;
+    }
 
     const etag = crypto.createHash('md5').update(payload).digest('hex');
     let overrideMeta: any = null;
     try {
-      const listing = await uaClient.listRules('/', 500, resolved.overrideRoot, true);
+      const listing = await uaClient.listRules('/', 500, resolved.overrideRootId, true);
       const entries = Array.isArray(listing?.data) ? listing.data : [];
       const entry = entries.find(
         (item: any) =>
@@ -327,6 +548,17 @@ router.post('/save', async (req: Request, res: Response) => {
             entry.Modifier ??
             entry.User,
         };
+      }
+      if (created && !overrideMeta?.pathId) {
+        return res.status(500).json({
+          error:
+            'Override save failed: override file was not found after create. Check UA rules listing.',
+          lastCall: {
+            action: 'createRule',
+            path: resolved.overrideRoot,
+            fileName: resolved.overrideFileName,
+          },
+        });
       }
       if (entry?.PathID) {
         try {
@@ -358,10 +590,24 @@ router.post('/save', async (req: Request, res: Response) => {
         `Override meta lookup failed for ${resolved.overrideRoot}: ${error?.message || 'unknown error'}`,
       );
     }
+    const parentNode = String(file_id).split('/').slice(0, -1).join('/');
+    if (parentNode) {
+      try {
+        await refreshFolderOverviewForNode(uaClient, serverId, parentNode, 25);
+      } catch (err: any) {
+        logger.warn(`Folder cache refresh failed: ${err?.message || 'unknown error'}`);
+      }
+      try {
+        await refreshOverviewNode(serverId, uaClient, parentNode);
+      } catch (err: any) {
+        logger.warn(`Overview cache refresh failed: ${err?.message || 'unknown error'}`);
+      }
+    }
+
     res.json({
       ...resolved,
       overrides,
-      overrideFormat: overrideFormat === 'object' && overrides.length === 1 ? 'object' : 'array',
+      overrideFormat: 'object',
       overrideMeta,
       exists: Boolean(overrideMeta),
       etag,

@@ -23,6 +23,7 @@ import overridesRoutes from './routes/overrides';
 import brokerRoutes from './routes/broker';
 import mibRoutes from './routes/mibs';
 import overviewRoutes from './routes/overview';
+import microserviceRoutes from './routes/microservice';
 import { startSearchIndexing } from './services/searchIndex';
 import { startCacheWarmupFromEnv } from './services/cacheWarmup';
 
@@ -96,6 +97,7 @@ app.use('/api/v1/overrides', overridesRoutes);
 app.use('/api/v1/broker', brokerRoutes);
 app.use('/api/v1/mibs', mibRoutes);
 app.use('/api/v1/overview', overviewRoutes);
+app.use('/api/v1/microservice', microserviceRoutes);
 
 // Health check
 app.get('/health', (req: Request, res: Response) => {
