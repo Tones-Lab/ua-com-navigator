@@ -87,14 +87,16 @@ const schema = JSON.parse(schemaRaw);
 const ajv = new Ajv({ allErrors: true, strict: false });
 const validate = ajv.compile(schema);
 
-const getUaClientFromSession = (req: Request): { uaClient: UAClient; serverId: string } => {
+const getUaClientFromSession = async (
+  req: Request,
+): Promise<{ uaClient: UAClient; serverId: string }> => {
   const sessionId = req.cookies.FCOM_SESSION_ID;
   if (!sessionId) {
     throw new Error('No active session');
   }
 
-  const auth = getCredentials(sessionId);
-  const server = getServer(sessionId);
+  const auth = await getCredentials(sessionId);
+  const server = await getServer(sessionId);
   if (!auth || !server) {
     throw new Error('Session not found or expired');
   }
@@ -116,9 +118,14 @@ const getUaClientFromSession = (req: Request): { uaClient: UAClient; serverId: s
   };
 };
 
-const requireSession = (req: Request, res: Response) => {
+const requireSession = async (req: Request, res: Response) => {
   const sessionId = req.cookies.FCOM_SESSION_ID;
-  if (!sessionId || !getSession(sessionId)) {
+  if (!sessionId) {
+    res.status(401).json({ error: 'No active session' });
+    return null;
+  }
+  const session = await getSession(sessionId);
+  if (!session) {
     res.status(401).json({ error: 'No active session' });
     return null;
   }
@@ -668,7 +675,7 @@ router.get('/overview', async (req: Request, res: Response) => {
       return res.json(cached.data);
     }
 
-    const { uaClient, serverId } = getUaClientFromSession(req);
+    const { uaClient, serverId } = await getUaClientFromSession(req);
     const cachedCounts = getCachedCountsForNode(overviewIndex().getData(serverId), node);
     const data = await buildFolderOverview(uaClient, node, parsedLimit, cachedCounts);
     overviewCache.set(cacheKey, { data, fetchedAt: Date.now() });
@@ -679,8 +686,8 @@ router.get('/overview', async (req: Request, res: Response) => {
   }
 });
 
-router.get('/overview/status', (req: Request, res: Response) => {
-  if (!requireSession(req, res)) {
+router.get('/overview/status', async (req: Request, res: Response) => {
+  if (!(await requireSession(req, res))) {
     return;
   }
   const entries = Array.from(overviewCache.values());
@@ -698,7 +705,7 @@ router.get('/overview/status', (req: Request, res: Response) => {
 });
 
 router.post('/overview/rebuild', async (req: Request, res: Response) => {
-  if (!requireSession(req, res)) {
+  if (!(await requireSession(req, res))) {
     return;
   }
   isBuilding = true;
@@ -712,14 +719,14 @@ router.post('/overview/rebuild', async (req: Request, res: Response) => {
     const { node, limit = 25 } = req.body as { node?: string; limit?: number };
     const parsedLimit = Number(limit) || 25;
     if (!node) {
-      const { uaClient, serverId } = getUaClientFromSession(req);
+      const { uaClient, serverId } = await getUaClientFromSession(req);
       await rebuildAllFolderOverviews(uaClient, parsedLimit, overviewIndex().getData(serverId));
       persistFolderCacheToDisk();
       res.json({ status: 'rebuilt', count: overviewCache.size });
       return;
     }
     const cacheKey = `${node}:${parsedLimit}`;
-    const { uaClient, serverId } = getUaClientFromSession(req);
+    const { uaClient, serverId } = await getUaClientFromSession(req);
     buildProgress.phase = 'Rebuilding folder';
     buildProgress.processed = 0;
     buildProgress.total = 1;

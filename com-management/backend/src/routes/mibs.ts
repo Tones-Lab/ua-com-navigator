@@ -14,13 +14,13 @@ const MIB_ROOT = process.env.UA_MIB_DIR || path.join(A1_BASEDIR, 'distrib', 'mib
 const MIB2FCOM_BIN = process.env.UA_MIB2FCOM_BIN || path.join(A1_BASEDIR, 'bin', 'sdk', 'MIB2FCOM');
 const TRAP_CMD = process.env.UA_SNMP_TRAP_CMD || 'snmptrap';
 
-const requireEditPermission = (req: Request, res: Response): boolean => {
+const requireEditPermission = async (req: Request, res: Response): Promise<boolean> => {
   const sessionId = req.cookies.FCOM_SESSION_ID;
   if (!sessionId) {
     res.status(401).json({ error: 'No active session' });
     return false;
   }
-  const session = getSession(sessionId);
+  const session = await getSession(sessionId);
   if (!session) {
     res.status(401).json({ error: 'Session not found or expired' });
     return false;
@@ -323,7 +323,7 @@ router.get('/parse', async (req: Request, res: Response) => {
 
 router.post('/mib2fcom', async (req: Request, res: Response) => {
   try {
-    if (!requireEditPermission(req, res)) {
+    if (!(await requireEditPermission(req, res))) {
       return;
     }
     const { inputPath, outputName, useParentMibs } = req.body || {};

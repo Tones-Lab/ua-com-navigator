@@ -8,14 +8,14 @@ import { refreshFolderOverviewForNode } from './folders';
 
 const router = Router();
 
-const getUaClientFromSession = (req: Request): UAClient => {
+const getUaClientFromSession = async (req: Request): Promise<UAClient> => {
   const sessionId = req.cookies.FCOM_SESSION_ID;
   if (!sessionId) {
     throw new Error('No active session');
   }
 
-  const auth = getCredentials(sessionId);
-  const server = getServer(sessionId);
+  const auth = await getCredentials(sessionId);
+  const server = await getServer(sessionId);
   if (!auth || !server) {
     throw new Error('Session not found or expired');
   }
@@ -34,13 +34,13 @@ const getUaClientFromSession = (req: Request): UAClient => {
   });
 };
 
-const requireEditPermission = (req: Request, res: Response): boolean => {
+const requireEditPermission = async (req: Request, res: Response): Promise<boolean> => {
   const sessionId = req.cookies.FCOM_SESSION_ID;
   if (!sessionId) {
     res.status(401).json({ error: 'No active session' });
     return false;
   }
-  const session = getSession(sessionId);
+  const session = await getSession(sessionId);
   if (!session) {
     res.status(401).json({ error: 'Session not found or expired' });
     return false;
@@ -52,12 +52,12 @@ const requireEditPermission = (req: Request, res: Response): boolean => {
   return true;
 };
 
-const getServerIdFromSession = (req: Request): string => {
+const getServerIdFromSession = async (req: Request): Promise<string> => {
   const sessionId = req.cookies.FCOM_SESSION_ID;
   if (!sessionId) {
     throw new Error('No active session');
   }
-  const server = getServer(sessionId);
+  const server = await getServer(sessionId);
   if (!server) {
     throw new Error('Session not found or expired');
   }
@@ -246,8 +246,8 @@ router.get('/', async (req: Request, res: Response) => {
     }
 
     const resolved = resolveOverrideLocation(String(file_id));
-    const uaClient = getUaClientFromSession(req);
-    const serverId = getServerIdFromSession(req);
+    const uaClient = await getUaClientFromSession(req);
+    const serverId = await getServerIdFromSession(req);
 
     try {
       const data = await uaClient.readRule(resolved.overridePathId, 'HEAD');
@@ -364,7 +364,7 @@ router.get('/', async (req: Request, res: Response) => {
 
 router.post('/save', async (req: Request, res: Response) => {
   try {
-    if (!requireEditPermission(req, res)) {
+    if (!(await requireEditPermission(req, res))) {
       return;
     }
     const { file_id, overrides, commit_message } = req.body;
@@ -378,8 +378,8 @@ router.post('/save', async (req: Request, res: Response) => {
     }
 
     const resolved = resolveOverrideLocation(String(file_id));
-    const uaClient = getUaClientFromSession(req);
-    const serverId = getServerIdFromSession(req);
+    const uaClient = await getUaClientFromSession(req);
+    const serverId = await getServerIdFromSession(req);
 
     const ensureOverrideFolder = async () => {
       try {

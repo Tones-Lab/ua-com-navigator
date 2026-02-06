@@ -5,14 +5,14 @@ import { getCredentials, getServer, getSession } from '../services/sessionStore'
 
 const router = Router();
 
-const getUaClientFromSession = (req: Request): UAClient => {
+const getUaClientFromSession = async (req: Request): Promise<UAClient> => {
   const sessionId = req.cookies.FCOM_SESSION_ID;
   if (!sessionId) {
     throw new Error('No active session');
   }
 
-  const auth = getCredentials(sessionId);
-  const server = getServer(sessionId);
+  const auth = await getCredentials(sessionId);
+  const server = await getServer(sessionId);
   if (!auth || !server) {
     throw new Error('Session not found or expired');
   }
@@ -31,13 +31,13 @@ const getUaClientFromSession = (req: Request): UAClient => {
   });
 };
 
-const requireEditPermission = (req: Request, res: Response): boolean => {
+const requireEditPermission = async (req: Request, res: Response): Promise<boolean> => {
   const sessionId = req.cookies.FCOM_SESSION_ID;
   if (!sessionId) {
     res.status(401).json({ error: 'No active session' });
     return false;
   }
-  const session = getSession(sessionId);
+  const session = await getSession(sessionId);
   if (!session) {
     res.status(401).json({ error: 'Session not found or expired' });
     return false;
@@ -193,12 +193,12 @@ router.get('/health', (_req: Request, res: Response) => {
 });
 
 router.post('/redeploy-fcom', async (req: Request, res: Response) => {
-  if (!requireEditPermission(req, res)) {
+  if (!(await requireEditPermission(req, res))) {
     return;
   }
 
   try {
-    const uaClient = getUaClientFromSession(req);
+    const uaClient = await getUaClientFromSession(req);
 
     const clusters = await uaClient.getMicroserviceClusters(0, 100);
     const clusterName = pickClusterName(clusters);

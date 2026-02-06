@@ -9,23 +9,30 @@ import { UAClient } from '../services/ua';
 
 const router = Router();
 
-const requireSession = (req: Request, res: Response) => {
+const requireSession = async (req: Request, res: Response) => {
   const sessionId = req.cookies.FCOM_SESSION_ID;
-  if (!sessionId || !getSession(sessionId)) {
+  if (!sessionId) {
+    res.status(401).json({ error: 'No active session' });
+    return null;
+  }
+  const session = await getSession(sessionId);
+  if (!session) {
     res.status(401).json({ error: 'No active session' });
     return null;
   }
   return sessionId;
 };
 
-const getUaClientFromSession = (req: Request): { uaClient: UAClient; serverId: string } => {
+const getUaClientFromSession = async (
+  req: Request,
+): Promise<{ uaClient: UAClient; serverId: string }> => {
   const sessionId = req.cookies.FCOM_SESSION_ID;
   if (!sessionId) {
     throw new Error('No active session');
   }
 
-  const auth = getCredentials(sessionId);
-  const server = getServer(sessionId);
+  const auth = await getCredentials(sessionId);
+  const server = await getServer(sessionId);
   if (!auth || !server) {
     throw new Error('Session not found or expired');
   }
@@ -47,24 +54,24 @@ const getUaClientFromSession = (req: Request): { uaClient: UAClient; serverId: s
   };
 };
 
-router.get('/status', (req: Request, res: Response) => {
-  if (!requireSession(req, res)) {
+router.get('/status', async (req: Request, res: Response) => {
+  if (!(await requireSession(req, res))) {
     return;
   }
   try {
-    const { serverId } = getUaClientFromSession(req);
+    const { serverId } = await getUaClientFromSession(req);
     res.json(getOverviewStatus(serverId));
   } catch (error: any) {
     res.status(401).json({ error: error.message || 'Session not found or expired' });
   }
 });
 
-router.post('/rebuild', (req: Request, res: Response) => {
-  if (!requireSession(req, res)) {
+router.post('/rebuild', async (req: Request, res: Response) => {
+  if (!(await requireSession(req, res))) {
     return;
   }
   try {
-    const { uaClient, serverId } = getUaClientFromSession(req);
+    const { uaClient, serverId } = await getUaClientFromSession(req);
     requestOverviewRebuild(serverId, uaClient);
     res.json(getOverviewStatus(serverId));
   } catch (error: any) {
@@ -72,12 +79,12 @@ router.post('/rebuild', (req: Request, res: Response) => {
   }
 });
 
-router.get('/', (req: Request, res: Response) => {
-  if (!requireSession(req, res)) {
+router.get('/', async (req: Request, res: Response) => {
+  if (!(await requireSession(req, res))) {
     return;
   }
   try {
-    const { uaClient, serverId } = getUaClientFromSession(req);
+    const { uaClient, serverId } = await getUaClientFromSession(req);
     const status = getOverviewStatus(serverId);
     if (!status.isReady) {
       return res.status(503).json({

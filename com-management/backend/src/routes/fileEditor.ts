@@ -9,14 +9,14 @@ import { refreshFolderOverviewForNode } from './folders';
 
 const router = Router();
 
-const getUaClientFromSession = (req: Request): UAClient => {
+const getUaClientFromSession = async (req: Request): Promise<UAClient> => {
   const sessionId = req.cookies.FCOM_SESSION_ID;
   if (!sessionId) {
     throw new Error('No active session');
   }
 
-  const auth = getCredentials(sessionId);
-  const server = getServer(sessionId);
+  const auth = await getCredentials(sessionId);
+  const server = await getServer(sessionId);
   if (!auth || !server) {
     throw new Error('Session not found or expired');
   }
@@ -35,13 +35,13 @@ const getUaClientFromSession = (req: Request): UAClient => {
   });
 };
 
-const getServerIdFromSession = (req: Request): string => {
+const getServerIdFromSession = async (req: Request): Promise<string> => {
   const sessionId = req.cookies.FCOM_SESSION_ID;
   if (!sessionId) {
     throw new Error('No active session');
   }
 
-  const server = getServer(sessionId);
+  const server = await getServer(sessionId);
   if (!server) {
     throw new Error('Session not found or expired');
   }
@@ -49,13 +49,13 @@ const getServerIdFromSession = (req: Request): string => {
   return server.server_id;
 };
 
-const requireEditPermission = (req: Request, res: Response): boolean => {
+const requireEditPermission = async (req: Request, res: Response): Promise<boolean> => {
   const sessionId = req.cookies.FCOM_SESSION_ID;
   if (!sessionId) {
     res.status(401).json({ error: 'No active session' });
     return false;
   }
-  const session = getSession(sessionId);
+  const session = await getSession(sessionId);
   if (!session) {
     res.status(401).json({ error: 'Session not found or expired' });
     return false;
@@ -71,7 +71,7 @@ const requireEditPermission = (req: Request, res: Response): boolean => {
  * GET /api/v1/files/:file_id/read
  * Read and parse a complete FCOM JSON file
  */
-router.get('/read', (req: Request, res: Response) => {
+router.get('/read', async (req: Request, res: Response) => {
   try {
     const { file_id, revision = 'HEAD' } = req.query;
     if (!file_id) {
@@ -79,54 +79,50 @@ router.get('/read', (req: Request, res: Response) => {
     }
 
     logger.info(`Reading file: ${file_id}, revision: ${revision}`);
-    const uaClient = getUaClientFromSession(req);
+    const uaClient = await getUaClientFromSession(req);
 
-    uaClient
-      .readRule(String(file_id), String(revision))
-      .then((data) => {
-        const etag = crypto.createHash('md5').update(JSON.stringify(data)).digest('hex');
-        res.json({
-          file_id: String(file_id),
-          revision: revision as string,
-          etag,
-          content: data,
-          validation_errors: [],
-        });
-      })
-      .catch((error: any) => {
-        logger.error(`Error reading file: ${error.message}`);
-        res.status(500).json({ error: 'Failed to read file' });
+    try {
+      const data = await uaClient.readRule(String(file_id), String(revision));
+      const etag = crypto.createHash('md5').update(JSON.stringify(data)).digest('hex');
+      res.json({
+        file_id: String(file_id),
+        revision: revision as string,
+        etag,
+        content: data,
+        validation_errors: [],
       });
+    } catch (error: any) {
+      logger.error(`Error reading file: ${error.message}`);
+      res.status(500).json({ error: 'Failed to read file' });
+    }
   } catch (error: any) {
     logger.error(`Error reading file: ${error.message}`);
     res.status(401).json({ error: error.message || 'Failed to read file' });
   }
 });
 
-router.get('/:file_id/read', (req: Request, res: Response) => {
+router.get('/:file_id/read', async (req: Request, res: Response) => {
   try {
     const { file_id } = req.params;
     const { revision = 'HEAD' } = req.query;
 
     logger.info(`Reading file: ${file_id}, revision: ${revision}`);
-    const uaClient = getUaClientFromSession(req);
+    const uaClient = await getUaClientFromSession(req);
 
-    uaClient
-      .readRule(file_id, String(revision))
-      .then((data) => {
-        const etag = crypto.createHash('md5').update(JSON.stringify(data)).digest('hex');
-        res.json({
-          file_id: file_id,
-          revision: revision as string,
-          etag,
-          content: data,
-          validation_errors: [],
-        });
-      })
-      .catch((error: any) => {
-        logger.error(`Error reading file: ${error.message}`);
-        res.status(500).json({ error: 'Failed to read file' });
+    try {
+      const data = await uaClient.readRule(file_id, String(revision));
+      const etag = crypto.createHash('md5').update(JSON.stringify(data)).digest('hex');
+      res.json({
+        file_id: file_id,
+        revision: revision as string,
+        etag,
+        content: data,
+        validation_errors: [],
       });
+    } catch (error: any) {
+      logger.error(`Error reading file: ${error.message}`);
+      res.status(500).json({ error: 'Failed to read file' });
+    }
   } catch (error: any) {
     logger.error(`Error reading file: ${error.message}`);
     res.status(401).json({ error: error.message || 'Failed to read file' });
@@ -139,7 +135,7 @@ router.get('/:file_id/read', (req: Request, res: Response) => {
  */
 router.post('/save', async (req: Request, res: Response) => {
   try {
-    if (!requireEditPermission(req, res)) {
+    if (!(await requireEditPermission(req, res))) {
       return;
     }
     const { file_id, content, etag, commit_message } = req.body;
@@ -150,8 +146,8 @@ router.post('/save', async (req: Request, res: Response) => {
 
     logger.info(`Saving file: ${file_id}, message: ${commit_message}`);
 
-    const uaClient = getUaClientFromSession(req);
-    const serverId = getServerIdFromSession(req);
+    const uaClient = await getUaClientFromSession(req);
+    const serverId = await getServerIdFromSession(req);
     const data = await uaClient.updateRule(String(file_id), content, commit_message);
     try {
       await searchIndex().updateFileFromContent(String(file_id), content);
@@ -197,7 +193,7 @@ router.post('/save', async (req: Request, res: Response) => {
  */
 router.post('/:file_id/save', async (req: Request, res: Response) => {
   try {
-    if (!requireEditPermission(req, res)) {
+    if (!(await requireEditPermission(req, res))) {
       return;
     }
     const { file_id } = req.params;
@@ -209,8 +205,8 @@ router.post('/:file_id/save', async (req: Request, res: Response) => {
 
     logger.info(`Saving file: ${file_id}, message: ${commit_message}`);
 
-    const uaClient = getUaClientFromSession(req);
-    const serverId = getServerIdFromSession(req);
+    const uaClient = await getUaClientFromSession(req);
+    const serverId = await getServerIdFromSession(req);
     const data = await uaClient.updateRule(file_id, content, commit_message);
     try {
       await searchIndex().updateFileFromContent(String(file_id), content);
@@ -254,21 +250,25 @@ router.post('/:file_id/save', async (req: Request, res: Response) => {
  * GET /api/v1/files/:file_id/diff
  * Get diff between working copy and HEAD (or two revisions)
  */
-router.get('/:file_id/diff', (req: Request, res: Response) => {
+router.get('/:file_id/diff', async (req: Request, res: Response) => {
   try {
     const { file_id } = req.params;
     const { revision_a = 'HEAD', revision_b = 'WORKING' } = req.query;
 
     logger.info(`Getting diff for file: ${file_id}`);
-    const uaClient = getUaClientFromSession(req);
+    const uaClient = await getUaClientFromSession(req);
 
-    uaClient
-      .diffRules(file_id, String(revision_a), String(revision_b))
-      .then((data) => res.json(data))
-      .catch((error: any) => {
-        logger.error(`Error getting diff: ${error.message}`);
-        res.status(500).json({ error: 'Failed to get diff' });
-      });
+    try {
+      const data = await uaClient.diffRules(
+        file_id,
+        String(revision_a),
+        String(revision_b),
+      );
+      res.json(data);
+    } catch (error: any) {
+      logger.error(`Error getting diff: ${error.message}`);
+      res.status(500).json({ error: 'Failed to get diff' });
+    }
   } catch (error: any) {
     logger.error(`Error getting diff: ${error.message}`);
     res.status(401).json({ error: error.message || 'Failed to get diff' });
@@ -279,20 +279,20 @@ router.get('/:file_id/diff', (req: Request, res: Response) => {
  * GET /api/v1/files/:file_id/history
  * Get SVN commit history for a file
  */
-router.get('/:file_id/history', (req: Request, res: Response) => {
+router.get('/:file_id/history', async (req: Request, res: Response) => {
   try {
     const { file_id } = req.params;
     const { limit = 20, offset = 0 } = req.query;
 
     logger.info(`Getting history for file: ${file_id}`);
-    const uaClient = getUaClientFromSession(req);
-    uaClient
-      .getHistory(file_id, Number(limit), Number(offset))
-      .then((data) => res.json(data))
-      .catch((error: any) => {
-        logger.error(`Error getting history: ${error.message}`);
-        res.status(500).json({ error: 'Failed to get history' });
-      });
+    const uaClient = await getUaClientFromSession(req);
+    try {
+      const data = await uaClient.getHistory(file_id, Number(limit), Number(offset));
+      res.json(data);
+    } catch (error: any) {
+      logger.error(`Error getting history: ${error.message}`);
+      res.status(500).json({ error: 'Failed to get history' });
+    }
   } catch (error: any) {
     logger.error(`Error getting history: ${error.message}`);
     res.status(401).json({ error: error.message || 'Failed to get history' });

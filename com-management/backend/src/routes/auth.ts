@@ -136,7 +136,7 @@ router.post('/login', async (req: Request, res: Response) => {
       can_edit_rules: canEditRules,
     };
 
-    setSession(session, authReq, server);
+    await setSession(session, authReq, server);
     // Set HTTP-only cookie
     const forwardedProto = req.headers['x-forwarded-proto'];
     const isSecure =
@@ -175,11 +175,11 @@ router.post('/login', async (req: Request, res: Response) => {
  * POST /api/v1/auth/logout
  * Terminate session
  */
-router.post('/logout', (req: Request, res: Response) => {
+router.post('/logout', async (req: Request, res: Response) => {
   try {
     const sessionId = req.cookies.FCOM_SESSION_ID;
     if (sessionId) {
-      clearSession(sessionId);
+      await clearSession(sessionId);
       res.clearCookie('FCOM_SESSION_ID');
     }
     res.status(204).send();
@@ -193,14 +193,16 @@ router.post('/logout', (req: Request, res: Response) => {
  * GET /api/v1/auth/session
  * Get current session details
  */
-router.get('/session', (req: Request, res: Response) => {
+router.get('/session', async (req: Request, res: Response) => {
   try {
     const sessionId = req.cookies.FCOM_SESSION_ID;
-    if (!sessionId || !getSession(sessionId)) {
+    if (!sessionId) {
       return res.status(401).json({ error: 'No active session' });
     }
-
-    const session = getSession(sessionId)!;
+    const session = await getSession(sessionId);
+    if (!session) {
+      return res.status(401).json({ error: 'No active session' });
+    }
     res.json({
       session_id: session.session_id,
       user: session.user,

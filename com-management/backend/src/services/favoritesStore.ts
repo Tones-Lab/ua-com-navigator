@@ -1,6 +1,5 @@
-import fs from 'fs';
-import path from 'path';
 import logger from '../utils/logger';
+import { getRedisClient } from './redisClient';
 
 export type FavoriteType = 'file' | 'folder';
 
@@ -11,75 +10,68 @@ export interface FavoriteItem {
   node?: string;
 }
 
-export interface FavoritesState {
-  [user: string]: {
-    [serverId: string]: FavoriteItem[];
-  };
-}
+const FAVORITES_PREFIX = 'fcom:favorites:';
 
-const storagePath = path.resolve(process.cwd(), 'data', 'favorites.json');
+const buildFavoritesKey = (user: string, serverId: string) =>
+  `${FAVORITES_PREFIX}${serverId}:${user}`;
 
-const readStore = (): FavoritesState => {
+const buildFavoriteHashKey = (favorite: FavoriteItem) => `${favorite.type}:${favorite.pathId}`;
+
+const parseFavoriteEntry = (raw: string): FavoriteItem | null => {
   try {
-    if (!fs.existsSync(storagePath)) {
-      return {};
+    const parsed = JSON.parse(raw);
+    if (!parsed?.type || !parsed?.pathId) {
+      return null;
     }
-    const raw = fs.readFileSync(storagePath, 'utf-8');
-    return raw ? JSON.parse(raw) : {};
-  } catch (error: any) {
-    logger.error(`Failed to read favorites store: ${error.message}`);
-    return {};
+    return parsed as FavoriteItem;
+  } catch {
+    return null;
   }
 };
 
-const writeStore = (state: FavoritesState) => {
+export const getFavorites = async (user: string, serverId: string): Promise<FavoriteItem[]> => {
   try {
-    fs.mkdirSync(path.dirname(storagePath), { recursive: true });
-    fs.writeFileSync(storagePath, JSON.stringify(state, null, 2));
+    const client = await getRedisClient();
+    const rawEntries = await client.hGetAll(buildFavoritesKey(user, serverId));
+    return Object.values(rawEntries)
+      .map((entry) => parseFavoriteEntry(entry))
+      .filter((entry): entry is FavoriteItem => Boolean(entry));
   } catch (error: any) {
-    logger.error(`Failed to write favorites store: ${error.message}`);
-  }
-};
-
-export const getFavorites = (user: string, serverId: string): FavoriteItem[] => {
-  const state = readStore();
-  return state[user]?.[serverId] ?? [];
-};
-
-export const addFavorite = (
-  user: string,
-  serverId: string,
-  favorite: FavoriteItem,
-): FavoriteItem[] => {
-  const state = readStore();
-  if (!state[user]) {
-    state[user] = {};
-  }
-  if (!state[user][serverId]) {
-    state[user][serverId] = [];
-  }
-  const exists = state[user][serverId].some(
-    (item) => item.pathId === favorite.pathId && item.type === favorite.type,
-  );
-  if (!exists) {
-    state[user][serverId].push(favorite);
-    writeStore(state);
-  }
-  return state[user][serverId];
-};
-
-export const removeFavorite = (
-  user: string,
-  serverId: string,
-  favorite: FavoriteItem,
-): FavoriteItem[] => {
-  const state = readStore();
-  if (!state[user] || !state[user][serverId]) {
+    logger.error(`Failed to read favorites store: ${error?.message || 'unknown error'}`);
     return [];
   }
-  state[user][serverId] = state[user][serverId].filter(
-    (item) => !(item.pathId === favorite.pathId && item.type === favorite.type),
-  );
-  writeStore(state);
-  return state[user][serverId];
+};
+
+export const addFavorite = async (
+  user: string,
+  serverId: string,
+  favorite: FavoriteItem,
+): Promise<FavoriteItem[]> => {
+  try {
+    const client = await getRedisClient();
+    const key = buildFavoritesKey(user, serverId);
+    const hashKey = buildFavoriteHashKey(favorite);
+    await client.hSet(key, hashKey, JSON.stringify(favorite));
+    return await getFavorites(user, serverId);
+  } catch (error: any) {
+    logger.error(`Failed to write favorites store: ${error?.message || 'unknown error'}`);
+    return [];
+  }
+};
+
+export const removeFavorite = async (
+  user: string,
+  serverId: string,
+  favorite: FavoriteItem,
+): Promise<FavoriteItem[]> => {
+  try {
+    const client = await getRedisClient();
+    const key = buildFavoritesKey(user, serverId);
+    const hashKey = buildFavoriteHashKey(favorite);
+    await client.hDel(key, hashKey);
+    return await getFavorites(user, serverId);
+  } catch (error: any) {
+    logger.error(`Failed to write favorites store: ${error?.message || 'unknown error'}`);
+    return [];
+  }
 };

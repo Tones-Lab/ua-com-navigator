@@ -5,14 +5,14 @@ import { getCredentials, getServer } from '../services/sessionStore';
 
 const router = Router();
 
-const getUaClientFromSession = (req: Request): UAClient => {
+const getUaClientFromSession = async (req: Request): Promise<UAClient> => {
   const sessionId = req.cookies.FCOM_SESSION_ID;
   if (!sessionId) {
     throw new Error('No active session');
   }
 
-  const auth = getCredentials(sessionId);
-  const server = getServer(sessionId);
+  const auth = await getCredentials(sessionId);
+  const server = await getServer(sessionId);
   if (!auth || !server) {
     throw new Error('Session not found or expired');
   }
@@ -33,7 +33,7 @@ const getUaClientFromSession = (req: Request): UAClient => {
 
 router.get('/servers', async (req: Request, res: Response) => {
   try {
-    const uaClient = getUaClientFromSession(req);
+    const uaClient = await getUaClientFromSession(req);
     const data = await uaClient.getBrokerServers();
     res.json(data);
   } catch (error: any) {

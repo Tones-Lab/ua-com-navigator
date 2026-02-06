@@ -9,7 +9,7 @@ const router = Router();
  * GET /api/v1/files/browse
  * List directory tree for FCOM files
  */
-router.get('/browse', (req: Request, res: Response) => {
+router.get('/browse', async (req: Request, res: Response) => {
   try {
     const { path = '/', node, vendor, protocol_type, search, limit = 100 } = req.query;
 
@@ -18,8 +18,8 @@ router.get('/browse', (req: Request, res: Response) => {
       return res.status(401).json({ error: 'No active session' });
     }
 
-    const auth = getCredentials(sessionId);
-    const server = getServer(sessionId);
+    const auth = await getCredentials(sessionId);
+    const server = await getServer(sessionId);
     if (!auth || !server) {
       return res.status(401).json({ error: 'Session not found or expired' });
     }
@@ -42,13 +42,17 @@ router.get('/browse', (req: Request, res: Response) => {
     });
 
     // TODO: Map UA response into normalized entries for UI; return raw for now.
-    uaClient
-      .listRules(String(path), Number(limit), node ? String(node) : undefined)
-      .then((data) => res.json(data))
-      .catch((error: any) => {
-        logger.error(`Error browsing files: ${error.message}`);
-        res.status(500).json({ error: 'Failed to browse files' });
-      });
+    try {
+      const data = await uaClient.listRules(
+        String(path),
+        Number(limit),
+        node ? String(node) : undefined,
+      );
+      res.json(data);
+    } catch (error: any) {
+      logger.error(`Error browsing files: ${error.message}`);
+      res.status(500).json({ error: 'Failed to browse files' });
+    }
   } catch (error: any) {
     logger.error(`Error browsing files: ${error.message}`);
     res.status(500).json({ error: 'Failed to browse files' });

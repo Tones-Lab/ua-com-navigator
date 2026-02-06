@@ -10,32 +10,37 @@ import {
 
 const router = Router();
 
-const requireSession = (req: Request, res: Response) => {
+const requireSession = async (req: Request, res: Response) => {
   const sessionId = req.cookies.FCOM_SESSION_ID;
-  if (!sessionId || !getSession(sessionId)) {
+  if (!sessionId) {
+    res.status(401).json({ error: 'No active session' });
+    return null;
+  }
+  const session = await getSession(sessionId);
+  if (!session) {
     res.status(401).json({ error: 'No active session' });
     return null;
   }
   return sessionId;
 };
 
-router.get('/status', (req: Request, res: Response) => {
-  if (!requireSession(req, res)) {
+router.get('/status', async (req: Request, res: Response) => {
+  if (!(await requireSession(req, res))) {
     return;
   }
   res.json(getSearchIndexStatus());
 });
 
 router.post('/rebuild', async (req: Request, res: Response) => {
-  if (!requireSession(req, res)) {
+  if (!(await requireSession(req, res))) {
     return;
   }
   requestSearchIndexRebuild();
   res.json(getSearchIndexStatus());
 });
 
-router.get('/', (req: Request, res: Response) => {
-  if (!requireSession(req, res)) {
+router.get('/', async (req: Request, res: Response) => {
+  if (!(await requireSession(req, res))) {
     return;
   }
   const {

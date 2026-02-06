@@ -10,22 +10,22 @@ import {
 
 const router = Router();
 
-const getSessionContext = (req: Request) => {
+const getSessionContext = async (req: Request) => {
   const sessionId = req.cookies.FCOM_SESSION_ID;
   if (!sessionId) {
     throw new Error('No active session');
   }
-  const session = getSession(sessionId);
+  const session = await getSession(sessionId);
   if (!session) {
     throw new Error('Session not found or expired');
   }
   return session;
 };
 
-router.get('/', (req: Request, res: Response) => {
+router.get('/', async (req: Request, res: Response) => {
   try {
-    const session = getSessionContext(req);
-    const favorites = getFavorites(session.user, session.server_id);
+    const session = await getSessionContext(req);
+    const favorites = await getFavorites(session.user, session.server_id);
     res.json({ favorites });
   } catch (error: any) {
     logger.error(`Favorites fetch error: ${error.message}`);
@@ -33,14 +33,14 @@ router.get('/', (req: Request, res: Response) => {
   }
 });
 
-router.post('/', (req: Request, res: Response) => {
+router.post('/', async (req: Request, res: Response) => {
   try {
-    const session = getSessionContext(req);
+    const session = await getSessionContext(req);
     const favorite = req.body as FavoriteItem;
     if (!favorite?.type || !favorite?.pathId) {
       return res.status(400).json({ error: 'Missing favorite type or pathId' });
     }
-    const updated = addFavorite(session.user, session.server_id, favorite);
+    const updated = await addFavorite(session.user, session.server_id, favorite);
     res.json({ favorites: updated });
   } catch (error: any) {
     logger.error(`Favorites add error: ${error.message}`);
@@ -48,14 +48,14 @@ router.post('/', (req: Request, res: Response) => {
   }
 });
 
-router.delete('/', (req: Request, res: Response) => {
+router.delete('/', async (req: Request, res: Response) => {
   try {
-    const session = getSessionContext(req);
+    const session = await getSessionContext(req);
     const favorite = req.body as FavoriteItem;
     if (!favorite?.type || !favorite?.pathId) {
       return res.status(400).json({ error: 'Missing favorite type or pathId' });
     }
-    const updated = removeFavorite(session.user, session.server_id, favorite);
+    const updated = await removeFavorite(session.user, session.server_id, favorite);
     res.json({ favorites: updated });
   } catch (error: any) {
     logger.error(`Favorites remove error: ${error.message}`);
