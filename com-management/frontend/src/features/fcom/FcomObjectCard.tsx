@@ -14,6 +14,9 @@ type FcomObjectCardProps = {
   getProcessorTargets: (obj: any) => Set<string>;
   getProcessorFieldSummary: (obj: any, field: string) => string;
   getOverrideValueMap: (obj: any) => Map<string, any>;
+  getOverrideFileInfoForObject: (objectName?: string | null) => any;
+  getOverrideMetaForObject: (objectName?: string | null) => any;
+  getOverrideRuleLinkForObject: (objectName?: string | null) => string | null;
   getEventOverrideFields: (obj: any) => string[];
   panelEditState: Record<string, boolean>;
   getPanelDirtyFields: (obj: any, panelKey: string) => string[];
@@ -86,6 +89,9 @@ export default function FcomObjectCard({
   getProcessorTargets,
   getProcessorFieldSummary,
   getOverrideValueMap,
+  getOverrideFileInfoForObject,
+  getOverrideMetaForObject,
+  getOverrideRuleLinkForObject,
   getEventOverrideFields,
   panelEditState,
   getPanelDirtyFields,
@@ -161,6 +167,9 @@ export default function FcomObjectCard({
   const overrideTargets = getOverrideTargets(obj);
   const processorTargets = getProcessorTargets(obj);
   const overrideValueMap = getOverrideValueMap(obj);
+  const overrideFileInfo = getOverrideFileInfoForObject(obj?.['@objectName']);
+  const overrideMeta = getOverrideMetaForObject(obj?.['@objectName']);
+  const overrideRuleLink = getOverrideRuleLinkForObject(obj?.['@objectName']);
   const eventPanelKey = `${objectKey}:event`;
   const eventOverrideFields = getEventOverrideFields(obj);
   const panelDirtyFields = panelEditState[eventPanelKey]
@@ -503,7 +512,46 @@ export default function FcomObjectCard({
           <div className="object-title">
             <span className="object-name">{obj?.['@objectName'] || `Object ${idx + 1}`}</span>
             {obj?.certification && <span className="pill">{obj.certification}</span>}
-            {overrideFlags.any && <span className="pill override-pill">Override</span>}
+            {overrideFlags.any && (
+              <span className="override-summary" tabIndex={0} {...overrideTooltipHoverProps}>
+                <span className="pill override-pill">Override</span>
+                {(overrideMeta || overrideFileInfo) && (
+                  <div className="override-summary-card" role="tooltip">
+                    <div className="override-summary-title">Override File</div>
+                    <ul className="override-summary-list">
+                      <li className="override-summary-item">
+                        <span className="override-summary-field">File</span>
+                        <span className="override-summary-value">
+                          {overrideMeta?.pathName || overrideFileInfo?.fileName || '—'}
+                        </span>
+                      </li>
+                      <li className="override-summary-item">
+                        <span className="override-summary-field">Modified</span>
+                        <span className="override-summary-value">
+                          {overrideMeta?.modified || '—'}
+                        </span>
+                      </li>
+                      <li className="override-summary-item">
+                        <span className="override-summary-field">Modified by</span>
+                        <span className="override-summary-value">
+                          {overrideMeta?.modifiedBy || '—'}
+                        </span>
+                      </li>
+                    </ul>
+                    {overrideRuleLink && (
+                      <a
+                        className="override-summary-link"
+                        href={overrideRuleLink}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        Open rule file
+                      </a>
+                    )}
+                  </div>
+                )}
+              </span>
+            )}
             {overrideFlags.advancedFlow && (
               <span className="pill" title="Advanced Flow configured for this object">
                 Advanced Flow

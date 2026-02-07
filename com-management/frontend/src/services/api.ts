@@ -193,6 +193,18 @@ class ApiClient {
     return this.client.get('/microservice/health');
   }
 
+  async getMicroserviceStatus() {
+    return this.client.get('/microservice/status');
+  }
+
+  async deployMicroservice(name: string) {
+    return this.client.post('/microservice/deploy-service', { name });
+  }
+
+  async redeployMicroservice(name: string) {
+    return this.client.post('/microservice/redeploy-service', { name });
+  }
+
   // Favorites
   async getFavorites() {
     return this.client.get('/favorites');

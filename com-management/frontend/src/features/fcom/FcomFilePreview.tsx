@@ -32,6 +32,9 @@ type FcomFilePreviewProps = {
   getProcessorTargets: (obj: any) => Set<string>;
   getProcessorFieldSummary: (obj: any, field: string) => string;
   getOverrideValueMap: (obj: any) => Map<string, any>;
+  getOverrideFileInfoForObject: (objectName?: string | null) => any;
+  getOverrideMetaForObject: (objectName?: string | null) => any;
+  getOverrideRuleLinkForObject: (objectName?: string | null) => string | null;
   getObjectKey: (obj: any, idx: number) => string;
   registerObjectRowRef: (key: string, node: HTMLDivElement | null) => void;
   getEventOverrideFields: (obj: any) => string[];
@@ -130,6 +133,9 @@ export default function FcomFilePreview({
   getProcessorTargets,
   getProcessorFieldSummary,
   getOverrideValueMap,
+  getOverrideFileInfoForObject,
+  getOverrideMetaForObject,
+  getOverrideRuleLinkForObject,
   getObjectKey,
   registerObjectRowRef,
   getEventOverrideFields,
@@ -265,6 +271,9 @@ export default function FcomFilePreview({
                     getProcessorTargets={getProcessorTargets}
                     getProcessorFieldSummary={getProcessorFieldSummary}
                     getOverrideValueMap={getOverrideValueMap}
+                    getOverrideFileInfoForObject={getOverrideFileInfoForObject}
+                    getOverrideMetaForObject={getOverrideMetaForObject}
+                    getOverrideRuleLinkForObject={getOverrideRuleLinkForObject}
                     getEventOverrideFields={getEventOverrideFields}
                     panelEditState={panelEditState}
                     getPanelDirtyFields={getPanelDirtyFields}

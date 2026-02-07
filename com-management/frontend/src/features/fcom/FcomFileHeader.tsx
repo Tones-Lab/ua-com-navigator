@@ -148,23 +148,6 @@ export default function FcomFileHeader({
           {fileSubMethod && <span>SubMethod: {fileSubMethod}</span>}
         </div>
       )}
-      {overrideInfo?.overrideMeta?.pathName && hasLocalOverrides && (
-        <div className="override-meta-row">
-          <span>
-            Override file:{' '}
-            {overrideInfo?.overrideMeta?.pathName || overrideInfo?.overrideFileName || '—'}
-          </span>
-          <span>
-            Revision:{' '}
-            {overrideInfo?.overrideMeta?.revision &&
-            /^[0-9]+$/.test(String(overrideInfo.overrideMeta.revision))
-              ? `r${overrideInfo.overrideMeta.revision}`
-              : overrideInfo?.overrideMeta?.revision || '—'}
-          </span>
-          <span>Modified: {overrideInfo?.overrideMeta?.modified || '—'}</span>
-          <span>Modified by: {overrideInfo?.overrideMeta?.modifiedBy || '—'}</span>
-        </div>
-      )}
       {overrideError && <div className="error">{overrideError}</div>}
       <div className="action-row">
         {selectedFile ? (

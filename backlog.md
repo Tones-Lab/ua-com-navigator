@@ -3,6 +3,7 @@
 ## Now (P0)
 - ✅ Feature - ability to restart FCOM processing microservice from the UI.
 - ✅ Persist active tab across refresh (preserve current page instead of defaulting to Overview).
+- 🔥 BUG - Critical - microservice status in UI header shows orange and reports incorrect health while CLI tests show services healthy.
 - 🔥 Framework modernization (OJET-first, single runtime).
 	- Plan: architecture/framework-modernization-plan.md
 - 🔥 Unify Global/Object processor palettes using a single registry source-of-truth.
@@ -314,3 +315,6 @@ FEATURE - enhance logging and failures. have a health check for all REST API's r
 
 Steps Required to deploy fcom-processor always in debug to help testing:
 
+FEATURE - convert foundation rules to COM rules - a chatbot tool to consume foundary perl, and help convert to a stub of COM
+
+FEATURE - when viewing a MIB - correctly take an entity as EVENT (FCOM-trap) or METRIC (PCOM-snmp). The should do a live 'search' and find the match of this entity in the FCOM (just fcom for now, for notification types - will do PCOM and objects later - roadmapped). The UI should then flag the notification listing as 'check mark' so that its 'supported' for each mib, we should show a header with FCOM Support X/Y (where X are matches, and Y is total notification types in the active/viewed MIB). Then for each notification type, if there is a match in the FCOM, show a check mark and link to the FCOM file and location where this notification is processed. If there is no match, show an 'X' and have an option to 'create FCOM override' that would generate a stub override for this notification type, and link to the builder to edit and fill out the details.

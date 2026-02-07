@@ -563,6 +563,10 @@ export default function App() {
   const [redeployModalOpen, setRedeployModalOpen] = useState(false);
   const [redeployLoading, setRedeployLoading] = useState(false);
   const [redeployError, setRedeployError] = useState<string | null>(null);
+  const [microserviceActionLabel, setMicroserviceActionLabel] = useState<string | null>(null);
+  const [microserviceStatus, setMicroserviceStatus] = useState<any | null>(null);
+  const [microserviceStatusLoading, setMicroserviceStatusLoading] = useState(false);
+  const [microserviceStatusError, setMicroserviceStatusError] = useState<string | null>(null);
   const [eventsSchemaFields, setEventsSchemaFields] = useState<string[]>([]);
   const [overrideInfo, setOverrideInfo] = useState<any | null>(null);
   const [overrideLoading, setOverrideLoading] = useState(false);
@@ -626,6 +630,7 @@ export default function App() {
   const [builderRedoStack, setBuilderRedoStack] = useState<BuilderSnapshot[]>([]);
   const builderHistoryBusyRef = useRef(false);
   const builderHistorySigRef = useRef<string | null>(null);
+  const builderDirtySigRef = useRef<string | null>(null);
   const builderHistoryInitRef = useRef(false);
   const [showBuilderHelpModal, setShowBuilderHelpModal] = useState(false);
   const [pendingCancel, setPendingCancel] = useState<null | {
@@ -781,6 +786,7 @@ export default function App() {
       setBuilderUndoStack([]);
       setBuilderRedoStack([]);
       builderHistorySigRef.current = null;
+      builderDirtySigRef.current = null;
       return;
     }
     setBuilderUndoStack([snapshot]);
@@ -2437,6 +2443,63 @@ export default function App() {
     return `fcom.redeployReady.${serverKey}.${sessionId}`;
   }, [serverId, session?.server_id, session?.session_id, session?.user]);
 
+  const requiredMicroservices = Array.isArray(microserviceStatus?.required)
+    ? microserviceStatus.required
+    : [];
+  const missingMicroservices = requiredMicroservices
+    .filter((entry: any) => !entry?.installed)
+    .map((entry: any) => entry?.label || entry?.name || 'unknown');
+  const unhealthyMicroservices = requiredMicroservices
+    .filter((entry: any) => entry?.installed && !entry?.running)
+    .map((entry: any) => entry?.label || entry?.name || 'unknown');
+  const fcomServiceStatus = requiredMicroservices.find(
+    (entry: any) => entry?.name === 'fcom-processor',
+  );
+  const showMicroserviceWarning =
+    missingMicroservices.length > 0 || unhealthyMicroservices.length > 0;
+  const microserviceWarningTitle = showMicroserviceWarning
+    ? `Issues: ${[...missingMicroservices, ...unhealthyMicroservices].join(', ')}`
+    : '';
+  const microserviceIndicatorState = microserviceStatusLoading
+    ? 'loading'
+    : microserviceStatusError
+      ? 'warn'
+      : redeployReady
+        ? 'warn'
+        : microserviceStatus?.chainReady
+          ? 'ok'
+          : 'warn';
+  const microserviceIndicatorLabel = microserviceStatusLoading
+    ? '...'
+    : microserviceIndicatorState === 'ok'
+      ? 'OK'
+      : '!';
+  const microserviceIndicatorTitle = microserviceStatusLoading
+    ? 'Checking microservice status'
+    : microserviceStatusError
+      ? microserviceStatusError
+      : microserviceIndicatorState === 'ok'
+        ? 'All required microservices running'
+        : microserviceWarningTitle || 'Microservice issues detected';
+  const getServiceTone = (entry: any): 'ok' | 'warn' | 'error' => {
+    if (!entry?.installed) {
+      return 'error';
+    }
+    if (!entry?.running) {
+      return 'warn';
+    }
+    return 'ok';
+  };
+  const getServiceStatusText = (entry: any): string => {
+    if (!entry?.installed) {
+      return entry?.available ? 'Missing (available to deploy)' : 'Missing (not in catalog)';
+    }
+    if (!entry?.running) {
+      return 'Installed, not running';
+    }
+    return 'Running';
+  };
+
   const setRedeployReadyState = (next: boolean) => {
     setRedeployReady(next);
     if (!isAuthenticated) {
@@ -2446,6 +2509,25 @@ export default function App() {
       sessionStorage.setItem(redeployStorageKey, 'true');
     } else {
       sessionStorage.removeItem(redeployStorageKey);
+    }
+  };
+
+  const refreshMicroserviceStatus = async () => {
+    if (!isAuthenticated) {
+      return;
+    }
+    setMicroserviceStatusLoading(true);
+    setMicroserviceStatusError(null);
+    try {
+      const resp = await api.getMicroserviceStatus();
+      setMicroserviceStatus(resp.data);
+    } catch (err: any) {
+      setMicroserviceStatus(null);
+      setMicroserviceStatusError(
+        err?.response?.data?.error || 'Failed to load microservice status',
+      );
+    } finally {
+      setMicroserviceStatusLoading(false);
     }
   };
 
@@ -2481,6 +2563,10 @@ export default function App() {
       setRedeployModalOpen(false);
       setRedeployLoading(false);
       setRedeployError(null);
+      setMicroserviceActionLabel(null);
+      setMicroserviceStatus(null);
+      setMicroserviceStatusLoading(false);
+      setMicroserviceStatusError(null);
     }
   }, [isAuthenticated]);
 
@@ -2506,6 +2592,23 @@ export default function App() {
       }
     };
     loadEventsSchema();
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      return;
+    }
+    refreshMicroserviceStatus();
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      return undefined;
+    }
+    const intervalId = window.setInterval(() => {
+      refreshMicroserviceStatus();
+    }, 60000);
+    return () => window.clearInterval(intervalId);
   }, [isAuthenticated]);
 
   useEffect(() => {
@@ -4178,8 +4281,14 @@ export default function App() {
         message.trim(),
       );
       setOverrideInfo(resp.data);
+      try {
+        const refreshed = await api.getOverrides(selectedFile.PathID);
+        setOverrideInfo(refreshed.data);
+      } catch {
+        // Keep save response metadata if refresh fails.
+      }
       setSaveSuccess(
-        'Overrides saved. Literal changes are stored as processors. Restart FCOM Processor required.',
+        'Overrides saved. Literal changes are stored as patch operations. Restart FCOM Processor required.',
       );
       setRedeployReadyState(true);
       setRedeployPulse(true);
@@ -4220,11 +4329,19 @@ export default function App() {
     if (!ensureEditPermission()) {
       return;
     }
+    if (fcomServiceStatus && !fcomServiceStatus.installed) {
+      setRedeployError('FCOM Processor is not installed. Deploy it before redeploying.');
+      setRedeployModalOpen(true);
+      return;
+    }
     setRedeployLoading(true);
+    setMicroserviceActionLabel('Redeploying FCOM Processor...');
     setRedeployError(null);
     try {
       await api.getMicroserviceHealth();
-      await api.redeployFcomProcessor();
+      await api.redeployMicroservice('fcom-processor');
+      setMicroserviceActionLabel('Refreshing status...');
+      await refreshMicroserviceStatus();
       setRedeployPulse(false);
       setRedeployReadyState(false);
       setRedeployModalOpen(false);
@@ -4234,6 +4351,59 @@ export default function App() {
       setRedeployError(message);
     } finally {
       setRedeployLoading(false);
+      setMicroserviceActionLabel(null);
+    }
+  };
+
+  const handleDeployMicroservice = async (name: string, label: string) => {
+    if (redeployLoading) {
+      return;
+    }
+    if (!ensureEditPermission()) {
+      return;
+    }
+    setRedeployLoading(true);
+    setMicroserviceActionLabel(`Deploying ${label}...`);
+    setRedeployError(null);
+    try {
+      await api.deployMicroservice(name);
+      setMicroserviceActionLabel('Refreshing status...');
+      await refreshMicroserviceStatus();
+      triggerToast(`${label} deployed`, true);
+    } catch (err: any) {
+      const message = err?.response?.data?.error || `Failed to deploy ${label}`;
+      setRedeployError(message);
+    } finally {
+      setRedeployLoading(false);
+      setMicroserviceActionLabel(null);
+    }
+  };
+
+  const handleRedeployMicroservice = async (name: string, label: string) => {
+    if (redeployLoading) {
+      return;
+    }
+    if (!ensureEditPermission()) {
+      return;
+    }
+    setRedeployLoading(true);
+    setMicroserviceActionLabel(`Redeploying ${label}...`);
+    setRedeployError(null);
+    try {
+      await api.redeployMicroservice(name);
+      setMicroserviceActionLabel('Refreshing status...');
+      await refreshMicroserviceStatus();
+      if (name === 'fcom-processor') {
+        setRedeployPulse(false);
+        setRedeployReadyState(false);
+      }
+      triggerToast(`${label} redeployed`, true);
+    } catch (err: any) {
+      const message = err?.response?.data?.error || `Failed to redeploy ${label}`;
+      setRedeployError(message);
+    } finally {
+      setRedeployLoading(false);
+      setMicroserviceActionLabel(null);
     }
   };
 
@@ -4315,6 +4485,30 @@ export default function App() {
       return name && objectNames.has(name);
     });
   }, [selectedFile, fileData, overrideInfo, pendingOverrideSave]);
+
+  const getOverrideFileInfoForObject = (objectName?: string | null) => {
+    if (!objectName) {
+      return null;
+    }
+    return overrideInfo?.overrideFilesByObject?.[objectName] || null;
+  };
+
+  const getOverrideMetaForObject = (objectName?: string | null) => {
+    if (!objectName) {
+      return null;
+    }
+    return overrideInfo?.overrideMetaByObject?.[objectName] || null;
+  };
+
+  const getOverrideRuleLinkForObject = (objectName?: string | null) => {
+    const fileInfo = getOverrideFileInfoForObject(objectName);
+    const meta = getOverrideMetaForObject(objectName);
+    const fileName = meta?.pathName || fileInfo?.fileName;
+    if (!fileName || !overrideInfo?.overrideRootRulePath) {
+      return null;
+    }
+    return `${window.location.origin}#rule${overrideInfo.overrideRootRulePath}/${encodeURIComponent(fileName)}`;
+  };
 
   const overrideIndex = useMemo(() => {
     const entries = getWorkingOverrides();
@@ -4437,8 +4631,59 @@ export default function App() {
     return (processors || []).map(parseProcessor).filter((node): node is FlowNode => Boolean(node));
   };
 
+  const decodeJsonPointerSegment = (segment: string) =>
+    segment.replace(/~1/g, '/').replace(/~0/g, '~');
+
+  const encodeJsonPointerSegment = (segment: string) =>
+    segment.replace(/~/g, '~0').replace(/\//g, '~1');
+
+  const getJsonPointerEventPath = (value?: string | null) => {
+    if (!value || typeof value !== 'string') {
+      return null;
+    }
+    const normalized = value.startsWith('#') ? value.slice(1) : value;
+    if (!normalized.startsWith('/event')) {
+      return null;
+    }
+    const remainder = normalized.slice('/event'.length);
+    if (!remainder) {
+      return '$.event';
+    }
+    const parts = remainder
+      .split('/')
+      .filter(Boolean)
+      .map(decodeJsonPointerSegment);
+    if (parts.length === 0) {
+      return '$.event';
+    }
+    return `$.event.${parts.join('.')}`;
+  };
+
+  const getPatchTargetField = (processor: any) => {
+    if (!processor || typeof processor !== 'object') {
+      return null;
+    }
+    if (!processor.op || !processor.path) {
+      return null;
+    }
+    return getJsonPointerEventPath(String(processor.path));
+  };
+
+  const buildEventPatchOp = (objectName: string, field: string, value: any) => {
+    const baseValue = getBaseObjectValue(objectName, `$.event.${field}`);
+    const op = baseValue === undefined ? 'add' : 'replace';
+    return {
+      op,
+      path: `/event/${encodeJsonPointerSegment(field)}`,
+      value,
+    };
+  };
+
   const getProcessorTargetField = (processor: any) => {
     if (!processor || typeof processor !== 'object') {
+      return null;
+    }
+    if (processor?.op && processor?.path) {
       return null;
     }
     const keys = [
@@ -4470,12 +4715,26 @@ export default function App() {
   };
 
   const getProcessorType = (processor: any) =>
-    processor && typeof processor === 'object' ? Object.keys(processor || {})[0] : null;
+    processor && typeof processor === 'object'
+      ? processor.op
+        ? 'patch'
+        : Object.keys(processor || {})[0]
+      : null;
 
   const getProcessorSummaryLines = (processor: any) => {
     const type = getProcessorType(processor);
     if (!type) {
       return [] as string[];
+    }
+    if (type === 'patch') {
+      const lines: string[] = [`Op: ${processor.op}`];
+      if (processor.path) {
+        lines.push(`Path: ${processor.path}`);
+      }
+      if (processor.value !== undefined) {
+        lines.push(`Value: ${formatOverrideValue(processor.value)}`);
+      }
+      return lines;
     }
     const payload = processor[type] || {};
     const lines: string[] = [`Type: ${type}`];
@@ -4558,6 +4817,9 @@ export default function App() {
     const map = new Map<string, any>();
     const visit = (list: any[]) => {
       (list || []).forEach((processor: any) => {
+        if (processor?.op && processor?.path) {
+          return;
+        }
         if (processor?.if) {
           const payload = processor.if;
           const condition = buildIfConditionLabel(payload);
@@ -4585,6 +4847,24 @@ export default function App() {
       });
     };
     visit(processors);
+    return map;
+  };
+
+  const getPatchOverrideMap = (processors: any[]) => {
+    const map = new Map<string, any>();
+    (processors || []).forEach((processor: any) => {
+      if (!processor?.op || !processor?.path) {
+        return;
+      }
+      if (!['add', 'replace', 'test'].includes(String(processor.op))) {
+        return;
+      }
+      const target = getPatchTargetField(processor);
+      if (!target) {
+        return;
+      }
+      map.set(target, processor.value);
+    });
     return map;
   };
 
@@ -4616,7 +4896,7 @@ export default function App() {
       const targeted = new Map<string, any>();
       const untargeted = new Map<string, any>();
       processors.forEach((proc: any, index: number) => {
-        const target = getProcessorTargetField(proc);
+        const target = getProcessorTargetField(proc) || getPatchTargetField(proc);
         if (target) {
           if (!targeted.has(target)) {
             targeted.set(target, proc);
@@ -4790,11 +5070,19 @@ export default function App() {
     const baseObj = getBaseObjectByName(objectName);
     const baseEvent =
       baseObj?.event && typeof baseObj.event === 'object' ? baseObj.event : ({} as any);
+    const processors = Array.isArray(entry?.processors) ? entry.processors : [];
+    const patchOverrides = getPatchOverrideMap(processors);
     const eventOverrides =
       entry?.event && typeof entry.event === 'object' ? entry.event : ({} as any);
+    const mergedOverrides: Record<string, any> = { ...eventOverrides };
+    patchOverrides.forEach((value, target) => {
+      if (target.startsWith('$.event.')) {
+        mergedOverrides[target.replace('$.event.', '')] = value;
+      }
+    });
     const diff: Record<string, any> = {};
-    Object.keys(eventOverrides).forEach((field) => {
-      const overrideValue = eventOverrides[field];
+    Object.keys(mergedOverrides).forEach((field) => {
+      const overrideValue = mergedOverrides[field];
       const baseValue = baseEvent[field];
       if (!areOverrideValuesEqual(overrideValue, baseValue)) {
         diff[field] = overrideValue;
@@ -4849,6 +5137,8 @@ export default function App() {
       Array.isArray(entry?.processors) ? entry.processors : [],
     );
     const targetMap = getOverrideTargetMap(processors);
+    const patchMap = getPatchOverrideMap(processors);
+    patchMap.forEach((value, target) => targetMap.set(target, value));
     overrides.forEach((entry: any) => {
       const eventOverrides = getOverrideEventMap(entry);
       Object.keys(eventOverrides).forEach((field) => {
@@ -4891,6 +5181,8 @@ export default function App() {
       Array.isArray(entry?.processors) ? entry.processors : [],
     );
     const targetMap = getOverrideTargetMap(processors);
+    const patchMap = getPatchOverrideMap(processors);
+    patchMap.forEach((value, target) => targetMap.set(target, value));
     overrides.forEach((entry: any) => {
       const eventOverrides = getOverrideEventMap(entry);
       Object.keys(eventOverrides).forEach((field) => {
@@ -5496,12 +5788,8 @@ export default function App() {
     cancelEventEdit(key);
   };
 
-  const buildOverrideSetProcessor = (field: string, value: any) => ({
-    set: {
-      source: value,
-      targetField: `$.event.${field}`,
-    },
-  });
+  const buildOverridePatchOp = (objectName: string, field: string, value: any) =>
+    buildEventPatchOp(objectName, field, value);
 
   const saveEventEdit = async (obj: any, key: string) => {
     if (!selectedFile) {
@@ -5587,10 +5875,15 @@ export default function App() {
           };
 
     let processors = Array.isArray(overrideEntry.processors) ? [...overrideEntry.processors] : [];
+    const hasNonPatch = processors.some((proc: any) => !(proc?.op && proc?.path));
+    if (hasNonPatch) {
+      setSaveError('Advanced processors are not supported in v3 override files yet.');
+      return;
+    }
 
     if (removalFields.size > 0) {
       processors = processors.filter((proc: any) => {
-        const target = getProcessorTargetField(proc);
+        const target = getPatchTargetField(proc);
         if (!target) {
           return true;
         }
@@ -5604,8 +5897,8 @@ export default function App() {
         return;
       }
       const targetField = `$.event.${field}`;
-      processors = processors.filter((proc: any) => getProcessorTargetField(proc) !== targetField);
-      processors.push(buildOverrideSetProcessor(field, value));
+      processors = processors.filter((proc: any) => getPatchTargetField(proc) !== targetField);
+      processors.push(buildOverridePatchOp(objectName, field, value));
     });
 
     if (processors.length === 0) {
@@ -6724,6 +7017,17 @@ export default function App() {
     setBuilderTarget({ panelKey, field });
     setBuilderOpen(true);
     setShowProcessorJson(true);
+    const builderConfig = existingProcessor
+      ? buildBuilderConfigFromProcessor(existingProcessor, targetPath)
+      : null;
+    if (builderConfig) {
+      setBuilderFocus('processor');
+      setBuilderTypeLocked('processor');
+      setProcessorType(builderConfig.type);
+      setProcessorStep('configure');
+      setBuilderProcessorConfig(builderConfig.config);
+      return;
+    }
     if (evalEnabled && evalText) {
       const parsed = parseEvalToRows(evalText);
       setBuilderFocus('eval');
@@ -6736,36 +7040,6 @@ export default function App() {
         setBuilderMode('friendly');
       }
       setBuilderRegularText(evalText);
-      return;
-    }
-    if (existingProcessor?.regex) {
-      setBuilderFocus('processor');
-      setBuilderTypeLocked('processor');
-      setProcessorType('regex');
-      setProcessorStep('configure');
-      setBuilderProcessorConfig({
-        sourceType: existingProcessor.regex?.source?.startsWith('$.') ? 'path' : 'literal',
-        source: String(existingProcessor.regex?.source ?? ''),
-        pattern: String(existingProcessor.regex?.pattern ?? ''),
-        group: existingProcessor.regex?.group ? String(existingProcessor.regex?.group) : '',
-        targetField: existingProcessor.regex?.targetField ?? targetPath,
-      });
-      return;
-    }
-    if (existingProcessor?.set) {
-      setBuilderFocus('processor');
-      setBuilderTypeLocked('processor');
-      setProcessorType('set');
-      setProcessorStep('configure');
-      setBuilderProcessorConfig({
-        sourceType: existingProcessor.set?.source?.startsWith('$.') ? 'path' : 'literal',
-        source: String(existingProcessor.set?.source ?? ''),
-        pattern: '',
-        argsText: Array.isArray(existingProcessor.set?.args)
-          ? JSON.stringify(existingProcessor.set?.args, null, 2)
-          : '',
-        targetField: existingProcessor.set?.targetField ?? targetPath,
-      });
       return;
     }
     if (!evalEnabled) {
@@ -6847,36 +7121,12 @@ export default function App() {
     if (!builderTarget) {
       return false;
     }
-    const obj = getObjectByPanelKey(builderTarget.panelKey);
-    if (!obj) {
+    if (!builderDirtySigRef.current) {
       return false;
     }
-    if (builderFocus === 'literal') {
-      return (
-        getCurrentFieldValue(obj, builderTarget.panelKey, builderTarget.field) !==
-        builderLiteralText
-      );
-    }
-    if (builderFocus === 'eval') {
-      const currentValue = getCurrentFieldValue(obj, builderTarget.panelKey, builderTarget.field);
-      const candidate =
-        builderMode === 'regular' ? builderRegularText.trim() : friendlyPreview.trim();
-      if (!candidate) {
-        return false;
-      }
-      return String(currentValue).trim() !== candidate;
-    }
-    if (builderFocus === 'processor') {
-      if (processorType) {
-        return true;
-      }
-      return Boolean(
-        builderProcessorConfig.source ||
-        builderProcessorConfig.pattern ||
-        builderProcessorConfig.targetField,
-      );
-    }
-    return false;
+    const snapshot = createBuilderSnapshot();
+    const sig = JSON.stringify(snapshot);
+    return sig !== builderDirtySigRef.current;
   };
 
   const requestCancelBuilder = () => {
@@ -6975,6 +7225,7 @@ export default function App() {
     }
     const snapshot = createBuilderSnapshot();
     resetBuilderHistory(snapshot);
+    builderDirtySigRef.current = JSON.stringify(snapshot);
     builderHistoryInitRef.current = false;
   }, [builderTarget, builderFocus, builderMode, processorType, processorStep, builderTypeLocked]);
 
@@ -7118,6 +7369,78 @@ export default function App() {
       defaults.targetField = fallbackTarget;
     }
     return defaults;
+  };
+
+  const formatProcessorConfigValue = (value: any) => {
+    if (value === null || value === undefined) {
+      return '';
+    }
+    if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+      return String(value);
+    }
+    try {
+      return JSON.stringify(value, null, 2);
+    } catch {
+      return String(value);
+    }
+  };
+
+  const buildBuilderConfigFromProcessor = (
+    processor: any,
+    fallbackTarget: string,
+  ): { type: string; config: Record<string, any> } | null => {
+    const type = getProcessorType(processor);
+    if (!type) {
+      return null;
+    }
+    const payload = processor?.[type] || {};
+    const specs = processorConfigSpecs[type] || [];
+    const config: Record<string, any> = {
+      ...getDefaultProcessorConfig(type, fallbackTarget),
+    };
+    specs.forEach((spec) => {
+      if (spec.key === 'sourceType') {
+        const sourceValue = payload.source;
+        if (typeof sourceValue === 'string') {
+          config.sourceType = sourceValue.startsWith('$.') ? 'path' : 'literal';
+        } else if (sourceValue !== undefined) {
+          config.sourceType = 'literal';
+        }
+        return;
+      }
+      if (spec.type === 'json') {
+        if (payload?.[spec.key] !== undefined) {
+          const rawValue = payload[spec.key];
+          config[`${spec.key}Text`] =
+            typeof rawValue === 'string' ? rawValue : formatProcessorConfigValue(rawValue);
+        }
+        return;
+      }
+      if (payload?.[spec.key] !== undefined) {
+        config[spec.key] =
+          spec.type === 'boolean'
+            ? Boolean(payload[spec.key])
+            : formatProcessorConfigValue(payload[spec.key]);
+      }
+    });
+    if (type === 'foreach') {
+      config.processors = buildFlowNodesFromProcessors(
+        Array.isArray(payload.processors) ? payload.processors : [],
+      );
+    }
+    if (type === 'switch') {
+      const cases = Array.isArray(payload.case) ? payload.case : [];
+      config.cases = cases.map((item: any) => ({
+        id: nextSwitchCaseId(),
+        match: formatProcessorConfigValue(item?.match ?? ''),
+        operator: formatProcessorConfigValue(item?.operator ?? ''),
+        processors: buildFlowNodesFromProcessors(Array.isArray(item?.then) ? item.then : []),
+      }));
+      config.defaultProcessors = buildFlowNodesFromProcessors(
+        Array.isArray(payload.default) ? payload.default : [],
+      );
+    }
+    return { type, config };
   };
 
   const buildProcessorPayload = () => {
@@ -7645,6 +7968,7 @@ export default function App() {
     const existingOverrides = Array.isArray(overrideInfo?.overrides)
       ? [...overrideInfo.overrides]
       : [];
+    const baseOverrides = pendingOverrideSave ? [...pendingOverrideSave] : existingOverrides;
     const method =
       overrideInfo?.method ||
       (String(selectedFile.PathID || '').includes('/syslog/') ? 'syslog' : 'trap');
@@ -7666,24 +7990,30 @@ export default function App() {
             _type: 'override',
             processors: [],
           };
-    const processors = Array.isArray(overrideEntry.processors) ? [...overrideEntry.processors] : [];
-    const processorKey = Object.keys(processor)[0];
-    const targetField = getProcessorTargetField(processor);
-    const existingIdx = processors.findIndex(
-      (proc: any) =>
-        Object.keys(proc || {})[0] === processorKey &&
-        getProcessorTargetField(proc) === targetField,
-    );
-    if (existingIdx >= 0) {
-      const existingProcessor = processors[existingIdx];
-      if (JSON.stringify(existingProcessor) === JSON.stringify(processor)) {
-        closeBuilder();
-        return;
-      }
-      processors[existingIdx] = processor;
-    } else {
-      processors.push(processor);
+    let processors = Array.isArray(overrideEntry.processors) ? [...overrideEntry.processors] : [];
+    const hasNonPatch = processors.some((proc: any) => !(proc?.op && proc?.path));
+    if (hasNonPatch) {
+      setSaveError('Advanced processors are not supported in v3 override files yet.');
+      return;
     }
+
+    const patchOp = (() => {
+      if (processor?.set && processor?.set?.targetField?.startsWith('$.event.')) {
+        const field = processor.set.targetField.replace('$.event.', '');
+        return buildOverridePatchOp(objectName, field, processor.set.source);
+      }
+      return null;
+    })();
+    if (!patchOp) {
+      setSaveError('Only event field set operations are supported in v3 overrides.');
+      return;
+    }
+
+    const targetField = getPatchTargetField(patchOp);
+    if (targetField) {
+      processors = processors.filter((proc: any) => getPatchTargetField(proc) !== targetField);
+    }
+    processors.push(patchOp);
     overrideEntry.processors = processors;
     if (matchIndex >= 0) {
       baseOverrides[matchIndex] = overrideEntry;
@@ -8174,181 +8504,13 @@ export default function App() {
     objectNameOverride?: string | null,
     focusTargetField?: string | null,
   ) => void = (scope, objectNameOverride, focusTargetField) => {
-    if (!hasEditPermission) {
-      return;
-    }
-    const method = getOverrideMethod();
-    if (scope === 'global') {
-      const preEntry = getOverrideEntry({ scope: 'pre', method });
-      const postEntry = getOverrideEntry({ scope: 'post', method });
-      const preProcessors = Array.isArray(preEntry?.processors) ? preEntry.processors : [];
-      const postProcessors = Array.isArray(postEntry?.processors) ? postEntry.processors : [];
-      setGlobalPreFlow(buildFlowNodesFromProcessors(preProcessors));
-      setGlobalPostFlow(buildFlowNodesFromProcessors(postProcessors));
-      setAdvancedFlowBaseline({
-        scope: 'global',
-        pre: JSON.stringify(preProcessors),
-        post: JSON.stringify(postProcessors),
-      });
-      setAdvancedFlowTarget({ scope: 'global', method });
-      setAdvancedProcessorScope('global');
-      setAdvancedFlowFocusTarget(focusTargetField || null);
-      setAdvancedFlowFocusIndex(0);
-      setAdvancedFlowFocusOnly(false);
-      setAdvancedFlowDefaultTarget(focusTargetField || null);
-      setShowAdvancedProcessorModal(true);
-      return;
-    }
-    const objectName =
-      objectNameOverride ||
-      (() => {
-        if (!builderTarget) {
-          return null;
-        }
-        const obj = getObjectByPanelKey(builderTarget.panelKey);
-        return obj?.['@objectName'] || null;
-      })();
-    if (!objectName) {
-      return;
-    }
-    const entry = getOverrideEntry({ objectName, scope: 'post', method });
-    const processors = Array.isArray(entry?.processors) ? entry.processors : [];
-    setAdvancedFlow(buildFlowNodesFromProcessors(processors));
-    setAdvancedFlowBaseline({
-      scope: 'object',
-      objectName,
-      object: JSON.stringify(processors),
-    });
-    setAdvancedFlowTarget({ scope: 'object', objectName, method });
-    setAdvancedProcessorScope('object');
-    setAdvancedFlowFocusTarget(focusTargetField || null);
-    setAdvancedFlowFocusIndex(0);
-    setAdvancedFlowFocusOnly(false);
-    setAdvancedFlowDefaultTarget(focusTargetField || null);
-    setShowAdvancedProcessorModal(true);
+    setSaveError('Advanced flow processors are not supported in v3 override files yet.');
+    return;
   };
 
   const saveAdvancedFlow = () => {
-    if (!selectedFile || !advancedFlowTarget) {
-      return;
-    }
-    if (!ensureEditPermission()) {
-      return;
-    }
-    const method = advancedFlowTarget.method || getOverrideMethod();
-    const existingOverrides = getOverrideEntries().slice();
-    const baseOverrides = pendingOverrideSave ? [...pendingOverrideSave] : existingOverrides;
-    const beforeOverrides = JSON.parse(JSON.stringify(baseOverrides));
-    if (advancedFlowTarget.scope === 'global') {
-      const preProcessors = buildFlowProcessors(globalPreFlow);
-      const postProcessors = buildFlowProcessors(globalPostFlow);
-      const updateEntry = (scope: 'pre' | 'post', processors: any[]) => {
-        const matchIndex = baseOverrides.findIndex(
-          (entry: any) =>
-            entry?.scope === scope && entry?.method === method && !entry?.['@objectName'],
-        );
-        if (processors.length === 0) {
-          if (matchIndex >= 0) {
-            baseOverrides.splice(matchIndex, 1);
-          }
-          return;
-        }
-        const nextEntry =
-          matchIndex >= 0
-            ? { ...baseOverrides[matchIndex] }
-            : {
-                name: `Global ${scope} Override`,
-                description: `Global ${scope} processors`,
-                domain: 'fault',
-                method,
-                scope,
-                _type: 'override',
-                processors: [],
-              };
-        nextEntry.processors = processors;
-        if (matchIndex >= 0) {
-          baseOverrides[matchIndex] = nextEntry;
-        } else {
-          baseOverrides.push(nextEntry);
-        }
-      };
-      updateEntry('pre', preProcessors);
-      updateEntry('post', postProcessors);
-      setAdvancedFlowBaseline({
-        scope: 'global',
-        pre: JSON.stringify(preProcessors),
-        post: JSON.stringify(postProcessors),
-      });
-    } else {
-      const objectName = advancedFlowTarget.objectName;
-      if (!objectName) {
-        return;
-      }
-      const processors = buildFlowProcessors(advancedFlow);
-      const matchIndex = baseOverrides.findIndex(
-        (entry: any) =>
-          entry?.['@objectName'] === objectName &&
-          entry?.method === method &&
-          entry?.scope === 'post',
-      );
-      if (processors.length === 0) {
-        if (matchIndex >= 0) {
-          baseOverrides.splice(matchIndex, 1);
-        }
-      } else {
-        const overrideEntry =
-          matchIndex >= 0
-            ? { ...baseOverrides[matchIndex] }
-            : {
-                name: `${objectName} Override`,
-                description: `Overrides for ${objectName}`,
-                domain: 'fault',
-                method,
-                scope: 'post',
-                '@objectName': objectName,
-                _type: 'override',
-                processors: [],
-              };
-        overrideEntry.processors = processors;
-        if (matchIndex >= 0) {
-          baseOverrides[matchIndex] = overrideEntry;
-        } else {
-          baseOverrides.push(overrideEntry);
-        }
-      }
-      setAdvancedFlowBaseline({
-        scope: 'object',
-        objectName,
-        object: JSON.stringify(processors),
-      });
-    }
-    setPendingOverrideSave(baseOverrides);
-    if (
-      removeAllOverridesModal.open &&
-      removeAllOverridesModal.panelKey &&
-      removeAllOverridesModal.objectName
-    ) {
-      const modalObj = getObjectByName(removeAllOverridesModal.objectName);
-      if (modalObj) {
-        window.setTimeout(() => {
-          openRemoveAllOverridesModal(modalObj, removeAllOverridesModal.panelKey as string);
-        }, 0);
-      }
-    }
-    const diff = diffOverrides(beforeOverrides, baseOverrides);
-    if (diff.totalChanges > 0) {
-      if (advancedFlowTarget.scope === 'global') {
-        triggerToast(`Staged ${diff.totalChanges} global advanced flow change(s)`, true);
-      } else {
-        const targetLabel = advancedFlowTarget.objectName || 'Object';
-        triggerToast(
-          `Staged ${diff.totalChanges} advanced flow change(s) for ${targetLabel}`,
-          true,
-        );
-      }
-    }
-    setShowAdvancedProcessorModal(false);
-    setAdvancedFlowDefaultTarget(null);
+    setSaveError('Advanced flow processors are not supported in v3 override files yet.');
+    return;
   };
 
   const handleBuilderSelect = (item: ProcessorCatalogItem, isEnabled: boolean) => {
@@ -8356,26 +8518,7 @@ export default function App() {
       return;
     }
     if (item.id === 'if') {
-      if (!builderTarget) {
-        return;
-      }
-      const obj = getObjectByPanelKey(builderTarget.panelKey);
-      const objectName = obj?.['@objectName'];
-      if (!objectName) {
-        return;
-      }
-      const method = getOverrideMethod();
-      const entry = getOverrideEntry({ objectName, scope: 'post', method });
-      const processors = Array.isArray(entry?.processors) ? entry.processors : [];
-      setAdvancedFlow(buildFlowNodesFromProcessors(processors));
-      setAdvancedFlowBaseline({
-        scope: 'object',
-        objectName,
-        object: JSON.stringify(processors),
-      });
-      setAdvancedFlowTarget({ scope: 'object', objectName, method });
-      setAdvancedProcessorScope('object');
-      setShowAdvancedProcessorModal(true);
+      setSaveError('Advanced flow processors are not supported in v3 override files yet.');
       return;
     }
     if (item.id === 'set') {
@@ -8385,7 +8528,7 @@ export default function App() {
         ...prev,
         ...getDefaultProcessorConfig(
           'set',
-          builderTarget ? `$.event.${builderTarget.field}` : prev.targetField,
+          builderTarget ? `$.event.${builderTarget.field}` : prev.targetField || '',
         ),
       }));
       return;
@@ -8397,7 +8540,7 @@ export default function App() {
         ...prev,
         ...getDefaultProcessorConfig(
           'regex',
-          builderTarget ? `$.event.${builderTarget.field}` : prev.targetField,
+          builderTarget ? `$.event.${builderTarget.field}` : prev.targetField || '',
         ),
       }));
       return;
@@ -8408,7 +8551,7 @@ export default function App() {
       ...prev,
       ...getDefaultProcessorConfig(
         item.id,
-        builderTarget ? `$.event.${builderTarget.field}` : prev.targetField,
+        builderTarget ? `$.event.${builderTarget.field}` : prev.targetField || '',
       ),
       ...(item.id === 'foreach' ? { processors: [] } : {}),
       ...(item.id === 'switch'
@@ -9657,7 +9800,8 @@ export default function App() {
   const formatFlowTargetLabel = (target: string) =>
     target.startsWith('$.event.') ? target.replace('$.event.', '') : target;
   const advancedFlowRemovedTargets = useMemo(() => {
-    if (!advancedFlowTarget) {
+    const target = advancedFlowTarget;
+    if (!target) {
       return [] as string[];
     }
     const removed = new Set<string>();
@@ -9666,7 +9810,7 @@ export default function App() {
         if (section.objectName) {
           return;
         }
-      } else if (section.objectName !== advancedFlowTarget.objectName) {
+      } else if (section.objectName !== target.objectName) {
         return;
       }
       section.fieldChanges.forEach((change) => {
@@ -9844,6 +9988,146 @@ export default function App() {
     />
   );
 
+  const microserviceModal = redeployModalOpen ? (
+    <div className="modal-overlay" role="dialog" aria-modal="true">
+      <div className="modal modal-wide">
+        <h3>Microservice Status</h3>
+        <p>
+          Trap processing requires the chain below to be installed and running:
+          trap-collector -&gt; fcom-processor -&gt; event-sink.
+        </p>
+        {redeployReady && (
+          <div className="builder-hint builder-hint-warning">
+            Changes staged. Redeploy FCOM Processor to apply them.
+          </div>
+        )}
+        {showMicroserviceWarning && (
+          <div className="builder-hint builder-hint-warning">
+            Attention: {[...missingMicroservices, ...unhealthyMicroservices].join(', ')}
+          </div>
+        )}
+        {microserviceStatusError && (
+          <div className="builder-hint builder-hint-warning">{microserviceStatusError}</div>
+        )}
+        {redeployError && <div className="error-message">{redeployError}</div>}
+        {microserviceActionLabel && (
+          <div className="microservice-action-banner">{microserviceActionLabel}</div>
+        )}
+        {microserviceStatusLoading ? (
+          <div className="microservice-loading">Loading status...</div>
+        ) : (
+          <div className="microservice-chain">
+            {requiredMicroservices.map((entry: any, idx: number) => {
+              const tone = getServiceTone(entry);
+              const label = entry?.label || entry?.name || 'Unknown';
+              const canDeploy = !entry?.installed && entry?.available;
+              const canRedeploy =
+                Boolean(entry?.installed) &&
+                (entry?.name === 'fcom-processor' || !entry?.running);
+              const actionLabel = (microserviceActionLabel || '').toLowerCase();
+              const labelKey = String(label).toLowerCase();
+              const isActionFor = labelKey && actionLabel.includes(labelKey);
+              const isDeploying = isActionFor && actionLabel.startsWith('deploying');
+              const isRedeploying = isActionFor && actionLabel.startsWith('redeploying');
+              const isWorking = isDeploying || isRedeploying;
+              return (
+                <div key={entry?.name || idx} className="microservice-chain-step">
+                  <div
+                    className={`microservice-card microservice-card-${tone}${
+                      isWorking ? ' microservice-card-working' : ''
+                    }`}
+                  >
+                    <div className="microservice-card-header">
+                      <span
+                        className={`microservice-dot microservice-dot-${tone}`}
+                        aria-hidden="true"
+                      />
+                      <div className="microservice-card-title">{label}</div>
+                    </div>
+                    <div className="microservice-card-status">{getServiceStatusText(entry)}</div>
+                    {entry?.workload && (
+                      <div className="microservice-card-meta">
+                        Ready {entry.workload.ready || '0'} - Available {entry.workload.available || '0'}
+                      </div>
+                    )}
+                    {isWorking && (
+                      <div className="microservice-card-progress">
+                        <span className="microservice-spinner" aria-hidden="true" />
+                        Working...
+                      </div>
+                    )}
+                    <div className="microservice-card-actions">
+                      {canDeploy && (
+                        <button
+                          type="button"
+                          className="builder-card builder-card-primary"
+                          onClick={() => handleDeployMicroservice(entry.name, label)}
+                          disabled={redeployLoading || !hasEditPermission}
+                        >
+                          {isDeploying ? 'Deploying...' : 'Deploy'}
+                        </button>
+                      )}
+                      {canRedeploy && (
+                        <button
+                          type="button"
+                          className="builder-card builder-card-primary"
+                          onClick={() => handleRedeployMicroservice(entry.name, label)}
+                          disabled={redeployLoading || !hasEditPermission}
+                        >
+                          {isRedeploying ? 'Redeploying...' : 'Redeploy'}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                  {idx < requiredMicroservices.length - 1 && (
+                    <div className="microservice-chain-arrow" aria-hidden="true">
+                      -&gt;
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+        <div className="modal-actions">
+          <button
+            type="button"
+            onClick={() => {
+              if (!redeployLoading) {
+                setRedeployModalOpen(false);
+                setRedeployError(null);
+              }
+            }}
+          >
+            Close
+          </button>
+          <button
+            type="button"
+            className="builder-card"
+            onClick={async () => {
+              setMicroserviceActionLabel('Refreshing status...');
+              await refreshMicroserviceStatus();
+              setMicroserviceActionLabel(null);
+            }}
+            disabled={microserviceStatusLoading || redeployLoading}
+          >
+            {microserviceStatusLoading ? 'Refreshing...' : 'Refresh status'}
+          </button>
+          <button
+            type="button"
+            className={`builder-card builder-card-primary${
+              redeployReady || redeployPulse ? ' microservice-pulse' : ''
+            }`}
+            onClick={handleRedeployFcomProcessor}
+            disabled={redeployLoading || !hasEditPermission}
+          >
+            Redeploy FCOM Processor
+          </button>
+        </div>
+      </div>
+    </div>
+  ) : null;
+
   return (
     <ErrorBoundary>
       <div className="app">
@@ -9852,22 +10136,20 @@ export default function App() {
           {isAuthenticated && <AppTabs activeApp={activeApp} onChange={handleAppTabChange} />}
           {isAuthenticated && (
             <div className="header-actions">
-              {redeployReady && (
-                <button
-                  type="button"
-                  className={`search-button redeploy-button${
-                    redeployPulse ? ' redeploy-pulse' : ''
-                  }`}
-                  onClick={() => {
-                    setRedeployError(null);
-                    setRedeployModalOpen(true);
-                  }}
-                  disabled={!hasEditPermission}
-                  title={hasEditPermission ? '' : 'Read-only access'}
-                >
-                  Redeploy FCOM Processor
-                </button>
-              )}
+              <button
+                type="button"
+                className={`microservice-indicator microservice-indicator-${microserviceIndicatorState}${
+                  redeployReady || redeployPulse ? ' microservice-pulse' : ''
+                }`}
+                title={microserviceIndicatorTitle}
+                aria-label={microserviceIndicatorTitle}
+                onClick={() => {
+                  setRedeployError(null);
+                  setRedeployModalOpen(true);
+                }}
+              >
+                {microserviceIndicatorLabel}
+              </button>
               <button
                 type="button"
                 className="user-menu-button"
@@ -10034,6 +10316,9 @@ export default function App() {
                           getProcessorTargets={getProcessorTargets}
                           getProcessorFieldSummary={getProcessorFieldSummary}
                           getOverrideValueMap={getOverrideValueMap}
+                          getOverrideFileInfoForObject={getOverrideFileInfoForObject}
+                          getOverrideMetaForObject={getOverrideMetaForObject}
+                          getOverrideRuleLinkForObject={getOverrideRuleLinkForObject}
                           getObjectKey={getObjectKey}
                           registerObjectRowRef={registerObjectRowRef}
                           getEventOverrideFields={getEventOverrideFields}
@@ -10440,41 +10725,6 @@ export default function App() {
                                   </div>
                                 </>
                               )}
-                            </div>
-                          </div>
-                        )}
-                        {redeployModalOpen && (
-                          <div className="modal-overlay" role="dialog" aria-modal="true">
-                            <div className="modal">
-                              <h3>Redeploy FCOM Processor</h3>
-                              <p>
-                                This will uninstall and redeploy the FCOM Processor microservice
-                                using the currently installed Helm chart.
-                              </p>
-                              {redeployError && (
-                                <div className="error-message">{redeployError}</div>
-                              )}
-                              <div className="modal-actions">
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    if (!redeployLoading) {
-                                      setRedeployModalOpen(false);
-                                      setRedeployError(null);
-                                    }
-                                  }}
-                                >
-                                  Cancel
-                                </button>
-                                <button
-                                  type="button"
-                                  className="builder-card builder-card-primary"
-                                  onClick={handleRedeployFcomProcessor}
-                                  disabled={redeployLoading || !hasEditPermission}
-                                >
-                                  {redeployLoading ? 'Redeploying…' : 'Redeploy'}
-                                </button>
-                              </div>
                             </div>
                           </div>
                         )}
@@ -11555,7 +11805,7 @@ export default function App() {
                               <div className="save-spinner" aria-hidden="true" />
                               <div>
                                 <div className="save-overlay-title">
-                                  Redeploying FCOM Processor…
+                                  {microserviceActionLabel || 'Updating microservices…'}
                                 </div>
                                 <div className="save-overlay-subtitle">
                                   Please wait{redeployElapsed ? ` • ${redeployElapsed}s` : ''}
@@ -12533,22 +12783,31 @@ export default function App() {
                     <>
                       <span className="muted">
                         {overviewProgress?.phase || 'Cache refreshing…'}
+                        {overviewStatus?.buildId ? ` · Build ${overviewStatus.buildId}` : ''}
                         {overviewProgress?.total
                           ? ` · ${overviewProgress.processed} / ${overviewProgress.total} ${overviewProgress.unit || 'items'}`
                           : ''}
                       </span>
-                      {overviewProgress?.total ? (
-                        <div className="trap-progress" aria-hidden="true">
-                          <div
-                            className="trap-progress-bar"
-                            style={{ width: `${overviewProgressPercent}%` }}
-                          />
-                        </div>
-                      ) : null}
+                      <div className="trap-progress" aria-hidden="true">
+                        <div
+                          className={`trap-progress-bar${
+                            overviewProgress?.total ? '' : ' indeterminate'
+                          }`}
+                          style={{
+                            width: overviewProgress?.total
+                              ? `${overviewProgressPercent}%`
+                              : '35%',
+                          }}
+                        />
+                      </div>
                     </>
                   ) : overviewStatus?.lastBuiltAt ? (
                     <span className="muted">
+                      {overviewStatus.isStale ? 'Stale · ' : ''}
                       Last refresh {formatTime(overviewStatus.lastBuiltAt)}
+                      {overviewStatus.nextRefreshAt
+                        ? ` · Next refresh ${formatTime(overviewStatus.nextRefreshAt)}`
+                        : ''}
                     </span>
                   ) : (
                     <span className="muted">Cache not loaded yet.</span>
@@ -12569,23 +12828,32 @@ export default function App() {
                     <>
                       <span className="muted">
                         {searchProgress?.phase || 'Cache refreshing…'}
+                        {searchStatus?.buildId ? ` · Build ${searchStatus.buildId}` : ''}
                         {searchProgress?.total
                           ? ` · ${searchProgress.processed} / ${searchProgress.total} ${searchProgress.unit || 'items'}`
                           : ''}
                       </span>
-                      {searchProgress?.total ? (
-                        <div className="trap-progress" aria-hidden="true">
-                          <div
-                            className="trap-progress-bar"
-                            style={{ width: `${searchProgressPercent}%` }}
-                          />
-                        </div>
-                      ) : null}
+                      <div className="trap-progress" aria-hidden="true">
+                        <div
+                          className={`trap-progress-bar${
+                            searchProgress?.total ? '' : ' indeterminate'
+                          }`}
+                          style={{
+                            width: searchProgress?.total
+                              ? `${searchProgressPercent}%`
+                              : '35%',
+                          }}
+                        />
+                      </div>
                     </>
                   ) : searchStatus?.lastBuiltAt ? (
                     <span className="muted">
+                      {searchStatus.isStale ? 'Stale · ' : ''}
                       Indexed {searchStatus.counts?.files || 0} files · Last refresh{' '}
                       {formatTime(searchStatus.lastBuiltAt)}
+                      {searchStatus.nextRefreshAt
+                        ? ` · Next refresh ${formatTime(searchStatus.nextRefreshAt)}`
+                        : ''}
                     </span>
                   ) : (
                     <span className="muted">Cache not loaded yet.</span>
@@ -12606,23 +12874,34 @@ export default function App() {
                     <>
                       <span className="muted">
                         {folderProgress?.phase || 'Cache refreshing…'}
+                        {folderOverviewStatus?.buildId
+                          ? ` · Build ${folderOverviewStatus.buildId}`
+                          : ''}
                         {folderProgress?.total
                           ? ` · ${folderProgress.processed} / ${folderProgress.total} ${folderProgress.unit || 'items'}`
                           : ''}
                       </span>
-                      {folderProgress?.total ? (
-                        <div className="trap-progress" aria-hidden="true">
-                          <div
-                            className="trap-progress-bar"
-                            style={{ width: `${folderProgressPercent}%` }}
-                          />
-                        </div>
-                      ) : null}
+                      <div className="trap-progress" aria-hidden="true">
+                        <div
+                          className={`trap-progress-bar${
+                            folderProgress?.total ? '' : ' indeterminate'
+                          }`}
+                          style={{
+                            width: folderProgress?.total
+                              ? `${folderProgressPercent}%`
+                              : '35%',
+                          }}
+                        />
+                      </div>
                     </>
-                  ) : folderOverviewStatus?.entryCount ? (
+                  ) : folderOverviewStatus?.lastBuiltAt ? (
                     <span className="muted">
-                      {folderOverviewStatus.entryCount} entries · Last refresh{' '}
+                      {folderOverviewStatus.isStale ? 'Stale · ' : ''}
+                      {folderOverviewStatus.entryCount || 0} entries · Last refresh{' '}
                       {formatTime(folderOverviewStatus.lastBuiltAt)}
+                      {folderOverviewStatus.nextRefreshAt
+                        ? ` · Next refresh ${formatTime(folderOverviewStatus.nextRefreshAt)}`
+                        : ''}
                     </span>
                   ) : folderOverviewStatus?.lastClearedAt ? (
                     <span className="muted">
@@ -12658,6 +12937,7 @@ export default function App() {
             </div>
           )}
         </main>
+        {microserviceModal}
       </div>
     </ErrorBoundary>
   );

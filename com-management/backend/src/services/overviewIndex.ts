@@ -1,15 +1,25 @@
 import path from 'path';
-import fs from 'fs';
 import logger from '../utils/logger';
 import { UAClient } from './ua';
+import { getRedisClient } from './redisClient';
 
 const DEFAULT_PATH_PREFIX = 'id-core/default/processing/event/fcom/_objects';
 const PATH_PREFIX = (process.env.COMS_PATH_PREFIX ?? DEFAULT_PATH_PREFIX).replace(/^\/+|\/+$/g, '');
 const OVERVIEW_PAGE_LIMIT = Number(process.env.OVERVIEW_PAGE_LIMIT || 500);
 const OVERRIDE_SUFFIX = '.override.json';
-const DEFAULT_REFRESH_INTERVAL_MS = 10 * 60 * 1000;
+const DEFAULT_CACHE_TTL_MS = 10 * 60 * 1000;
+const OVERVIEW_LIST_RETRIES = Math.max(0, Number(process.env.OVERVIEW_LIST_RETRIES || 3));
+const OVERVIEW_LIST_RETRY_DELAY_MS = Math.max(
+  0,
+  Number(process.env.OVERVIEW_LIST_RETRY_DELAY_MS || 500),
+);
+const OVERVIEW_READ_RETRIES = Math.max(0, Number(process.env.OVERVIEW_READ_RETRIES || 3));
+const OVERVIEW_READ_RETRY_DELAY_MS = Math.max(
+  0,
+  Number(process.env.OVERVIEW_READ_RETRY_DELAY_MS || 500),
+);
 const OVERVIEW_REFRESH_INTERVAL_MS = Number(
-  process.env.OVERVIEW_REFRESH_INTERVAL_MS || DEFAULT_REFRESH_INTERVAL_MS,
+  process.env.OVERVIEW_REFRESH_INTERVAL_MS || DEFAULT_CACHE_TTL_MS,
 );
 const OVERVIEW_CONCURRENCY = Math.max(1, Number(process.env.OVERVIEW_CONCURRENCY || 20));
 const OVERVIEW_OVERRIDE_CONCURRENCY = Math.max(
@@ -20,8 +30,10 @@ const OVERVIEW_OVERRIDE_TIMEOUT_MS = Math.max(
   0,
   Number(process.env.OVERVIEW_OVERRIDE_TIMEOUT_MS || 15000),
 );
-const CACHE_DIR = process.env.COM_CACHE_DIR || path.resolve(process.cwd(), 'cache');
-const OVERVIEW_CACHE_FILE = path.join(CACHE_DIR, 'overview_index_cache.json');
+const CACHE_TTL_MS = Number(
+  process.env.CACHE_TTL_MS || process.env.OVERVIEW_CACHE_TTL_MS || OVERVIEW_REFRESH_INTERVAL_MS,
+);
+const OVERVIEW_CACHE_PREFIX = 'fcom:overview:index:';
 
 type OverviewCounts = {
   files: number;
@@ -53,6 +65,8 @@ type OverviewStatus = {
   rootPath: string;
   isReady: boolean;
   isBuilding: boolean;
+  isStale: boolean;
+  buildId: number | null;
   lastBuiltAt: string | null;
   lastDurationMs: number | null;
   nextRefreshAt: string | null;
@@ -71,25 +85,104 @@ type OverviewStatus = {
   };
 };
 
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const getRetryDelayMs = (baseDelayMs: number, attempt: number) =>
+  baseDelayMs > 0 ? baseDelayMs * Math.pow(2, Math.max(0, attempt - 1)) : 0;
+
+const listRulesWithRetry = async (
+  uaClient: UAClient,
+  node: string,
+  start: number,
+  context: string,
+) => {
+  const maxAttempts = OVERVIEW_LIST_RETRIES + 1;
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    try {
+      return await uaClient.listRules('/', OVERVIEW_PAGE_LIMIT, node, true, start);
+    } catch (error: any) {
+      const message = error?.message || 'unknown error';
+      logger.warn(
+        `Overview listRules failed (${context}) node=${node} start=${start} ` +
+          `attempt=${attempt}/${maxAttempts}: ${message}`,
+      );
+      if (attempt >= maxAttempts) {
+        throw new Error(
+          `Overview listRules failed (${context}) after ${maxAttempts} attempts: ${message}`,
+        );
+      }
+      const delayMs = getRetryDelayMs(OVERVIEW_LIST_RETRY_DELAY_MS, attempt);
+      if (delayMs > 0) {
+        await sleep(delayMs);
+      }
+    }
+  }
+  throw new Error(`Overview listRules failed (${context}) for node=${node} start=${start}`);
+};
+
+const readRuleWithRetry = async (
+  uaClient: UAClient,
+  pathId: string,
+  context: string,
+  options?: { timeoutMs?: number; revision?: string },
+) => {
+  const maxAttempts = OVERVIEW_READ_RETRIES + 1;
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    try {
+      const request = options?.revision
+        ? uaClient.readRule(pathId, options.revision)
+        : uaClient.readRule(pathId);
+      if (options?.timeoutMs && options.timeoutMs > 0) {
+        return await Promise.race([
+          request,
+          new Promise((_, reject) => {
+            setTimeout(() => reject(new Error('Overview read timeout')), options.timeoutMs);
+          }),
+        ]);
+      }
+      return await request;
+    } catch (error: any) {
+      const message = error?.message || 'unknown error';
+      logger.warn(
+        `Overview readRule failed (${context}) path=${pathId} ` +
+          `attempt=${attempt}/${maxAttempts}: ${message}`,
+      );
+      if (attempt >= maxAttempts) {
+        throw new Error(
+          `Overview readRule failed (${context}) after ${maxAttempts} attempts: ${message}`,
+        );
+      }
+      const delayMs = getRetryDelayMs(OVERVIEW_READ_RETRY_DELAY_MS, attempt);
+      if (delayMs > 0) {
+        await sleep(delayMs);
+      }
+    }
+  }
+  throw new Error(`Overview readRule failed (${context}) for path=${pathId}`);
+};
+
 type OverviewState = {
   data: OverviewData | null;
   isBuilding: boolean;
   lastBuiltAt: string | null;
   lastDurationMs: number | null;
-  nextRefreshAt: string | null;
+  expiresAtMs: number | null;
   lastError: string | null;
+  buildId: number | null;
   progress: {
     phase: string | null;
     processed: number;
     total: number;
     unit: string;
   };
-  refreshTimer: NodeJS.Timeout | null;
 };
 
-const alignToNextMinute = (timestampMs: number) => {
-  const minuteMs = 60 * 1000;
-  return Math.ceil(timestampMs / minuteMs) * minuteMs;
+type OverviewCachePayload = {
+  data: OverviewData;
+  lastBuiltAt: string | null;
+  lastDurationMs: number | null;
+  expiresAtMs: number | null;
+  buildId: number | null;
 };
 
 const createEmptyCounts = (): OverviewCounts => ({
@@ -296,48 +389,16 @@ const collectEventOverrideTargets = (entry: any, objectName: string, targetKeys:
 
 class OverviewIndexService {
   private states = new Map<string, OverviewState>();
+  private hydratePromises = new Map<string, Promise<void>>();
 
-  hydrateFromDisk(
-    payload: Record<
-      string,
-      { data: OverviewData; lastBuiltAt?: string | null; lastDurationMs?: number | null }
-    >,
-  ) {
-    Object.entries(payload).forEach(([serverId, value]) => {
-      if (!value?.data) {
-        return;
-      }
-      const state = this.getState(serverId);
-      state.data = value.data;
-      state.lastBuiltAt = value.lastBuiltAt ?? null;
-      state.lastDurationMs = value.lastDurationMs ?? null;
-      state.isBuilding = false;
-      state.lastError = null;
-      state.progress = {
-        phase: 'Loaded',
-        processed: 0,
-        total: 0,
-        unit: 'items',
-      };
-    });
-  }
-
-  snapshotForDisk() {
-    const payload: Record<
-      string,
-      { data: OverviewData; lastBuiltAt: string | null; lastDurationMs: number | null }
-    > = {};
-    for (const [serverId, state] of this.states.entries()) {
-      if (!state.data) {
-        continue;
-      }
-      payload[serverId] = {
-        data: state.data,
-        lastBuiltAt: state.lastBuiltAt,
-        lastDurationMs: state.lastDurationMs,
-      };
+  async ensureHydrated(serverId: string) {
+    if (this.hydratePromises.has(serverId)) {
+      await this.hydratePromises.get(serverId);
+      return;
     }
-    return payload;
+    const promise = this.loadFromCache(serverId);
+    this.hydratePromises.set(serverId, promise);
+    await promise;
   }
 
   private getState(serverId: string): OverviewState {
@@ -347,29 +408,86 @@ class OverviewIndexService {
         isBuilding: false,
         lastBuiltAt: null,
         lastDurationMs: null,
-        nextRefreshAt: null,
+        expiresAtMs: null,
         lastError: null,
+        buildId: null,
         progress: {
           phase: null,
           processed: 0,
           total: 0,
           unit: 'items',
         },
-        refreshTimer: null,
       });
     }
     return this.states.get(serverId)!;
   }
 
+  private async loadFromCache(serverId: string) {
+    if (!serverId) {
+      return;
+    }
+    try {
+      const client = await getRedisClient();
+      const raw = await client.get(`${OVERVIEW_CACHE_PREFIX}${serverId}`);
+      if (!raw) {
+        return;
+      }
+      const parsed = JSON.parse(raw);
+      if (!parsed?.data) {
+        return;
+      }
+      const payload = parsed as OverviewCachePayload;
+      const state = this.getState(serverId);
+      state.data = payload.data as OverviewData;
+      state.lastBuiltAt = payload.lastBuiltAt ?? null;
+      state.lastDurationMs = payload.lastDurationMs ?? null;
+      state.expiresAtMs = typeof payload.expiresAtMs === 'number' ? payload.expiresAtMs : null;
+      state.buildId = payload.buildId ?? null;
+      state.isBuilding = false;
+      state.lastError = null;
+      state.progress = {
+        phase: 'Loaded',
+        processed: 0,
+        total: 0,
+        unit: 'items',
+      };
+    } catch (error: any) {
+      logger.warn(`Overview cache load failed: ${error?.message || 'read error'}`);
+    }
+  }
+
+  private async persistToCache(serverId: string) {
+    const state = this.getState(serverId);
+    if (!state.data) {
+      return;
+    }
+    try {
+      const client = await getRedisClient();
+      const payload: OverviewCachePayload = {
+        data: state.data,
+        lastBuiltAt: state.lastBuiltAt,
+        lastDurationMs: state.lastDurationMs,
+        expiresAtMs: state.expiresAtMs,
+        buildId: state.buildId,
+      };
+      await client.set(`${OVERVIEW_CACHE_PREFIX}${serverId}`, JSON.stringify(payload));
+    } catch (error: any) {
+      logger.warn(`Overview cache persist failed: ${error?.message || 'write error'}`);
+    }
+  }
+
   getStatus(serverId: string): OverviewStatus {
     const state = this.getState(serverId);
+    const isStale = this.isStale(serverId);
     return {
       rootPath: PATH_PREFIX,
       isReady: !!state.data,
       isBuilding: state.isBuilding,
+      isStale,
+      buildId: state.buildId,
       lastBuiltAt: state.lastBuiltAt,
       lastDurationMs: state.lastDurationMs,
-      nextRefreshAt: state.nextRefreshAt,
+      nextRefreshAt: state.expiresAtMs ? new Date(state.expiresAtMs).toISOString() : null,
       lastError: state.lastError,
       progress: state.progress,
       counts: {
@@ -382,6 +500,17 @@ class OverviewIndexService {
     };
   }
 
+  isStale(serverId: string) {
+    const state = this.getState(serverId);
+    if (!state.data) {
+      return false;
+    }
+    if (!state.expiresAtMs) {
+      return true;
+    }
+    return Date.now() > state.expiresAtMs;
+  }
+
   getData(serverId: string): OverviewData | null {
     return this.getState(serverId).data;
   }
@@ -389,13 +518,15 @@ class OverviewIndexService {
   async rebuildIndex(
     serverId: string,
     uaClient: UAClient,
-    trigger: 'startup' | 'manual' | 'schedule' = 'manual',
+    trigger: 'startup' | 'manual' | 'auto' = 'manual',
   ) {
+    await this.ensureHydrated(serverId);
     const state = this.getState(serverId);
     if (state.isBuilding) {
       return;
     }
     state.isBuilding = true;
+    state.buildId = (state.buildId ?? 0) + 1;
     state.lastError = null;
     state.progress = {
       phase: 'Starting',
@@ -403,49 +534,39 @@ class OverviewIndexService {
       total: 0,
       unit: 'items',
     };
+    logger.info(`Overview index rebuild started (${trigger}) server=${serverId}`);
     const start = Date.now();
     try {
       state.data = await this.buildIndex(uaClient, state);
       state.lastBuiltAt = new Date().toISOString();
       state.lastDurationMs = Date.now() - start;
+      state.expiresAtMs = Date.now() + CACHE_TTL_MS;
       state.progress = {
         phase: 'Completed',
         processed: state.progress.total || state.progress.processed,
         total: state.progress.total || state.progress.processed,
         unit: state.progress.unit,
       };
-      this.scheduleNextRefresh(state, serverId, uaClient);
-      logger.info(`Overview index rebuilt (${trigger}) in ${state.lastDurationMs}ms`);
-      persistOverviewCacheToDisk();
+      logger.info(
+        `Overview index COMPLETE (${trigger}) server=${serverId} took ${state.lastDurationMs}ms`,
+      );
+      await this.persistToCache(serverId);
     } catch (error: any) {
       state.lastError = error?.message || 'Overview index rebuild failed';
-      logger.error(`Overview index rebuild error: ${state.lastError}`);
+      logger.error(
+        `Overview index rebuild error server=${serverId}: ${state.lastError}`,
+      );
     } finally {
       state.isBuilding = false;
     }
   }
 
-  requestRebuild(serverId: string, uaClient: UAClient) {
+  requestRebuild(serverId: string, uaClient: UAClient, trigger: 'startup' | 'manual' | 'auto') {
     const state = this.getState(serverId);
     if (state.isBuilding) {
       return;
     }
-    void this.rebuildIndex(serverId, uaClient, 'manual');
-  }
-
-  private scheduleNextRefresh(state: OverviewState, serverId: string, uaClient: UAClient) {
-    if (state.refreshTimer) {
-      clearTimeout(state.refreshTimer);
-    }
-    const intervalMs = OVERVIEW_REFRESH_INTERVAL_MS;
-    const nextAt = alignToNextMinute(Date.now() + intervalMs);
-    state.nextRefreshAt = new Date(nextAt).toISOString();
-    state.refreshTimer = setTimeout(
-      () => {
-        void this.rebuildIndex(serverId, uaClient, 'schedule');
-      },
-      Math.max(0, nextAt - Date.now()),
-    );
+    void this.rebuildIndex(serverId, uaClient, trigger);
   }
 
   private resolveProtocolVendor(node: string) {
@@ -469,6 +590,7 @@ class OverviewIndexService {
   }
 
   async refreshNode(serverId: string, uaClient: UAClient, node: string) {
+    await this.ensureHydrated(serverId);
     const state = this.getState(serverId);
     if (!state.data) {
       return;
@@ -485,7 +607,12 @@ class OverviewIndexService {
       const all: any[] = [];
       let start = 0;
       while (true) {
-        const response = await uaClient.listRules('/', OVERVIEW_PAGE_LIMIT, nodePath, true, start);
+        const response = await listRulesWithRetry(
+          uaClient,
+          nodePath,
+          start,
+          'refresh-list',
+        );
         const data = Array.isArray(response?.data) ? response.data : [];
         if (data.length === 0) {
           break;
@@ -499,76 +626,70 @@ class OverviewIndexService {
       return all;
     };
 
+    const isFolderEntry = (entry: any) => {
+      const name = String(entry?.PathName || entry?.PathID || '').toLowerCase();
+      return !name.endsWith('.json');
+    };
+
     const buildFileCounts = async (pathId: string) => {
       const counts = createEmptyCounts();
-      try {
-        const response = await uaClient.readRule(pathId);
-        const raw = extractRuleText(response);
-        const parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
-        const objects: any[] = Array.isArray(parsed?.objects) ? parsed.objects : [];
-        counts.files = 1;
-        counts.objects = objects.length;
+      const response = await readRuleWithRetry(uaClient, pathId, 'refresh-read');
+      const raw = extractRuleText(response);
+      const parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
+      const objects: any[] = Array.isArray(parsed?.objects) ? parsed.objects : [];
+      counts.files = 1;
+      counts.objects = objects.length;
 
-        for (const obj of objects) {
-          const variableCount = Array.isArray(obj?.trap?.variables) ? obj.trap.variables.length : 0;
-          counts.variables += variableCount;
+      for (const obj of objects) {
+        const variableCount = Array.isArray(obj?.trap?.variables) ? obj.trap.variables.length : 0;
+        counts.variables += variableCount;
 
-          const classification = classifyObject(obj);
-          if (classification === 'processor') {
-            counts.processorObjects += 1;
-          } else if (classification === 'eval') {
-            counts.evalObjects += 1;
-          } else {
-            counts.literalObjects += 1;
-          }
+        const classification = classifyObject(obj);
+        if (classification === 'processor') {
+          counts.processorObjects += 1;
+        } else if (classification === 'eval') {
+          counts.evalObjects += 1;
+        } else {
+          counts.literalObjects += 1;
         }
-      } catch (error: any) {
-        logger.warn(`Overview index skipped ${pathId}: ${error?.message || 'read error'}`);
       }
       return counts;
     };
 
     const buildOverrideCounts = async (pathId: string) => {
-      try {
-        const response = await (OVERVIEW_OVERRIDE_TIMEOUT_MS
-          ? Promise.race([
-              uaClient.readRule(pathId),
-              new Promise((_, reject) => {
-                setTimeout(
-                  () => reject(new Error('Override read timeout')),
-                  OVERVIEW_OVERRIDE_TIMEOUT_MS,
-                );
-              }),
-            ])
-          : uaClient.readRule(pathId));
-        const raw = extractRuleText(response);
-        const text = typeof raw === 'string' ? raw : JSON.stringify(raw ?? []);
-        const overrides = parseOverridePayload(text);
-        const targetKeys = new Set<string>();
-        overrides.forEach((entry: any) => {
-          const objectName = entry?.['@objectName'] || '__global__';
-          const processors = Array.isArray(entry?.processors) ? entry.processors : [];
-          collectOverrideTargets(processors, objectName, targetKeys);
-          collectEventOverrideTargets(entry, objectName, targetKeys);
-        });
-        return targetKeys.size;
-      } catch (error: any) {
-        logger.warn(`Overview index override skipped ${pathId}: ${error?.message || 'read error'}`);
-        return 0;
-      }
+      const response = await readRuleWithRetry(uaClient, pathId, 'refresh-override', {
+        timeoutMs: OVERVIEW_OVERRIDE_TIMEOUT_MS,
+      });
+      const raw = extractRuleText(response);
+      const text = typeof raw === 'string' ? raw : JSON.stringify(raw ?? []);
+      const overrides = parseOverridePayload(text);
+      const targetKeys = new Set<string>();
+      overrides.forEach((entry: any) => {
+        const objectName = entry?.['@objectName'] || '__global__';
+        const processors = Array.isArray(entry?.processors) ? entry.processors : [];
+        collectOverrideTargets(processors, objectName, targetKeys);
+        collectEventOverrideTargets(entry, objectName, targetKeys);
+      });
+      return targetKeys.size;
     };
 
-    const resolveOverridePath = () => {
-      const basePath = PATH_PREFIX.includes('/_objects')
-        ? PATH_PREFIX.replace('/_objects', '')
-        : PATH_PREFIX;
-      if (!basePath) {
-        return null;
+    const overridesRoot = PATH_PREFIX.includes('/_objects')
+      ? `${PATH_PREFIX.replace('/_objects', '')}/overrides`
+      : `${PATH_PREFIX}/overrides`;
+
+    const listDirectoryRecursive = async (nodePath: string) => {
+      const entries = await listDirectory(nodePath);
+      const all: any[] = [...entries];
+      const folders = entries.filter((entry) => isFolderEntry(entry));
+      for (const folder of folders) {
+        const folderNode = String(folder?.PathID || folder?.PathName || '');
+        if (!folderNode) {
+          continue;
+        }
+        const nested = await listDirectoryRecursive(folderNode);
+        all.push(...nested);
       }
-      if (protocol) {
-        return `${basePath}/overrides/${vendor}.${protocol}.override.json`;
-      }
-      return `${basePath}/overrides/${vendor}.override.json`;
+      return all;
     };
 
     const listing = await listDirectory(node);
@@ -587,9 +708,25 @@ class OverviewIndexService {
       addCounts(nextCounts, counts);
     }
 
-    const overridePath = resolveOverridePath();
-    if (overridePath) {
-      nextCounts.overrides = await buildOverrideCounts(overridePath);
+    if (overridesRoot) {
+      const overrideListing = await listDirectoryRecursive(overridesRoot);
+      const overrideFiles = overrideListing.filter((entry) => {
+        const fileName = String(entry?.PathName || entry?.PathID || '').toLowerCase();
+        if (!fileName.endsWith(OVERRIDE_SUFFIX)) {
+          return false;
+        }
+        const baseName = path.posix.basename(fileName);
+        return baseName.startsWith(`${vendor.toLowerCase()}.`);
+      });
+      let overrideCount = 0;
+      for (const entry of overrideFiles) {
+        const pathId = String(entry?.PathID || entry?.PathName || '');
+        if (!pathId) {
+          continue;
+        }
+        overrideCount += await buildOverrideCounts(pathId);
+      }
+      nextCounts.overrides = overrideCount;
     }
 
     let protocolEntry = state.data.protocols.find(
@@ -626,7 +763,7 @@ class OverviewIndexService {
       total: files.length,
       unit: 'files',
     };
-    persistOverviewCacheToDisk();
+    await this.persistToCache(serverId);
   }
 
   private async buildIndex(uaClient: UAClient, state: OverviewState): Promise<OverviewData> {
@@ -662,7 +799,7 @@ class OverviewIndexService {
       const all: any[] = [];
       let start = 0;
       while (true) {
-        const response = await uaClient.listRules('/', OVERVIEW_PAGE_LIMIT, node, true, start);
+        const response = await listRulesWithRetry(uaClient, node, start, 'build-list');
         const data = Array.isArray(response?.data) ? response.data : [];
         if (data.length === 0) {
           break;
@@ -693,61 +830,44 @@ class OverviewIndexService {
 
     const buildFileCounts = async (pathId: string) => {
       const counts = createEmptyCounts();
-      try {
-        const response = await uaClient.readRule(pathId);
-        const raw = extractRuleText(response);
-        const parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
-        const objects: any[] = Array.isArray(parsed?.objects) ? parsed.objects : [];
-        counts.files = 1;
-        counts.objects = objects.length;
+      const response = await readRuleWithRetry(uaClient, pathId, 'build-read');
+      const raw = extractRuleText(response);
+      const parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
+      const objects: any[] = Array.isArray(parsed?.objects) ? parsed.objects : [];
+      counts.files = 1;
+      counts.objects = objects.length;
 
-        for (const obj of objects) {
-          const variableCount = Array.isArray(obj?.trap?.variables) ? obj.trap.variables.length : 0;
-          counts.variables += variableCount;
+      for (const obj of objects) {
+        const variableCount = Array.isArray(obj?.trap?.variables) ? obj.trap.variables.length : 0;
+        counts.variables += variableCount;
 
-          const classification = classifyObject(obj);
-          if (classification === 'processor') {
-            counts.processorObjects += 1;
-          } else if (classification === 'eval') {
-            counts.evalObjects += 1;
-          } else {
-            counts.literalObjects += 1;
-          }
+        const classification = classifyObject(obj);
+        if (classification === 'processor') {
+          counts.processorObjects += 1;
+        } else if (classification === 'eval') {
+          counts.evalObjects += 1;
+        } else {
+          counts.literalObjects += 1;
         }
-      } catch (error: any) {
-        logger.warn(`Overview index skipped ${pathId}: ${error?.message || 'read error'}`);
       }
       return counts;
     };
 
     const buildOverrideCounts = async (pathId: string) => {
-      try {
-        const response = await (OVERVIEW_OVERRIDE_TIMEOUT_MS
-          ? Promise.race([
-              uaClient.readRule(pathId),
-              new Promise((_, reject) => {
-                setTimeout(
-                  () => reject(new Error('Override read timeout')),
-                  OVERVIEW_OVERRIDE_TIMEOUT_MS,
-                );
-              }),
-            ])
-          : uaClient.readRule(pathId));
-        const raw = extractRuleText(response);
-        const text = typeof raw === 'string' ? raw : JSON.stringify(raw ?? []);
-        const overrides = parseOverridePayload(text);
-        const targetKeys = new Set<string>();
-        overrides.forEach((entry: any) => {
-          const objectName = entry?.['@objectName'] || '__global__';
-          const processors = Array.isArray(entry?.processors) ? entry.processors : [];
-          collectOverrideTargets(processors, objectName, targetKeys);
-          collectEventOverrideTargets(entry, objectName, targetKeys);
-        });
-        return targetKeys.size;
-      } catch (error: any) {
-        logger.warn(`Overview index override skipped ${pathId}: ${error?.message || 'read error'}`);
-        return 0;
-      }
+      const response = await readRuleWithRetry(uaClient, pathId, 'build-override', {
+        timeoutMs: OVERVIEW_OVERRIDE_TIMEOUT_MS,
+      });
+      const raw = extractRuleText(response);
+      const text = typeof raw === 'string' ? raw : JSON.stringify(raw ?? []);
+      const overrides = parseOverridePayload(text);
+      const targetKeys = new Set<string>();
+      overrides.forEach((entry: any) => {
+        const objectName = entry?.['@objectName'] || '__global__';
+        const processors = Array.isArray(entry?.processors) ? entry.processors : [];
+        collectOverrideTargets(processors, objectName, targetKeys);
+        collectEventOverrideTargets(entry, objectName, targetKeys);
+      });
+      return targetKeys.size;
     };
 
     const normalizeVendorName = (value: string) => value.trim().toLowerCase();
@@ -812,20 +932,23 @@ class OverviewIndexService {
             const baseStem =
               baseName.replace(new RegExp(`${OVERRIDE_SUFFIX}$`, 'i'), '') || '(root)';
             const nameParts = baseStem.split('.').filter(Boolean);
-            const lastPart = nameParts.length > 1 ? nameParts[nameParts.length - 1] : '';
-            const protocol = ['trap', 'syslog'].includes(lastPart.toLowerCase())
-              ? lastPart
+            const relativeParts = relative.split('/').filter(Boolean);
+            const folderProtocol =
+              relativeParts.length > 1 ? relativeParts[relativeParts.length - 2] : '';
+            const protocol = ['trap', 'syslog'].includes(folderProtocol.toLowerCase())
+              ? folderProtocol
               : null;
-            const vendorName = protocol ? nameParts.slice(0, -1).join('.') : baseStem;
+            const vendorName = nameParts.length > 0 ? nameParts[0] : baseStem;
+            const protocolName = protocol || 'fcom';
             const overrideCount = await buildOverrideCounts(
               String(overrideEntry?.PathID || fileName),
             );
-            if (protocol) {
-              const key = `${protocol.toLowerCase()}::${normalizeVendorName(vendorName)}`;
+            if (protocolName) {
+              const key = `${protocolName.toLowerCase()}::${normalizeVendorName(vendorName)}`;
               overrideCountsByProtocolVendor.set(key, {
                 name: vendorName,
                 count: overrideCount,
-                protocol,
+                protocol: protocolName,
               });
             } else {
               rootOverrideCounts.push({ name: vendorName, count: overrideCount });
@@ -972,46 +1095,12 @@ class OverviewIndexService {
 
 const overviewIndexService = new OverviewIndexService();
 
-const ensureCacheDir = () => {
-  try {
-    fs.mkdirSync(CACHE_DIR, { recursive: true });
-  } catch {
-    // ignore
-  }
-};
-
-const loadOverviewCacheFromDisk = () => {
-  try {
-    if (!fs.existsSync(OVERVIEW_CACHE_FILE)) {
-      return;
-    }
-    const raw = fs.readFileSync(OVERVIEW_CACHE_FILE, 'utf-8');
-    const parsed = JSON.parse(raw);
-    if (parsed && typeof parsed === 'object' && parsed.states) {
-      overviewIndexService.hydrateFromDisk(parsed.states);
-    }
-  } catch {
-    // ignore
-  }
-};
-
-const persistOverviewCacheToDisk = () => {
-  try {
-    ensureCacheDir();
-    const payload = {
-      states: overviewIndexService.snapshotForDisk(),
-    };
-    fs.writeFileSync(OVERVIEW_CACHE_FILE, JSON.stringify(payload));
-  } catch (error: any) {
-    logger.warn(`Overview cache persist failed: ${error?.message || 'write error'}`);
-  }
-};
-
-loadOverviewCacheFromDisk();
-
 export const getOverviewStatus = (serverId: string) => overviewIndexService.getStatus(serverId);
-export const requestOverviewRebuild = (serverId: string, uaClient: UAClient) =>
-  overviewIndexService.requestRebuild(serverId, uaClient);
+export const requestOverviewRebuild = (
+  serverId: string,
+  uaClient: UAClient,
+  trigger: 'startup' | 'manual' | 'auto' = 'manual',
+) => overviewIndexService.requestRebuild(serverId, uaClient, trigger);
 export const refreshOverviewNode = (serverId: string, uaClient: UAClient, node: string) =>
   overviewIndexService.refreshNode(serverId, uaClient, node);
 export const overviewIndex = () => overviewIndexService;

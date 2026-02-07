@@ -96,23 +96,44 @@ const resolveOverrideLocation = (fileId: string) => {
   }
 
   const overrideRoot = `${basePath}/overrides`;
-  const overrideFileName = method
-    ? `${vendor}.${method}.override.json`
-    : `${vendor}.override.json`;
-  const overridePath = `${overrideRoot}/${overrideFileName}`;
+  const overridePath = `${overrideRoot}`;
   const overrideRootId = toIdCorePath(overrideRoot);
-  const overridePathId = `${overrideRootId}/${overrideFileName}`;
 
   return {
     basePath,
     vendor,
     method,
     overrideRoot,
-    overrideFileName,
     overridePath,
     overrideRootId,
-    overridePathId,
   };
+};
+
+const normalizeOverrideSegment = (value: string) =>
+  String(value || '')
+    .trim()
+    .toLowerCase()
+    .replace(/::/g, '.')
+    .replace(/[^a-z0-9.-]+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/\.{2,}/g, '.')
+    .replace(/^-+|-+$/g, '')
+    .replace(/^\.+|\.+$/g, '');
+
+const splitObjectName = (objectName: string) => {
+  const [mib, obj] = String(objectName || '').split('::');
+  return {
+    mib: mib || 'unknown',
+    object: obj || mib || 'object',
+  };
+};
+
+const buildOverrideFileName = (vendor: string, objectName: string) => {
+  const { mib, object } = splitObjectName(objectName);
+  const vendorPart = normalizeOverrideSegment(vendor) || 'vendor';
+  const mibPart = normalizeOverrideSegment(mib) || 'mib';
+  const objectPart = normalizeOverrideSegment(object) || 'object';
+  return `${vendorPart}.${mibPart}.${objectPart}.override.json`;
 };
 
 const extractRuleText = (data: any) => {
@@ -171,6 +192,63 @@ const parseOverridePayload = (ruleText: string) => {
   }
   throw new Error('Override file must be a JSON array or object at the root');
 };
+
+const extractRuleObjects = (ruleText: string) => {
+  const trimmed = ruleText.trim();
+  if (!trimmed) {
+    return [] as any[];
+  }
+  const parsed = JSON.parse(trimmed);
+  if (Array.isArray(parsed?.objects)) {
+    return parsed.objects;
+  }
+  if (Array.isArray(parsed)) {
+    return parsed;
+  }
+  if (parsed && typeof parsed === 'object') {
+    return [parsed];
+  }
+  return [] as any[];
+};
+
+const listRulesAll = async (uaClient: UAClient, node: string, limit: number = 500) => {
+  const entries: any[] = [];
+  let start = 0;
+  while (true) {
+    const response = await uaClient.listRules('/', limit, node, true, start);
+    const data = Array.isArray(response?.data) ? response.data : [];
+    if (data.length === 0) {
+      break;
+    }
+    entries.push(...data);
+    if (data.length < limit) {
+      break;
+    }
+    start += data.length;
+  }
+  return entries;
+};
+
+const isPatchOperation = (processor: any) => {
+  const op = processor?.op;
+  const path = processor?.path;
+  if (!op || !path) {
+    return false;
+  }
+  const allowed = new Set(['add', 'replace', 'test', 'remove', 'move', 'copy']);
+  return typeof op === 'string' && allowed.has(op) && typeof path === 'string';
+};
+
+const normalizeOverrideEntry = (entry: any, objectName: string, method: string) => ({
+  name: entry?.name || `${objectName} Override`,
+  description: entry?.description || `Overrides for ${objectName}`,
+  domain: entry?.domain || 'fault',
+  method: entry?.method || method || 'trap',
+  scope: entry?.scope || 'post',
+  '@objectName': objectName,
+  _type: 'override',
+  processors: Array.isArray(entry?.processors) ? entry.processors : [],
+});
 
 const parseRevisionName = (revisionName: string) => {
   const revisionMatch = revisionName.match(/r(\d+)/i);
@@ -238,6 +316,22 @@ const buildOverrideMetaFromHistory = (history: any, resolved: any) => {
   };
 };
 
+const mergeOverrideMeta = (base: any, next: any) => {
+  if (!next) {
+    return base;
+  }
+  if (!base) {
+    return next;
+  }
+  return {
+    ...next,
+    ...base,
+    revision: base.revision ?? next.revision,
+    modified: base.modified ?? next.modified,
+    modifiedBy: base.modifiedBy ?? next.modifiedBy,
+  };
+};
+
 router.get('/', async (req: Request, res: Response) => {
   try {
     const { file_id } = req.query;
@@ -247,46 +341,70 @@ router.get('/', async (req: Request, res: Response) => {
 
     const resolved = resolveOverrideLocation(String(file_id));
     const uaClient = await getUaClientFromSession(req);
-    const serverId = await getServerIdFromSession(req);
+    const ruleData = await uaClient.readRule(String(file_id), 'HEAD');
+    const ruleText = extractRuleText(ruleData);
+    if (typeof ruleText !== 'string') {
+      const diagnostics = buildRuleTextDiagnostics(ruleData);
+      return res.status(400).json({
+        error: 'Override load aborted: file content did not include RuleText.',
+        lastCall: {
+          action: 'readRule',
+          path: String(file_id),
+          diagnostics,
+        },
+      });
+    }
 
-    try {
-      const data = await uaClient.readRule(resolved.overridePathId, 'HEAD');
-      const ruleText =
-        data?.content?.data?.[0]?.RuleText ?? data?.data?.[0]?.RuleText ?? data?.RuleText;
-      if (typeof ruleText !== 'string') {
-        if (isLikelyListResponse(data)) {
-          return res.json({
-            ...resolved,
-            overrides: [],
-            overrideMeta: null,
-            etag: null,
-            exists: false,
-          });
-        }
-        const diagnostics = buildRuleTextDiagnostics(data);
-        return res.status(400).json({
-          error:
-            'Override load aborted: response did not include RuleText. Check the last call details.',
-          lastCall: {
-            action: 'readRule',
-            path: resolved.overridePathId,
-            diagnostics,
-          },
-        });
+    const objects = extractRuleObjects(ruleText);
+    const objectNames = objects
+      .map((obj: any) => obj?.['@objectName'])
+      .filter((name: any) => typeof name === 'string' && name.length > 0) as string[];
+    const objectNameSet = new Set(objectNames);
+
+    const overrideListing = await listRulesAll(uaClient, resolved.overrideRootId, 500);
+    const overrides: any[] = [];
+    const overrideMetaByObject: Record<string, any> = {};
+    const overrideFilesByObject: Record<string, any> = {};
+
+    for (const objectName of objectNames) {
+      const fileName = buildOverrideFileName(resolved.vendor, objectName);
+      const overridePathId = `${resolved.overrideRootId}/${fileName}`;
+      const entry = overrideListing.find(
+        (item: any) =>
+          item?.PathName === fileName ||
+          item?.PathID === overridePathId ||
+          String(item?.PathID || '').endsWith(`/${fileName}`),
+      );
+      const exists = Boolean(entry);
+      overrideFilesByObject[objectName] = {
+        fileName,
+        pathId: entry?.PathID ?? overridePathId,
+        exists,
+      };
+      if (!exists) {
+        continue;
       }
-      const parsed = parseOverridePayload(ruleText);
-      const overrides = parsed.overrides;
-      const etag = crypto.createHash('md5').update(ruleText).digest('hex');
-      let overrideMeta: any = null;
+
       try {
-        const listing = await uaClient.listRules('/', 500, resolved.overrideRoot, true);
-        const entries = Array.isArray(listing?.data) ? listing.data : [];
-        const entry = entries.find(
-          (item: any) =>
-            item?.PathName === resolved.overrideFileName ||
-            item?.PathID === resolved.overridePath ||
-            String(item?.PathID || '').endsWith(`/${resolved.overrideFileName}`),
+        const data = await uaClient.readRule(String(entry?.PathID || overridePathId), 'HEAD');
+        const ruleText = extractRuleText(data);
+        if (typeof ruleText !== 'string') {
+          continue;
+        }
+        const parsed = parseOverridePayload(ruleText);
+        const overrideEntry = parsed.overrides.find(
+          (item: any) => item?.['@objectName'] === objectName,
         );
+        const normalized = overrideEntry
+          ? normalizeOverrideEntry(overrideEntry, objectName, resolved.method)
+          : null;
+        const processors = Array.isArray(normalized?.processors) ? normalized?.processors : [];
+        const hasOverrides = processors.length > 0;
+        if (hasOverrides && normalized) {
+          overrides.push(normalized);
+        }
+
+        let overrideMeta: any = null;
         if (entry) {
           overrideMeta = {
             ...(overrideMeta || {}),
@@ -311,51 +429,55 @@ router.get('/', async (req: Request, res: Response) => {
             const history = await uaClient.getHistoryByNode(String(entry.PathID), 1, 0);
             const entriesHistory = extractHistoryEntries(history);
             const latest = entriesHistory[0];
+            const historyMeta = buildOverrideMetaFromHistory(history, {
+              overridePath: String(entry.PathID),
+              overrideFileName: fileName,
+            });
             const revisionName =
               latest?.RevisionName ??
               latest?.revisionName ??
               latest?.RevisionLabel ??
               latest?.revisionLabel;
             if (typeof revisionName === 'string') {
-              const parsed = parseRevisionName(revisionName);
-              if (parsed.user) {
+              const parsedRevision = parseRevisionName(revisionName);
+              if (parsedRevision.user) {
                 overrideMeta = {
                   ...(overrideMeta || {}),
-                  modifiedBy: parsed.user,
+                  modifiedBy: parsedRevision.user,
                 };
               }
             }
+            overrideMeta = mergeOverrideMeta(overrideMeta, historyMeta);
           } catch (error: any) {
             logger.warn(
               `Override history lookup failed for ${entry.PathID}: ${error?.message || 'unknown error'}`,
             );
           }
         }
+        if (overrideMeta) {
+          overrideMetaByObject[objectName] = overrideMeta;
+        }
       } catch (error: any) {
         logger.warn(
-          `Override meta lookup failed for ${resolved.overrideRoot}: ${error?.message || 'unknown error'}`,
+          `Override read failed for ${overridePathId}: ${error?.message || 'unknown error'}`,
         );
       }
-      return res.json({
-        ...resolved,
-        overrides,
-        overrideFormat: parsed.format,
-        overrideMeta,
-        etag,
-        exists: Boolean(overrideMeta),
-      });
-    } catch (error: any) {
-      logger.warn(
-        `Override read failed for ${resolved.overridePath}: ${error?.message || 'unknown error'}`,
-      );
-      return res.json({
-        ...resolved,
-        overrides: [],
-        overrideMeta: null,
-        etag: null,
-        exists: false,
-      });
     }
+
+    const etagPayload = JSON.stringify(overrides);
+    const etag = crypto.createHash('md5').update(etagPayload).digest('hex');
+    const overrideRootRulePath = `/rules/${resolved.overrideRootId.replace(/^id-core\//, '')}`;
+
+    return res.json({
+      ...resolved,
+      overrides,
+      overrideFormat: 'object',
+      overrideMetaByObject,
+      overrideFilesByObject,
+      overrideRootRulePath,
+      etag,
+      exists: overrides.length > 0,
+    });
   } catch (error: any) {
     logger.error(`Override lookup error: ${error.message}`);
     return res.status(500).json({ error: error.message || 'Failed to resolve overrides' });
@@ -371,12 +493,6 @@ router.post('/save', async (req: Request, res: Response) => {
     if (!file_id || !Array.isArray(overrides) || commit_message === undefined) {
       return res.status(400).json({ error: 'Missing file_id, overrides, or commit_message' });
     }
-    if (overrides.length !== 1) {
-      return res.status(400).json({
-        error: 'Override file must contain a single override object.',
-      });
-    }
-
     const resolved = resolveOverrideLocation(String(file_id));
     const uaClient = await getUaClientFromSession(req);
     const serverId = await getServerIdFromSession(req);
@@ -396,6 +512,10 @@ router.post('/save', async (req: Request, res: Response) => {
           commit_message,
         );
         if (createResp?.success === false) {
+          const message = String(createResp?.message || '').toLowerCase();
+          if (message.includes('file exists') || message.includes('already exists')) {
+            return;
+          }
           return res.status(403).json({
             error: createResp?.message || 'Override folder create failed.',
             lastCall: {
@@ -413,183 +533,201 @@ router.post('/save', async (req: Request, res: Response) => {
       return;
     }
 
-    if (!isOverrideEntry(overrides[0])) {
+    if (!overrides.every(isOverrideEntry)) {
       return res.status(400).json({
-        error: 'Override payload must be a single override object (_type: override).',
+        error: 'Override payload must be override object(s) (_type: override).',
       });
     }
 
-    const payload = JSON.stringify(overrides[0], null, 2);
-    let response: any;
-    let created = false;
-    try {
-      const existing = await uaClient.readRule(resolved.overridePathId, 'HEAD');
-      const diagnostics = buildRuleTextDiagnostics(existing);
-      const ruleText =
-        existing?.content?.data?.[0]?.RuleText ??
-        existing?.data?.[0]?.RuleText ??
-        existing?.RuleText ??
-        null;
-      if (!diagnostics.hasRuleText || typeof ruleText !== 'string') {
-        if (!isLikelyListResponse(existing)) {
-          return res.status(400).json({
-            error:
-              'Override save aborted: existing file content is not a rule text payload. Check the last call details.',
-            lastCall: {
-              action: 'readRule',
-              path: resolved.overridePathId,
-              diagnostics,
-            },
-          });
-        }
-        response = await uaClient.createRule(
-          resolved.overrideFileName,
-          payload,
-          resolved.overrideRootId,
-          commit_message,
-          resolved.overrideRootId,
-        );
-        if (response?.success === false) {
-          return res.status(403).json({
-            error: response?.message || 'Override create failed: permission required.',
-            lastCall: {
-              action: 'createRule',
-              path: resolved.overrideRoot,
-              fileName: resolved.overrideFileName,
-            },
-          });
-        }
-        created = true;
-      } else {
-        try {
-          const parsed = JSON.parse(ruleText.trim() || 'null');
-          if (
-            parsed &&
-            typeof parsed === 'object' &&
-            !Array.isArray(parsed) &&
-            Object.keys(parsed).length === 0
-          ) {
-            // Treat empty objects as missing override content so saves can proceed.
-          } else if (!isValidOverridePayload(parsed)) {
+    const ruleData = await uaClient.readRule(String(file_id), 'HEAD');
+    const ruleText = extractRuleText(ruleData);
+    if (typeof ruleText !== 'string') {
+      return res.status(400).json({
+        error: 'Override save aborted: selected file content is missing RuleText.',
+      });
+    }
+    const objects = extractRuleObjects(ruleText);
+    const objectNames = objects
+      .map((obj: any) => obj?.['@objectName'])
+      .filter((name: any) => typeof name === 'string' && name.length > 0) as string[];
+
+    const overridesByObject = new Map<string, any>();
+    for (const entry of overrides) {
+      const objectName = entry?.['@objectName'];
+      if (!objectName) {
+        return res.status(400).json({
+          error: 'Global overrides are not supported in per-object mode.',
+        });
+      }
+      if (!objectNameSet.has(objectName)) {
+        return res.status(400).json({
+          error: `Override target ${objectName} is not part of the selected file.`,
+        });
+      }
+      if (overridesByObject.has(objectName)) {
+        return res.status(400).json({
+          error: `Multiple override entries found for ${objectName}. Only one per object is supported.`,
+        });
+      }
+      overridesByObject.set(objectName, entry);
+    }
+
+    const listing = await listRulesAll(uaClient, resolved.overrideRootId, 500);
+
+    const writeQueue: Array<{
+      pathId: string;
+      fileName: string;
+      action: 'create' | 'update';
+      payload: string;
+      previousContent?: string | null;
+    }> = [];
+
+    for (const objectName of objectNames) {
+      const fileName = buildOverrideFileName(resolved.vendor, objectName);
+      const overridePathId = `${resolved.overrideRootId}/${fileName}`;
+      const listingEntry = listing.find(
+        (item: any) =>
+          item?.PathName === fileName ||
+          item?.PathID === overridePathId ||
+          String(item?.PathID || '').endsWith(`/${fileName}`),
+      );
+      const exists = Boolean(listingEntry);
+      const desiredEntryRaw = overridesByObject.get(objectName) || null;
+
+      let existingContent: string | null = null;
+      let existingEntry: any = null;
+      if (exists) {
+        const existing = await uaClient.readRule(String(listingEntry?.PathID || overridePathId));
+        const existingText = extractRuleText(existing);
+        if (typeof existingText === 'string') {
+          existingContent = existingText;
+          try {
+            const parsed = parseOverridePayload(existingText);
+            existingEntry = parsed.overrides.find(
+              (item: any) => item?.['@objectName'] === objectName,
+            );
+          } catch (error: any) {
             return res.status(400).json({
               error:
-                'Override save aborted: existing file content does not look like override JSON. Check the last call details.',
+                'Override save aborted: existing override file is not valid JSON. Check the file content.',
               lastCall: {
                 action: 'readRule',
-                path: resolved.overridePath,
-                diagnostics,
+                path: String(listingEntry?.PathID || overridePathId),
+                parseError: error?.message || 'Failed to parse JSON',
               },
             });
           }
-        } catch (parseError: any) {
-          return res.status(400).json({
-            error:
-              'Override save aborted: existing file content is not valid JSON. Check the last call details.',
-            lastCall: {
-              action: 'readRule',
-              path: resolved.overridePath,
-              diagnostics,
-              parseError: parseError?.message || 'Failed to parse JSON',
-            },
-          });
         }
-        response = await uaClient.updateRule(resolved.overridePathId, payload, commit_message);
       }
-    } catch (error: any) {
-      if (!isMissingRule(error)) {
-        throw error;
+
+      let desiredEntry: any = null;
+      if (desiredEntryRaw) {
+        desiredEntry = normalizeOverrideEntry(desiredEntryRaw, objectName, resolved.method);
+      } else if (exists) {
+        const normalizedExisting = normalizeOverrideEntry(
+          existingEntry || {},
+          objectName,
+          resolved.method,
+        );
+        normalizedExisting.processors = [];
+        desiredEntry = normalizedExisting;
       }
-      response = await uaClient.createRule(
-        resolved.overrideFileName,
-        payload,
-        resolved.overrideRootId,
-        commit_message,
-        resolved.overrideRootId,
-      );
-      if (response?.success === false) {
-        return res.status(403).json({
-          error: response?.message || 'Override create failed: permission required.',
+
+      if (!desiredEntry) {
+        continue;
+      }
+
+      const processors = Array.isArray(desiredEntry.processors) ? desiredEntry.processors : [];
+      const invalidProcessor = processors.find((proc: any) => !isPatchOperation(proc));
+      if (invalidProcessor) {
+        return res.status(400).json({
+          error:
+            'Override save aborted: v3 override files only support JSON Patch operations in processors.',
           lastCall: {
-            action: 'createRule',
-            path: resolved.overrideRoot,
-            fileName: resolved.overrideFileName,
+            action: 'validateOverride',
+            objectName,
           },
         });
       }
-      created = true;
+
+      const payload = JSON.stringify(desiredEntry, null, 2);
+      if (existingContent && existingContent.trim() === payload.trim()) {
+        continue;
+      }
+
+      writeQueue.push({
+        pathId: String(listingEntry?.PathID || overridePathId),
+        fileName,
+        action: exists ? 'update' : 'create',
+        payload,
+        previousContent: existingContent,
+      });
     }
 
-    const etag = crypto.createHash('md5').update(payload).digest('hex');
-    let overrideMeta: any = null;
-    try {
-      const listing = await uaClient.listRules('/', 500, resolved.overrideRootId, true);
-      const entries = Array.isArray(listing?.data) ? listing.data : [];
-      const entry = entries.find(
-        (item: any) =>
-          item?.PathName === resolved.overrideFileName ||
-          item?.PathID === resolved.overridePath ||
-          String(item?.PathID || '').endsWith(`/${resolved.overrideFileName}`),
-      );
-      if (entry) {
-        overrideMeta = {
-          ...(overrideMeta || {}),
-          pathId: entry.PathID ?? overrideMeta?.pathId,
-          pathName: entry.PathName ?? overrideMeta?.pathName,
-          revision: overrideMeta?.revision ?? entry.LastRevision ?? entry.Revision ?? entry.Rev,
-          modified:
-            overrideMeta?.modified ??
-            entry.ModificationTime ??
-            entry.LastModified ??
-            entry.Modified,
-          modifiedBy:
-            overrideMeta?.modifiedBy ??
-            entry.ModifiedBy ??
-            entry.LastModifiedBy ??
-            entry.Modifier ??
-            entry.User,
-        };
-      }
-      if (created && !overrideMeta?.pathId) {
-        return res.status(500).json({
-          error:
-            'Override save failed: override file was not found after create. Check UA rules listing.',
-          lastCall: {
-            action: 'createRule',
-            path: resolved.overrideRoot,
-            fileName: resolved.overrideFileName,
-          },
-        });
-      }
-      if (entry?.PathID) {
+    const writeWithRetry = async (fn: () => Promise<any>, attempts: number = 3) => {
+      let lastError: any = null;
+      for (let attempt = 1; attempt <= attempts; attempt += 1) {
         try {
-          const history = await uaClient.getHistoryByNode(String(entry.PathID), 1, 0);
-          const entriesHistory = extractHistoryEntries(history);
-          const latest = entriesHistory[0];
-          const revisionName =
-            latest?.RevisionName ??
-            latest?.revisionName ??
-            latest?.RevisionLabel ??
-            latest?.revisionLabel;
-          if (typeof revisionName === 'string') {
-            const parsed = parseRevisionName(revisionName);
-            if (parsed.user) {
-              overrideMeta = {
-                ...(overrideMeta || {}),
-                modifiedBy: parsed.user,
-              };
-            }
-          }
+          return await fn();
         } catch (error: any) {
+          lastError = error;
+          if (attempt >= attempts) {
+            break;
+          }
+        }
+      }
+      throw lastError;
+    };
+
+    const appliedWrites: Array<{ action: 'create' | 'update'; pathId: string; previous?: string }>
+      = [];
+    try {
+      for (const write of writeQueue) {
+        if (write.action === 'create') {
+          await writeWithRetry(
+            () =>
+              uaClient.createRule(
+                write.fileName,
+                write.payload,
+                resolved.overrideRootId,
+                commit_message,
+                resolved.overrideRootId,
+              ),
+            3,
+          );
+          appliedWrites.push({ action: 'create', pathId: write.pathId });
+        } else {
+          await writeWithRetry(
+            () => uaClient.updateRule(write.pathId, write.payload, commit_message),
+            3,
+          );
+          appliedWrites.push({
+            action: 'update',
+            pathId: write.pathId,
+            previous: write.previousContent || '',
+          });
+        }
+      }
+    } catch (error: any) {
+      const rollbackMessage = `${commit_message} (rollback)`;
+      for (const applied of appliedWrites.reverse()) {
+        try {
+          if (applied.action === 'create') {
+            await uaClient.deleteRule(applied.pathId, rollbackMessage);
+          } else {
+            await uaClient.updateRule(applied.pathId, applied.previous || '', rollbackMessage);
+          }
+        } catch (rollbackError: any) {
           logger.warn(
-            `Override history lookup failed for ${entry.PathID}: ${error?.message || 'unknown error'}`,
+            `Override rollback failed for ${applied.pathId}: ${rollbackError?.message || 'unknown error'}`,
           );
         }
       }
-    } catch (error: any) {
-      logger.warn(
-        `Override meta lookup failed for ${resolved.overrideRoot}: ${error?.message || 'unknown error'}`,
-      );
+      return res.status(500).json({
+        error: error?.message || 'Override save failed; changes were rolled back.',
+      });
     }
+
     const parentNode = String(file_id).split('/').slice(0, -1).join('/');
     if (parentNode) {
       try {
@@ -603,15 +741,21 @@ router.post('/save', async (req: Request, res: Response) => {
         logger.warn(`Overview cache refresh failed: ${err?.message || 'unknown error'}`);
       }
     }
+    try {
+      await refreshFolderOverviewForNode(uaClient, serverId, resolved.overrideRootId, 25);
+    } catch (err: any) {
+      logger.warn(`Override folder cache refresh failed: ${err?.message || 'unknown error'}`);
+    }
 
+    const etagPayload = JSON.stringify(overrides);
+    const etag = crypto.createHash('md5').update(etagPayload).digest('hex');
     res.json({
       ...resolved,
       overrides,
       overrideFormat: 'object',
-      overrideMeta,
-      exists: Boolean(overrideMeta),
       etag,
-      result: response,
+      exists: overrides.length > 0,
+      result: { writes: writeQueue.length },
     });
   } catch (error: any) {
     logger.error(`Override save error: ${error.message}`);
