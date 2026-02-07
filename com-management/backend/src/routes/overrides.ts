@@ -550,6 +550,7 @@ router.post('/save', async (req: Request, res: Response) => {
     const objectNames = objects
       .map((obj: any) => obj?.['@objectName'])
       .filter((name: any) => typeof name === 'string' && name.length > 0) as string[];
+    const objectNameSet = new Set(objectNames);
 
     const overridesByObject = new Map<string, any>();
     for (const entry of overrides) {
