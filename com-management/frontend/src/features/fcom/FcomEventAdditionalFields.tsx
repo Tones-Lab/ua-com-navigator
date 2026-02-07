@@ -182,22 +182,43 @@ export default function FcomEventAdditionalFields({
                 const stagedRemoved = isFieldStagedRemoved(obj, field);
                 const isProcessorField = processorTargets.has(`$.event.${field}`);
                 const processorSummary = getProcessorFieldSummary(obj, field);
-                return isProcessorField ? (
-                  <div
-                    className={`${
-                      isFieldHighlighted(eventPanelKey, field)
-                        ? 'panel-input panel-input-warning'
-                        : 'panel-input'
-                    } panel-input-processor${
-                      isFieldPendingRemoval(eventPanelKey, field) || stagedRemoved
-                        ? ' panel-input-removed'
-                        : ''
-                    }`}
-                    title="Value set by processor"
-                  >
-                    Processor{processorSummary ? ` • ${processorSummary}` : ''}
-                  </div>
-                ) : (
+                if (isProcessorField) {
+                  const processorValue = overrideValueMap.get(`$.event.${field}`);
+                  const processorDisplay = (() => {
+                    if (processorValue === undefined) {
+                      return `Processor${processorSummary ? ` • ${processorSummary}` : ''}`;
+                    }
+                    if (
+                      typeof processorValue === 'string' ||
+                      typeof processorValue === 'number' ||
+                      typeof processorValue === 'boolean'
+                    ) {
+                      return String(processorValue);
+                    }
+                    try {
+                      return JSON.stringify(processorValue);
+                    } catch {
+                      return String(processorValue);
+                    }
+                  })();
+                  return (
+                    <input
+                      className={`${
+                        isFieldHighlighted(eventPanelKey, field)
+                          ? 'panel-input panel-input-warning'
+                          : 'panel-input'
+                      }${
+                        isFieldPendingRemoval(eventPanelKey, field) || stagedRemoved
+                          ? ' panel-input-removed'
+                          : ''
+                      }`}
+                      value={processorDisplay}
+                      disabled
+                      title="Value set by processor"
+                    />
+                  );
+                }
+                return (
                   <input
                     className={`${
                       isFieldHighlighted(eventPanelKey, field)

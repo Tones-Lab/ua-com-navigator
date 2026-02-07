@@ -1,16 +1,31 @@
-import fs from 'fs/promises';
-import path from 'path';
 import logger from '../utils/logger';
+import { UAClient } from './ua';
+import { getRedisClient } from './redisClient';
 
-const DEFAULT_COMS_ROOT = path.resolve(process.cwd(), '..', '..', 'coms');
 const MAX_CONTENT_BYTES = Number(process.env.SEARCH_MAX_CONTENT_BYTES || 5 * 1024 * 1024);
 const DEFAULT_PATH_PREFIX = 'id-core/default/processing/event/fcom/_objects';
 const PATH_PREFIX = (process.env.COMS_PATH_PREFIX ?? DEFAULT_PATH_PREFIX).replace(/^\/+|\/+$/g, '');
-const IGNORED_DIRS = new Set(['.git', '.svn', 'node_modules']);
-const DEFAULT_REFRESH_INTERVAL_MS = 10 * 60 * 1000;
-const SEARCH_REFRESH_INTERVAL_MS = Number(
-  process.env.SEARCH_REFRESH_INTERVAL_MS || DEFAULT_REFRESH_INTERVAL_MS,
+const DEFAULT_CACHE_TTL_MS = 10 * 60 * 1000;
+const CACHE_TTL_MS = Number(
+  process.env.CACHE_TTL_MS || process.env.SEARCH_CACHE_TTL_MS || DEFAULT_CACHE_TTL_MS,
 );
+const SEARCH_PAGE_LIMIT = Number(process.env.SEARCH_PAGE_LIMIT || 500);
+const SEARCH_LIST_CONCURRENCY = Math.max(1, Number(process.env.SEARCH_LIST_CONCURRENCY || 12));
+const SEARCH_CONTENT_CONCURRENCY = Math.max(
+  1,
+  Number(process.env.SEARCH_CONTENT_CONCURRENCY || 48),
+);
+const SEARCH_LIST_RETRIES = Math.max(0, Number(process.env.SEARCH_LIST_RETRIES || 3));
+const SEARCH_LIST_RETRY_DELAY_MS = Math.max(
+  0,
+  Number(process.env.SEARCH_LIST_RETRY_DELAY_MS || 500),
+);
+const SEARCH_READ_RETRIES = Math.max(0, Number(process.env.SEARCH_READ_RETRIES || 3));
+const SEARCH_READ_RETRY_DELAY_MS = Math.max(
+  0,
+  Number(process.env.SEARCH_READ_RETRY_DELAY_MS || 500),
+);
+const SEARCH_CACHE_PREFIX = 'fcom:search:index:';
 
 type SearchScope = 'name' | 'content' | 'all';
 
@@ -52,6 +67,8 @@ type SearchIndexStatus = {
   rootPath: string;
   isReady: boolean;
   isBuilding: boolean;
+  isStale: boolean;
+  buildId: number | null;
   lastBuiltAt: string | null;
   lastDurationMs: number | null;
   nextRefreshAt: string | null;
@@ -70,24 +87,36 @@ type SearchIndexStatus = {
   };
 };
 
-const alignToNextMinute = (timestampMs: number) => {
-  const minuteMs = 60 * 1000;
-  return Math.ceil(timestampMs / minuteMs) * minuteMs;
+type SearchIndexCachePayload = {
+  data: SearchIndexData;
+  lastBuiltAt: string | null;
+  lastDurationMs: number | null;
+  expiresAtMs: number | null;
 };
 
 const normalizePathId = (value: string) => value.replace(/^\/+/, '');
-
-const applyPathPrefix = (relativePath: string) => {
-  if (!PATH_PREFIX) {
-    return relativePath;
-  }
-  return relativePath ? `${PATH_PREFIX}/${relativePath}` : PATH_PREFIX;
-};
 
 const getNameFromPath = (value: string) => {
   const cleaned = normalizePathId(value);
   const parts = cleaned.split('/').filter(Boolean);
   return parts[parts.length - 1] || cleaned;
+};
+
+const extractRuleText = (data: any) =>
+  data?.content?.data?.[0]?.RuleText ?? data?.data?.[0]?.RuleText ?? data?.RuleText ?? data;
+
+const buildCacheKey = (serverId: string) => `${SEARCH_CACHE_PREFIX}${serverId}`;
+
+const parseCachedPayload = (raw: string): SearchIndexCachePayload | null => {
+  try {
+    const parsed = JSON.parse(raw);
+    if (!parsed?.data) {
+      return null;
+    }
+    return parsed as SearchIndexCachePayload;
+  } catch {
+    return null;
+  }
 };
 
 const createSnippet = (text: string, index: number) => {
@@ -98,6 +127,70 @@ const createSnippet = (text: string, index: number) => {
   const end = Math.min(text.length, index + 80);
   const preview = text.slice(start, end).replace(/\s+/g, ' ').trim();
   return { line, column: col, preview };
+};
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const getRetryDelayMs = (baseDelayMs: number, attempt: number) =>
+  baseDelayMs > 0 ? baseDelayMs * Math.pow(2, Math.max(0, attempt - 1)) : 0;
+
+const listRulesWithRetry = async (
+  uaClient: UAClient,
+  node: string,
+  start: number,
+  context: string,
+) => {
+  const maxAttempts = SEARCH_LIST_RETRIES + 1;
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    try {
+      return await uaClient.listRules('/', SEARCH_PAGE_LIMIT, node, false, start);
+    } catch (error: any) {
+      const message = error?.message || 'unknown error';
+      logger.warn(
+        `Search listRules failed (${context}) node=${node} start=${start} ` +
+          `attempt=${attempt}/${maxAttempts}: ${message}`,
+      );
+      if (attempt >= maxAttempts) {
+        throw new Error(
+          `Search listRules failed (${context}) after ${maxAttempts} attempts: ${message}`,
+        );
+      }
+      const delayMs = getRetryDelayMs(SEARCH_LIST_RETRY_DELAY_MS, attempt);
+      if (delayMs > 0) {
+        await sleep(delayMs);
+      }
+    }
+  }
+  throw new Error(`Search listRules failed (${context}) for node=${node} start=${start}`);
+};
+
+const readRuleWithRetry = async (
+  uaClient: UAClient,
+  pathId: string,
+  context: string,
+) => {
+  const maxAttempts = SEARCH_READ_RETRIES + 1;
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    try {
+      return await uaClient.readRule(pathId);
+    } catch (error: any) {
+      const message = error?.message || 'unknown error';
+      logger.warn(
+        `Search readRule failed (${context}) path=${pathId} ` +
+          `attempt=${attempt}/${maxAttempts}: ${message}`,
+      );
+      if (attempt >= maxAttempts) {
+        throw new Error(
+          `Search readRule failed (${context}) after ${maxAttempts} attempts: ${message}`,
+        );
+      }
+      const delayMs = getRetryDelayMs(SEARCH_READ_RETRY_DELAY_MS, attempt);
+      if (delayMs > 0) {
+        await sleep(delayMs);
+      }
+    }
+  }
+  throw new Error(`Search readRule failed (${context}) for path=${pathId}`);
 };
 
 const countOccurrences = (text: string, query: string) => {
@@ -116,13 +209,17 @@ const countOccurrences = (text: string, query: string) => {
 
 class SearchIndexService {
   private rootPath: string;
+  private serverId: string;
   private index: SearchIndexData | null = null;
   private isBuilding = false;
   private lastBuiltAt: string | null = null;
   private lastDurationMs: number | null = null;
   private nextRefreshAt: string | null = null;
+  private expiresAtMs: number | null = null;
   private lastError: string | null = null;
-  private refreshTimer: NodeJS.Timeout | null = null;
+  private buildId: number | null = null;
+  private cacheLoaded = false;
+  private loadPromise: Promise<void> | null = null;
   private progress = {
     phase: null as string | null,
     processed: 0,
@@ -130,22 +227,39 @@ class SearchIndexService {
     unit: 'files',
   };
 
-  constructor(rootPath?: string) {
-    this.rootPath = rootPath || process.env.COMS_ROOT || DEFAULT_COMS_ROOT;
+  constructor(serverId: string, rootPath?: string) {
+    this.serverId = serverId;
+    this.rootPath = rootPath || PATH_PREFIX || '';
   }
 
-  start() {
+  start(uaClient: UAClient) {
     if (this.isBuilding) {
       return;
     }
-    void this.rebuildIndex('startup');
+    void this.rebuildIndex(uaClient, 'startup');
+  }
+
+  async ensureHydrated() {
+    if (this.cacheLoaded) {
+      return;
+    }
+    if (!this.loadPromise) {
+      this.loadPromise = this.loadFromCache().finally(() => {
+        this.cacheLoaded = true;
+      });
+    }
+    await this.loadPromise;
   }
 
   getStatus(): SearchIndexStatus {
+    void this.ensureHydrated();
+    const isStale = this.isStale();
     return {
       rootPath: this.rootPath,
       isReady: !!this.index,
       isBuilding: this.isBuilding,
+      isStale,
+      buildId: this.buildId,
       lastBuiltAt: this.lastBuiltAt,
       lastDurationMs: this.lastDurationMs,
       nextRefreshAt: this.nextRefreshAt,
@@ -160,11 +274,21 @@ class SearchIndexService {
     };
   }
 
-  async rebuildIndex(trigger: 'startup' | 'manual' | 'schedule' | 'update' = 'manual') {
-    if (this.isBuilding) {
-      return;
+  isStale() {
+    if (!this.index) {
+      return false;
     }
-    this.isBuilding = true;
+    if (!this.expiresAtMs) {
+      return true;
+    }
+    return Date.now() > this.expiresAtMs;
+  }
+
+  private async runRebuild(
+    uaClient: UAClient,
+    trigger: 'startup' | 'manual' | 'auto' | 'update' = 'manual',
+  ) {
+    this.buildId = (this.buildId ?? 0) + 1;
     this.lastError = null;
     this.progress = {
       phase: 'Starting',
@@ -172,58 +296,62 @@ class SearchIndexService {
       total: 0,
       unit: 'files',
     };
+    logger.info(`Search index rebuild started (${trigger}) server=${this.serverId}`);
     const start = Date.now();
     try {
-      const nextIndex = await this.buildIndex();
+      const nextIndex = await this.buildIndex(uaClient);
       this.index = nextIndex;
       this.lastBuiltAt = new Date().toISOString();
       this.lastDurationMs = Date.now() - start;
+      this.expiresAtMs = Date.now() + CACHE_TTL_MS;
+      this.nextRefreshAt = new Date(this.expiresAtMs).toISOString();
       this.progress = {
         phase: 'Completed',
         processed: this.progress.total || this.progress.processed,
         total: this.progress.total || this.progress.processed,
         unit: this.progress.unit,
       };
-      this.scheduleNextRefresh(SEARCH_REFRESH_INTERVAL_MS);
-      logger.info(`Search index rebuilt (${trigger}) in ${this.lastDurationMs}ms`);
+      await this.persistToCache();
+      logger.info(
+        `Search index COMPLETE (${trigger}) server=${this.serverId} took ${this.lastDurationMs}ms`,
+      );
     } catch (error: any) {
       this.lastError = error?.message || 'Search index rebuild failed';
-      logger.error(`Search index rebuild error: ${this.lastError}`);
+      logger.error(
+        `Search index rebuild error server=${this.serverId}: ${this.lastError}`,
+      );
     } finally {
       this.isBuilding = false;
     }
   }
 
-  scheduleNextRefresh(intervalMs: number) {
-    if (this.refreshTimer) {
-      clearTimeout(this.refreshTimer);
-    }
-    const nextAt = alignToNextMinute(Date.now() + intervalMs);
-    this.nextRefreshAt = new Date(nextAt).toISOString();
-    this.refreshTimer = setTimeout(
-      () => {
-        void this.rebuildIndex('schedule');
-      },
-      Math.max(0, nextAt - Date.now()),
-    );
-  }
-
-  requestRebuild() {
+  async rebuildIndex(
+    uaClient: UAClient,
+    trigger: 'startup' | 'manual' | 'auto' | 'update' = 'manual',
+  ) {
     if (this.isBuilding) {
       return;
     }
-    void this.rebuildIndex('manual');
+    this.isBuilding = true;
+    await this.runRebuild(uaClient, trigger);
+  }
+
+  requestRebuild(
+    uaClient: UAClient,
+    trigger: 'startup' | 'manual' | 'auto' | 'update' = 'manual',
+  ) {
+    if (this.isBuilding) {
+      return;
+    }
+    this.isBuilding = true;
+    void this.runRebuild(uaClient, trigger);
   }
 
   async updateFileFromContent(pathId: string, content: any) {
     if (!this.index) {
       return;
     }
-    const normalized = normalizePathId(pathId);
-    const prefixed =
-      PATH_PREFIX && !normalized.startsWith(`${PATH_PREFIX}/`)
-        ? `${PATH_PREFIX}/${normalized}`
-        : normalized;
+    const prefixed = normalizePathId(pathId);
     const text = typeof content === 'string' ? content : JSON.stringify(content, null, 2);
     const name = getNameFromPath(prefixed);
     const nameLower = name.toLowerCase();
@@ -256,6 +384,9 @@ class SearchIndexService {
       contentFileCount: contentEntries.length,
       fileCount: nameEntries.filter((entry) => entry.type === 'file').length,
     };
+    this.expiresAtMs = Date.now() + CACHE_TTL_MS;
+    this.nextRefreshAt = new Date(this.expiresAtMs).toISOString();
+    await this.persistToCache();
   }
 
   search(query: string, scope: SearchScope, limit: number): SearchResult[] {
@@ -329,99 +460,188 @@ class SearchIndexService {
     return results;
   }
 
-  private async buildIndex(): Promise<SearchIndexData> {
+  private async buildIndex(uaClient: UAClient): Promise<SearchIndexData> {
+    if (!PATH_PREFIX) {
+      throw new Error('COMS_PATH_PREFIX is not configured');
+    }
     const nameEntries: NameEntry[] = [];
     const contentEntries: ContentEntry[] = [];
     let fileCount = 0;
     let folderCount = 0;
     let totalBytes = 0;
 
-    const countFiles = async (dirPath: string): Promise<number> => {
-      let count = 0;
-      const entries = await fs.readdir(dirPath, { withFileTypes: true });
-      for (const entry of entries) {
-        if (IGNORED_DIRS.has(entry.name)) {
-          continue;
-        }
-        const absolutePath = path.join(dirPath, entry.name);
-        if (entry.isDirectory()) {
-          count += await countFiles(absolutePath);
-        } else if (entry.isFile()) {
-          count += 1;
-        }
-      }
-      return count;
+    const isFolderEntry = (entry: any) => {
+      const name = String(entry?.PathName || entry?.PathID || '').toLowerCase();
+      return !name.endsWith('.json');
     };
 
-    try {
-      const totalFiles = await countFiles(this.rootPath);
-      this.progress = {
-        phase: 'Indexing files',
-        processed: 0,
-        total: totalFiles,
-        unit: 'files',
-      };
-    } catch (error: any) {
-      logger.warn(`Search index count failed: ${error?.message || 'count error'}`);
-      this.progress = {
-        phase: 'Indexing files',
-        processed: 0,
-        total: 0,
-        unit: 'files',
-      };
-    }
+    const listDirectory = async (node: string) => {
+      const all: any[] = [];
+      let start = 0;
+      while (true) {
+        const response = await listRulesWithRetry(uaClient, node, start, 'build-list');
+        const data = Array.isArray(response?.data) ? response.data : [];
+        if (data.length === 0) {
+          break;
+        }
+        all.push(...data);
+        if (data.length < SEARCH_PAGE_LIMIT) {
+          break;
+        }
+        start += data.length;
+      }
+      return all;
+    };
 
-    const walk = async (dirPath: string, relativePath: string) => {
-      const entries = await fs.readdir(dirPath, { withFileTypes: true });
+    const countFolders = async () => {
+      let total = 0;
+      const queue = [PATH_PREFIX];
+      const inFlight = new Set<Promise<void>>();
+
+      const handleNode = async (node: string) => {
+        const entries = await listDirectory(node);
+        for (const entry of entries) {
+          if (!isFolderEntry(entry)) {
+            continue;
+          }
+          const entryPath = normalizePathId(String(entry?.PathID || entry?.PathName || ''));
+          if (!entryPath) {
+            continue;
+          }
+          total += 1;
+          this.progress.processed = total;
+          queue.push(entryPath);
+        }
+      };
+
+      while (queue.length > 0 || inFlight.size > 0) {
+        while (queue.length > 0 && inFlight.size < SEARCH_LIST_CONCURRENCY) {
+          const node = queue.shift();
+          if (!node) {
+            continue;
+          }
+          const task = handleNode(node).finally(() => {
+            inFlight.delete(task);
+          });
+          inFlight.add(task);
+        }
+        if (inFlight.size > 0) {
+          await Promise.race(inFlight);
+        }
+      }
+      return total;
+    };
+
+    this.progress = {
+      phase: 'Counting folders',
+      processed: 0,
+      total: 0,
+      unit: 'folders',
+    };
+
+    const totalFolders = await countFolders();
+    const totalNodes = Math.max(1, totalFolders + 1);
+    this.progress = {
+      phase: 'Listing folders',
+      processed: 0,
+      total: totalNodes,
+      unit: 'folders',
+    };
+
+    const fileEntries: Array<{ pathId: string; name: string }> = [];
+    const folderQueue: string[] = [PATH_PREFIX];
+    const inFlight = new Set<Promise<void>>();
+
+    const handleNode = async (node: string) => {
+      const entries = await listDirectory(node);
       for (const entry of entries) {
-        if (IGNORED_DIRS.has(entry.name)) {
+        const entryPath = normalizePathId(String(entry?.PathID || entry?.PathName || ''));
+        if (!entryPath) {
           continue;
         }
-        const absolutePath = path.join(dirPath, entry.name);
-        const nextRelative = relativePath ? `${relativePath}/${entry.name}` : entry.name;
-        if (entry.isDirectory()) {
+        const entryName = getNameFromPath(entryPath);
+        if (isFolderEntry(entry)) {
           folderCount += 1;
-          const pathId = applyPathPrefix(nextRelative);
           nameEntries.push({
-            pathId,
-            name: entry.name,
+            pathId: entryPath,
+            name: entryName,
             type: 'folder',
-            nameLower: entry.name.toLowerCase(),
-            pathLower: pathId.toLowerCase(),
+            nameLower: entryName.toLowerCase(),
+            pathLower: entryPath.toLowerCase(),
           });
-          await walk(absolutePath, nextRelative);
-        } else if (entry.isFile()) {
-          const pathId = applyPathPrefix(nextRelative);
+          folderQueue.push(entryPath);
+        } else {
           fileCount += 1;
           nameEntries.push({
-            pathId,
-            name: entry.name,
+            pathId: entryPath,
+            name: entryName,
             type: 'file',
-            nameLower: entry.name.toLowerCase(),
-            pathLower: pathId.toLowerCase(),
+            nameLower: entryName.toLowerCase(),
+            pathLower: entryPath.toLowerCase(),
           });
-          this.progress.processed += 1;
-          try {
-            const stat = await fs.stat(absolutePath);
-            totalBytes += stat.size;
-            if (stat.size <= MAX_CONTENT_BYTES) {
-              const content = await fs.readFile(absolutePath, 'utf-8');
-              contentEntries.push({
-                pathId,
-                name: entry.name,
-                content,
-                contentLower: content.toLowerCase(),
-                sizeBytes: stat.size,
-              });
-            }
-          } catch (error: any) {
-            logger.warn(`Skipping file ${absolutePath}: ${error?.message || 'read error'}`);
-          }
+          fileEntries.push({ pathId: entryPath, name: entryName });
         }
       }
+      this.progress.processed += 1;
     };
 
-    await walk(this.rootPath, '');
+    while (folderQueue.length > 0 || inFlight.size > 0) {
+      while (folderQueue.length > 0 && inFlight.size < SEARCH_LIST_CONCURRENCY) {
+        const node = folderQueue.shift();
+        if (!node) {
+          continue;
+        }
+        const task = handleNode(node).finally(() => {
+          inFlight.delete(task);
+        });
+        inFlight.add(task);
+      }
+      if (inFlight.size > 0) {
+        await Promise.race(inFlight);
+      }
+    }
+
+    this.progress = {
+      phase: 'Indexing content',
+      processed: 0,
+      total: fileEntries.length,
+      unit: 'files',
+    };
+
+    const runPool = async (
+      items: Array<{ pathId: string; name: string }>,
+      concurrency: number,
+    ) => {
+      let cursor = 0;
+      const workers = Array.from({ length: Math.min(concurrency, items.length) }, async () => {
+        while (cursor < items.length) {
+          const idx = cursor;
+          cursor += 1;
+          const entry = items[idx];
+          try {
+            const response = await readRuleWithRetry(uaClient, entry.pathId, 'build-read');
+            const raw = extractRuleText(response);
+            const text = typeof raw === 'string' ? raw : JSON.stringify(raw ?? {}, null, 2);
+            const sizeBytes = Buffer.byteLength(text, 'utf-8');
+            totalBytes += sizeBytes;
+            if (sizeBytes <= MAX_CONTENT_BYTES) {
+              contentEntries.push({
+                pathId: entry.pathId,
+                name: entry.name,
+                content: text,
+                contentLower: text.toLowerCase(),
+                sizeBytes,
+              });
+            }
+          } finally {
+            this.progress.processed += 1;
+          }
+        }
+      });
+      await Promise.all(workers);
+    };
+
+    await runPool(fileEntries, SEARCH_CONTENT_CONCURRENCY);
 
     return {
       nameEntries,
@@ -432,14 +652,86 @@ class SearchIndexService {
       totalBytes,
     };
   }
+
+  private async loadFromCache() {
+    if (!this.serverId) {
+      return;
+    }
+    try {
+      const client = await getRedisClient();
+      const raw = await client.get(buildCacheKey(this.serverId));
+      if (!raw) {
+        return;
+      }
+      const parsed = parseCachedPayload(raw);
+      if (!parsed) {
+        return;
+      }
+      this.index = parsed.data;
+      this.lastBuiltAt = parsed.lastBuiltAt ?? null;
+      this.lastDurationMs = parsed.lastDurationMs ?? null;
+      this.expiresAtMs = typeof parsed.expiresAtMs === 'number' ? parsed.expiresAtMs : null;
+      this.nextRefreshAt = this.expiresAtMs
+        ? new Date(this.expiresAtMs).toISOString()
+        : null;
+      this.lastError = null;
+      this.progress = {
+        phase: 'Loaded',
+        processed: 0,
+        total: 0,
+        unit: 'files',
+      };
+    } catch (error: any) {
+      logger.warn(`Search cache load failed: ${error?.message || 'read error'}`);
+    }
+  }
+
+  private async persistToCache() {
+    if (!this.serverId || !this.index) {
+      return;
+    }
+    try {
+      const client = await getRedisClient();
+      const payload: SearchIndexCachePayload = {
+        data: this.index,
+        lastBuiltAt: this.lastBuiltAt,
+        lastDurationMs: this.lastDurationMs,
+        expiresAtMs: this.expiresAtMs,
+      };
+      await client.set(buildCacheKey(this.serverId), JSON.stringify(payload));
+    } catch (error: any) {
+      logger.warn(`Search cache persist failed: ${error?.message || 'write error'}`);
+    }
+  }
 }
 
-const searchIndexService = new SearchIndexService();
+const searchIndexRegistry = new Map<string, SearchIndexService>();
 
-export const startSearchIndexing = () => searchIndexService.start();
-export const getSearchIndexStatus = () => searchIndexService.getStatus();
-export const rebuildSearchIndex = async () => searchIndexService.rebuildIndex('manual');
-export const requestSearchIndexRebuild = () => searchIndexService.requestRebuild();
-export const searchIndex = () => searchIndexService;
+const getSearchIndexService = (serverId: string) => {
+  const key = serverId || 'unknown-server';
+  const existing = searchIndexRegistry.get(key);
+  if (existing) {
+    return existing;
+  }
+  const next = new SearchIndexService(key);
+  searchIndexRegistry.set(key, next);
+  return next;
+};
+
+export const startSearchIndexing = (serverId: string, uaClient: UAClient) =>
+  getSearchIndexService(serverId).start(uaClient);
+export const getSearchIndexStatus = (serverId: string) =>
+  getSearchIndexService(serverId).getStatus();
+export const rebuildSearchIndex = async (
+  serverId: string,
+  uaClient: UAClient,
+  trigger: 'startup' | 'manual' | 'auto' | 'update' = 'manual',
+) => getSearchIndexService(serverId).rebuildIndex(uaClient, trigger);
+export const requestSearchIndexRebuild = (
+  serverId: string,
+  uaClient: UAClient,
+  trigger: 'startup' | 'manual' | 'auto' | 'update' = 'manual',
+) => getSearchIndexService(serverId).requestRebuild(uaClient, trigger);
+export const searchIndex = (serverId: string) => getSearchIndexService(serverId);
 
 export type { SearchScope, SearchResult, SearchIndexStatus };

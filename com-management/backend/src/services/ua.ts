@@ -478,6 +478,38 @@ export class UAClient {
   }
 
   /**
+   * Get available Helm chart catalogs.
+   */
+  async getMicroserviceCatalogs(start: number = 0, limit: number = 200): Promise<any> {
+    try {
+      logger.info('[UA] Fetching microservice catalogs');
+      const response = await this.client.get('/microservice/Catalogs', {
+        params: { start, limit },
+      });
+      return response.data;
+    } catch (error: any) {
+      logger.error(`[UA] Error fetching microservice catalogs: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
+   * Get default helm chart values for a catalog entry.
+   */
+  async getCatalogHelmChartValues(helmchart: string, version: string): Promise<any> {
+    try {
+      logger.info('[UA] Fetching helm chart default values');
+      const response = await this.client.get('/microservice/Catalogs/readForHelmchartValues', {
+        params: { Helmchart: helmchart, Version: version },
+      });
+      return response.data;
+    } catch (error: any) {
+      logger.error(`[UA] Error fetching helm chart values: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
    * Uninstall a Helm chart by deploy id.
    */
   async uninstallHelmChart(deployId: string): Promise<any> {
@@ -536,6 +568,22 @@ export class UAClient {
       return response.data;
     } catch (error: any) {
       logger.error(`[UA] Error fetching Helm chart values: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
+   * Get workload tree entries for microservice deployments.
+   */
+  async getMicroserviceWorkloadTree(node: string, type: string = 'deployment'): Promise<any> {
+    try {
+      logger.info('[UA] Fetching microservice workload tree');
+      const response = await this.client.get('/microservice/Workload/readForTree', {
+        params: { node, type },
+      });
+      return response.data;
+    } catch (error: any) {
+      logger.error(`[UA] Error fetching microservice workload tree: ${error.message}`);
       throw error;
     }
   }

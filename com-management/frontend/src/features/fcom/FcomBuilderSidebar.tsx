@@ -729,7 +729,7 @@ export default function FcomBuilderSidebar({
               )}
               {isBuilderTargetReady && (
                 <>
-                  <div className="processor-steps">
+                  <div className="builder-steps">
                     {[
                       { key: 'select', label: 'Select' },
                       { key: 'configure', label: 'Configure' },
@@ -758,7 +758,7 @@ export default function FcomBuilderSidebar({
                         <button
                           key={stepItem.key}
                           type="button"
-                          className={`processor-step${isActive ? ' processor-step-active' : ''}${isComplete ? ' processor-step-complete' : ''}`}
+                          className={`builder-step${isActive ? ' builder-step-active' : ''}${isComplete ? ' builder-step-complete' : ''}`}
                           disabled={!isEnabled}
                           title={title}
                           onClick={() => {
@@ -768,7 +768,7 @@ export default function FcomBuilderSidebar({
                             setProcessorStep(stepItem.key as 'select' | 'configure' | 'review');
                           }}
                         >
-                          <span className="processor-step-index">
+                          <span className="builder-step-index">
                             {isComplete ? '✓' : index + 1}
                           </span>
                           {stepItem.label}

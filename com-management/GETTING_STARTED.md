@@ -71,6 +71,19 @@ curl https://localhost:3001/health
 - UA TLS failures: set UA_TLS_INSECURE=true for test servers.
 - Missing search data: ensure COMS_ROOT points at /root/navigator/coms.
 
+## Cache behavior (stale-while-revalidate)
+
+The backend never deletes search/overview/folder cache entries on TTL expiry.
+Instead, cache entries store an `expiresAtMs` freshness marker:
+
+- Fresh entries are served immediately.
+- Stale entries are served immediately and a background rebuild is queued.
+- Missing entries trigger a rebuild; requests return a 503 only if there is no cached data.
+
+This preserves UI usability during transient UA outages. Configure freshness windows
+using `CACHE_TTL_MS`, `SEARCH_CACHE_TTL_MS`, `OVERVIEW_CACHE_TTL_MS`, and
+`FOLDER_OVERVIEW_TTL_MS`.
+
 ## Documentation
 
 - App overview: [README.md](README.md)

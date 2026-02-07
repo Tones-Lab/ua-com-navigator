@@ -150,7 +150,7 @@ router.post('/save', async (req: Request, res: Response) => {
     const serverId = await getServerIdFromSession(req);
     const data = await uaClient.updateRule(String(file_id), content, commit_message);
     try {
-      await searchIndex().updateFileFromContent(String(file_id), content);
+      await searchIndex(serverId).updateFileFromContent(String(file_id), content);
     } catch (err: any) {
       logger.warn(`Search index update failed: ${err?.message || 'unknown error'}`);
     }
@@ -209,7 +209,7 @@ router.post('/:file_id/save', async (req: Request, res: Response) => {
     const serverId = await getServerIdFromSession(req);
     const data = await uaClient.updateRule(file_id, content, commit_message);
     try {
-      await searchIndex().updateFileFromContent(String(file_id), content);
+      await searchIndex(serverId).updateFileFromContent(String(file_id), content);
     } catch (err: any) {
       logger.warn(`Search index update failed: ${err?.message || 'unknown error'}`);
     }

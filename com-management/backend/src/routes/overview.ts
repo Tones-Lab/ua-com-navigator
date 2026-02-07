@@ -1,4 +1,5 @@
 import { Router, Request, Response } from 'express';
+import logger from '../utils/logger';
 import { getCredentials, getServer, getSession } from '../services/sessionStore';
 import {
   getOverviewStatus,
@@ -60,7 +61,16 @@ router.get('/status', async (req: Request, res: Response) => {
   }
   try {
     const { serverId } = await getUaClientFromSession(req);
-    res.json(getOverviewStatus(serverId));
+    await overviewIndex().ensureHydrated(serverId);
+    const status = getOverviewStatus(serverId);
+    if (status.isReady && status.isStale && !status.isBuilding) {
+      const { uaClient } = await getUaClientFromSession(req);
+      logger.info(
+        `Overview cache stale; serving cached data and scheduling refresh server=${serverId}`,
+      );
+      requestOverviewRebuild(serverId, uaClient, 'auto');
+    }
+    res.json(status);
   } catch (error: any) {
     res.status(401).json({ error: error.message || 'Session not found or expired' });
   }
@@ -72,7 +82,8 @@ router.post('/rebuild', async (req: Request, res: Response) => {
   }
   try {
     const { uaClient, serverId } = await getUaClientFromSession(req);
-    requestOverviewRebuild(serverId, uaClient);
+    await overviewIndex().ensureHydrated(serverId);
+    requestOverviewRebuild(serverId, uaClient, 'manual');
     res.json(getOverviewStatus(serverId));
   } catch (error: any) {
     res.status(401).json({ error: error.message || 'Session not found or expired' });
@@ -85,12 +96,21 @@ router.get('/', async (req: Request, res: Response) => {
   }
   try {
     const { uaClient, serverId } = await getUaClientFromSession(req);
+    await overviewIndex().ensureHydrated(serverId);
     const status = getOverviewStatus(serverId);
     if (!status.isReady) {
+      requestOverviewRebuild(serverId, uaClient, 'auto');
       return res.status(503).json({
         error: status.lastError || 'Overview index is still building',
         status,
       });
+    }
+
+    if (status.isStale && !status.isBuilding) {
+      logger.info(
+        `Overview cache stale; serving cached data and scheduling refresh server=${serverId}`,
+      );
+      requestOverviewRebuild(serverId, uaClient, 'auto');
     }
 
     res.json({

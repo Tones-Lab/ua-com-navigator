@@ -24,8 +24,11 @@ import brokerRoutes from './routes/broker';
 import mibRoutes from './routes/mibs';
 import overviewRoutes from './routes/overview';
 import microserviceRoutes from './routes/microservice';
-import { startSearchIndexing } from './services/searchIndex';
+import healthRoutes from './routes/health';
+import metricsRoutes from './routes/metrics';
 import { startCacheWarmupFromEnv } from './services/cacheWarmup';
+import { startConnectivityStatusPolling } from './services/connectivityStatusCache';
+import { startMicroserviceStatusPolling } from './services/microserviceStatusCache';
 
 dotenv.config();
 
@@ -98,6 +101,8 @@ app.use('/api/v1/broker', brokerRoutes);
 app.use('/api/v1/mibs', mibRoutes);
 app.use('/api/v1/overview', overviewRoutes);
 app.use('/api/v1/microservice', microserviceRoutes);
+app.use('/api/v1/health', healthRoutes);
+app.use('/metrics', metricsRoutes);
 
 // Health check
 app.get('/health', (req: Request, res: Response) => {
@@ -125,7 +130,8 @@ if (useHttps) {
   });
 }
 
-startSearchIndexing();
 startCacheWarmupFromEnv();
+startMicroserviceStatusPolling();
+startConnectivityStatusPolling();
 
 export default app;

@@ -41,6 +41,11 @@ Explicit requirement: if a code change requires a restart to take effect, you (t
 - **Only send fields explicitly documented or required by the UA REST API.**
 - **Do not include extra/unknown keys** even if they appear to be tolerated by UA.
 
+## UA REST API helper (standard)
+
+- Use the shared helper script at [scripts/ua_api_helper.py](scripts/ua_api_helper.py) for UA REST calls.
+- This file contains the canonical host, port, auth, and TLS settings for this environment.
+
 ## Git commit messages (strict)
 
 All commits must follow this format:

@@ -111,9 +111,24 @@ Backend configuration is driven by environment variables (see [backend/.env.exam
 | SEARCH_MAX_CONTENT_BYTES     | 5242880                                         | Max file bytes indexed for content search |
 | EVENTS_SCHEMA_TTL_MS         | 900000                                          | Cache TTL for event schema                |
 | EVENTS_SCHEMA_PATH           | backend/data/events-schema.json                 | Fallback schema path                      |
-| FOLDER_OVERVIEW_TTL_MS       | 600000                                          | Folder overview cache TTL                 |
+| CACHE_TTL_MS                 | 600000                                          | Cache freshness window for stale refresh  |
+| SEARCH_CACHE_TTL_MS          | 600000                                          | Search cache freshness window             |
+| OVERVIEW_CACHE_TTL_MS        | 600000                                          | Overview cache freshness window           |
+| FOLDER_OVERVIEW_TTL_MS       | 600000                                          | Folder cache freshness window             |
 | OVERVIEW_PAGE_LIMIT          | 500                                             | UA page size for overview indexing        |
 | OVERVIEW_REFRESH_INTERVAL_MS | 3600000                                         | Overview refresh interval                 |
+| SEARCH_LIST_RETRIES          | 3                                               | Search list retry attempts                |
+| SEARCH_LIST_RETRY_DELAY_MS   | 500                                             | Search list retry base delay (ms)         |
+| SEARCH_READ_RETRIES          | 3                                               | Search read retry attempts                |
+| SEARCH_READ_RETRY_DELAY_MS   | 500                                             | Search read retry base delay (ms)         |
+| OVERVIEW_LIST_RETRIES        | 3                                               | Overview list retry attempts              |
+| OVERVIEW_LIST_RETRY_DELAY_MS | 500                                             | Overview list retry base delay (ms)       |
+| OVERVIEW_READ_RETRIES        | 3                                               | Overview read retry attempts              |
+| OVERVIEW_READ_RETRY_DELAY_MS | 500                                             | Overview read retry base delay (ms)       |
+| FOLDER_LIST_RETRIES          | 3                                               | Folder list retry attempts                |
+| FOLDER_LIST_RETRY_DELAY_MS   | 500                                             | Folder list retry base delay (ms)         |
+| FOLDER_READ_RETRIES          | 3                                               | Folder read retry attempts                |
+| FOLDER_READ_RETRY_DELAY_MS   | 500                                             | Folder read retry base delay (ms)         |
 | UA_DB_QUERY_ENDPOINT         | /database/queryTools/executeQuery               | UA DB query endpoint                      |
 | UA_DB_QUERY_NAME             | Event                                           | UA query DB name                          |
 | UA_DB_QUERY_ID               |                                                 | UA query DB id                            |
@@ -126,6 +141,52 @@ Backend configuration is driven by environment variables (see [backend/.env.exam
 | MIBS                         |                                                 | Extra MIB search path for SNMP tools      |
 
 Frontend configuration is code‑driven; no env vars are required by default.
+
+## Cache lifecycle (stale-while-revalidate)
+
+Search, overview, and folder caches are designed to never disappear due to TTL expiry.
+Instead, each cache entry stores an `expiresAtMs` timestamp:
+
+- Fresh cache entries are served immediately.
+- Stale cache entries are still served immediately, and a background rebuild is queued.
+- Missing cache entries trigger a rebuild and return a 503 only when there is no cached data.
+
+The `*_TTL_MS` values define the freshness window only. Redis keys are persisted without
+expiration to preserve usability during transient outages.
+
+When staleness is detected, the backend logs a line such as:
+
+"Search cache stale; serving cached data and scheduling refresh"
+
+Status endpoints expose `isStale` and `nextRefreshAt` so the UI can show refresh timing
+without forcing users to wait for rebuilds.
+
+## Monitoring and runbook
+
+Recommended checks (systemd + journald):
+
+```bash
+systemctl status com-management-backend --no-pager
+journalctl -u com-management-backend.service -n 200 --no-pager
+```
+
+Common log patterns:
+
+- Cache completion: `Search index COMPLETE`, `Overview index COMPLETE`, `Folder cache COMPLETE`
+- Stale serve + refresh: `cache stale; serving cached data and scheduling refresh`
+- Warmup staleness: `Cache warmup: ... cache stale; scheduling refresh`
+- Rebuild failures: `rebuild failed` / `rebuild error`
+
+If rebuild failures persist, increase retry/backoff env vars and confirm UA connectivity.
+
+## Tests
+
+Backend unit tests (cache staleness):
+
+```bash
+cd /root/navigator/com-management/backend
+npm test
+```
 
 ## Backend API surface
 
