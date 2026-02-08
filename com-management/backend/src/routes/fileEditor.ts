@@ -77,12 +77,16 @@ router.get('/read', async (req: Request, res: Response) => {
     if (!file_id) {
       return res.status(400).json({ error: 'Missing file_id' });
     }
-
+    const start = Date.now();
     logger.info(`Reading file: ${file_id}, revision: ${revision}`);
     const uaClient = await getUaClientFromSession(req);
 
     try {
+      const readStart = Date.now();
       const data = await uaClient.readRule(String(file_id), String(revision));
+      logger.info(
+        `Read file: ${file_id} in ${Date.now() - readStart}ms (total ${Date.now() - start}ms)`,
+      );
       const etag = crypto.createHash('md5').update(JSON.stringify(data)).digest('hex');
       res.json({
         file_id: String(file_id),
@@ -106,11 +110,16 @@ router.get('/:file_id/read', async (req: Request, res: Response) => {
     const { file_id } = req.params;
     const { revision = 'HEAD' } = req.query;
 
+    const start = Date.now();
     logger.info(`Reading file: ${file_id}, revision: ${revision}`);
     const uaClient = await getUaClientFromSession(req);
 
     try {
+      const readStart = Date.now();
       const data = await uaClient.readRule(file_id, String(revision));
+      logger.info(
+        `Read file: ${file_id} in ${Date.now() - readStart}ms (total ${Date.now() - start}ms)`,
+      );
       const etag = crypto.createHash('md5').update(JSON.stringify(data)).digest('hex');
       res.json({
         file_id: file_id,

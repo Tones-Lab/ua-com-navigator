@@ -1,7 +1,7 @@
 import logger from '../utils/logger';
 import { incCounter, setGauge } from '../utils/metricsStore';
 import { getBootstrapClient } from './bootstrapClient';
-import { getCachedMicroserviceStatus } from './microserviceStatusCache';
+import { getCachedMicroserviceStatus, refreshMicroserviceStatusNow } from './microserviceStatusCache';
 
 export type ConnectivityStatusSummary = {
   success: boolean;
@@ -74,13 +74,22 @@ const checkMicroserviceHealth = () => {
   if (!microserviceCache.data) {
     return { ok: false, error: 'Microservice status not available' };
   }
-  const stale = microserviceCache.updatedAt
-    ? Date.now() - Date.parse(microserviceCache.updatedAt) > getPollIntervalMs() * 2
-    : true;
-  if (stale) {
-    return { ok: false, error: 'Microservice status stale' };
-  }
-  const ok = microserviceCache.data.chainReady;
+  const required = Array.isArray(microserviceCache.data.required)
+    ? microserviceCache.data.required
+    : [];
+  const missingCount = Array.isArray(microserviceCache.data.missing)
+    ? microserviceCache.data.missing.length
+    : 0;
+  const hasDown = required.some((entry: any) => {
+    if (entry?.runningState) {
+      return entry.runningState === 'down';
+    }
+    return Boolean(entry?.installed) && entry?.running === false;
+  });
+  const hasUnknown =
+    microserviceCache.data.chainUnknown === true ||
+    required.some((entry: any) => entry?.runningState === 'unknown');
+  const ok = missingCount === 0 && !hasDown && (microserviceCache.data.chainReady || hasUnknown);
   return { ok, error: ok ? null : 'Microservice chain not ready' };
 };
 
@@ -99,6 +108,16 @@ const checkUaRest = async () => {
 
 export const refreshConnectivityStatusNow = async () => {
   const uaResult = await checkUaRest();
+  const microserviceCache = getCachedMicroserviceStatus();
+  const pollMs = getPollIntervalMs();
+  const updatedAtMs = microserviceCache.updatedAt ? Date.parse(microserviceCache.updatedAt) : 0;
+  const ageMs = updatedAtMs ? Date.now() - updatedAtMs : Number.MAX_SAFE_INTEGER;
+  const sessionFresh =
+    microserviceCache.data && microserviceCache.source === 'session' && ageMs < pollMs;
+
+  if (!sessionFresh) {
+    await refreshMicroserviceStatusNow();
+  }
   const microserviceResult = checkMicroserviceHealth();
 
   const data: ConnectivityStatusSummary = {

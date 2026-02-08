@@ -9,6 +9,16 @@ import { requestSearchIndexRebuild } from './searchIndex';
 const OVERVIEW_CACHE_PREFIX = 'fcom:overview:index:';
 const SEARCH_CACHE_PREFIX = 'fcom:search:index:';
 const FOLDER_CACHE_META_PREFIX = 'fcom:folder:overview:meta:';
+const DEFAULT_CACHE_TTL_MS = 10 * 60 * 1000;
+const OVERVIEW_CACHE_TTL_MS = Number(
+  process.env.CACHE_TTL_MS || process.env.OVERVIEW_CACHE_TTL_MS || DEFAULT_CACHE_TTL_MS,
+);
+const SEARCH_CACHE_TTL_MS = Number(
+  process.env.CACHE_TTL_MS || process.env.SEARCH_CACHE_TTL_MS || DEFAULT_CACHE_TTL_MS,
+);
+const FOLDER_CACHE_TTL_MS = Number(
+  process.env.CACHE_TTL_MS || process.env.FOLDER_OVERVIEW_TTL_MS || DEFAULT_CACHE_TTL_MS,
+);
 
 const warmedServers = new Set<string>();
 
@@ -52,9 +62,44 @@ const warmupIfMissing = async (
       }
     };
 
-    const overviewExpiresAtMs = safeParse(overviewRaw)?.expiresAtMs ?? null;
-    const searchExpiresAtMs = safeParse(searchRaw)?.expiresAtMs ?? null;
-    const folderExpiresAtMs = safeParse(folderMetaRaw)?.expiresAtMs ?? null;
+    const overviewPayload = safeParse(overviewRaw);
+    const searchPayload = safeParse(searchRaw);
+    const folderMetaPayload = safeParse(folderMetaRaw);
+
+    const overviewExpiresAtMs = overviewPayload?.expiresAtMs ?? null;
+    const searchExpiresAtMs = searchPayload?.expiresAtMs ?? null;
+    const folderExpiresAtMs = folderMetaPayload?.expiresAtMs ?? null;
+    const overviewLastBuiltAt = overviewPayload?.lastBuiltAt ?? null;
+    const searchLastBuiltAt = searchPayload?.lastBuiltAt ?? null;
+    const folderLastBuiltAtMs = folderMetaPayload?.lastBuiltAtMs ?? null;
+
+    const fallbackExpiryFromLastBuilt = (
+      lastBuilt: string | number | null,
+      ttlMs: number,
+    ) => {
+      if (!lastBuilt) {
+        return null;
+      }
+      const lastBuiltMs =
+        typeof lastBuilt === 'number' ? lastBuilt : Date.parse(String(lastBuilt));
+      if (Number.isNaN(lastBuiltMs)) {
+        return null;
+      }
+      return lastBuiltMs + ttlMs;
+    };
+
+    const overviewEffectiveExpiry =
+      typeof overviewExpiresAtMs === 'number'
+        ? overviewExpiresAtMs
+        : fallbackExpiryFromLastBuilt(overviewLastBuiltAt, OVERVIEW_CACHE_TTL_MS);
+    const searchEffectiveExpiry =
+      typeof searchExpiresAtMs === 'number'
+        ? searchExpiresAtMs
+        : fallbackExpiryFromLastBuilt(searchLastBuiltAt, SEARCH_CACHE_TTL_MS);
+    const folderEffectiveExpiry =
+      typeof folderExpiresAtMs === 'number'
+        ? folderExpiresAtMs
+        : fallbackExpiryFromLastBuilt(folderLastBuiltAtMs, FOLDER_CACHE_TTL_MS);
 
     const overviewMissing = !overviewRaw;
     const searchMissing = !searchRaw;
@@ -62,18 +107,18 @@ const warmupIfMissing = async (
 
     const overviewStale = overviewMissing
       ? false
-      : typeof overviewExpiresAtMs === 'number'
-        ? now > overviewExpiresAtMs
+      : typeof overviewEffectiveExpiry === 'number'
+        ? now > overviewEffectiveExpiry
         : true;
     const searchStale = searchMissing
       ? false
-      : typeof searchExpiresAtMs === 'number'
-        ? now > searchExpiresAtMs
+      : typeof searchEffectiveExpiry === 'number'
+        ? now > searchEffectiveExpiry
         : true;
     const folderStale = folderMissing
       ? false
-      : typeof folderExpiresAtMs === 'number'
-        ? now > folderExpiresAtMs
+      : typeof folderEffectiveExpiry === 'number'
+        ? now > folderEffectiveExpiry
         : true;
 
     const describeState = (missing: boolean, stale: boolean) => {

@@ -29,8 +29,119 @@ tags:
     description: FCOM JSON schema and validation
   - name: Overrides
     description: FCOM override file management
+  - name: Microservices
+    description: Microservice health and deployment status
 
 paths:
+  /microservice/status:
+    get:
+      tags:
+        - Microservices
+      summary: Get required microservice status
+      description: |
+        Returns the status of required microservices and cache metadata.
+        Use refresh=1 to force a real-time refresh from UA.
+      security:
+        - sessionCookie: []
+      parameters:
+        - in: query
+          name: refresh
+          schema:
+            type: string
+            enum: ['1']
+          required: false
+          description: Force real-time refresh when set to 1.
+      responses:
+        '200':
+          description: Microservice status summary
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  chainReady:
+                    type: boolean
+                  chainUnknown:
+                    type: boolean
+                  required:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        label:
+                          type: string
+                        installed:
+                          type: boolean
+                        available:
+                          type: boolean
+                        running:
+                          type: boolean
+                        runningState:
+                          type: string
+                          enum: [ok, down, unknown]
+                        reason:
+                          type: string
+                          nullable: true
+                        cluster:
+                          type: string
+                        namespace:
+                          type: string
+                        workload:
+                          type: object
+                          nullable: true
+                          properties:
+                            ready:
+                              type: string
+                            available:
+                              type: string
+                            uptodate:
+                              type: string
+                  missing:
+                    type: array
+                    items:
+                      type: string
+                  installedCount:
+                    type: integer
+                  catalogCount:
+                    type: integer
+                  updatedAt:
+                    type: string
+                    format: date-time
+                  cache:
+                    type: object
+                    properties:
+                      source:
+                        type: string
+                      updatedAt:
+                        type: string
+                        format: date-time
+                      lastAttemptAt:
+                        type: string
+                        format: date-time
+                      serverId:
+                        type: string
+                        nullable: true
+                      ageSeconds:
+                        type: integer
+                        nullable: true
+                      stale:
+                        type: boolean
+                      error:
+                        type: string
+                        nullable: true
+                      refreshAttempted:
+                        type: boolean
+                      refreshError:
+                        type: string
+                        nullable: true
+        '401':
+          description: No active session
+        '500':
+          description: Failed to retrieve microservice status
   /auth/login:
     post:
       tags:

@@ -14,6 +14,18 @@ import FcomBuilderSidebar from './features/fcom/FcomBuilderSidebar';
 import './App.css';
 
 const COMS_PATH_PREFIX = 'id-core/default/processing/event/fcom/_objects';
+const FILE_LOAD_STAGE_ORDER = ['original', 'overrides', 'compare', 'render'] as const;
+const FILE_LOAD_STAGE_TIMING = {
+  showDelayMs: 120,
+  stepMs: 380,
+  minVisibleMs: 900,
+  exitGraceMs: 450,
+  holdAfterRenderMs: 1500,
+};
+const OVERRIDE_SAVE_TIMING = {
+  staggerMs: 140,
+  stepMs: 240,
+};
 
 class ErrorBoundary extends React.Component<
   { children: React.ReactNode },
@@ -56,6 +68,7 @@ type AppTab = 'overview' | 'fcom' | 'pcom' | 'mib';
 export default function App() {
   const { session, servers, isAuthenticated, setSession, clearSession, setServers } =
     useSessionStore();
+  const nowMs = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
   const [activeApp, setActiveApp] = useState<AppTab>('overview');
   const [serverId, setServerId] = useState('');
   const [username, setUsername] = useState('');
@@ -142,6 +155,9 @@ export default function App() {
   const [mibDefinitions, setMibDefinitions] = useState<any[]>([]);
   const [mibDefinitionSearch, setMibDefinitionSearch] = useState('');
   const [mibSelectedDefinition, setMibSelectedDefinition] = useState<any | null>(null);
+  const [mibSupportByPath, setMibSupportByPath] = useState<
+    Record<string, { fcom: boolean | null; pcom: boolean | null; checkedAt: number }>
+  >({});
   const [mibOutput, setMibOutput] = useState('');
   const [mibOutputName, setMibOutputName] = useState('');
   const [mib2FcomLoading, setMib2FcomLoading] = useState(false);
@@ -528,12 +544,40 @@ export default function App() {
   const [selectedFile, setSelectedFile] = useState<any>(null);
   const [fileData, setFileData] = useState<any>(null);
   const [fileLoading, setFileLoading] = useState(false);
+  const [fileLoadStageTarget, setFileLoadStageTarget] = useState<
+    'original' | 'overrides' | 'compare' | 'render' | null
+  >(null);
+  const [fileLoadStageDisplay, setFileLoadStageDisplay] = useState<
+    'original' | 'overrides' | 'compare' | 'render' | null
+  >(null);
+  const fileLoadStageDisplayRef = useRef<
+    'original' | 'overrides' | 'compare' | 'render' | null
+  >(null);
+  const fileLoadStageTimersRef = useRef<number[]>([]);
+  const fileLoadStageStartRef = useRef<number | null>(null);
+  const fileLoadStageHideTimeoutRef = useRef<number | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
   const [editorText, setEditorText] = useState('');
   const [commitMessage, setCommitMessage] = useState('');
   const [saveLoading, setSaveLoading] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [saveSuccess, setSaveSuccess] = useState<string | null>(null);
+  const [overrideSaveStatus, setOverrideSaveStatus] = useState<
+    Array<{
+      objectName: string;
+      fileName: string;
+      status: 'queued' | 'saving' | 'retrying' | 'done' | 'failed';
+    }>
+  >([]);
+  const [overrideSaveDisplayStatus, setOverrideSaveDisplayStatus] = useState<
+    Array<{
+      objectName: string;
+      fileName: string;
+      status: 'queued' | 'saving' | 'retrying' | 'done' | 'failed';
+    }>
+  >([]);
+  const overrideSaveDisplayRef = useRef(overrideSaveDisplayStatus);
+  const overrideSaveStatusTimersRef = useRef<number[]>([]);
   const [viewMode, setViewMode] = useState<'friendly' | 'preview'>('preview');
   const [originalText, setOriginalText] = useState('');
   const [showCommitModal, setShowCommitModal] = useState(false);
@@ -2172,6 +2216,164 @@ export default function App() {
       }
     };
   }, [stagedToast, toastPulseAfter]);
+
+  const clearTimerList = (timerRef: React.MutableRefObject<number[]>) => {
+    timerRef.current.forEach((timerId) => window.clearTimeout(timerId));
+    timerRef.current = [];
+  };
+
+  useEffect(() => {
+    fileLoadStageDisplayRef.current = fileLoadStageDisplay;
+  }, [fileLoadStageDisplay]);
+
+  useEffect(() => {
+    overrideSaveDisplayRef.current = overrideSaveDisplayStatus;
+  }, [overrideSaveDisplayStatus]);
+
+  useEffect(() => {
+    clearTimerList(fileLoadStageTimersRef);
+    if (!fileLoadStageTarget) {
+      if (!fileLoadStageDisplayRef.current) {
+        return;
+      }
+      const elapsed = fileLoadStageStartRef.current
+        ? Date.now() - fileLoadStageStartRef.current
+        : 0;
+      const delay = Math.max(
+        FILE_LOAD_STAGE_TIMING.exitGraceMs,
+        FILE_LOAD_STAGE_TIMING.minVisibleMs - elapsed,
+      );
+      const timerId = window.setTimeout(() => {
+        setFileLoadStageDisplay(null);
+        fileLoadStageStartRef.current = null;
+      }, Math.max(0, delay));
+      fileLoadStageTimersRef.current.push(timerId);
+      return;
+    }
+    const targetIndex = FILE_LOAD_STAGE_ORDER.indexOf(fileLoadStageTarget);
+    if (targetIndex === -1) {
+      return;
+    }
+    const currentDisplay = fileLoadStageDisplayRef.current;
+    const currentIndex = currentDisplay
+      ? FILE_LOAD_STAGE_ORDER.indexOf(currentDisplay)
+      : -1;
+    const nextStages = FILE_LOAD_STAGE_ORDER.slice(
+      currentIndex === -1 ? 0 : currentIndex + 1,
+      targetIndex + 1,
+    );
+    if (nextStages.length === 0) {
+      return;
+    }
+    let delay = currentIndex === -1
+      ? FILE_LOAD_STAGE_TIMING.showDelayMs
+      : FILE_LOAD_STAGE_TIMING.stepMs;
+    nextStages.forEach((stage) => {
+      const timerId = window.setTimeout(() => {
+        if (!fileLoadStageStartRef.current) {
+          fileLoadStageStartRef.current = Date.now();
+        }
+        setFileLoadStageDisplay(stage);
+      }, delay);
+      fileLoadStageTimersRef.current.push(timerId);
+      delay += FILE_LOAD_STAGE_TIMING.stepMs;
+    });
+  }, [fileLoadStageTarget]);
+
+  useEffect(() => {
+    if (fileLoadStageTarget !== 'render') {
+      return;
+    }
+    if (fileLoading) {
+      return;
+    }
+    if (fileLoadStageDisplay !== 'render') {
+      return;
+    }
+    if (fileLoadStageHideTimeoutRef.current) {
+      return;
+    }
+    const holdStart = nowMs();
+    fileLoadStageHideTimeoutRef.current = window.setTimeout(() => {
+      setFileLoadStageTarget(null);
+      fileLoadStageHideTimeoutRef.current = null;
+    }, FILE_LOAD_STAGE_TIMING.holdAfterRenderMs);
+  }, [fileLoadStageTarget, fileLoadStageDisplay, fileLoading]);
+
+  useEffect(() => {
+    clearTimerList(overrideSaveStatusTimersRef);
+    if (overrideSaveStatus.length === 0) {
+      setOverrideSaveDisplayStatus([]);
+      return;
+    }
+    const allFinal = overrideSaveStatus.every(
+      (entry) => entry.status === 'done' || entry.status === 'failed',
+    );
+    const hasInFlight = overrideSaveStatus.some(
+      (entry) => entry.status === 'saving' || entry.status === 'retrying',
+    );
+    const currentDisplay = overrideSaveDisplayRef.current;
+    const displayHasProgress = currentDisplay.some(
+      (entry) => entry.status !== 'queued',
+    );
+    if (!allFinal || hasInFlight || displayHasProgress) {
+      setOverrideSaveDisplayStatus(overrideSaveStatus);
+      return;
+    }
+    setOverrideSaveDisplayStatus((prev) => {
+      if (prev.length === 0) {
+        return overrideSaveStatus.map((entry) => ({ ...entry, status: 'queued' }));
+      }
+      const prevStatus = new Map(prev.map((entry) => [entry.fileName, entry.status]));
+      return overrideSaveStatus.map((entry) => ({
+        ...entry,
+        status: prevStatus.get(entry.fileName) ?? 'queued',
+      }));
+    });
+    overrideSaveStatus.forEach((entry, index) => {
+      const savingDelay = OVERRIDE_SAVE_TIMING.staggerMs * index;
+      const doneDelay = savingDelay + OVERRIDE_SAVE_TIMING.stepMs;
+      const savingTimer = window.setTimeout(() => {
+        setOverrideSaveDisplayStatus((prev) =>
+          prev.map((item) =>
+            item.fileName === entry.fileName ? { ...item, status: 'saving' } : item,
+          ),
+        );
+      }, savingDelay);
+      const doneTimer = window.setTimeout(() => {
+        setOverrideSaveDisplayStatus((prev) =>
+          prev.map((item) =>
+            item.fileName === entry.fileName
+              ? { ...item, status: entry.status }
+              : item,
+          ),
+        );
+      }, doneDelay);
+      overrideSaveStatusTimersRef.current.push(savingTimer, doneTimer);
+    });
+  }, [overrideSaveStatus]);
+
+  useEffect(() => {
+    if (saveLoading || overrideSaveStatus.length === 0) {
+      return;
+    }
+    const completed = overrideSaveStatus.every(
+      (entry) => entry.status === 'done' || entry.status === 'failed',
+    );
+    if (!completed) {
+      return;
+    }
+    const timeout = window.setTimeout(() => {
+      setOverrideSaveStatus([]);
+    }, 6000);
+    return () => {
+      window.clearTimeout(timeout);
+    };
+  }, [overrideSaveStatus, saveLoading]);
+
+  useEffect(() => {
+    setOverrideSaveStatus([]);
+  }, [selectedFile?.PathID]);
   const isAnyPanelEditing = Object.values(panelEditState).some(Boolean);
 
   const triggerToast = (message: string, pulse = false) => {
@@ -2450,42 +2652,75 @@ export default function App() {
     .filter((entry: any) => !entry?.installed)
     .map((entry: any) => entry?.label || entry?.name || 'unknown');
   const unhealthyMicroservices = requiredMicroservices
-    .filter((entry: any) => entry?.installed && !entry?.running)
+    .filter((entry: any) => {
+      if (!entry?.installed) {
+        return false;
+      }
+      if (entry?.runningState) {
+        return entry.runningState === 'down';
+      }
+      return entry?.running === false;
+    })
+    .map((entry: any) => entry?.label || entry?.name || 'unknown');
+  const unknownMicroservices = requiredMicroservices
+    .filter((entry: any) => entry?.installed && entry?.runningState === 'unknown')
     .map((entry: any) => entry?.label || entry?.name || 'unknown');
   const fcomServiceStatus = requiredMicroservices.find(
     (entry: any) => entry?.name === 'fcom-processor',
   );
   const showMicroserviceWarning =
     missingMicroservices.length > 0 || unhealthyMicroservices.length > 0;
+  const showMicroserviceUnknown = !showMicroserviceWarning && unknownMicroservices.length > 0;
   const microserviceWarningTitle = showMicroserviceWarning
     ? `Issues: ${[...missingMicroservices, ...unhealthyMicroservices].join(', ')}`
     : '';
+  const microserviceUnknownTitle = showMicroserviceUnknown
+    ? `Unknown: ${unknownMicroservices.join(', ')}`
+    : '';
+  const microserviceNeedsRedeploy = redeployReady;
   const microserviceIndicatorState = microserviceStatusLoading
     ? 'loading'
     : microserviceStatusError
       ? 'warn'
-      : redeployReady
+      : showMicroserviceWarning
         ? 'warn'
-        : microserviceStatus?.chainReady
+        : showMicroserviceUnknown
+          ? 'warn'
+          : microserviceStatus?.chainReady
           ? 'ok'
           : 'warn';
   const microserviceIndicatorLabel = microserviceStatusLoading
     ? '...'
-    : microserviceIndicatorState === 'ok'
-      ? 'OK'
-      : '!';
+    : showMicroserviceWarning
+      ? '!'
+      : showMicroserviceUnknown
+        ? '?'
+      : microserviceNeedsRedeploy
+        ? null
+        : microserviceIndicatorState === 'ok'
+          ? 'OK'
+          : '!';
   const microserviceIndicatorTitle = microserviceStatusLoading
     ? 'Checking microservice status'
     : microserviceStatusError
       ? microserviceStatusError
-      : microserviceIndicatorState === 'ok'
-        ? 'All required microservices running'
-        : microserviceWarningTitle || 'Microservice issues detected';
+      : showMicroserviceWarning
+        ? microserviceWarningTitle || 'Microservice issues detected'
+        : showMicroserviceUnknown
+          ? microserviceUnknownTitle || 'Microservice status unknown'
+        : microserviceNeedsRedeploy
+          ? 'Changes staged. Redeploy FCOM Processor to apply.'
+          : microserviceIndicatorState === 'ok'
+            ? 'All required microservices running'
+            : 'Microservice issues detected';
   const getServiceTone = (entry: any): 'ok' | 'warn' | 'error' => {
     if (!entry?.installed) {
       return 'error';
     }
-    if (!entry?.running) {
+    if (entry?.runningState === 'unknown') {
+      return 'warn';
+    }
+    if (entry?.runningState === 'down' || entry?.running === false) {
       return 'warn';
     }
     return 'ok';
@@ -2494,7 +2729,10 @@ export default function App() {
     if (!entry?.installed) {
       return entry?.available ? 'Missing (available to deploy)' : 'Missing (not in catalog)';
     }
-    if (!entry?.running) {
+    if (entry?.runningState === 'unknown') {
+      return 'Installed, status unknown';
+    }
+    if (entry?.runningState === 'down' || entry?.running === false) {
       return 'Installed, not running';
     }
     return 'Running';
@@ -2512,14 +2750,14 @@ export default function App() {
     }
   };
 
-  const refreshMicroserviceStatus = async () => {
+  const refreshMicroserviceStatus = async (options?: { refresh?: boolean }) => {
     if (!isAuthenticated) {
       return;
     }
     setMicroserviceStatusLoading(true);
     setMicroserviceStatusError(null);
     try {
-      const resp = await api.getMicroserviceStatus();
+      const resp = await api.getMicroserviceStatus(options);
       setMicroserviceStatus(resp.data);
     } catch (err: any) {
       setMicroserviceStatus(null);
@@ -3261,6 +3499,12 @@ export default function App() {
   };
 
   const handleOpenFileInternal = async (entry: any) => {
+    const timingLabel = entry?.PathID ? `file-load:${entry.PathID}` : 'file-load:unknown';
+    const timingStart = nowMs();
+    const logTiming = (step: string, start: number) => {
+      const elapsed = Math.round(nowMs() - start);
+      console.info(`[FCOM Timing] ${timingLabel} ${step} ${elapsed}ms`);
+    };
     closeBuilder();
     setPanelEditState({});
     setPanelDrafts({});
@@ -3295,11 +3539,18 @@ export default function App() {
     setSaveSuccess(null);
     setOverrideError(null);
     setOverrideInfo(null);
+    clearTimerList(fileLoadStageTimersRef);
+    if (fileLoadStageHideTimeoutRef.current) {
+      window.clearTimeout(fileLoadStageHideTimeoutRef.current);
+      fileLoadStageHideTimeoutRef.current = null;
+    }
+    setFileLoadStageTarget('original');
     setFileLoading(true);
     if (entry?.PathID) {
       setBreadcrumbs(buildBreadcrumbsFromPath(entry.PathID));
     }
     try {
+      const readStart = nowMs();
       const retryMessage = 'Failed to parse rules file... retrying in 1 second';
       const readWithRetry = async () => {
         let attempt = 0;
@@ -3318,10 +3569,14 @@ export default function App() {
         return await api.readFile(entry.PathID);
       };
       const resp = await readWithRetry();
+      logTiming('readFile', readStart);
       setFileData(resp.data);
+      setFileLoadStageTarget('overrides');
       setOverrideLoading(true);
       try {
+        const overridesStart = nowMs();
         const overridesResp = await api.getOverrides(entry.PathID);
+        logTiming('getOverrides', overridesStart);
         setOverrideInfo(overridesResp.data);
       } catch (err: any) {
         setOverrideError(err?.response?.data?.error || 'Failed to load overrides');
@@ -3329,6 +3584,8 @@ export default function App() {
       } finally {
         setOverrideLoading(false);
       }
+      setFileLoadStageTarget('compare');
+      const parseStart = nowMs();
       const ruleText = resp.data?.content?.data?.[0]?.RuleText;
       if (typeof ruleText === 'string') {
         try {
@@ -3345,13 +3602,21 @@ export default function App() {
         setEditorText(formatted);
         setOriginalText(formatted);
       }
+      logTiming('parse+format', parseStart);
       setCommitMessage('');
       setViewMode('friendly');
+      setFileLoadStageTarget('render');
     } catch (err: any) {
       setFileError(err?.response?.data?.error || 'Failed to load file');
+      setFileLoadStageTarget(null);
     } finally {
       setFileLoading(false);
+      logTiming('total', timingStart);
       highlightNextOpenRef.current = false;
+      if (fileLoadStageHideTimeoutRef.current) {
+        window.clearTimeout(fileLoadStageHideTimeoutRef.current);
+        fileLoadStageHideTimeoutRef.current = null;
+      }
     }
   };
 
@@ -3920,6 +4185,110 @@ export default function App() {
     await loadMibPath(mibPath, { append: false });
   };
 
+  const getMibBaseName = (value?: string | null) => {
+    if (!value) {
+      return '';
+    }
+    const name = value.split('/').pop() || value;
+    return name.replace(/\.(mib|txt)$/i, '');
+  };
+
+  const getMibSupportStatus = (supported: boolean | null) => {
+    if (supported === true) {
+      return { label: 'OK', status: 'ok' as const };
+    }
+    if (supported === false) {
+      return { label: '!', status: 'warn' as const };
+    }
+    return { label: '?', status: 'unknown' as const };
+  };
+
+  const getSupportedCountLabel = (supported: boolean | null, total: number) => {
+    if (supported === null) {
+      return 'N/A';
+    }
+    return supported ? total : 0;
+  };
+
+  const resolveMibSupport = async (pathValue: string) => {
+    if (!pathValue) {
+      return;
+    }
+    if (mibSupportByPath[pathValue]) {
+      return;
+    }
+    const baseName = getMibBaseName(pathValue);
+    if (!baseName) {
+      setMibSupportByPath((prev) => ({
+        ...prev,
+        [pathValue]: { fcom: null, pcom: null, checkedAt: Date.now() },
+      }));
+      return;
+    }
+    const lookupComsFile = async (fileName: string) => {
+      try {
+        const resp = await api.searchComs(fileName, 'name', 5);
+        const results = Array.isArray(resp.data?.results) ? resp.data.results : [];
+        const lower = fileName.toLowerCase();
+        return results.some((result: any) => {
+          const pathId = String(result?.pathId || '').toLowerCase();
+          const name = String(result?.name || '').toLowerCase();
+          return pathId.endsWith(lower) || name === lower;
+        });
+      } catch {
+        return null;
+      }
+    };
+    const [fcomSupported, pcomSupported] = await Promise.all([
+      lookupComsFile(`${baseName}-FCOM.json`),
+      lookupComsFile(`${baseName}-PCOM.json`),
+    ]);
+    setMibSupportByPath((prev) => ({
+      ...prev,
+      [pathValue]: {
+        fcom: fcomSupported,
+        pcom: pcomSupported,
+        checkedAt: Date.now(),
+      },
+    }));
+  };
+
+  useEffect(() => {
+    if (mibEntries.length === 0) {
+      return;
+    }
+    let active = true;
+    const run = async () => {
+      for (const entry of mibEntries) {
+        if (!active) {
+          return;
+        }
+        if (entry?.isDir) {
+          continue;
+        }
+        const pathValue = entry?.path;
+        if (!pathValue) {
+          continue;
+        }
+        if (mibSupportByPath[pathValue]) {
+          continue;
+        }
+        await resolveMibSupport(pathValue);
+      }
+    };
+    void run();
+    return () => {
+      active = false;
+    };
+  }, [mibEntries, mibSupportByPath]);
+
+  useEffect(() => {
+    if (!mibSelectedFile) {
+      return;
+    }
+    void resolveMibSupport(mibSelectedFile);
+  }, [mibSelectedFile]);
+
   const loadMibDefinitions = async (filePath: string) => {
     setMibLoading(true);
     setMibError(null);
@@ -4201,6 +4570,20 @@ export default function App() {
       ),
     [mibDefinitions, mibDefinitionSearch],
   );
+  const mibDefinitionCounts = useMemo(() => {
+    let fcomCount = 0;
+    let pcomCount = 0;
+    mibDefinitions.forEach((definition) => {
+      const kind = String(definition?.kind || '').toUpperCase();
+      if (kind === 'NOTIFICATION-TYPE' || kind === 'TRAP-TYPE') {
+        fcomCount += 1;
+      } else if (kind === 'OBJECT-TYPE') {
+        pcomCount += 1;
+      }
+    });
+    return { fcomCount, pcomCount };
+  }, [mibDefinitions]);
+  const mibSelectedSupport = mibSelectedFile ? mibSupportByPath[mibSelectedFile] : null;
   const saveWithContent = async (content: any, message: string) => {
     if (!selectedFile) {
       return null;
@@ -4252,11 +4635,17 @@ export default function App() {
     if (!err) {
       return false;
     }
-    const message = String(err?.message || err?.toString?.() || '').toLowerCase();
+    const message = String(
+      err?.message || err?.error || err?.toString?.() || '',
+    ).toLowerCase();
     const code = String(err?.code || '').toLowerCase();
+    const name = String(err?.name || '').toLowerCase();
     const hasResponse = Boolean(err?.response);
     if (hasResponse) {
       return false;
+    }
+    if (name.includes('typeerror') && (message.includes('fetch') || message.includes('network'))) {
+      return true;
     }
     if (code.includes('econnreset') || code.includes('econnaborted') || code.includes('etimedout')) {
       return true;
@@ -4271,16 +4660,221 @@ export default function App() {
     if (!ensureEditPermission()) {
       return;
     }
+    const applyOverrideSaveResults = (files: any[] | undefined) => {
+      if (!Array.isArray(files) || files.length === 0) {
+        setOverrideSaveStatus((prev) =>
+          prev.map((entry) =>
+            entry.status === 'failed' ? entry : { ...entry, status: 'done' },
+          ),
+        );
+        return;
+      }
+      const fileMap = new Map(
+        files
+          .filter((entry) => entry && typeof entry.fileName === 'string')
+          .map((entry) => [String(entry.fileName), String(entry.status || 'done')]),
+      );
+      setOverrideSaveStatus((prev) => {
+        if (prev.length === 0) {
+          return files
+            .filter((entry) => entry && typeof entry.fileName === 'string')
+            .map((entry) => ({
+              objectName: entry.fileName,
+              fileName: entry.fileName,
+              status:
+                entry.status === 'failed'
+                  ? 'failed'
+                  : entry.status === 'saving'
+                    ? 'saving'
+                    : entry.status === 'queued'
+                      ? 'queued'
+                      : 'done',
+            }));
+        }
+        return prev.map((entry) => {
+          const nextStatus = fileMap.get(entry.fileName);
+          if (!nextStatus) {
+            return entry;
+          }
+          return {
+            ...entry,
+            status:
+              nextStatus === 'failed'
+                ? 'failed'
+                : nextStatus === 'saving'
+                  ? 'saving'
+                  : nextStatus === 'queued'
+                    ? 'queued'
+                    : 'done',
+          };
+        });
+      });
+    };
+    const buildOverrideSaveStatus = () => {
+      const staged = diffOverrides(getBaseOverrides(), pendingOverrideSave);
+      let objectNames = staged.editedObjects;
+      if (objectNames.length === 0) {
+        objectNames = pendingOverrideSave
+          .map((entry: any) => entry?.['@objectName'])
+          .filter((name: any) => typeof name === 'string' && name.length > 0);
+      }
+      const unique = Array.from(new Set(objectNames));
+      return unique.map((objectName) => {
+        const fileName =
+          overrideInfo?.overrideFilesByObject?.[objectName]?.fileName ||
+          `${objectName}.override.json`;
+        return { objectName, fileName, status: 'queued' as const };
+      });
+    };
+    const setAllOverrideStatus = (
+      status: 'queued' | 'saving' | 'retrying' | 'done' | 'failed',
+    ) => {
+      setOverrideSaveStatus((prev) => prev.map((item) => ({ ...item, status })));
+    };
+    const applyProgressUpdate = (entry: {
+      fileName: string;
+      action?: string;
+      status?: string;
+    }) => {
+      if (!entry?.fileName) {
+        return;
+      }
+      const normalizedStatus =
+        entry.status === 'failed'
+          ? 'failed'
+          : entry.status === 'saving'
+            ? 'saving'
+            : entry.status === 'retrying'
+              ? 'retrying'
+              : entry.status === 'done'
+                ? 'done'
+                : 'queued';
+      setOverrideSaveStatus((prev) => {
+        const existingIndex = prev.findIndex((item) => item.fileName === entry.fileName);
+        if (existingIndex === -1) {
+          return [
+            ...prev,
+            {
+              objectName: entry.fileName,
+              fileName: entry.fileName,
+              status: normalizedStatus,
+            },
+          ];
+        }
+        const next = [...prev];
+        next[existingIndex] = {
+          ...next[existingIndex],
+          status: normalizedStatus,
+        };
+        return next;
+      });
+    };
+    const streamOverrideSave = async () => {
+      const response = await fetch('/api/v1/overrides/save-stream', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          file_id: selectedFile.PathID,
+          overrides: pendingOverrideSave,
+          commit_message: message.trim(),
+        }),
+      });
+      const contentType = response.headers.get('content-type') || '';
+      const isEventStream = contentType.includes('text/event-stream');
+      if (!response.ok && !isEventStream) {
+        let errorPayload: any = null;
+        try {
+          errorPayload = await response.json();
+        } catch {
+          // ignore
+        }
+        throw errorPayload || new Error('Failed to save overrides');
+      }
+      if (!response.body) {
+        throw new Error('Streaming response not available');
+      }
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+      let completedPayload: any = null;
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) {
+          break;
+        }
+        buffer += decoder.decode(value, { stream: true });
+        const parts = buffer.split('\n\n');
+        buffer = parts.pop() || '';
+        parts.forEach((chunk) => {
+          const lines = chunk.split('\n');
+          let eventName = 'message';
+          let dataText = '';
+          lines.forEach((line) => {
+            if (line.startsWith('event:')) {
+              eventName = line.replace('event:', '').trim();
+            } else if (line.startsWith('data:')) {
+              dataText += line.replace('data:', '').trim();
+            }
+          });
+          if (!dataText) {
+            return;
+          }
+          let payload: any = null;
+          try {
+            payload = JSON.parse(dataText);
+          } catch {
+            payload = dataText;
+          }
+          if (eventName === 'progress') {
+            applyProgressUpdate(payload);
+          } else if (eventName === 'complete') {
+            completedPayload = payload;
+          } else if (eventName === 'error') {
+            throw payload;
+          }
+        });
+      }
+      return completedPayload;
+    };
+    const wait = (ms: number) => new Promise((resolve) => window.setTimeout(resolve, ms));
+    const retryDelays = [2000, 5000];
     setSaveError(null);
     setSaveSuccess(null);
     setSaveLoading(true);
+    setOverrideSaveStatus(buildOverrideSaveStatus());
     try {
-      const resp = await api.saveOverrides(
-        selectedFile.PathID,
-        pendingOverrideSave,
-        message.trim(),
-      );
-      setOverrideInfo(resp.data);
+      let respData: any = null;
+      let attempt = 0;
+      while (true) {
+        try {
+          respData = await streamOverrideSave();
+          break;
+        } catch (streamError: any) {
+          if (isTransientSocketError(streamError) && attempt < retryDelays.length) {
+            setSaveError(`Connection dropped. Retrying (${attempt + 1}/${retryDelays.length})…`);
+            setAllOverrideStatus('retrying');
+            await wait(retryDelays[attempt]);
+            setAllOverrideStatus('saving');
+            attempt += 1;
+            continue;
+          }
+          if (streamError?.error || streamError?.result) {
+            throw streamError;
+          }
+          const fallback = await api.saveOverrides(
+            selectedFile.PathID,
+            pendingOverrideSave,
+            message.trim(),
+          );
+          respData = fallback.data;
+          break;
+        }
+      }
+      if (respData) {
+        setOverrideInfo(respData);
+        applyOverrideSaveResults(respData?.result?.files);
+      }
       try {
         const refreshed = await api.getOverrides(selectedFile.PathID);
         setOverrideInfo(refreshed.data);
@@ -4306,15 +4900,26 @@ export default function App() {
           const refreshed = await api.getOverrides(selectedFile.PathID);
           setOverrideInfo(refreshed.data);
           setSaveError(null);
+          applyOverrideSaveResults(err?.response?.data?.result?.files);
           triggerToast('Connection recovered. Overrides refreshed.', true);
         } catch (refreshError: any) {
           setSaveError(
             refreshError?.response?.data?.error ||
               'Connection dropped and override refresh failed. Please refresh the page.',
           );
+          applyOverrideSaveResults(err?.response?.data?.result?.files);
         }
       } else {
-        setSaveError(err?.response?.data?.error || 'Failed to save overrides');
+        const errorMessage =
+          err?.response?.data?.error || err?.error || err?.message || 'Failed to save overrides';
+        setSaveError(errorMessage);
+        if (err?.response?.data?.result?.files) {
+          applyOverrideSaveResults(err.response.data.result.files);
+        } else if (err?.result?.files) {
+          applyOverrideSaveResults(err.result.files);
+        } else {
+          setOverrideSaveStatus((prev) => prev.map((entry) => ({ ...entry, status: 'failed' })));
+        }
       }
     } finally {
       setSaveLoading(false);
@@ -4666,18 +5271,23 @@ export default function App() {
     if (!processor.op || !processor.path) {
       return null;
     }
+    const setTarget = processor?.value?.set?.targetField;
+    if (typeof setTarget === 'string') {
+      return setTarget;
+    }
     return getJsonPointerEventPath(String(processor.path));
   };
 
-  const buildEventPatchOp = (objectName: string, field: string, value: any) => {
-    const baseValue = getBaseObjectValue(objectName, `$.event.${field}`);
-    const op = baseValue === undefined ? 'add' : 'replace';
-    return {
-      op,
-      path: `/event/${encodeJsonPointerSegment(field)}`,
-      value,
-    };
-  };
+  const buildEventPatchOp = (_objectName: string, field: string, value: any) => ({
+    op: 'add',
+    path: '/-',
+    value: {
+      set: {
+        source: value,
+        targetField: `$.event.${field}`,
+      },
+    },
+  });
 
   const getProcessorTargetField = (processor: any) => {
     if (!processor || typeof processor !== 'object') {
@@ -4863,7 +5473,11 @@ export default function App() {
       if (!target) {
         return;
       }
-      map.set(target, processor.value);
+      const patchValue =
+        processor?.value?.set && Object.prototype.hasOwnProperty.call(processor.value.set, 'source')
+          ? processor.value.set.source
+          : processor.value;
+      map.set(target, patchValue);
     });
     return map;
   };
@@ -5803,7 +6417,9 @@ export default function App() {
       return;
     }
     const draft = panelDrafts?.[key]?.event || {};
+    const overrideValueMap = getOverrideValueMap(obj);
     const removalFields = new Set(panelOverrideRemovals[key] || []);
+    const autoRemovalFields = new Set<string>();
     const stagedRemovedFields = new Set<string>();
     const stagedNow = diffOverrides(getBaseOverrides(), getWorkingOverrides());
     stagedNow.sections.forEach((section) => {
@@ -5838,9 +6454,17 @@ export default function App() {
         if (isEvalMode(key, field)) {
           value = { eval: String(draftValue ?? '') };
         }
+        const baseValue = getBaseObjectValue(objectName, `$.event.${field}`);
+        const hasOverride = overrideValueMap.has(`$.event.${field}`);
+        if (hasOverride && areOverrideValuesEqual(value, baseValue)) {
+          autoRemovalFields.add(field);
+          return;
+        }
         updates.push({ field, value });
       }
     });
+
+    autoRemovalFields.forEach((field) => removalFields.add(field));
 
     if (updates.length === 0 && removalFields.size === 0) {
       setSaveError(null);
@@ -5871,6 +6495,7 @@ export default function App() {
             scope,
             '@objectName': objectName,
             _type: 'override',
+            version: 'v3',
             processors: [],
           };
 
@@ -5879,6 +6504,9 @@ export default function App() {
     if (hasNonPatch) {
       setSaveError('Advanced processors are not supported in v3 override files yet.');
       return;
+    }
+    if (!overrideEntry.version) {
+      overrideEntry.version = 'v3';
     }
 
     if (removalFields.size > 0) {
@@ -6115,10 +6743,31 @@ export default function App() {
     return name ? `name:${name}` : `idx:${index}`;
   };
 
-  const scrollToRef = (target?: HTMLDivElement | null) => {
-    if (target) {
-      target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  const getStickyOffset = (container: HTMLElement | null) => {
+    if (!container) {
+      return 0;
     }
+    const bars = Array.from(container.querySelectorAll<HTMLElement>('.match-bar'));
+    if (bars.length === 0) {
+      return 0;
+    }
+    const total = bars.reduce((sum, bar) => sum + bar.getBoundingClientRect().height, 0);
+    return total + 12;
+  };
+
+  const scrollToRef = (target?: HTMLDivElement | null, options?: { offset?: number }) => {
+    if (!target) {
+      return;
+    }
+    const container = getActiveScrollContainer();
+    if (!container) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    const offset = options?.offset ?? 0;
+    const targetTop = target.getBoundingClientRect().top - container.getBoundingClientRect().top;
+    const nextTop = container.scrollTop + targetTop - offset;
+    container.scrollTo({ top: Math.max(0, nextTop), behavior: 'smooth' });
   };
 
   const getActiveScrollContainer = () =>
@@ -6147,7 +6796,8 @@ export default function App() {
       return;
     }
     const key = overrideObjectKeys[index];
-    scrollToRef(objectRowRefs.current[key]);
+    const container = getActiveScrollContainer();
+    scrollToRef(objectRowRefs.current[key], { offset: getStickyOffset(container) });
   };
 
   const handlePrevOverride = () => {
@@ -7988,6 +8638,7 @@ export default function App() {
             scope,
             '@objectName': objectName,
             _type: 'override',
+            version: 'v3',
             processors: [],
           };
     let processors = Array.isArray(overrideEntry.processors) ? [...overrideEntry.processors] : [];
@@ -7995,6 +8646,9 @@ export default function App() {
     if (hasNonPatch) {
       setSaveError('Advanced processors are not supported in v3 override files yet.');
       return;
+    }
+    if (!overrideEntry.version) {
+      overrideEntry.version = 'v3';
     }
 
     const patchOp = (() => {
@@ -10106,23 +10760,23 @@ export default function App() {
             className="builder-card"
             onClick={async () => {
               setMicroserviceActionLabel('Refreshing status...');
-              await refreshMicroserviceStatus();
+              await refreshMicroserviceStatus({ refresh: true });
               setMicroserviceActionLabel(null);
             }}
             disabled={microserviceStatusLoading || redeployLoading}
           >
             {microserviceStatusLoading ? 'Refreshing...' : 'Refresh status'}
           </button>
-          <button
-            type="button"
-            className={`builder-card builder-card-primary${
-              redeployReady || redeployPulse ? ' microservice-pulse' : ''
-            }`}
-            onClick={handleRedeployFcomProcessor}
-            disabled={redeployLoading || !hasEditPermission}
-          >
-            Redeploy FCOM Processor
-          </button>
+          {redeployReady && (
+            <button
+              type="button"
+              className="builder-card builder-card-primary microservice-pulse"
+              onClick={handleRedeployFcomProcessor}
+              disabled={redeployLoading || !hasEditPermission}
+            >
+              Redeploy FCOM Processor
+            </button>
+          )}
         </div>
       </div>
     </div>
@@ -10139,7 +10793,7 @@ export default function App() {
               <button
                 type="button"
                 className={`microservice-indicator microservice-indicator-${microserviceIndicatorState}${
-                  redeployReady || redeployPulse ? ' microservice-pulse' : ''
+                  microserviceNeedsRedeploy ? ' microservice-pulse' : ''
                 }`}
                 title={microserviceIndicatorTitle}
                 aria-label={microserviceIndicatorTitle}
@@ -10148,7 +10802,26 @@ export default function App() {
                   setRedeployModalOpen(true);
                 }}
               >
-                {microserviceIndicatorLabel}
+                {microserviceIndicatorLabel ?? (
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path
+                      d="M20 12a8 8 0 1 1-2.34-5.66"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M20 4v6h-6"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                )}
               </button>
               <button
                 type="button"
@@ -10282,6 +10955,8 @@ export default function App() {
                           fileError={fileError}
                           saveError={saveError}
                           saveSuccess={saveSuccess}
+                          overrideSaveStatus={overrideSaveDisplayStatus}
+                          saveLoading={saveLoading}
                           stagedToast={stagedToast}
                           highlightQuery={highlightQuery}
                           highlightFileName={highlightFileName}
@@ -10290,6 +10965,7 @@ export default function App() {
                         <FcomFilePreview
                           selectedFile={selectedFile}
                           fileLoading={fileLoading}
+                          fileLoadStage={fileLoadStageDisplay}
                           viewMode={viewMode}
                           isAnyPanelEditing={isAnyPanelEditing}
                           friendlyViewRef={friendlyViewRef}
@@ -11789,13 +12465,59 @@ export default function App() {
                         {saveLoading && (
                           <div className="save-overlay" aria-live="polite" aria-busy="true">
                             <div className="save-overlay-card">
-                              <div className="save-spinner" aria-hidden="true" />
-                              <div>
-                                <div className="save-overlay-title">Saving changes…</div>
-                                <div className="save-overlay-subtitle">
-                                  Please wait{saveElapsed ? ` • ${saveElapsed}s` : ''}
+                              <div className="save-overlay-main">
+                                <div className="save-spinner" aria-hidden="true" />
+                                <div>
+                                  <div className="save-overlay-title">Saving changes…</div>
+                                  <div className="save-overlay-subtitle">
+                                    Please wait{saveElapsed ? ` • ${saveElapsed}s` : ''}
+                                  </div>
                                 </div>
                               </div>
+                              {overrideSaveDisplayStatus.length > 0 && (
+                                <div className="save-overlay-status">
+                                  <div className="save-overlay-status-header">
+                                    <span>Override files</span>
+                                    <span>
+                                      {
+                                        overrideSaveDisplayStatus.filter(
+                                          (entry) => entry.status === 'done',
+                                        ).length
+                                      }
+                                      /{overrideSaveDisplayStatus.length} complete
+                                    </span>
+                                  </div>
+                                  <div className="save-overlay-status-list">
+                                    {overrideSaveDisplayStatus.map((entry) => {
+                                      const label =
+                                        entry.status === 'done'
+                                          ? 'Done'
+                                          : entry.status === 'failed'
+                                            ? 'Failed'
+                                            : entry.status === 'retrying'
+                                              ? 'Retrying'
+                                              : entry.status === 'saving'
+                                                ? 'Saving'
+                                                : 'Queued';
+                                      return (
+                                        <div
+                                          key={`${entry.objectName}-${entry.fileName}`}
+                                          className="save-overlay-status-item"
+                                        >
+                                          <span className="save-overlay-status-name">
+                                            {entry.fileName}
+                                          </span>
+                                          <span
+                                            className={`save-overlay-status-pill save-overlay-status-pill-${entry.status}`}
+                                          >
+                                            {label}
+                                          </span>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              )}
                             </div>
                           </div>
                         )}
@@ -12199,27 +12921,66 @@ export default function App() {
                             <div className="empty-state">No MIB files found.</div>
                           ) : (
                             <ul className="browse-list">
-                              {mibEntries.map((entry) => (
-                                <li key={entry.path || entry.name}>
-                                  <button
-                                    type="button"
-                                    className={
-                                      entry.isDir ? 'browse-link' : 'browse-link file-link'
-                                    }
-                                    onClick={() => handleOpenMibEntry(entry)}
-                                  >
-                                    <span className="browse-icon" aria-hidden="true">
-                                      {entry.isDir ? '📁' : '📄'}
-                                    </span>
-                                    {entry.name}
-                                  </button>
-                                  {!entry.isDir && (
-                                    <span className="browse-meta">
-                                      {entry.size ? `${Math.round(entry.size / 1024)} KB` : ''}
-                                    </span>
-                                  )}
-                                </li>
-                              ))}
+                              {mibEntries.map((entry) => {
+                                const entrySupport = entry?.path
+                                  ? mibSupportByPath[entry.path]
+                                  : null;
+                                const fcomStatus = getMibSupportStatus(entrySupport?.fcom ?? null);
+                                const pcomStatus = getMibSupportStatus(entrySupport?.pcom ?? null);
+                                return (
+                                  <li key={entry.path || entry.name}>
+                                    <button
+                                      type="button"
+                                      className={
+                                        entry.isDir ? 'browse-link' : 'browse-link file-link'
+                                      }
+                                      onClick={() => handleOpenMibEntry(entry)}
+                                    >
+                                      <span className="browse-icon" aria-hidden="true">
+                                        {entry.isDir ? '📁' : '📄'}
+                                      </span>
+                                      {entry.name}
+                                    </button>
+                                    {!entry.isDir && (
+                                      <div className="mib-entry-meta">
+                                        <span className="mib-support-badge mib-support-badge-fcom">
+                                          FCOM
+                                        </span>
+                                        <span
+                                          className={`mib-support-status mib-support-status-${fcomStatus.status}`}
+                                          title={
+                                            fcomStatus.status === 'ok'
+                                              ? 'FCOM support found'
+                                              : fcomStatus.status === 'warn'
+                                                ? 'FCOM support not found'
+                                                : 'FCOM support unknown'
+                                          }
+                                        >
+                                          {fcomStatus.label}
+                                        </span>
+                                        <span className="mib-support-badge mib-support-badge-pcom">
+                                          PCOM
+                                        </span>
+                                        <span
+                                          className={`mib-support-status mib-support-status-${pcomStatus.status}`}
+                                          title={
+                                            pcomStatus.status === 'ok'
+                                              ? 'PCOM support found'
+                                              : pcomStatus.status === 'warn'
+                                                ? 'PCOM support not found'
+                                                : 'PCOM support unknown'
+                                          }
+                                        >
+                                          {pcomStatus.label}
+                                        </span>
+                                        <span className="browse-meta">
+                                          {entry.size ? `${Math.round(entry.size / 1024)} KB` : ''}
+                                        </span>
+                                      </div>
+                                    )}
+                                  </li>
+                                );
+                              })}
                             </ul>
                           )}
                           {(mibTotal !== null || mibFilteredTotal !== null) && (
@@ -12263,6 +13024,58 @@ export default function App() {
                         <div className="mib-details">
                           <div className="file-title">
                             <strong>{mibSelectedFile}</strong>
+                          </div>
+                          <div className="mib-overview">
+                            {(() => {
+                              const fcomStatus = getMibSupportStatus(
+                                mibSelectedSupport?.fcom ?? null,
+                              );
+                              const pcomStatus = getMibSupportStatus(
+                                mibSelectedSupport?.pcom ?? null,
+                              );
+                              return (
+                                <>
+                                  <div className="mib-overview-row">
+                                    <div className="mib-overview-label">
+                                      <span className="mib-support-badge mib-support-badge-fcom">
+                                        FCOM
+                                      </span>
+                                      <span
+                                        className={`mib-support-status mib-support-status-${fcomStatus.status}`}
+                                      >
+                                        {fcomStatus.label}
+                                      </span>
+                                    </div>
+                                    <div className="mib-overview-value">
+                                      Notifications: {mibDefinitionCounts.fcomCount} | Supported:{' '}
+                                      {getSupportedCountLabel(
+                                        mibSelectedSupport?.fcom ?? null,
+                                        mibDefinitionCounts.fcomCount,
+                                      )}
+                                    </div>
+                                  </div>
+                                  <div className="mib-overview-row">
+                                    <div className="mib-overview-label">
+                                      <span className="mib-support-badge mib-support-badge-pcom">
+                                        PCOM
+                                      </span>
+                                      <span
+                                        className={`mib-support-status mib-support-status-${pcomStatus.status}`}
+                                      >
+                                        {pcomStatus.label}
+                                      </span>
+                                    </div>
+                                    <div className="mib-overview-value">
+                                      Objects: {mibDefinitionCounts.pcomCount} | Supported:{' '}
+                                      {getSupportedCountLabel(
+                                        mibSelectedSupport?.pcom ?? null,
+                                        mibDefinitionCounts.pcomCount,
+                                      )}
+                                    </div>
+                                  </div>
+                                </>
+                              );
+                            })()}
                           </div>
                           <div className="mib-actions">
                             <button
@@ -12321,8 +13134,56 @@ export default function App() {
                                     }
                                     onClick={() => setMibSelectedDefinition(definition)}
                                   >
-                                    <span className="mib-definition-name">{definition.name}</span>
-                                    <span className="mib-definition-kind">{definition.kind}</span>
+                                    {(() => {
+                                      const kind = String(definition?.kind || '').toUpperCase();
+                                      const isFcom =
+                                        kind === 'NOTIFICATION-TYPE' || kind === 'TRAP-TYPE';
+                                      const isPcom = kind === 'OBJECT-TYPE';
+                                      const support = isFcom
+                                        ? mibSelectedSupport?.fcom ?? null
+                                        : isPcom
+                                          ? mibSelectedSupport?.pcom ?? null
+                                          : null;
+                                      const status = getMibSupportStatus(support);
+                                      return (
+                                        <>
+                                          <div className="mib-definition-main">
+                                            <span className="mib-definition-name">
+                                              {definition.name}
+                                            </span>
+                                            <span className="mib-definition-kind">
+                                              {definition.kind}
+                                            </span>
+                                          </div>
+                                          <div className="mib-definition-flags">
+                                            {isFcom && (
+                                              <span className="mib-support-badge mib-support-badge-fcom">
+                                                FCOM
+                                              </span>
+                                            )}
+                                            {isPcom && (
+                                              <span className="mib-support-badge mib-support-badge-pcom">
+                                                PCOM
+                                              </span>
+                                            )}
+                                            {(isFcom || isPcom) && (
+                                              <span
+                                                className={`mib-support-status mib-support-status-${status.status}`}
+                                                title={
+                                                  status.status === 'ok'
+                                                    ? 'Support found'
+                                                    : status.status === 'warn'
+                                                      ? 'Support not found'
+                                                      : 'Support unknown'
+                                                }
+                                              >
+                                                {status.label}
+                                              </span>
+                                            )}
+                                          </div>
+                                        </>
+                                      );
+                                    })()}
                                   </button>
                                 ))
                               )}

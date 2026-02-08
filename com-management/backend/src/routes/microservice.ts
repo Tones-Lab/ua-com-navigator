@@ -752,14 +752,16 @@ router.get('/status', async (req: Request, res: Response) => {
   const sessionId = req.cookies.FCOM_SESSION_ID;
   const server = sessionId ? await getServer(sessionId) : null;
   const serverId = server?.server_id ?? null;
+  const refresh = String(req.query?.refresh || '').trim() === '1';
   const cached = getCachedMicroserviceStatus();
   const pollMs = getMicroserviceStatusPollMs();
   const updatedAtMs = cached.updatedAt ? Date.parse(cached.updatedAt) : 0;
   const ageMs = updatedAtMs ? Date.now() - updatedAtMs : Number.MAX_SAFE_INTEGER;
   const isFresh = cached.data && ageMs < pollMs;
   const isSameServer = cached.serverId && serverId && cached.serverId === serverId;
+  const preferSession = Boolean(sessionId) && cached.source === 'bootstrap';
 
-  if (cached.data && isFresh && isSameServer) {
+  if (!refresh && cached.data && isFresh && isSameServer && !preferSession) {
     return res.json({
       ...cached.data,
       cache: {
@@ -770,6 +772,8 @@ router.get('/status', async (req: Request, res: Response) => {
         ageSeconds: Math.floor(ageMs / 1000),
         stale: false,
         error: cached.error,
+        refreshAttempted: false,
+        refreshError: null,
       },
     });
   }
@@ -788,6 +792,8 @@ router.get('/status', async (req: Request, res: Response) => {
         ageSeconds: 0,
         stale: false,
         error: null,
+        refreshAttempted: refresh,
+        refreshError: null,
       },
     });
   } catch (error: any) {
@@ -803,6 +809,8 @@ router.get('/status', async (req: Request, res: Response) => {
           ageSeconds: updatedAtMs ? Math.floor(ageMs / 1000) : null,
           stale: true,
           error: error.message || 'Failed to refresh microservice status',
+          refreshAttempted: refresh,
+          refreshError: error.message || 'Failed to refresh microservice status',
         },
       });
     }

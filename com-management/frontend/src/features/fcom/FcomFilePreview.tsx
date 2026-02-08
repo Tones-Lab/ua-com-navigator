@@ -6,6 +6,7 @@ import FcomMatchBar from './FcomMatchBar';
 type FcomFilePreviewProps = {
   selectedFile: any | null;
   fileLoading: boolean;
+  fileLoadStage: 'original' | 'overrides' | 'compare' | 'render' | null;
   viewMode: 'friendly' | 'preview';
   isAnyPanelEditing: boolean;
   friendlyViewRef: RefObject<HTMLDivElement>;
@@ -107,6 +108,7 @@ type FcomFilePreviewProps = {
 export default function FcomFilePreview({
   selectedFile,
   fileLoading,
+  fileLoadStage,
   viewMode,
   isAnyPanelEditing,
   friendlyViewRef,
@@ -188,8 +190,54 @@ export default function FcomFilePreview({
   renderRawHighlightedText,
 }: FcomFilePreviewProps) {
   const friendlyObjects = getFriendlyObjects(fileData);
+  const loadSteps = [
+    { key: 'original', label: 'Loading original file' },
+    { key: 'overrides', label: 'Checking overrides' },
+    { key: 'compare', label: 'Comparing base + overrides' },
+    { key: 'render', label: 'Rendering final view' },
+  ] as const;
+  const activeIndex =
+    fileLoadStage === 'render' && !fileLoading
+      ? loadSteps.length
+      : loadSteps.findIndex((step) => step.key === fileLoadStage);
   return (
     <div className="file-preview">
+      {selectedFile && fileLoadStage && (
+        <div className="file-preview-loading" aria-live="polite" aria-busy="true">
+          <div className="file-preview-loading-card">
+            <div className="file-preview-loading-header">
+              <div className="file-preview-loading-spinner" aria-hidden="true" />
+              <div>
+                <div className="file-preview-loading-title">Loading rules…</div>
+                <div className="file-preview-loading-subtitle">
+                  Preparing preview{fileLoading ? '…' : ''}
+                </div>
+              </div>
+            </div>
+            <div className="file-preview-loading-steps">
+              {loadSteps.map((step, index) => {
+                const status =
+                  activeIndex === -1
+                    ? 'pending'
+                    : index < activeIndex
+                      ? 'done'
+                      : index === activeIndex
+                        ? 'active'
+                        : 'pending';
+                return (
+                  <div key={step.key} className="file-preview-loading-step">
+                    <span
+                      className={`file-preview-loading-dot file-preview-loading-dot-${status}`}
+                      aria-hidden="true"
+                    />
+                    <span className="file-preview-loading-label">{step.label}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
       {!selectedFile ? (
         <div className="empty-state">Select a file on the left to view and edit.</div>
       ) : fileLoading ? (

@@ -6,6 +6,8 @@ export type MicroserviceServiceStatus = {
   installed: boolean;
   available: boolean;
   running: boolean;
+  runningState: 'ok' | 'down' | 'unknown';
+  reason: string | null;
   cluster: string;
   namespace: string;
   workload: {
@@ -18,6 +20,7 @@ export type MicroserviceServiceStatus = {
 export type MicroserviceStatusSummary = {
   success: boolean;
   chainReady: boolean;
+  chainUnknown: boolean;
   required: MicroserviceServiceStatus[];
   missing: string[];
   installedCount: number;
@@ -129,6 +132,27 @@ const isWorkloadRunning = (entry: Record<string, any> | undefined): boolean => {
   return ready > 0 && (total === 0 || ready >= total) && available > 0;
 };
 
+const getRunningState = (
+  installed: boolean,
+  workloadEntry: Record<string, any> | undefined,
+): { state: 'ok' | 'down' | 'unknown'; reason: string | null } => {
+  if (!installed) {
+    return { state: 'down', reason: 'not_installed' };
+  }
+  if (!workloadEntry) {
+    return { state: 'unknown', reason: 'workload_missing' };
+  }
+  const hasReady = workloadEntry.ready !== undefined && workloadEntry.ready !== null;
+  const hasAvailable = workloadEntry.available !== undefined && workloadEntry.available !== null;
+  if (!hasReady && !hasAvailable) {
+    return { state: 'unknown', reason: 'workload_missing_fields' };
+  }
+  if (isWorkloadRunning(workloadEntry)) {
+    return { state: 'ok', reason: null };
+  }
+  return { state: 'down', reason: 'workload_not_ready' };
+};
+
 const fetchInstalledEntries = async (uaClient: UAClient): Promise<Array<Record<string, any>>> => {
   const entries: Array<Record<string, any>> = [];
   const limit = 200;
@@ -227,16 +251,20 @@ const buildServiceStatus = (
   const workloadKey = `${cluster}::${namespace}`;
   const workloadMap = workloads.get(workloadKey);
   const workloadEntry = workloadMap
-    ? Array.from(workloadMap.values()).find((entry) =>
-        hints.some((hint) => matchesCatalogTarget(entry, hint)),
+    ? workloadMap.get(service.key) ||
+      Array.from(workloadMap.values()).find((entry) =>
+        hints.some((hint) => matchesTarget(entry, hint)),
       )
     : undefined;
+  const runningMeta = getRunningState(Boolean(installedEntry), workloadEntry);
   return {
     name: service.key,
     label: service.label,
     installed: Boolean(installedEntry),
     available: Boolean(catalogEntry),
-    running: Boolean(installedEntry) ? isWorkloadRunning(workloadEntry) : false,
+    running: runningMeta.state === 'ok',
+    runningState: runningMeta.state,
+    reason: runningMeta.reason,
     cluster,
     namespace,
     workload: workloadEntry
@@ -262,11 +290,13 @@ export const getMicroserviceStatus = async (
     buildServiceStatus(installedEntries, catalogEntries, workloadMap, service),
   );
   const missing = required.filter((entry) => !entry.installed).map((entry) => entry.name);
-  const chainReady = missing.length === 0 && required.every((entry) => entry.running);
+  const chainUnknown = required.some((entry) => entry.runningState === 'unknown');
+  const chainReady = missing.length === 0 && required.every((entry) => entry.runningState === 'ok');
 
   return {
     success: true,
     chainReady,
+    chainUnknown,
     required,
     missing,
     installedCount: installedEntries.length,

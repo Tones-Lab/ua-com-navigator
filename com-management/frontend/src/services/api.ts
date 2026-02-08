@@ -193,8 +193,10 @@ class ApiClient {
     return this.client.get('/microservice/health');
   }
 
-  async getMicroserviceStatus() {
-    return this.client.get('/microservice/status');
+  async getMicroserviceStatus(options?: { refresh?: boolean }) {
+    return this.client.get('/microservice/status', {
+      params: options?.refresh ? { refresh: '1' } : undefined,
+    });
   }
 
   async deployMicroservice(name: string) {

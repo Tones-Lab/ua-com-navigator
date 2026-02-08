@@ -35,6 +35,12 @@ type FcomFileHeaderProps = {
   fileError: string | null;
   saveError: string | null;
   saveSuccess: string | null;
+  overrideSaveStatus: Array<{
+    objectName: string;
+    fileName: string;
+    status: 'queued' | 'saving' | 'retrying' | 'done' | 'failed';
+  }>;
+  saveLoading: boolean;
   stagedToast: string | null;
   highlightQuery: string | null;
   highlightFileName: boolean;
@@ -69,6 +75,8 @@ export default function FcomFileHeader({
   fileError,
   saveError,
   saveSuccess,
+  overrideSaveStatus,
+  saveLoading,
   stagedToast,
   highlightQuery,
   highlightFileName,
@@ -249,6 +257,44 @@ export default function FcomFileHeader({
       {fileError && <div className="error">{fileError}</div>}
       {saveError && <div className="error">{saveError}</div>}
       {saveSuccess && <div className="success">{saveSuccess}</div>}
+      {!saveLoading && overrideSaveStatus.length > 0 && (
+        <div className="override-save-status">
+          <div className="override-save-status-header">
+            <span>Override files</span>
+            <span>
+              {overrideSaveStatus.filter((entry) => entry.status === 'done').length}/
+              {overrideSaveStatus.length} complete
+            </span>
+          </div>
+          <div className="override-save-status-list">
+            {overrideSaveStatus.map((entry) => {
+              const label =
+                entry.status === 'done'
+                  ? 'Done'
+                  : entry.status === 'failed'
+                    ? 'Failed'
+                    : entry.status === 'retrying'
+                      ? 'Retrying'
+                      : entry.status === 'saving'
+                        ? 'Saving'
+                        : 'Queued';
+              return (
+                <div
+                  key={`${entry.objectName}-${entry.fileName}`}
+                  className="override-save-status-item"
+                >
+                  <span className="override-save-status-name">{entry.fileName}</span>
+                  <span
+                    className={`override-save-status-pill override-save-status-pill-${entry.status}`}
+                  >
+                    {label}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
       {stagedToast && <div className="staged-toast">{stagedToast}</div>}
     </>
   );
