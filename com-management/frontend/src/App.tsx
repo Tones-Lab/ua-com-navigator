@@ -18,89 +18,82 @@ const FILE_LOAD_STAGE_ORDER = ['original', 'overrides', 'compare', 'render'] as 
 const FILE_LOAD_STAGE_TIMING = {
   showDelayMs: 120,
   stepMs: 380,
-        {requiredMicroservices.length === 0 ? (
-          <div className="microservice-loading">Loading status...</div>
-        ) : (
-          <div className="microservice-chain">
-            {requiredMicroservices.map((entry: any, idx: number) => {
-              const tone = getServiceTone(entry);
-              const label = entry?.label || entry?.name || 'Unknown';
-              const canDeploy = !entry?.installed && entry?.available;
-              const canRedeploy =
-                Boolean(entry?.installed) &&
-                (entry?.name === 'fcom-processor' || !entry?.running);
-              const actionLabel = (microserviceActionLabel || '').toLowerCase();
-              const labelKey = String(label).toLowerCase();
-              const isActionFor = labelKey && actionLabel.includes(labelKey);
-              const isDeploying = isActionFor && actionLabel.startsWith('deploying');
-              const isRedeploying = isActionFor && actionLabel.startsWith('redeploying');
-              const isWorking = isDeploying || isRedeploying;
-              const isRefreshing = microserviceStatusLoading;
-              return (
-                <div key={entry?.name || idx} className="microservice-chain-step">
-                  <div
-                    className={`microservice-card microservice-card-${tone}${
-                      isWorking ? ' microservice-card-working' : ''
-                    }${isRefreshing ? ' microservice-card-refreshing' : ''}`}
-                  >
-                    {isRefreshing && (
-                      <div className="microservice-card-overlay" aria-hidden="true">
-                        <span className="microservice-spinner" />
-                        Refreshing...
-                      </div>
-                    )}
-                    <div className="microservice-card-header">
-                      <span
-                        className={`microservice-dot microservice-dot-${tone}`}
-                        aria-hidden="true"
-                      />
-                      <div className="microservice-card-title">{label}</div>
-                    </div>
-                    <div className="microservice-card-status">{getServiceStatusText(entry)}</div>
-                    {entry?.workload && (
-                      <div className="microservice-card-meta">
-                        Ready {entry.workload.ready || '0'} - Available {entry.workload.available || '0'}
-                      </div>
-                    )}
-                    {isWorking && (
-                      <div className="microservice-card-progress">
-                        <span className="microservice-spinner" aria-hidden="true" />
-                        Working...
-                      </div>
-                    )}
-                    <div className="microservice-card-actions">
-                      {canDeploy && (
-                        <button
-                          type="button"
-                          className="builder-card builder-card-primary"
-                          onClick={() => handleDeployMicroservice(entry.name, label)}
-                          disabled={redeployLoading || !hasEditPermission}
-                        >
-                          {isDeploying ? 'Deploying...' : 'Deploy'}
-                        </button>
-                      )}
-                      {canRedeploy && (
-                        <button
-                          type="button"
-                          className="builder-card builder-card-primary"
-                          onClick={() => handleRedeployMicroservice(entry.name, label)}
-                          disabled={redeployLoading || !hasEditPermission}
-                        >
-                          {isRedeploying ? 'Redeploying...' : 'Redeploy'}
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                  {idx < requiredMicroservices.length - 1 && (
-                    <div className="microservice-chain-arrow" aria-hidden="true">
-                      -&gt;
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        )}
+  minVisibleMs: 900,
+  exitGraceMs: 450,
+  holdAfterRenderMs: 1500,
+};
+const OVERRIDE_SAVE_TIMING = {
+  staggerMs: 140,
+  stepMs: 240,
+};
+
+class ErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean; error?: Error }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, info: React.ErrorInfo) {
+    console.error('UI crash:', error, info);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="app">
+          <header className="app-header">
+            <h1>COM Curation &amp; Management</h1>
+          </header>
+          <main>
+            <div className="error">
+              Something went wrong while rendering the app. Refresh the page to try again.
+            </div>
+          </main>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
+type AppTab = 'overview' | 'fcom' | 'pcom' | 'mib';
+
+export default function App() {
+  const { session, servers, isAuthenticated, setSession, clearSession, setServers } =
+    useSessionStore();
+  const nowMs = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
+  const [activeApp, setActiveApp] = useState<AppTab>('overview');
+  const [serverId, setServerId] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [browseLoading, setBrowseLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchScope, setSearchScope] = useState<'all' | 'name' | 'content'>('all');
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [searchError, setSearchError] = useState<string | null>(null);
+  const [searchStatus, setSearchStatus] = useState<any>(null);
+  const [searchRebuildPending, setSearchRebuildPending] = useState(false);
+  const searchRebuildStartRef = useRef<number | null>(null);
+  const searchStatusPollRef = useRef<number | null>(null);
+  const [folderRebuildPending, setFolderRebuildPending] = useState(false);
+  const folderRebuildStartRef = useRef<number | null>(null);
+  const folderStatusPollRef = useRef<number | null>(null);
+  const [searchHighlightActive, setSearchHighlightActive] = useState(false);
+  const [highlightQuery, setHighlightQuery] = useState<string | null>(null);
+  const [highlightPathId, setHighlightPathId] = useState<string | null>(null);
+  const [highlightMatchSource, setHighlightMatchSource] = useState<
+    'name' | 'content' | 'both' | null
+  >(null);
   const [highlightObjectKeys, setHighlightObjectKeys] = useState<string[]>([]);
   const [currentMatchIndex, setCurrentMatchIndex] = useState(0);
   const [matchObjectOptions, setMatchObjectOptions] = useState<
@@ -272,6 +265,26 @@ const FILE_LOAD_STAGE_TIMING = {
     sessionStorage.setItem('fcom.search.query', searchQuery);
     sessionStorage.setItem('fcom.search.scope', searchScope);
   }, [searchQuery, searchScope]);
+
+  useEffect(() => {
+    if (!mibLoading) {
+      setMibLoadingElapsed(0);
+      setMibShowLoadingTimer(false);
+      return;
+    }
+    setMibLoadingElapsed(0);
+    setMibShowLoadingTimer(false);
+    const timerId = window.setTimeout(() => {
+      setMibShowLoadingTimer(true);
+    }, 2000);
+    const intervalId = window.setInterval(() => {
+      setMibLoadingElapsed((prev) => prev + 1);
+    }, 1000);
+    return () => {
+      window.clearTimeout(timerId);
+      window.clearInterval(intervalId);
+    };
+  }, [mibLoading]);
 
   useEffect(() => {
     try {
@@ -482,6 +495,134 @@ const FILE_LOAD_STAGE_TIMING = {
       segments[0] = segments[0].replace(/^id-/, '');
     }
     return `/${segments.join('/')}`;
+  };
+
+  const inferAppFromPath = (pathId?: string | null) => {
+    if (!pathId) {
+      return null;
+    }
+    const normalized = `/${pathId}`.toLowerCase();
+    if (normalized.includes('/fcom/')) {
+      return 'fcom' as AppTab;
+    }
+    if (normalized.includes('/pcom/')) {
+      return 'pcom' as AppTab;
+    }
+    if (normalized.includes('/mib/')) {
+      return 'mib' as AppTab;
+    }
+    return null;
+  };
+
+  const normalizePathId = (pathId?: string | null) =>
+    pathId ? pathId.replace(/^\/+/, '') : '';
+
+  const normalizeRulesPath = (pathId?: string | null) => {
+    const cleaned = normalizePathId(pathId);
+    if (!cleaned) {
+      return '';
+    }
+    if (cleaned.startsWith('id-core/rules/')) {
+      return `id-core/${cleaned.slice('id-core/rules/'.length)}`;
+    }
+    if (cleaned.startsWith('rules/')) {
+      return `id-core/${cleaned.slice('rules/'.length)}`;
+    }
+    return cleaned;
+  };
+
+  const ensureCorePrefix = (pathId?: string | null) => {
+    const normalized = normalizeRulesPath(pathId);
+    if (!normalized) {
+      return '';
+    }
+    if (normalized.startsWith('id-')) {
+      return normalized;
+    }
+    return normalized;
+  };
+
+  const isFileReadPayload = (payload: any) => {
+    if (!payload || typeof payload !== 'object') {
+      return false;
+    }
+    const content = payload.content;
+    if (!content || typeof content !== 'object') {
+      return false;
+    }
+    if (Array.isArray(content.data) || Array.isArray(content.objects)) {
+      return true;
+    }
+    return Object.keys(content).length > 0;
+  };
+
+  const resolveDeepLinkFileId = async (fileId: string, nodeParam?: string | null) => {
+    const cleanedFile = normalizeRulesPath(fileId);
+    if (!cleanedFile) {
+      return null;
+    }
+    const fileName = cleanedFile.split('/').pop() || cleanedFile;
+    const parentFromFile = cleanedFile.split('/').slice(0, -1).join('/');
+    const nodeCandidates = new Set<string>();
+    if (nodeParam) {
+      nodeCandidates.add(normalizeRulesPath(nodeParam));
+    }
+    if (parentFromFile) {
+      nodeCandidates.add(parentFromFile);
+    }
+    Array.from(nodeCandidates).forEach((node) => {
+      const normalized = ensureCorePrefix(node);
+      if (normalized) {
+        nodeCandidates.add(normalized);
+      }
+    });
+
+    const fileNameLower = fileName.toLowerCase();
+    const fileCandidates = new Set<string>();
+    fileCandidates.add(cleanedFile);
+    const prefixed = ensureCorePrefix(cleanedFile);
+    if (prefixed) {
+      fileCandidates.add(prefixed);
+    }
+    if (cleanedFile.startsWith('id-core/')) {
+      fileCandidates.add(cleanedFile.replace(/^id-core\//, ''));
+    }
+
+    for (const candidate of fileCandidates) {
+      try {
+        const resp = await api.readFile(candidate);
+        if (isFileReadPayload(resp.data)) {
+          return candidate;
+        }
+      } catch {
+        // ignore read failures, try next candidate
+      }
+    }
+    for (const node of nodeCandidates) {
+      const normalizedNode = ensureCorePrefix(node);
+      if (!normalizedNode) {
+        continue;
+      }
+      try {
+        const resp = await api.browsePath(browsePath, { node: normalizedNode });
+        const items = Array.isArray(resp.data?.data) ? resp.data.data : [];
+        const match = items.find((entry: any) => {
+          if (!entry || isFolder(entry)) {
+            return false;
+          }
+          const pathName = String(entry?.PathName || '').toLowerCase();
+          const pathId = String(entry?.PathID || '').toLowerCase();
+          return pathName === fileNameLower || pathId.endsWith(`/${fileNameLower}`);
+        });
+        if (match?.PathID) {
+          return String(match.PathID);
+        }
+      } catch {
+        // ignore browse resolution errors
+      }
+    }
+
+    return ensureCorePrefix(cleanedFile) || cleanedFile;
   };
 
   const getVendorFromPath = (pathId?: string | null) => {
@@ -2194,26 +2335,6 @@ const FILE_LOAD_STAGE_TIMING = {
   }, [activeApp, isAuthenticated, mibEntries.length, mibLoading]);
 
   useEffect(() => {
-    if (!mibLoading) {
-      setMibLoadingElapsed(0);
-      setMibShowLoadingTimer(false);
-      return;
-    }
-    setMibLoadingElapsed(0);
-    setMibShowLoadingTimer(false);
-    const timerId = window.setTimeout(() => {
-      setMibShowLoadingTimer(true);
-    }, 2000);
-    const intervalId = window.setInterval(() => {
-      setMibLoadingElapsed((prev) => prev + 1);
-    }, 1000);
-    return () => {
-      window.clearTimeout(timerId);
-      window.clearInterval(intervalId);
-    };
-  }, [mibLoading]);
-
-  useEffect(() => {
     if (!saveLoading) {
       setSaveElapsed(0);
       return;
@@ -2950,9 +3071,19 @@ const FILE_LOAD_STAGE_TIMING = {
     const nodeParam = params.get('node');
     const fileParam = params.get('file');
     const viewParam = params.get('view');
+    const appParam = params.get('app');
 
     if (viewParam === 'friendly' || viewParam === 'preview') {
       setViewMode(viewParam);
+    }
+
+    if (appParam === 'overview' || appParam === 'fcom' || appParam === 'pcom' || appParam === 'mib') {
+      setActiveApp(appParam as AppTab);
+    } else {
+      const inferred = inferAppFromPath(fileParam || nodeParam);
+      if (inferred) {
+        setActiveApp(inferred);
+      }
     }
 
     if (fileParam) {
@@ -2988,6 +3119,7 @@ const FILE_LOAD_STAGE_TIMING = {
     } else {
       params.delete('file');
     }
+    params.set('app', activeApp);
     params.set('view', viewMode);
     if (session?.server_id) {
       params.set('server', session.server_id);
@@ -3623,31 +3755,7 @@ const FILE_LOAD_STAGE_TIMING = {
         const overridesResp = await api.getOverrides(entry.PathID);
         logTiming('getOverrides', overridesStart);
         setOverrideInfo(overridesResp.data);
-        const overridesCount = Array.isArray(overridesResp.data?.overrides)
-          ? overridesResp.data.overrides.length
-          : 0;
-        const filesCount = overridesResp.data?.overrideFilesByObject
-          ? Object.keys(overridesResp.data.overrideFilesByObject).length
-          : 0;
-        console.info('[Overrides] response', {
-          fileId: entry.PathID,
-          exists: overridesResp.data?.exists,
-          overridesCount,
-          filesCount,
-          vendor: overridesResp.data?.vendor,
-          method: overridesResp.data?.method,
-        });
-        if (overridesCount === 0) {
-          console.info('[Overrides] no overrides returned', {
-            fileId: entry.PathID,
-            overrideRoot: overridesResp.data?.overrideRootId,
-          });
-        }
       } catch (err: any) {
-        console.warn('[Overrides] load failed', {
-          fileId: entry?.PathID,
-          error: err?.response?.data?.error || err?.message || err,
-        });
         setOverrideError(err?.response?.data?.error || 'Failed to load overrides');
         setOverrideInfo(null);
       } finally {
@@ -3673,7 +3781,7 @@ const FILE_LOAD_STAGE_TIMING = {
       }
       logTiming('parse+format', parseStart);
       setCommitMessage('');
-      setViewMode('friendly');
+      setViewMode((prev) => (prev === 'preview' ? prev : 'friendly'));
       setFileLoadStageTarget('render');
     } catch (err: any) {
       setFileError(err?.response?.data?.error || 'Failed to load file');
@@ -3737,11 +3845,16 @@ const FILE_LOAD_STAGE_TIMING = {
   };
 
   const openFileFromUrlInternal = async (fileId: string, nodeParam?: string | null) => {
-    const fileName = fileId.split('/').pop() || fileId;
-    const derivedParent = fileId.split('/').slice(0, -1).join('/');
-    const parentNode = nodeParam || derivedParent;
+    const resolvedFileId = (await resolveDeepLinkFileId(fileId, nodeParam)) || fileId;
+    const fileName = resolvedFileId.split('/').pop() || resolvedFileId;
+    const derivedParent = resolvedFileId.split('/').slice(0, -1).join('/');
+    const parentNode = ensureCorePrefix(nodeParam) || derivedParent;
     try {
-      await handleOpenFileInternal({ PathID: fileId, PathName: fileName });
+      const inferred = inferAppFromPath(resolvedFileId || parentNode);
+      if (inferred && inferred !== activeApp) {
+        setActiveApp(inferred);
+      }
+      await handleOpenFileInternal({ PathID: resolvedFileId, PathName: fileName });
       if (parentNode) {
         try {
           const resp = await api.browsePath(browsePath, { node: parentNode });
@@ -3937,20 +4050,20 @@ const FILE_LOAD_STAGE_TIMING = {
     };
   };
 
-  const applyTrapDefaults = async (
-    parsed: {
-      version?: string;
-      community?: string;
-      host?: string;
-      trapOid?: string;
-      mibModule?: string;
-      varbinds: Array<{ oid: string; type: string; value: string }>;
-    },
-    options?: { objectName?: string; source?: 'fcom' | 'mib'; fallbackModule?: string },
-  ) => {
-    setTrapSource(options?.source ?? 'fcom');
+  const openTrapComposerFromTest = async (obj: any) => {
+    const testCommand = obj?.test;
+    if (!testCommand || typeof testCommand !== 'string') {
+      triggerToast('No test trap command found for this object.', false);
+      return;
+    }
+    const parsed = parseTrapTestCommand(testCommand);
+    if (!parsed.trapOid) {
+      triggerToast('Test trap command did not include a trap OID.', false);
+      return;
+    }
+    setTrapSource('fcom');
     setTrapError(null);
-    setTrapObjectName(options?.objectName || '');
+    setTrapObjectName(String(obj?.['@objectName'] || obj?.name || ''));
     setTrapHost('');
     setTrapPort(162);
     let nextHost = '';
@@ -3969,30 +4082,13 @@ const FILE_LOAD_STAGE_TIMING = {
       }
     }
     setTrapOid(parsed.trapOid ? String(parsed.trapOid) : '');
-    setTrapMibModule(parsed.mibModule || options?.fallbackModule || '');
+    setTrapMibModule(parsed.mibModule || '');
     setTrapVarbinds(
       parsed.varbinds.length > 0 ? parsed.varbinds : [{ oid: '', type: 's', value: '' }],
     );
     setTrapManualOpen(false);
     setTrapModalOpen(true);
     await loadBrokerServers({ currentHost: nextHost, forceDefault: true });
-  };
-
-  const openTrapComposerFromTest = async (obj: any) => {
-    const testCommand = obj?.test;
-    if (!testCommand || typeof testCommand !== 'string') {
-      triggerToast('No test trap command found for this object.', false);
-      return;
-    }
-    const parsed = parseTrapTestCommand(testCommand);
-    if (!parsed.trapOid) {
-      triggerToast('Test trap command did not include a trap OID.', false);
-      return;
-    }
-    await applyTrapDefaults(parsed, {
-      objectName: String(obj?.['@objectName'] || obj?.name || ''),
-      source: 'fcom',
-    });
   };
 
   const buildTrapTestItems = (objects: any[], sourceLabel: string) => {
@@ -4588,10 +4684,43 @@ const FILE_LOAD_STAGE_TIMING = {
     }
   };
 
+  const applyTrapDefaults = (defaults: NonNullable<typeof mibTrapDefaults>) => {
+    const parsed = defaults.parsed;
+    if (!parsed) {
+      return '';
+    }
+    let nextHost = '';
+    if (parsed.version) {
+      setTrapVersion(parsed.version);
+    }
+    if (parsed.community) {
+      setTrapCommunity(parsed.community);
+    }
+    if (parsed.host) {
+      const [hostValue, portValue] = parsed.host.split(':');
+      nextHost = hostValue || parsed.host;
+      setTrapHost(nextHost);
+      if (portValue && Number(portValue)) {
+        setTrapPort(Number(portValue));
+      }
+    }
+    if (parsed.trapOid) {
+      setTrapOid(String(parsed.trapOid));
+    }
+    if (parsed.mibModule) {
+      setTrapMibModule(parsed.mibModule);
+    }
+    if (parsed.varbinds && parsed.varbinds.length > 0) {
+      setTrapVarbinds(parsed.varbinds);
+    }
+    setTrapObjectName(defaults.objectName || '');
+    return nextHost;
+  };
+
   const openTrapComposer = async (definition: any, sourcePath?: string | null) => {
     setTrapError(null);
     setTrapSource('mib');
-    setTrapObjectName('');
+    setTrapObjectName(String(definition?.name || ''));
     const resolvedOid = definition?.fullOid || definition?.oid;
     setTrapOid(resolvedOid ? String(resolvedOid) : '');
     setTrapVarbinds([{ oid: '', type: 's', value: '' }]);
@@ -4603,8 +4732,9 @@ const FILE_LOAD_STAGE_TIMING = {
     } else {
       setTrapMibModule('');
     }
+    const defaultHost = mibTrapDefaults ? applyTrapDefaults(mibTrapDefaults) : '';
     setTrapModalOpen(true);
-    await loadBrokerServers({ currentHost: '', forceDefault: true });
+    await loadBrokerServers({ currentHost: defaultHost, forceDefault: true });
   };
 
   const addRecentTarget = (hostValue: string) => {
@@ -4764,24 +4894,29 @@ const FILE_LOAD_STAGE_TIMING = {
     (fav): fav is { type: 'folder'; pathId: string; label: string } => fav.type === 'folder',
   );
   const filteredMibDefinitions = useMemo(() => {
-    const needle = mibDefinitionSearch.trim().toLowerCase();
+    const query = mibDefinitionSearch.trim().toLowerCase();
     return mibDefinitions.filter((entry) => {
-      const kind = String(entry?.kind || '').toUpperCase();
-      const isFcom = kind === 'NOTIFICATION-TYPE' || kind === 'TRAP-TYPE';
-      const isPcom = kind === 'OBJECT-TYPE';
-      if (mibObjectFilter === 'fcom' && !isFcom) {
-        return false;
-      }
-      if (mibObjectFilter === 'pcom' && !isPcom) {
-        return false;
-      }
-      if (!needle) {
-        return true;
-      }
       const name = String(entry?.name || '').toLowerCase();
       const oid = String(entry?.oid || '').toLowerCase();
       const fullOid = String(entry?.fullOid || '').toLowerCase();
-      return name.includes(needle) || oid.includes(needle) || fullOid.includes(needle);
+      const matchesQuery =
+        !query || name.includes(query) || oid.includes(query) || fullOid.includes(query);
+      if (!matchesQuery) {
+        return false;
+      }
+      if (mibObjectFilter === 'all') {
+        return true;
+      }
+      const kind = String(entry?.kind || '').toUpperCase();
+      const isFcom = kind === 'NOTIFICATION-TYPE' || kind === 'TRAP-TYPE';
+      const isPcom = kind === 'OBJECT-TYPE';
+      if (mibObjectFilter === 'fcom') {
+        return isFcom;
+      }
+      if (mibObjectFilter === 'pcom') {
+        return isPcom;
+      }
+      return true;
     });
   }, [mibDefinitions, mibDefinitionSearch, mibObjectFilter]);
   const mibDefinitionCounts = useMemo(() => {
@@ -5326,7 +5461,61 @@ const FILE_LOAD_STAGE_TIMING = {
     if (!fileName || !overrideInfo?.overrideRootRulePath) {
       return null;
     }
-    return `${window.location.origin}#rule${overrideInfo.overrideRootRulePath}/${encodeURIComponent(fileName)}`;
+    const rootPath = normalizeRulesPath(overrideInfo.overrideRootRulePath);
+    const filePath = `${rootPath}/${fileName}`.replace(/^\/+/, '');
+    const nodePath = filePath.split('/').slice(0, -1).join('/');
+    const params = new URLSearchParams(window.location.search);
+    params.set('app', 'fcom');
+    params.set('file', filePath);
+    if (nodePath) {
+      params.set('node', ensureCorePrefix(nodePath));
+    } else {
+      params.delete('node');
+    }
+    params.set('view', 'preview');
+    const query = params.toString();
+    return `${window.location.origin}${window.location.pathname}?${query}`;
+  };
+
+  const getOverrideVersionInfo = (objectName?: string | null) => {
+    if (!objectName) {
+      return { mode: 'none', label: '', detail: '' } as {
+        mode: 'none' | 'v2' | 'v3' | 'mixed';
+        label: string;
+        detail: string;
+      };
+    }
+    const entries = overrideIndex.get(objectName) || [];
+    if (entries.length === 0) {
+      return { mode: 'none', label: '', detail: '' } as const;
+    }
+    let hasV2 = false;
+    let hasV3 = false;
+    entries.forEach((entry: any) => {
+      const processors = Array.isArray(entry?.processors) ? entry.processors : [];
+      const hasPatch = processors.some((proc: any) => proc?.op && proc?.path);
+      if (entry?.version === 'v3' || hasPatch) {
+        hasV3 = true;
+        return;
+      }
+      if (entry?.version === 'v2' || processors.length > 0) {
+        hasV2 = true;
+      }
+    });
+    if (hasV2 && hasV3) {
+      return {
+        mode: 'mixed',
+        label: 'Mixed (v2 + v3)',
+        detail: 'Both processor and patch overrides are present.',
+      } as const;
+    }
+    if (hasV3) {
+      return { mode: 'v3', label: 'Patch (v3)', detail: 'JSON Patch override.' } as const;
+    }
+    if (hasV2) {
+      return { mode: 'v2', label: 'Processor (v2)', detail: 'Legacy processor override.' } as const;
+    }
+    return { mode: 'none', label: '', detail: '' } as const;
   };
 
   const overrideIndex = useMemo(() => {
@@ -6285,9 +6474,17 @@ const FILE_LOAD_STAGE_TIMING = {
       return null;
     }
 
+    const overrideVersion = getOverrideVersionInfo(obj?.['@objectName']);
+
     return (
       <div className="override-summary-card" role="tooltip">
         <div className="override-summary-title">{title}</div>
+        {overrideVersion.mode !== 'none' && (
+          <div className="override-summary-note">
+            {overrideVersion.label}
+            {overrideVersion.detail ? ` • ${overrideVersion.detail}` : ''}
+          </div>
+        )}
         <ul className="override-summary-list">
           {rows.map((row) => {
             const target = row.field.startsWith('$.') ? row.field : `$.event.${row.field}`;
@@ -6619,6 +6816,99 @@ const FILE_LOAD_STAGE_TIMING = {
   const buildOverridePatchOp = (objectName: string, field: string, value: any) =>
     buildEventPatchOp(objectName, field, value);
 
+  const canConvertOverrideToV3 = (objectName: string) => {
+    if (!objectName) {
+      return false;
+    }
+    const overrides = getWorkingOverrides();
+    const method = getOverrideMethod();
+    const scope = 'post';
+    const entry = overrides.find(
+      (item: any) =>
+        item?.['@objectName'] === objectName && item?.method === method && item?.scope === scope,
+    );
+    if (!entry) {
+      return false;
+    }
+    const processors = Array.isArray(entry?.processors) ? entry.processors : [];
+    if (processors.length === 0) {
+      return false;
+    }
+    if (processors.some((proc: any) => proc?.op && proc?.path)) {
+      return false;
+    }
+    const convertible = processors.filter((processor: any) => {
+      const target = getProcessorTargetField(processor);
+      if (!target || !target.startsWith('$.event.')) {
+        return false;
+      }
+      return Boolean(processor?.set && Object.prototype.hasOwnProperty.call(processor.set, 'source'));
+    });
+    return convertible.length > 0 && convertible.length === processors.length;
+  };
+
+  const convertOverrideToV3 = (objectName: string) => {
+    if (!objectName) {
+      return;
+    }
+    const overrides = getWorkingOverrides();
+    const method = getOverrideMethod();
+    const scope = 'post';
+    const matchIndex = overrides.findIndex(
+      (entry: any) =>
+        entry?.['@objectName'] === objectName && entry?.method === method && entry?.scope === scope,
+    );
+    if (matchIndex < 0) {
+      return;
+    }
+    const entry = overrides[matchIndex];
+    const processors = Array.isArray(entry?.processors) ? entry.processors : [];
+    const patchOps: any[] = [];
+
+    processors.forEach((processor: any) => {
+      if (processor?.op && processor?.path) {
+        patchOps.push(processor);
+        return;
+      }
+      const target = getProcessorTargetField(processor);
+      if (!target || !target.startsWith('$.event.')) {
+        return;
+      }
+      if (!processor?.set || !Object.prototype.hasOwnProperty.call(processor.set, 'source')) {
+        return;
+      }
+      const field = target.replace('$.event.', '');
+      const nextOp = buildOverridePatchOp(objectName, field, processor.set.source);
+      for (let i = patchOps.length - 1; i >= 0; i -= 1) {
+        if (getPatchTargetField(patchOps[i]) === target) {
+          patchOps.splice(i, 1);
+        }
+      }
+      patchOps.push(nextOp);
+    });
+
+    if (patchOps.length === 0) {
+      return;
+    }
+
+    const converted = {
+      ...entry,
+      version: 'v3',
+      processors: patchOps,
+    };
+    const nextOverrides = [...overrides];
+    nextOverrides[matchIndex] = converted;
+    setPendingOverrideSave(nextOverrides);
+    triggerToast(`Converted ${objectName} override to v3 patch mode (staged).`, true);
+  };
+
+  const openAdvancedFlowForObject = (objectName: string) => {
+    if (!objectName) {
+      return;
+    }
+    openAdvancedFlowModal('object', objectName, null);
+  };
+
   const saveEventEdit = async (obj: any, key: string) => {
     if (!selectedFile) {
       return;
@@ -6628,6 +6918,11 @@ const FILE_LOAD_STAGE_TIMING = {
     }
     const objectName = obj?.['@objectName'];
     if (!objectName) {
+      return;
+    }
+    const versionInfo = getOverrideVersionInfo(objectName);
+    if (versionInfo.mode === 'v2' || versionInfo.mode === 'mixed') {
+      setSaveError('This object uses v2 processor overrides. Convert to v3 before editing.');
       return;
     }
     const draft = panelDrafts?.[key]?.event || {};
@@ -7831,6 +8126,11 @@ const FILE_LOAD_STAGE_TIMING = {
 
   const openBuilderForField = (obj: any, panelKey: string, field: string) => {
     if (!hasEditPermission) {
+      return;
+    }
+    const versionInfo = getOverrideVersionInfo(obj?.['@objectName']);
+    if (versionInfo.mode === 'v2' || versionInfo.mode === 'mixed') {
+      triggerToast('Open Advanced Flow or convert to v3 before using the builder.', false);
       return;
     }
     if (!panelEditState[panelKey]) {
@@ -9372,13 +9672,192 @@ const FILE_LOAD_STAGE_TIMING = {
     objectNameOverride?: string | null,
     focusTargetField?: string | null,
   ) => void = (scope, objectNameOverride, focusTargetField) => {
-    setSaveError('Advanced flow processors are not supported in v3 override files yet.');
-    return;
+    if (!selectedFile) {
+      return;
+    }
+    const getObjectName = () => {
+      if (scope === 'global') {
+        return null;
+      }
+      if (objectNameOverride) {
+        return objectNameOverride;
+      }
+      if (builderTarget?.panelKey) {
+        return getObjectByPanelKey(builderTarget.panelKey)?.['@objectName'] || null;
+      }
+      return null;
+    };
+    const objectName = getObjectName();
+    if (scope === 'object' && !objectName) {
+      setSaveError('Select an object to open Advanced Flow.');
+      return;
+    }
+    const method = getOverrideMethod();
+    const hasPatchOps = (processors: any[]) =>
+      processors.some((processor: any) => processor?.op && processor?.path);
+    if (scope === 'global') {
+      const preEntry = getOverrideEntry({ scope: 'pre', method });
+      const postEntry = getOverrideEntry({ scope: 'post', method });
+      const preProcessors = Array.isArray(preEntry?.processors) ? preEntry.processors : [];
+      const postProcessors = Array.isArray(postEntry?.processors) ? postEntry.processors : [];
+      if (hasPatchOps(preProcessors) || hasPatchOps(postProcessors)) {
+        setSaveError('Advanced Flow only supports v2 processor overrides.');
+        return;
+      }
+      const preNodes = buildFlowNodesFromProcessors(preProcessors);
+      const postNodes = buildFlowNodesFromProcessors(postProcessors);
+      setGlobalPreFlow(preNodes);
+      setGlobalPostFlow(postNodes);
+      setAdvancedFlow([]);
+      setAdvancedFlowBaseline({
+        scope: 'global',
+        pre: JSON.stringify(buildFlowProcessors(preNodes)),
+        post: JSON.stringify(buildFlowProcessors(postNodes)),
+      });
+    } else if (objectName) {
+      const entry = getOverrideEntry({ objectName, scope: 'post', method });
+      const processors = Array.isArray(entry?.processors) ? entry.processors : [];
+      if (hasPatchOps(processors)) {
+        setSaveError('Advanced Flow only supports v2 processor overrides.');
+        return;
+      }
+      const nodes = buildFlowNodesFromProcessors(processors);
+      setAdvancedFlow(nodes);
+      setAdvancedFlowBaseline({
+        scope: 'object',
+        objectName,
+        object: JSON.stringify(buildFlowProcessors(nodes)),
+      });
+    }
+    setAdvancedFlowTarget({ scope, objectName: objectName || undefined, method });
+    setAdvancedProcessorScope(scope);
+    setAdvancedProcessorSearch('');
+    setAdvancedFlowFocusTarget(focusTargetField || null);
+    setAdvancedFlowFocusIndex(0);
+    setAdvancedFlowFocusOnly(false);
+    setAdvancedFlowDefaultTarget(focusTargetField || null);
+    setFlowEditor(null);
+    setFlowEditorDraft(null);
+    setSaveError(null);
+    setShowAdvancedProcessorModal(true);
   };
 
   const saveAdvancedFlow = () => {
-    setSaveError('Advanced flow processors are not supported in v3 override files yet.');
-    return;
+    if (!ensureEditPermission()) {
+      return;
+    }
+    if (!advancedFlowTarget) {
+      setSaveError('Select a target before saving Advanced Flow.');
+      return;
+    }
+    const method = advancedFlowTarget.method || getOverrideMethod();
+    const baseOverrides = pendingOverrideSave
+      ? [...pendingOverrideSave]
+      : Array.isArray(overrideInfo?.overrides)
+        ? [...overrideInfo.overrides]
+        : [];
+    const updateOverrideEntry = (params: {
+      objectName?: string;
+      scope: 'pre' | 'post';
+      processors: any[];
+    }) => {
+      const matchIndex = baseOverrides.findIndex(
+        (entry: any) =>
+          entry?.scope === params.scope &&
+          entry?.method === method &&
+          (params.objectName
+            ? entry?.['@objectName'] === params.objectName
+            : !entry?.['@objectName']),
+      );
+      const existing = matchIndex >= 0 ? { ...baseOverrides[matchIndex] } : null;
+      const hasEventOverrides =
+        existing?.event &&
+        typeof existing.event === 'object' &&
+        Object.keys(existing.event).length > 0;
+      if (params.processors.length === 0) {
+        if (!existing) {
+          return;
+        }
+        if (!hasEventOverrides) {
+          baseOverrides.splice(matchIndex, 1);
+          return;
+        }
+        const nextEntry = {
+          ...existing,
+          version: 'v2',
+          processors: [],
+        };
+        baseOverrides[matchIndex] = nextEntry;
+        return;
+      }
+      const nextEntry = existing
+        ? {
+            ...existing,
+            version: 'v2',
+            processors: params.processors,
+          }
+        : {
+            name: params.objectName
+              ? `${params.objectName} Override`
+              : 'Global Override',
+            description: params.objectName
+              ? `Overrides for ${params.objectName}`
+              : 'Global processor overrides',
+            domain: 'fault',
+            method,
+            scope: params.scope,
+            ...(params.objectName ? { '@objectName': params.objectName } : {}),
+            _type: 'override',
+            version: 'v2',
+            processors: params.processors,
+          };
+      if (matchIndex >= 0) {
+        baseOverrides[matchIndex] = nextEntry;
+      } else {
+        baseOverrides.push(nextEntry);
+      }
+    };
+
+    if (advancedProcessorScope === 'global') {
+      const preProcessors = buildFlowProcessors(globalPreFlow);
+      const postProcessors = buildFlowProcessors(globalPostFlow);
+      updateOverrideEntry({ scope: 'pre', processors: preProcessors });
+      updateOverrideEntry({ scope: 'post', processors: postProcessors });
+      setAdvancedFlowBaseline({
+        scope: 'global',
+        pre: JSON.stringify(preProcessors),
+        post: JSON.stringify(postProcessors),
+      });
+      const count = preProcessors.length + postProcessors.length;
+      triggerToast(
+        count === 0
+          ? 'Cleared global Advanced Flow processors (staged).'
+          : `Staged ${count} global Advanced Flow processor${count === 1 ? '' : 's'}.`,
+        true,
+      );
+    } else {
+      const objectName = advancedFlowTarget.objectName;
+      if (!objectName) {
+        setSaveError('Select an object before saving Advanced Flow.');
+        return;
+      }
+      const processors = buildFlowProcessors(advancedFlow);
+      updateOverrideEntry({ objectName, scope: 'post', processors });
+      setAdvancedFlowBaseline({
+        scope: 'object',
+        objectName,
+        object: JSON.stringify(processors),
+      });
+      const count = processors.length;
+      triggerToast(
+        count === 0
+          ? `Cleared Advanced Flow processors for ${objectName} (staged).`
+          : `Staged ${count} Advanced Flow processor${count === 1 ? '' : 's'} for ${objectName}.`,
+        true,
+      );
+    }
+    setPendingOverrideSave(baseOverrides);
+    setSaveError(null);
   };
 
   const handleBuilderSelect = (item: ProcessorCatalogItem, isEnabled: boolean) => {
@@ -11114,7 +11593,7 @@ const FILE_LOAD_STAGE_TIMING = {
                     handleOpenFile={handleOpenFile}
                   />
                   <div className="panel">
-                    <div className="panel-scroll mib-details-scroll">
+                    <div className="panel-scroll">
                       <div className="file-details">
                         {!selectedFile && (
                           <FcomFolderOverview
@@ -11206,6 +11685,10 @@ const FILE_LOAD_STAGE_TIMING = {
                           getProcessorTargets={getProcessorTargets}
                           getProcessorFieldSummary={getProcessorFieldSummary}
                           getOverrideValueMap={getOverrideValueMap}
+                          getOverrideVersionInfo={getOverrideVersionInfo}
+                          canConvertOverrideToV3={canConvertOverrideToV3}
+                          convertOverrideToV3={convertOverrideToV3}
+                          openAdvancedFlowForObject={openAdvancedFlowForObject}
                           getOverrideFileInfoForObject={getOverrideFileInfoForObject}
                           getOverrideMetaForObject={getOverrideMetaForObject}
                           getOverrideRuleLinkForObject={getOverrideRuleLinkForObject}
@@ -13459,6 +13942,12 @@ const FILE_LOAD_STAGE_TIMING = {
                                   const isFault = kind === 'NOTIFICATION-TYPE' || kind === 'TRAP-TYPE';
                                   const isPerf = kind === 'OBJECT-TYPE';
                                   const activeTab = isFault ? 'fault' : isPerf ? 'performance' : 'fault';
+                                  const actionTitle =
+                                    activeTab === 'fault' ? 'Fault Actions' : 'Performance Actions';
+                                  const actionSubtitle =
+                                    activeTab === 'fault'
+                                      ? 'Draft your fault pipeline and correlate events.'
+                                      : 'Draft performance handling and metric tags.';
                                   return (
                                     <div className="mib-definition-details">
                                       <div className="mib-definition-header">
@@ -13472,14 +13961,10 @@ const FILE_LOAD_STAGE_TIMING = {
                                       <div className="mib-definition-meta">
                                         <span>Kind: {mibSelectedDefinition.kind}</span>
                                         <span>
-                                          OID (numeric):
-                                          {' '}
-                                          {mibSelectedDefinition.fullOid || '—'}
+                                          OID (numeric): {mibSelectedDefinition.fullOid || '—'}
                                         </span>
                                         <span>
-                                          OID (symbolic):
-                                          {' '}
-                                          {mibSelectedDefinition.oid || '—'}
+                                          OID (symbolic): {mibSelectedDefinition.oid || '—'}
                                         </span>
                                       </div>
                                       <div className="mib-definition-meta">
@@ -13507,122 +13992,31 @@ const FILE_LOAD_STAGE_TIMING = {
                                           {mibSelectedDefinition.description}
                                         </div>
                                       )}
-                                      {activeTab === 'fault' ? (
-                                        <div className="mib-action-card">
-                                          <div className="mib-action-header">
-                                            <div>
-                                              <div className="mib-action-title">Send Trap (Test)</div>
-                                              <div className="mib-action-subtitle">
-                                                Build a test notification from this object.
-                                              </div>
-                                              {mibTrapDefaults?.parsed?.trapOid && (
-                                                <div className="mib-action-hint">
-                                                  Defaults loaded from FCOM test command.
-                                                </div>
-                                              )}
-                                            </div>
-                                            <button
-                                              type="button"
-                                              className="action-link"
-                                              disabled
-                                              title="Coming soon - will send a test trap"
-                                            >
-                                              Send Trap (Test)
-                                            </button>
-                                          </div>
-                                          <div className="mib-action-preview">
-                                            <div className="mib-action-preview-title">Payload preview</div>
-                                            <pre>{`{\n  "oid": "${
-  mibTrapDefaults?.parsed?.trapOid ||
-  mibSelectedDefinition.fullOid ||
-  mibSelectedDefinition.oid ||
-  '1.3.6.1.4.1'
-}",\n  "varbinds": [\n    { "oid": "${
-  mibTrapDefaults?.parsed?.varbinds?.[0]?.oid ||
-  `${mibTrapDefaults?.parsed?.trapOid ||
-  mibSelectedDefinition.fullOid ||
-  mibSelectedDefinition.oid ||
-  '1.3.6.1.4.1'}.1`
-}", "type": "${
-  mibTrapDefaults?.parsed?.varbinds?.[0]?.type || 'string'
-}", "value": "${
-  mibTrapDefaults?.parsed?.varbinds?.[0]?.value || 'example'
-}" }\n  ]\n}`}</pre>
-                                          </div>
-                                          <button
-                                            type="button"
-                                            className="action-link"
-                                            onClick={() => {
-                                              if (mibTrapDefaults?.parsed?.trapOid) {
-                                                void applyTrapDefaults(mibTrapDefaults.parsed, {
-                                                  objectName: mibTrapDefaults.objectName,
-                                                  source: 'fcom',
-                                                  fallbackModule: mibTrapDefaults.module,
-                                                });
-                                                return;
-                                              }
-                                              void openTrapComposer(
-                                                mibSelectedDefinition,
-                                                mibSelectedFile,
-                                              );
-                                            }}
-                                          >
-                                            Compose Trap
-                                          </button>
-                                        </div>
-                                      ) : (
-                                        <div className="mib-action-card">
-                                          <div className="mib-action-header">
-                                            <div>
-                                              <div className="mib-action-title">Run SNMP Poll</div>
-                                              <div className="mib-action-subtitle">
-                                                Targets devices with matching enterprise OID and valid
-                                                credentials.
-                                              </div>
-                                            </div>
-                                            <button
-                                              type="button"
-                                              className="action-link"
-                                              disabled
-                                              title="Coming soon - will query this object"
-                                            >
-                                              Run SNMP Poll
-                                            </button>
-                                          </div>
-                                          <div className="mib-action-grid">
-                                            <label className="mib-field">
-                                              Device
-                                              <select disabled>
-                                                <option>Devices will populate from UA catalog</option>
-                                              </select>
-                                            </label>
-                                            <label className="mib-field">
-                                              SNMP version
-                                              <select disabled>
-                                                <option>v2c</option>
-                                              </select>
-                                            </label>
-                                            <label className="mib-field">
-                                              Credential profile
-                                              <select disabled>
-                                                <option>Primary SNMP profile</option>
-                                              </select>
-                                            </label>
-                                          </div>
-                                          <div className="mib-action-preview">
-                                            <div className="mib-action-preview-title">Results</div>
-                                            <div className="mib-action-results">
-                                              <div>OID</div>
-                                              <div>Value</div>
-                                              <div>Type</div>
-                                              <div>Timestamp</div>
-                                              <div className="mib-action-results-empty">
-                                                Poll results will appear here.
-                                              </div>
+                                      <div className="mib-action-card">
+                                        <div className="mib-action-header">
+                                          <div>
+                                            <div className="mib-action-title">{actionTitle}</div>
+                                            <div className="mib-action-subtitle">{actionSubtitle}</div>
+                                            <div className="mib-action-hint">
+                                              Stub generation is coming next.
                                             </div>
                                           </div>
                                         </div>
-                                      )}
+                                        <div className="mib-action-results">
+                                          <div className="mib-action-results-empty">
+                                            No actions configured yet.
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <button
+                                        type="button"
+                                        className="action-link"
+                                        onClick={() =>
+                                          openTrapComposer(mibSelectedDefinition, mibSelectedFile)
+                                        }
+                                      >
+                                        Compose Trap
+                                      </button>
                                     </div>
                                   );
                                 })()

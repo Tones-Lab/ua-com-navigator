@@ -8,6 +8,8 @@ type FcomEventAdditionalFieldsProps = {
   processorTargets: Set<string>;
   getProcessorFieldSummary: (obj: any, field: string) => string;
   overrideValueMap: Map<string, any>;
+  isOverrideEditLocked: boolean;
+  overrideEditLockReason: string;
   panelEditState: Record<string, boolean>;
   hasEditPermission: boolean;
   isFieldHighlighted: (panelKey: string, field: string) => boolean;
@@ -55,6 +57,8 @@ export default function FcomEventAdditionalFields({
   processorTargets,
   getProcessorFieldSummary,
   overrideValueMap,
+  isOverrideEditLocked,
+  overrideEditLockReason,
   panelEditState,
   hasEditPermission,
   isFieldHighlighted,
@@ -158,7 +162,14 @@ export default function FcomEventAdditionalFields({
                   type="button"
                   className="builder-link builder-link-iconic"
                   onClick={() => openBuilderForField(obj, eventPanelKey, field)}
-                  disabled={isFieldLockedByBuilder(eventPanelKey, field)}
+                  disabled={isFieldLockedByBuilder(eventPanelKey, field) || isOverrideEditLocked}
+                  title={
+                    isOverrideEditLocked
+                      ? overrideEditLockReason
+                      : isFieldLockedByBuilder(eventPanelKey, field)
+                        ? 'Finish or cancel the builder to edit other fields'
+                        : ''
+                  }
                   aria-label="Open Builder"
                 >
                   <span className="builder-link-icon" aria-hidden="true">

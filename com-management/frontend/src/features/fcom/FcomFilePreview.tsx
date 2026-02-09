@@ -33,6 +33,14 @@ type FcomFilePreviewProps = {
   getProcessorTargets: (obj: any) => Set<string>;
   getProcessorFieldSummary: (obj: any, field: string) => string;
   getOverrideValueMap: (obj: any) => Map<string, any>;
+  getOverrideVersionInfo: (objectName?: string | null) => {
+    mode: 'none' | 'v2' | 'v3' | 'mixed';
+    label: string;
+    detail: string;
+  };
+  canConvertOverrideToV3: (objectName: string) => boolean;
+  convertOverrideToV3: (objectName: string) => void;
+  openAdvancedFlowForObject: (objectName: string) => void;
   getOverrideFileInfoForObject: (objectName?: string | null) => any;
   getOverrideMetaForObject: (objectName?: string | null) => any;
   getOverrideRuleLinkForObject: (objectName?: string | null) => string | null;
@@ -135,6 +143,10 @@ export default function FcomFilePreview({
   getProcessorTargets,
   getProcessorFieldSummary,
   getOverrideValueMap,
+  getOverrideVersionInfo,
+  canConvertOverrideToV3,
+  convertOverrideToV3,
+  openAdvancedFlowForObject,
   getOverrideFileInfoForObject,
   getOverrideMetaForObject,
   getOverrideRuleLinkForObject,
@@ -319,6 +331,10 @@ export default function FcomFilePreview({
                     getProcessorTargets={getProcessorTargets}
                     getProcessorFieldSummary={getProcessorFieldSummary}
                     getOverrideValueMap={getOverrideValueMap}
+                    getOverrideVersionInfo={getOverrideVersionInfo}
+                    canConvertOverrideToV3={canConvertOverrideToV3}
+                    convertOverrideToV3={convertOverrideToV3}
+                    openAdvancedFlowForObject={openAdvancedFlowForObject}
                     getOverrideFileInfoForObject={getOverrideFileInfoForObject}
                     getOverrideMetaForObject={getOverrideMetaForObject}
                     getOverrideRuleLinkForObject={getOverrideRuleLinkForObject}

@@ -14,6 +14,14 @@ type FcomObjectCardProps = {
   getProcessorTargets: (obj: any) => Set<string>;
   getProcessorFieldSummary: (obj: any, field: string) => string;
   getOverrideValueMap: (obj: any) => Map<string, any>;
+  getOverrideVersionInfo: (objectName?: string | null) => {
+    mode: 'none' | 'v2' | 'v3' | 'mixed';
+    label: string;
+    detail: string;
+  };
+  canConvertOverrideToV3: (objectName: string) => boolean;
+  convertOverrideToV3: (objectName: string) => void;
+  openAdvancedFlowForObject: (objectName: string) => void;
   getOverrideFileInfoForObject: (objectName?: string | null) => any;
   getOverrideMetaForObject: (objectName?: string | null) => any;
   getOverrideRuleLinkForObject: (objectName?: string | null) => string | null;
@@ -89,6 +97,10 @@ export default function FcomObjectCard({
   getProcessorTargets,
   getProcessorFieldSummary,
   getOverrideValueMap,
+  getOverrideVersionInfo,
+  canConvertOverrideToV3,
+  convertOverrideToV3,
+  openAdvancedFlowForObject,
   getOverrideFileInfoForObject,
   getOverrideMetaForObject,
   getOverrideRuleLinkForObject,
@@ -167,9 +179,21 @@ export default function FcomObjectCard({
   const overrideTargets = getOverrideTargets(obj);
   const processorTargets = getProcessorTargets(obj);
   const overrideValueMap = getOverrideValueMap(obj);
+  const overrideVersionInfo = getOverrideVersionInfo(obj?.['@objectName']);
   const overrideFileInfo = getOverrideFileInfoForObject(obj?.['@objectName']);
   const overrideMeta = getOverrideMetaForObject(obj?.['@objectName']);
   const overrideRuleLink = getOverrideRuleLinkForObject(obj?.['@objectName']);
+  const canConvert = obj?.['@objectName']
+    ? canConvertOverrideToV3(obj['@objectName'])
+    : false;
+  const isOverrideEditLocked =
+    overrideVersionInfo.mode === 'v2' || overrideVersionInfo.mode === 'mixed';
+  const overrideEditLockReason =
+    overrideVersionInfo.mode === 'v2'
+      ? 'Convert to v3 to edit this override.'
+      : overrideVersionInfo.mode === 'mixed'
+        ? 'Resolve mixed override versions before editing.'
+        : '';
   const eventPanelKey = `${objectKey}:event`;
   const eventOverrideFields = getEventOverrideFields(obj);
   const panelDirtyFields = panelEditState[eventPanelKey]
@@ -519,6 +543,14 @@ export default function FcomObjectCard({
                   <div className="override-summary-card" role="tooltip">
                     <div className="override-summary-title">Override File</div>
                     <ul className="override-summary-list">
+                      {overrideVersionInfo.mode !== 'none' && (
+                        <li className="override-summary-item">
+                          <span className="override-summary-field">Type</span>
+                          <span className="override-summary-value">
+                            {overrideVersionInfo.label}
+                          </span>
+                        </li>
+                      )}
                       <li className="override-summary-item">
                         <span className="override-summary-field">File</span>
                         <span className="override-summary-value">
@@ -610,6 +642,8 @@ export default function FcomObjectCard({
                   type="button"
                   className="override-remove-all-button"
                   onClick={() => openRemoveAllOverridesModal(obj, eventPanelKey)}
+                  disabled={isOverrideEditLocked}
+                  title={isOverrideEditLocked ? overrideEditLockReason : ''}
                 >
                   Remove All Overrides
                 </button>
@@ -618,11 +652,13 @@ export default function FcomObjectCard({
                 type="button"
                 className="panel-edit-button"
                 onClick={() => openAddFieldModal(eventPanelKey, obj)}
-                disabled={builderTarget?.panelKey === eventPanelKey}
+                disabled={builderTarget?.panelKey === eventPanelKey || isOverrideEditLocked}
                 title={
                   builderTarget?.panelKey === eventPanelKey
                     ? 'Finish or cancel the builder to add fields'
-                    : ''
+                    : isOverrideEditLocked
+                      ? overrideEditLockReason
+                      : ''
                 }
               >
                 Add Field
@@ -631,8 +667,14 @@ export default function FcomObjectCard({
                 type="button"
                 className="panel-edit-button"
                 onClick={() => saveEventEdit(obj, eventPanelKey)}
-                disabled={panelDirtyFields.length === 0}
-                title={panelDirtyFields.length === 0 ? 'No changes to save' : ''}
+                disabled={panelDirtyFields.length === 0 || isOverrideEditLocked}
+                title={
+                  panelDirtyFields.length === 0
+                    ? 'No changes to save'
+                    : isOverrideEditLocked
+                      ? overrideEditLockReason
+                      : ''
+                }
               >
                 Save
               </button>
@@ -646,6 +688,38 @@ export default function FcomObjectCard({
             </div>
           )}
         </div>
+        {panelEditState[eventPanelKey] && overrideVersionInfo.mode !== 'none' && (
+          <div className="override-edit-banner">
+            <div className="override-edit-text">
+              {overrideVersionInfo.mode === 'v3' && 'Editing in v3 patch mode.'}
+              {overrideVersionInfo.mode === 'v2' && 'Editing in v2 processor mode.'}
+              {overrideVersionInfo.mode === 'mixed' &&
+                'Editing in mixed override mode (v2 + v3).'}
+            </div>
+            <div className="override-edit-actions">
+              {overrideVersionInfo.mode !== 'v3' && obj?.['@objectName'] && (
+                <>
+                  {canConvert && (
+                    <button
+                      type="button"
+                      className="panel-edit-button"
+                      onClick={() => convertOverrideToV3(obj['@objectName'])}
+                    >
+                      Convert to v3
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    className="panel-edit-button"
+                    onClick={() => openAdvancedFlowForObject(obj['@objectName'])}
+                  >
+                    Open Advanced Flow (v2)
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        )}
         <div className="object-grid">
           <FcomEventAdditionalFields
             additionalFields={eventFields}
@@ -655,6 +729,8 @@ export default function FcomObjectCard({
             processorTargets={processorTargets}
             getProcessorFieldSummary={getProcessorFieldSummary}
             overrideValueMap={overrideValueMap}
+            isOverrideEditLocked={isOverrideEditLocked}
+            overrideEditLockReason={overrideEditLockReason}
             panelEditState={panelEditState}
             hasEditPermission={hasEditPermission}
             isFieldHighlighted={isFieldHighlighted}
