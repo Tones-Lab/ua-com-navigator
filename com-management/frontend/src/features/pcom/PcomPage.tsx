@@ -1,5 +1,3 @@
-import React from 'react';
-
 export default function PcomPage() {
   return (
     <div className="panel pcom-placeholder">

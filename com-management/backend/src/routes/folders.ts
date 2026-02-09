@@ -3,6 +3,7 @@ import Ajv from 'ajv';
 import fs from 'fs';
 import path from 'path';
 import logger from '../utils/logger';
+import cacheLogger from '../utils/cacheLogger';
 import UAClient from '../services/ua';
 import { overviewIndex, OverviewCounts, OverviewData } from '../services/overviewIndex';
 import { getCredentials, getServer, getSession } from '../services/sessionStore';
@@ -69,7 +70,7 @@ const loadFolderCache = async (serverId: string, node: string, limit: number) =>
     }
     return JSON.parse(raw) as { data: any; fetchedAt: number; expiresAtMs?: number | null };
   } catch (error: any) {
-    logger.warn(`Folder cache load failed: ${error?.message || 'read error'}`);
+    cacheLogger.warn(`Folder cache load failed: ${error?.message || 'read error'}`);
     return null;
   }
 };
@@ -84,7 +85,7 @@ const persistFolderCache = async (serverId: string, node: string, limit: number,
     };
     await client.set(buildCacheKey(serverId, node, limit), JSON.stringify(payload));
   } catch (error: any) {
-    logger.warn(`Folder cache persist failed: ${error?.message || 'write error'}`);
+    cacheLogger.warn(`Folder cache persist failed: ${error?.message || 'write error'}`);
   }
 };
 
@@ -99,7 +100,7 @@ const persistFolderMeta = async (serverId: string, lastBuiltAtMs: number) => {
       }),
     );
   } catch (error: any) {
-    logger.warn(`Folder cache meta persist failed: ${error?.message || 'write error'}`);
+    cacheLogger.warn(`Folder cache meta persist failed: ${error?.message || 'write error'}`);
   }
 };
 
@@ -118,7 +119,7 @@ const clearFolderCache = async (serverId: string) => {
     }
     await client.del(buildMetaKey(serverId));
   } catch (error: any) {
-    logger.warn(`Folder cache clear failed: ${error?.message || 'delete error'}`);
+    cacheLogger.warn(`Folder cache clear failed: ${error?.message || 'delete error'}`);
   }
 };
 

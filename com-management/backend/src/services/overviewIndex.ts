@@ -1,5 +1,5 @@
 import path from 'path';
-import logger from '../utils/logger';
+import cacheLogger from '../utils/cacheLogger';
 import { UAClient } from './ua';
 import { getRedisClient } from './redisClient';
 
@@ -102,7 +102,7 @@ const listRulesWithRetry = async (
       return await uaClient.listRules('/', OVERVIEW_PAGE_LIMIT, node, true, start);
     } catch (error: any) {
       const message = error?.message || 'unknown error';
-      logger.warn(
+      cacheLogger.warn(
         `Overview listRules failed (${context}) node=${node} start=${start} ` +
           `attempt=${attempt}/${maxAttempts}: ${message}`,
       );
@@ -143,7 +143,7 @@ const readRuleWithRetry = async (
       return await request;
     } catch (error: any) {
       const message = error?.message || 'unknown error';
-      logger.warn(
+      cacheLogger.warn(
         `Overview readRule failed (${context}) path=${pathId} ` +
           `attempt=${attempt}/${maxAttempts}: ${message}`,
       );
@@ -452,7 +452,7 @@ class OverviewIndexService {
         unit: 'items',
       };
     } catch (error: any) {
-      logger.warn(`Overview cache load failed: ${error?.message || 'read error'}`);
+      cacheLogger.warn(`Overview cache load failed: ${error?.message || 'read error'}`);
     }
   }
 
@@ -472,7 +472,7 @@ class OverviewIndexService {
       };
       await client.set(`${OVERVIEW_CACHE_PREFIX}${serverId}`, JSON.stringify(payload));
     } catch (error: any) {
-      logger.warn(`Overview cache persist failed: ${error?.message || 'write error'}`);
+      cacheLogger.warn(`Overview cache persist failed: ${error?.message || 'write error'}`);
     }
   }
 
@@ -534,7 +534,7 @@ class OverviewIndexService {
       total: 0,
       unit: 'items',
     };
-    logger.info(`Overview index rebuild started (${trigger}) server=${serverId}`);
+    cacheLogger.info(`Overview index rebuild started (${trigger}) server=${serverId}`);
     const start = Date.now();
     try {
       state.data = await this.buildIndex(uaClient, state);
@@ -547,13 +547,13 @@ class OverviewIndexService {
         total: state.progress.total || state.progress.processed,
         unit: state.progress.unit,
       };
-      logger.info(
+      cacheLogger.info(
         `Overview index COMPLETE (${trigger}) server=${serverId} took ${state.lastDurationMs}ms`,
       );
       await this.persistToCache(serverId);
     } catch (error: any) {
       state.lastError = error?.message || 'Overview index rebuild failed';
-      logger.error(
+      cacheLogger.error(
         `Overview index rebuild error server=${serverId}: ${state.lastError}`,
       );
     } finally {
@@ -961,7 +961,7 @@ class OverviewIndexService {
 
       await runOverridePool(overrideFiles, OVERVIEW_OVERRIDE_CONCURRENCY);
     } catch (error: any) {
-      logger.warn(
+      cacheLogger.warn(
         `Overview overrides not found for ${overridesRoot}: ${error?.message || 'unknown error'}`,
       );
     }

@@ -52,6 +52,20 @@ const resolveCanEditRules = (uaLoginData: any): boolean => {
   return false;
 };
 
+const formatAuthError = (error: any) => {
+  const status = error?.response?.status;
+  const data = error?.response?.data;
+  const code = error?.code || error?.errno;
+  const message = error?.message || 'unknown error';
+  return {
+    message,
+    status,
+    code,
+    hasResponse: Boolean(error?.response),
+    responseKeys: data && typeof data === 'object' ? Object.keys(data) : null,
+  };
+};
+
 /**
  * POST /api/v1/auth/login
  * Authenticate against a UA server (basic or certificate auth)
@@ -114,11 +128,37 @@ router.post('/login', async (req: Request, res: Response) => {
 
     let uaLoginData: any = null;
     if (authReq.auth_type === 'basic') {
-      uaLoginData = await uaClient.executeLogin(authReq.username!, authReq.password!);
+      const uaStart = Date.now();
+      try {
+        uaLoginData = await uaClient.executeLogin(authReq.username!, authReq.password!);
+      } catch (error: any) {
+        const detail = formatAuthError(error);
+        logger.error(
+          `[Auth] UA login failed request=${(req as any).id} server_id=${authReq.server_id} user=${authReq.username} detail=${JSON.stringify(detail)}`,
+        );
+        throw error;
+      } finally {
+        logger.info(
+          `[Auth] UA login duration request=${(req as any).id} server_id=${authReq.server_id} ms=${Date.now() - uaStart}`,
+        );
+      }
       logger.info(`[UA] executeLogin response: ${JSON.stringify(uaLoginData)}`);
     } else {
       // Verify auth with a lightweight read call (rules list) for certificate auth
-      await uaClient.listRules('/', 1);
+      const uaStart = Date.now();
+      try {
+        await uaClient.listRules('/', 1);
+      } catch (error: any) {
+        const detail = formatAuthError(error);
+        logger.error(
+          `[Auth] UA cert check failed request=${(req as any).id} server_id=${authReq.server_id} detail=${JSON.stringify(detail)}`,
+        );
+        throw error;
+      } finally {
+        logger.info(
+          `[Auth] UA cert check duration request=${(req as any).id} server_id=${authReq.server_id} ms=${Date.now() - uaStart}`,
+        );
+      }
     }
 
     const sessionId = uuidv4();
@@ -136,7 +176,15 @@ router.post('/login', async (req: Request, res: Response) => {
       can_edit_rules: canEditRules,
     };
 
-    await setSession(session, authReq, server);
+    try {
+      await setSession(session, authReq, server);
+    } catch (error: any) {
+      const detail = formatAuthError(error);
+      logger.error(
+        `[Auth] Session store failed request=${(req as any).id} server_id=${authReq.server_id} user=${session.user} detail=${JSON.stringify(detail)}`,
+      );
+      throw error;
+    }
     // Set HTTP-only cookie
     const forwardedProto = req.headers['x-forwarded-proto'];
     const isSecure =
@@ -163,8 +211,9 @@ router.post('/login', async (req: Request, res: Response) => {
       can_edit_rules: canEditRules,
     });
   } catch (error: any) {
+    const detail = formatAuthError(error);
     logger.error(
-      `[Auth] Login failed path=${req.path} server_id=${req.body?.server_id || 'unknown'} user=${req.body?.username || 'cert user'} auth_type=${req.body?.auth_type || 'unknown'} error=${error.message}`,
+      `[Auth] Login failed request=${(req as any).id} path=${req.path} server_id=${req.body?.server_id || 'unknown'} user=${req.body?.username || 'cert user'} auth_type=${req.body?.auth_type || 'unknown'} detail=${JSON.stringify(detail)}`,
     );
     logger.error(`Login error: ${error.message}`);
     res.status(500).json({ error: 'Authentication failed' });

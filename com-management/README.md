@@ -138,7 +138,22 @@ Backend configuration is driven by environment variables (see [backend/.env.exam
 | UA_MIB_DIR                   | $A1BASEDIR/distrib/mibs                         | MIB root for browsing                     |
 | UA_MIB2FCOM_BIN              | $A1BASEDIR/bin/sdk/MIB2FCOM                     | MIB2FCOM binary path                      |
 | UA_SNMP_TRAP_CMD             | snmptrap                                        | snmptrap executable                       |
+| UA_SNMP_TRANSLATE_CMD        | snmptranslate                                   | snmptranslate executable                  |
 | MIBS                         |                                                 | Extra MIB search path for SNMP tools      |
+| MIB_TRANSLATE_CACHE_PREFIX   | mib:translate:                                  | Redis key prefix for OID cache            |
+| MIB_TRANSLATE_CACHE_TTL_SECONDS | 604800                                       | Success TTL for OID cache                 |
+| MIB_TRANSLATE_NEGATIVE_TTL_SECONDS | 3600                                     | Failure TTL for OID cache                 |
+| MIB_TRANSLATE_CONCURRENCY    | 8                                               | Translate request concurrency             |
+| MIB_TRANSLATE_WARMUP_LIMIT   | 500                                             | Max names warmed per parse                |
+| MIB_TRANSLATE_WARMUP_CONCURRENCY | 6                                          | Warmup concurrency for OID cache          |
+
+### MIB tooling notes
+
+The MIB browser and metadata extraction use `snmptranslate` with the same MIB directory
+that powers browsing. Configure `UA_MIB_DIR` to point at the MIB root used by UA (typically
+`$A1BASEDIR/distrib/mibs`). If you install the app elsewhere, ensure that directory is populated
+with the required MIBs and set `MIBS` (optional) to include any extra search paths used by
+Net-SNMP. This keeps full OID resolution consistent between the browser and SNMP tooling.
 
 Frontend configuration is code‑driven; no env vars are required by default.
 

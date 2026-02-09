@@ -6,6 +6,7 @@ import { execFile } from 'child_process';
 import os from 'os';
 import logger from '../utils/logger';
 import { getSession } from '../services/sessionStore';
+import { getRedisClient } from '../services/redisClient';
 
 const router = Router();
 
@@ -13,6 +14,41 @@ const A1_BASEDIR = process.env.A1BASEDIR || '/opt/assure1';
 const MIB_ROOT = process.env.UA_MIB_DIR || path.join(A1_BASEDIR, 'distrib', 'mibs');
 const MIB2FCOM_BIN = process.env.UA_MIB2FCOM_BIN || path.join(A1_BASEDIR, 'bin', 'sdk', 'MIB2FCOM');
 const TRAP_CMD = process.env.UA_SNMP_TRAP_CMD || 'snmptrap';
+const SNMP_TRANSLATE_CMD = process.env.UA_SNMP_TRANSLATE_CMD || 'snmptranslate';
+const MIB_TRANSLATE_CACHE_PREFIX =
+  process.env.MIB_TRANSLATE_CACHE_PREFIX || 'mib:translate:';
+const DEFAULT_TRANSLATE_TTL_SECONDS = 7 * 24 * 60 * 60;
+const DEFAULT_TRANSLATE_NEGATIVE_TTL_SECONDS = 60 * 60;
+const DEFAULT_TRANSLATE_CONCURRENCY = 8;
+const DEFAULT_TRANSLATE_WARMUP_LIMIT = 500;
+const DEFAULT_TRANSLATE_WARMUP_CONCURRENCY = 6;
+const MIB_TRANSLATE_CACHE_TTL_SECONDS = Math.max(
+  60,
+  Number(process.env.MIB_TRANSLATE_CACHE_TTL_SECONDS || DEFAULT_TRANSLATE_TTL_SECONDS),
+);
+const MIB_TRANSLATE_NEGATIVE_TTL_SECONDS = Math.max(
+  30,
+  Number(process.env.MIB_TRANSLATE_NEGATIVE_TTL_SECONDS || DEFAULT_TRANSLATE_NEGATIVE_TTL_SECONDS),
+);
+const MIB_TRANSLATE_CONCURRENCY = Math.max(
+  1,
+  Number(process.env.MIB_TRANSLATE_CONCURRENCY || DEFAULT_TRANSLATE_CONCURRENCY),
+);
+const MIB_TRANSLATE_WARMUP_LIMIT = Math.max(
+  0,
+  Number(process.env.MIB_TRANSLATE_WARMUP_LIMIT || DEFAULT_TRANSLATE_WARMUP_LIMIT),
+);
+const MIB_TRANSLATE_WARMUP_CONCURRENCY = Math.max(
+  1,
+  Number(process.env.MIB_TRANSLATE_WARMUP_CONCURRENCY || DEFAULT_TRANSLATE_WARMUP_CONCURRENCY),
+);
+
+type CachedTranslateEntry = {
+  fullOid: string | null;
+  ok: boolean;
+  error?: string;
+  cachedAt: string;
+};
 
 const requireEditPermission = async (req: Request, res: Response): Promise<boolean> => {
   const sessionId = req.cookies.FCOM_SESSION_ID;
@@ -184,6 +220,261 @@ const parseMibDefinitions = (content: string) => {
   return definitions;
 };
 
+const getTranslateCacheClient = async () => {
+  try {
+    return await getRedisClient();
+  } catch (error: any) {
+    logger.warn(`MIB translate cache unavailable: ${error?.message || 'unknown error'}`);
+    return null;
+  }
+};
+
+const normalizeTranslateNames = (names: string[]) =>
+  Array.from(
+    new Set(names.map((value) => String(value || '').trim()).filter((value) => value.length > 0)),
+  );
+
+const splitQualifiedName = (name: string) => {
+  const trimmed = String(name || '').trim();
+  if (!trimmed) {
+    return { module: '', name: '' };
+  }
+  const parts = trimmed.split('::');
+  if (parts.length <= 1) {
+    return { module: '', name: trimmed };
+  }
+  const moduleName = parts.shift() || '';
+  const remainder = parts.join('::').trim();
+  return { module: moduleName.trim(), name: remainder || trimmed };
+};
+
+const buildTranslateCacheKey = (moduleName: string, name: string) => {
+  const safeModule = (moduleName || 'global').toLowerCase();
+  const safeName = (name || '').toLowerCase();
+  return `${MIB_TRANSLATE_CACHE_PREFIX}${safeModule}:${safeName}`;
+};
+
+const parseCachedEntry = (raw: string | null): CachedTranslateEntry | null => {
+  if (!raw) {
+    return null;
+  }
+  try {
+    const parsed = JSON.parse(raw);
+    if (typeof parsed?.ok !== 'boolean') {
+      return null;
+    }
+    return parsed as CachedTranslateEntry;
+  } catch {
+    return null;
+  }
+};
+
+const runWithConcurrency = async <T, R>(items: T[], limit: number, worker: (item: T) => Promise<R>) => {
+  if (items.length === 0) {
+    return [] as R[];
+  }
+  const results: R[] = new Array(items.length);
+  let nextIndex = 0;
+  const runner = async () => {
+    while (nextIndex < items.length) {
+      const current = nextIndex;
+      nextIndex += 1;
+      results[current] = await worker(items[current]);
+    }
+  };
+  const workerCount = Math.min(limit, items.length);
+  await Promise.all(Array.from({ length: workerCount }, () => runner()));
+  return results;
+};
+
+const buildMibEnv = (moduleName: string) =>
+  moduleName ? [moduleName, process.env.MIBS].filter(Boolean).join(':') : process.env.MIBS || '';
+
+const execTranslate = (name: string, moduleOverride: string) =>
+  new Promise<string>((resolve, reject) => {
+    const trimmedName = String(name || '').trim();
+    if (!trimmedName) {
+      reject(new Error('Empty name'));
+      return;
+    }
+    const moduleName = String(moduleOverride || '').trim();
+    const target = trimmedName.includes('::')
+      ? trimmedName
+      : moduleName
+        ? `${moduleName}::${trimmedName}`
+        : trimmedName;
+    const args = ['-On', '-M', MIB_ROOT];
+    if (moduleName) {
+      args.push('-m', moduleName);
+    }
+    args.push(target);
+    execFile(
+      SNMP_TRANSLATE_CMD,
+      args,
+      {
+        env: {
+          ...process.env,
+          MIBDIRS: MIB_ROOT,
+          MIBS: buildMibEnv(moduleName),
+        },
+        timeout: 8000,
+      },
+      (error, stdout, stderr) => {
+        if (error) {
+          const message = String(stderr || error.message || '').trim();
+          logger.warn('MIB translate failed', {
+            module: moduleName || undefined,
+            target,
+            message,
+          });
+          reject(new Error(message || 'snmptranslate failed'));
+          return;
+        }
+        resolve(String(stdout || '').trim());
+      },
+    );
+  });
+
+const translateNamesWithCache = async (moduleName: string, names: string[]) => {
+  const normalizedModule = String(moduleName || '').trim();
+  const entries = normalizeTranslateNames(names);
+  if (entries.length === 0) {
+    return [] as Array<{ name: string; fullOid: string | null; error?: string }>;
+  }
+
+  const cacheClient = await getTranslateCacheClient();
+  const cacheDescriptors = entries.map((name) => {
+    const split = splitQualifiedName(name);
+    const moduleOverride = split.module || normalizedModule;
+    const cacheKey = buildTranslateCacheKey(moduleOverride || 'global', split.name || name);
+    return {
+      name,
+      baseName: split.name || name,
+      moduleOverride,
+      cacheKey,
+    };
+  });
+
+  const results: Array<{ name: string; fullOid: string | null; error?: string }> =
+    new Array(entries.length);
+  const pending: Array<{
+    index: number;
+    name: string;
+    baseName: string;
+    moduleOverride: string;
+    cacheKey: string;
+  }> = [];
+
+  if (cacheClient) {
+    const cacheKeys = cacheDescriptors.map((entry) => entry.cacheKey);
+    const cached = await cacheClient.mGet(cacheKeys);
+    cached.forEach((raw, index) => {
+      const parsed = parseCachedEntry(raw);
+      if (parsed && parsed.ok && parsed.fullOid) {
+        results[index] = { name: cacheDescriptors[index].name, fullOid: parsed.fullOid };
+        return;
+      }
+      if (parsed && !parsed.ok) {
+        results[index] = {
+          name: cacheDescriptors[index].name,
+          fullOid: null,
+          error: parsed.error || 'Cached miss',
+        };
+        return;
+      }
+      pending.push({ index, ...cacheDescriptors[index] });
+    });
+  } else {
+    cacheDescriptors.forEach((entry, index) => {
+      pending.push({ index, ...entry });
+    });
+  }
+
+  if (pending.length > 0) {
+    await runWithConcurrency(pending, MIB_TRANSLATE_CONCURRENCY, async (item) => {
+      try {
+        const fullOid = await execTranslate(item.name, item.moduleOverride);
+        results[item.index] = { name: item.name, fullOid };
+        if (cacheClient) {
+          const payload: CachedTranslateEntry = {
+            fullOid,
+            ok: true,
+            cachedAt: new Date().toISOString(),
+          };
+          await cacheClient.set(item.cacheKey, JSON.stringify(payload), {
+            EX: MIB_TRANSLATE_CACHE_TTL_SECONDS,
+          });
+        }
+      } catch (error: any) {
+        const message = String(error?.message || 'Translate failed');
+        results[item.index] = { name: item.name, fullOid: null, error: message };
+        if (cacheClient) {
+          const payload: CachedTranslateEntry = {
+            fullOid: null,
+            ok: false,
+            error: message,
+            cachedAt: new Date().toISOString(),
+          };
+          await cacheClient.set(item.cacheKey, JSON.stringify(payload), {
+            EX: MIB_TRANSLATE_NEGATIVE_TTL_SECONDS,
+          });
+        }
+      }
+    });
+  }
+
+  return results;
+};
+
+const warmMibTranslateCache = async (moduleName: string, names: string[], sourcePath: string) => {
+  const normalized = normalizeTranslateNames(names);
+  const limited =
+    MIB_TRANSLATE_WARMUP_LIMIT > 0 ? normalized.slice(0, MIB_TRANSLATE_WARMUP_LIMIT) : normalized;
+  if (limited.length === 0) {
+    return;
+  }
+  const cacheClient = await getTranslateCacheClient();
+  if (!cacheClient) {
+    return;
+  }
+  logger.info('MIB translate warmup', {
+    module: moduleName || undefined,
+    names: limited.length,
+    source: sourcePath,
+  });
+  await runWithConcurrency(limited, MIB_TRANSLATE_WARMUP_CONCURRENCY, async (name) => {
+    const split = splitQualifiedName(name);
+    const moduleOverride = split.module || moduleName;
+    const baseName = split.name || name;
+    const cacheKey = buildTranslateCacheKey(moduleOverride || 'global', baseName);
+    const existing = parseCachedEntry(await cacheClient.get(cacheKey));
+    if (existing) {
+      return;
+    }
+    try {
+      const fullOid = await execTranslate(name, moduleOverride);
+      const payload: CachedTranslateEntry = {
+        fullOid,
+        ok: true,
+        cachedAt: new Date().toISOString(),
+      };
+      await cacheClient.set(cacheKey, JSON.stringify(payload), {
+        EX: MIB_TRANSLATE_CACHE_TTL_SECONDS,
+      });
+    } catch (error: any) {
+      const payload: CachedTranslateEntry = {
+        fullOid: null,
+        ok: false,
+        error: String(error?.message || 'Translate failed'),
+        cachedAt: new Date().toISOString(),
+      };
+      await cacheClient.set(cacheKey, JSON.stringify(payload), {
+        EX: MIB_TRANSLATE_NEGATIVE_TTL_SECONDS,
+      });
+    }
+  });
+};
+
 router.get('/browse', async (req: Request, res: Response) => {
   try {
     const requestedPath = String(req.query.path || '').trim();
@@ -314,10 +605,41 @@ router.get('/parse', async (req: Request, res: Response) => {
     const safePath = resolveSafePath(requestedPath);
     const content = await fs.readFile(safePath, 'utf-8');
     const definitions = parseMibDefinitions(content);
+    const baseName = path.basename(safePath).replace(/\.(mib|txt)$/i, '');
+    const moduleName = String(definitions?.[0]?.module || '').trim() || baseName;
+    const warmNames = definitions.map((definition) => String(definition?.name || '').trim());
+    void warmMibTranslateCache(moduleName, warmNames, requestedPath);
     res.json({ path: requestedPath, definitions });
   } catch (error: any) {
     logger.error(`MIB parse error: ${error.message}`);
     res.status(500).json({ error: error.message || 'Failed to parse MIB' });
+  }
+});
+
+router.post('/translate', async (req: Request, res: Response) => {
+  try {
+    const { module, names } = req.body || {};
+    const entries = Array.isArray(names) ? normalizeTranslateNames(names) : [];
+    if (entries.length === 0) {
+      return res.status(400).json({ error: 'Missing names' });
+    }
+    if (!existsSync(MIB_ROOT)) {
+      return res.status(500).json({ error: `MIB root not found at ${MIB_ROOT}` });
+    }
+
+    const normalizedModule = module ? String(module).trim() : '';
+    logger.info('MIB translate request', {
+      module: normalizedModule || undefined,
+      names: entries.length,
+      sample: entries.slice(0, 3),
+      mibRoot: MIB_ROOT,
+      mibEnv: buildMibEnv(normalizedModule) || undefined,
+    });
+    const results = await translateNamesWithCache(normalizedModule, entries);
+    res.json({ module: normalizedModule || undefined, entries: results });
+  } catch (error: any) {
+    logger.error(`MIB translate error: ${error.message}`);
+    res.status(500).json({ error: error.message || 'Failed to translate MIB names' });
   }
 });
 

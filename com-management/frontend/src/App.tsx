@@ -18,82 +18,89 @@ const FILE_LOAD_STAGE_ORDER = ['original', 'overrides', 'compare', 'render'] as 
 const FILE_LOAD_STAGE_TIMING = {
   showDelayMs: 120,
   stepMs: 380,
-  minVisibleMs: 900,
-  exitGraceMs: 450,
-  holdAfterRenderMs: 1500,
-};
-const OVERRIDE_SAVE_TIMING = {
-  staggerMs: 140,
-  stepMs: 240,
-};
-
-class ErrorBoundary extends React.Component<
-  { children: React.ReactNode },
-  { hasError: boolean; error?: Error }
-> {
-  constructor(props: { children: React.ReactNode }) {
-    super(props);
-    this.state = { hasError: false };
-  }
-
-  static getDerivedStateFromError(error: Error) {
-    return { hasError: true, error };
-  }
-
-  componentDidCatch(error: Error, info: React.ErrorInfo) {
-    console.error('UI crash:', error, info);
-  }
-  render() {
-    if (this.state.hasError) {
-      return (
-        <div className="app">
-          <header className="app-header">
-            <h1>COM Curation &amp; Management</h1>
-          </header>
-          <main>
-            <div className="error">
-              Something went wrong while rendering the app. Refresh the page to try again.
-            </div>
-          </main>
-        </div>
-      );
-    }
-
-    return this.props.children;
-  }
-}
-
-type AppTab = 'overview' | 'fcom' | 'pcom' | 'mib';
-
-export default function App() {
-  const { session, servers, isAuthenticated, setSession, clearSession, setServers } =
-    useSessionStore();
-  const nowMs = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
-  const [activeApp, setActiveApp] = useState<AppTab>('overview');
-  const [serverId, setServerId] = useState('');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [browseLoading, setBrowseLoading] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [searchScope, setSearchScope] = useState<'all' | 'name' | 'content'>('all');
-  const [searchResults, setSearchResults] = useState<any[]>([]);
-  const [searchLoading, setSearchLoading] = useState(false);
-  const [searchError, setSearchError] = useState<string | null>(null);
-  const [searchStatus, setSearchStatus] = useState<any>(null);
-  const [searchRebuildPending, setSearchRebuildPending] = useState(false);
-  const searchRebuildStartRef = useRef<number | null>(null);
-  const searchStatusPollRef = useRef<number | null>(null);
-  const [folderRebuildPending, setFolderRebuildPending] = useState(false);
-  const folderRebuildStartRef = useRef<number | null>(null);
-  const folderStatusPollRef = useRef<number | null>(null);
-  const [searchHighlightActive, setSearchHighlightActive] = useState(false);
-  const [highlightQuery, setHighlightQuery] = useState<string | null>(null);
-  const [highlightPathId, setHighlightPathId] = useState<string | null>(null);
-  const [highlightMatchSource, setHighlightMatchSource] = useState<
-    'name' | 'content' | 'both' | null
-  >(null);
+        {requiredMicroservices.length === 0 ? (
+          <div className="microservice-loading">Loading status...</div>
+        ) : (
+          <div className="microservice-chain">
+            {requiredMicroservices.map((entry: any, idx: number) => {
+              const tone = getServiceTone(entry);
+              const label = entry?.label || entry?.name || 'Unknown';
+              const canDeploy = !entry?.installed && entry?.available;
+              const canRedeploy =
+                Boolean(entry?.installed) &&
+                (entry?.name === 'fcom-processor' || !entry?.running);
+              const actionLabel = (microserviceActionLabel || '').toLowerCase();
+              const labelKey = String(label).toLowerCase();
+              const isActionFor = labelKey && actionLabel.includes(labelKey);
+              const isDeploying = isActionFor && actionLabel.startsWith('deploying');
+              const isRedeploying = isActionFor && actionLabel.startsWith('redeploying');
+              const isWorking = isDeploying || isRedeploying;
+              const isRefreshing = microserviceStatusLoading;
+              return (
+                <div key={entry?.name || idx} className="microservice-chain-step">
+                  <div
+                    className={`microservice-card microservice-card-${tone}${
+                      isWorking ? ' microservice-card-working' : ''
+                    }${isRefreshing ? ' microservice-card-refreshing' : ''}`}
+                  >
+                    {isRefreshing && (
+                      <div className="microservice-card-overlay" aria-hidden="true">
+                        <span className="microservice-spinner" />
+                        Refreshing...
+                      </div>
+                    )}
+                    <div className="microservice-card-header">
+                      <span
+                        className={`microservice-dot microservice-dot-${tone}`}
+                        aria-hidden="true"
+                      />
+                      <div className="microservice-card-title">{label}</div>
+                    </div>
+                    <div className="microservice-card-status">{getServiceStatusText(entry)}</div>
+                    {entry?.workload && (
+                      <div className="microservice-card-meta">
+                        Ready {entry.workload.ready || '0'} - Available {entry.workload.available || '0'}
+                      </div>
+                    )}
+                    {isWorking && (
+                      <div className="microservice-card-progress">
+                        <span className="microservice-spinner" aria-hidden="true" />
+                        Working...
+                      </div>
+                    )}
+                    <div className="microservice-card-actions">
+                      {canDeploy && (
+                        <button
+                          type="button"
+                          className="builder-card builder-card-primary"
+                          onClick={() => handleDeployMicroservice(entry.name, label)}
+                          disabled={redeployLoading || !hasEditPermission}
+                        >
+                          {isDeploying ? 'Deploying...' : 'Deploy'}
+                        </button>
+                      )}
+                      {canRedeploy && (
+                        <button
+                          type="button"
+                          className="builder-card builder-card-primary"
+                          onClick={() => handleRedeployMicroservice(entry.name, label)}
+                          disabled={redeployLoading || !hasEditPermission}
+                        >
+                          {isRedeploying ? 'Redeploying...' : 'Redeploy'}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                  {idx < requiredMicroservices.length - 1 && (
+                    <div className="microservice-chain-arrow" aria-hidden="true">
+                      -&gt;
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
   const [highlightObjectKeys, setHighlightObjectKeys] = useState<string[]>([]);
   const [currentMatchIndex, setCurrentMatchIndex] = useState(0);
   const [matchObjectOptions, setMatchObjectOptions] = useState<
@@ -142,6 +149,8 @@ export default function App() {
   const [mibPath, setMibPath] = useState('/');
   const [mibEntries, setMibEntries] = useState<any[]>([]);
   const [mibLoading, setMibLoading] = useState(false);
+  const [mibLoadingElapsed, setMibLoadingElapsed] = useState(0);
+  const [mibShowLoadingTimer, setMibShowLoadingTimer] = useState(false);
   const [mibError, setMibError] = useState<string | null>(null);
   const [mibSearch, setMibSearch] = useState('');
   const [mibSearchScope, setMibSearchScope] = useState<'folder' | 'all'>('folder');
@@ -153,7 +162,9 @@ export default function App() {
   const [mibFilteredTotal, setMibFilteredTotal] = useState<number | null>(null);
   const [mibSelectedFile, setMibSelectedFile] = useState<string | null>(null);
   const [mibDefinitions, setMibDefinitions] = useState<any[]>([]);
+  const [mibDetailsLoading, setMibDetailsLoading] = useState(false);
   const [mibDefinitionSearch, setMibDefinitionSearch] = useState('');
+  const [mibObjectFilter, setMibObjectFilter] = useState<'all' | 'fcom' | 'pcom'>('all');
   const [mibSelectedDefinition, setMibSelectedDefinition] = useState<any | null>(null);
   const [mibSupportByPath, setMibSupportByPath] = useState<
     Record<string, { fcom: boolean | null; pcom: boolean | null; checkedAt: number }>
@@ -163,6 +174,20 @@ export default function App() {
   const [mib2FcomLoading, setMib2FcomLoading] = useState(false);
   const [mib2FcomError, setMib2FcomError] = useState<string | null>(null);
   const [mibUseParent, setMibUseParent] = useState(true);
+  const [mibTrapDefaults, setMibTrapDefaults] = useState<null | {
+    objectName: string;
+    module?: string;
+    sourceFile?: string;
+    testCommand: string;
+    parsed: {
+      version?: string;
+      community?: string;
+      host?: string;
+      trapOid?: string;
+      mibModule?: string;
+      varbinds: Array<{ oid: string; type: string; value: string }>;
+    };
+  }>(null);
   const [trapModalOpen, setTrapModalOpen] = useState(false);
   const [trapSource, setTrapSource] = useState<'mib' | 'fcom'>('mib');
   const [trapObjectName, setTrapObjectName] = useState('');
@@ -2169,6 +2194,26 @@ export default function App() {
   }, [activeApp, isAuthenticated, mibEntries.length, mibLoading]);
 
   useEffect(() => {
+    if (!mibLoading) {
+      setMibLoadingElapsed(0);
+      setMibShowLoadingTimer(false);
+      return;
+    }
+    setMibLoadingElapsed(0);
+    setMibShowLoadingTimer(false);
+    const timerId = window.setTimeout(() => {
+      setMibShowLoadingTimer(true);
+    }, 2000);
+    const intervalId = window.setInterval(() => {
+      setMibLoadingElapsed((prev) => prev + 1);
+    }, 1000);
+    return () => {
+      window.clearTimeout(timerId);
+      window.clearInterval(intervalId);
+    };
+  }, [mibLoading]);
+
+  useEffect(() => {
     if (!saveLoading) {
       setSaveElapsed(0);
       return;
@@ -3578,7 +3623,31 @@ export default function App() {
         const overridesResp = await api.getOverrides(entry.PathID);
         logTiming('getOverrides', overridesStart);
         setOverrideInfo(overridesResp.data);
+        const overridesCount = Array.isArray(overridesResp.data?.overrides)
+          ? overridesResp.data.overrides.length
+          : 0;
+        const filesCount = overridesResp.data?.overrideFilesByObject
+          ? Object.keys(overridesResp.data.overrideFilesByObject).length
+          : 0;
+        console.info('[Overrides] response', {
+          fileId: entry.PathID,
+          exists: overridesResp.data?.exists,
+          overridesCount,
+          filesCount,
+          vendor: overridesResp.data?.vendor,
+          method: overridesResp.data?.method,
+        });
+        if (overridesCount === 0) {
+          console.info('[Overrides] no overrides returned', {
+            fileId: entry.PathID,
+            overrideRoot: overridesResp.data?.overrideRootId,
+          });
+        }
       } catch (err: any) {
+        console.warn('[Overrides] load failed', {
+          fileId: entry?.PathID,
+          error: err?.response?.data?.error || err?.message || err,
+        });
         setOverrideError(err?.response?.data?.error || 'Failed to load overrides');
         setOverrideInfo(null);
       } finally {
@@ -3868,20 +3937,20 @@ export default function App() {
     };
   };
 
-  const openTrapComposerFromTest = async (obj: any) => {
-    const testCommand = obj?.test;
-    if (!testCommand || typeof testCommand !== 'string') {
-      triggerToast('No test trap command found for this object.', false);
-      return;
-    }
-    const parsed = parseTrapTestCommand(testCommand);
-    if (!parsed.trapOid) {
-      triggerToast('Test trap command did not include a trap OID.', false);
-      return;
-    }
-    setTrapSource('fcom');
+  const applyTrapDefaults = async (
+    parsed: {
+      version?: string;
+      community?: string;
+      host?: string;
+      trapOid?: string;
+      mibModule?: string;
+      varbinds: Array<{ oid: string; type: string; value: string }>;
+    },
+    options?: { objectName?: string; source?: 'fcom' | 'mib'; fallbackModule?: string },
+  ) => {
+    setTrapSource(options?.source ?? 'fcom');
     setTrapError(null);
-    setTrapObjectName(String(obj?.['@objectName'] || obj?.name || ''));
+    setTrapObjectName(options?.objectName || '');
     setTrapHost('');
     setTrapPort(162);
     let nextHost = '';
@@ -3900,13 +3969,30 @@ export default function App() {
       }
     }
     setTrapOid(parsed.trapOid ? String(parsed.trapOid) : '');
-    setTrapMibModule(parsed.mibModule || '');
+    setTrapMibModule(parsed.mibModule || options?.fallbackModule || '');
     setTrapVarbinds(
       parsed.varbinds.length > 0 ? parsed.varbinds : [{ oid: '', type: 's', value: '' }],
     );
     setTrapManualOpen(false);
     setTrapModalOpen(true);
     await loadBrokerServers({ currentHost: nextHost, forceDefault: true });
+  };
+
+  const openTrapComposerFromTest = async (obj: any) => {
+    const testCommand = obj?.test;
+    if (!testCommand || typeof testCommand !== 'string') {
+      triggerToast('No test trap command found for this object.', false);
+      return;
+    }
+    const parsed = parseTrapTestCommand(testCommand);
+    if (!parsed.trapOid) {
+      triggerToast('Test trap command did not include a trap OID.', false);
+      return;
+    }
+    await applyTrapDefaults(parsed, {
+      objectName: String(obj?.['@objectName'] || obj?.name || ''),
+      source: 'fcom',
+    });
   };
 
   const buildTrapTestItems = (objects: any[], sourceLabel: string) => {
@@ -4107,12 +4193,17 @@ export default function App() {
     }
   };
 
-  const loadMibPath = async (nextPath?: string, options?: { append?: boolean }) => {
+  const loadMibPath = async (
+    nextPath?: string,
+    options?: { append?: boolean; searchOverride?: string | null },
+  ) => {
     const append = options?.append ?? false;
     const targetPath = (nextPath ?? mibPath ?? '/') || '/';
     const offset = append ? mibOffset : 0;
+    const effectiveSearch =
+      options?.searchOverride !== undefined ? String(options.searchOverride) : mibSearch;
     const searchParam =
-      mibSearchScope === 'folder' && mibSearch.trim() ? mibSearch.trim() : undefined;
+      mibSearchScope === 'folder' && effectiveSearch.trim() ? effectiveSearch.trim() : undefined;
 
     setMibLoading(true);
     setMibError(null);
@@ -4182,7 +4273,7 @@ export default function App() {
   const handleMibClearSearch = async () => {
     setMibSearch('');
     setMibOffset(0);
-    await loadMibPath(mibPath, { append: false });
+    await loadMibPath(mibPath, { append: false, searchOverride: '' });
   };
 
   const getMibBaseName = (value?: string | null) => {
@@ -4289,18 +4380,124 @@ export default function App() {
     void resolveMibSupport(mibSelectedFile);
   }, [mibSelectedFile]);
 
+  useEffect(() => {
+    let active = true;
+    const run = async () => {
+      if (!mibSelectedDefinition || !mibSelectedFile) {
+        setMibTrapDefaults(null);
+        return;
+      }
+      const baseName = getMibBaseName(mibSelectedFile);
+      const definitionName = String(mibSelectedDefinition?.name || '').trim();
+      if (!baseName || !definitionName) {
+        setMibTrapDefaults(null);
+        return;
+      }
+      const moduleName = String(mibSelectedDefinition?.module || '').trim() || baseName;
+      const expectedNames = new Set([
+        `${moduleName}::${definitionName}`,
+        `${baseName}::${definitionName}`,
+        definitionName,
+      ].map((value) => value.toLowerCase()));
+      try {
+        const resp = await api.searchComs(`${baseName}-FCOM.json`, 'name', 10);
+        const results = Array.isArray(resp.data?.results) ? resp.data.results : [];
+        const candidates = results.filter((result: any) => {
+          const name = String(result?.name || '').toLowerCase();
+          return name === `${baseName.toLowerCase()}-fcom.json`;
+        });
+        for (const candidate of candidates) {
+          if (!active) {
+            return;
+          }
+          const fileId = candidate?.pathId || candidate?.pathID || candidate?.path;
+          if (!fileId) {
+            continue;
+          }
+          const fileResp = await api.readFile(String(fileId));
+          const objects = getFriendlyObjects(fileResp.data);
+          const match = objects.find((obj: any) => {
+            const objName = String(obj?.['@objectName'] || obj?.name || '').toLowerCase();
+            return expectedNames.has(objName);
+          });
+          const testCommand = match?.test;
+          if (match && typeof testCommand === 'string') {
+            const parsed = parseTrapTestCommand(testCommand);
+            if (!parsed?.trapOid) {
+              continue;
+            }
+            setMibTrapDefaults({
+              objectName: String(match?.['@objectName'] || match?.name || definitionName),
+              module: moduleName,
+              sourceFile: String(fileId),
+              testCommand,
+              parsed,
+            });
+            return;
+          }
+        }
+        if (active) {
+          setMibTrapDefaults(null);
+        }
+      } catch {
+        if (active) {
+          setMibTrapDefaults(null);
+        }
+      }
+    };
+    void run();
+    return () => {
+      active = false;
+    };
+  }, [mibSelectedDefinition, mibSelectedFile]);
+
   const loadMibDefinitions = async (filePath: string) => {
-    setMibLoading(true);
+    setMibDetailsLoading(true);
     setMibError(null);
     try {
       const resp = await api.parseMib(filePath);
       const defs = Array.isArray(resp.data?.definitions) ? resp.data.definitions : [];
-      setMibDefinitions(defs);
+      const baseName = filePath.split('/').pop()?.replace(/\.(mib|txt)$/i, '') || '';
+      const moduleName = defs.length > 0 ? String(defs[0]?.module || '').trim() : '';
+      const resolvedModule = moduleName || baseName;
+      const names = defs.map((definition: any) => String(definition?.name || '').trim()).filter(Boolean);
+      let translateMap: Record<string, string> = {};
+      if (names.length > 0) {
+        try {
+          const translateResp = await api.translateMibNames(resolvedModule || null, names);
+          const entries = Array.isArray(translateResp.data?.entries)
+            ? translateResp.data.entries
+            : [];
+          const lowered = entries.reduce<Record<string, string>>((acc, entry) => {
+            if (entry?.name && entry?.fullOid) {
+              acc[String(entry.name).toLowerCase()] = String(entry.fullOid);
+            }
+            return acc;
+          }, {});
+          translateMap = lowered;
+          console.info('[MIB] translate summary', {
+            module: resolvedModule || null,
+            total: names.length,
+            resolved: entries.filter((entry: any) => entry?.fullOid).length,
+          });
+        } catch {
+          console.info('[MIB] translate failed', {
+            module: resolvedModule || null,
+            total: names.length,
+          });
+          translateMap = {};
+        }
+      }
+      const enriched = defs.map((definition: any) => ({
+        ...definition,
+        fullOid: translateMap[String(definition?.name || '').toLowerCase()] || definition?.fullOid || null,
+      }));
+      setMibDefinitions(enriched);
       setMibSelectedDefinition(null);
     } catch (err: any) {
       setMibError(err?.response?.data?.error || 'Failed to parse MIB');
     } finally {
-      setMibLoading(false);
+      setMibDetailsLoading(false);
     }
   };
 
@@ -4309,6 +4506,8 @@ export default function App() {
       setMibSelectedFile(null);
       setMibDefinitions([]);
       setMibSelectedDefinition(null);
+      setMibObjectFilter('all');
+      setMibTrapDefaults(null);
       setMibOffset(0);
       await loadMibPath(entry.path, { append: false });
       return;
@@ -4318,9 +4517,11 @@ export default function App() {
     }
     setMibSelectedFile(entry.path);
     setMibDefinitionSearch('');
+    setMibObjectFilter('all');
     setMibOutput('');
     setMibOutputName('');
     setMib2FcomError(null);
+    setMibTrapDefaults(null);
     await loadMibDefinitions(entry.path);
   };
 
@@ -4391,7 +4592,8 @@ export default function App() {
     setTrapError(null);
     setTrapSource('mib');
     setTrapObjectName('');
-    setTrapOid(definition?.oid ? String(definition.oid) : '');
+    const resolvedOid = definition?.fullOid || definition?.oid;
+    setTrapOid(resolvedOid ? String(resolvedOid) : '');
     setTrapVarbinds([{ oid: '', type: 's', value: '' }]);
     setTrapHost('');
     setTrapManualOpen(false);
@@ -4561,15 +4763,27 @@ export default function App() {
   const favoritesFolders = favorites.filter(
     (fav): fav is { type: 'folder'; pathId: string; label: string } => fav.type === 'folder',
   );
-  const filteredMibDefinitions = useMemo(
-    () =>
-      mibDefinitions.filter((entry) =>
-        String(entry?.name || '')
-          .toLowerCase()
-          .includes(mibDefinitionSearch.trim().toLowerCase()),
-      ),
-    [mibDefinitions, mibDefinitionSearch],
-  );
+  const filteredMibDefinitions = useMemo(() => {
+    const needle = mibDefinitionSearch.trim().toLowerCase();
+    return mibDefinitions.filter((entry) => {
+      const kind = String(entry?.kind || '').toUpperCase();
+      const isFcom = kind === 'NOTIFICATION-TYPE' || kind === 'TRAP-TYPE';
+      const isPcom = kind === 'OBJECT-TYPE';
+      if (mibObjectFilter === 'fcom' && !isFcom) {
+        return false;
+      }
+      if (mibObjectFilter === 'pcom' && !isPcom) {
+        return false;
+      }
+      if (!needle) {
+        return true;
+      }
+      const name = String(entry?.name || '').toLowerCase();
+      const oid = String(entry?.oid || '').toLowerCase();
+      const fullOid = String(entry?.fullOid || '').toLowerCase();
+      return name.includes(needle) || oid.includes(needle) || fullOid.includes(needle);
+    });
+  }, [mibDefinitions, mibDefinitionSearch, mibObjectFilter]);
   const mibDefinitionCounts = useMemo(() => {
     let fcomCount = 0;
     let pcomCount = 0;
@@ -10900,7 +11114,7 @@ export default function App() {
                     handleOpenFile={handleOpenFile}
                   />
                   <div className="panel">
-                    <div className="panel-scroll">
+                    <div className="panel-scroll mib-details-scroll">
                       <div className="file-details">
                         {!selectedFile && (
                           <FcomFolderOverview
@@ -12914,7 +13128,13 @@ export default function App() {
                       </div>
                       {mibError && <div className="error">{mibError}</div>}
                       {mibLoading ? (
-                        <div>Loading MIBs…</div>
+                        <div className="mib-list-loading" aria-busy="true">
+                          <span className="mib-loading-spinner" aria-hidden="true" />
+                          <span>Loading MIBs…</span>
+                          {mibShowLoadingTimer && (
+                            <span className="mib-loading-timer">{mibLoadingElapsed}s</span>
+                          )}
+                        </div>
                       ) : (
                         <div className="browse-results">
                           {mibEntries.length === 0 ? (
@@ -13033,46 +13253,41 @@ export default function App() {
                               const pcomStatus = getMibSupportStatus(
                                 mibSelectedSupport?.pcom ?? null,
                               );
+                              const fcomSupportedLabel = getSupportedCountLabel(
+                                mibSelectedSupport?.fcom ?? null,
+                                mibDefinitionCounts.fcomCount,
+                              );
+                              const pcomSupportedLabel = getSupportedCountLabel(
+                                mibSelectedSupport?.pcom ?? null,
+                                mibDefinitionCounts.pcomCount,
+                              );
                               return (
                                 <>
-                                  <div className="mib-overview-row">
-                                    <div className="mib-overview-label">
-                                      <span className="mib-support-badge mib-support-badge-fcom">
-                                        FCOM
-                                      </span>
+                                  <div className="mib-summary-left">
+                                    <div className="mib-summary-chip mib-summary-chip-fcom">
+                                      <span className="mib-summary-tag">FCOM</span>
                                       <span
                                         className={`mib-support-status mib-support-status-${fcomStatus.status}`}
                                       >
                                         {fcomStatus.label}
                                       </span>
-                                    </div>
-                                    <div className="mib-overview-value">
-                                      Notifications: {mibDefinitionCounts.fcomCount} | Supported:{' '}
-                                      {getSupportedCountLabel(
-                                        mibSelectedSupport?.fcom ?? null,
-                                        mibDefinitionCounts.fcomCount,
-                                      )}
-                                    </div>
-                                  </div>
-                                  <div className="mib-overview-row">
-                                    <div className="mib-overview-label">
-                                      <span className="mib-support-badge mib-support-badge-pcom">
-                                        PCOM
+                                      <span className="mib-summary-count">
+                                        {fcomSupportedLabel}/{mibDefinitionCounts.fcomCount}
                                       </span>
+                                    </div>
+                                    <div className="mib-summary-chip mib-summary-chip-pcom">
+                                      <span className="mib-summary-tag">PCOM</span>
                                       <span
                                         className={`mib-support-status mib-support-status-${pcomStatus.status}`}
                                       >
                                         {pcomStatus.label}
                                       </span>
-                                    </div>
-                                    <div className="mib-overview-value">
-                                      Objects: {mibDefinitionCounts.pcomCount} | Supported:{' '}
-                                      {getSupportedCountLabel(
-                                        mibSelectedSupport?.pcom ?? null,
-                                        mibDefinitionCounts.pcomCount,
-                                      )}
+                                      <span className="mib-summary-count">
+                                        {pcomSupportedLabel}/{mibDefinitionCounts.pcomCount}
+                                      </span>
                                     </div>
                                   </div>
+                                  <div className="mib-summary-meta">Supported / Total</div>
                                 </>
                               );
                             })()}
@@ -13111,129 +13326,309 @@ export default function App() {
                               />
                             </div>
                           )}
-                          <div className="panel-section">
-                            <div className="panel-section-title">Definitions</div>
-                            <input
-                              type="text"
-                              placeholder="Search definitions"
-                              value={mibDefinitionSearch}
-                              onChange={(e) => setMibDefinitionSearch(e.target.value)}
-                            />
-                            <div className="mib-definition-list">
-                              {filteredMibDefinitions.length === 0 ? (
-                                <div className="empty-state">No definitions found.</div>
-                              ) : (
-                                filteredMibDefinitions.map((definition) => (
+                          <div className="mib-main-split">
+                            <div className="mib-main-left">
+                              <div className="panel-section-title">Objects</div>
+                              <div className="mib-object-toolbar">
+                                <input
+                                  type="text"
+                                  placeholder="Search objects"
+                                  value={mibDefinitionSearch}
+                                  onChange={(e) => setMibDefinitionSearch(e.target.value)}
+                                />
+                                <div className="mib-filter-toggle" role="tablist">
                                   <button
-                                    key={`${definition.name}-${definition.oid || definition.kind}`}
                                     type="button"
                                     className={
-                                      mibSelectedDefinition?.name === definition.name
-                                        ? 'mib-definition-item mib-definition-item-active'
-                                        : 'mib-definition-item'
+                                      mibObjectFilter === 'all'
+                                        ? 'mib-filter-pill active'
+                                        : 'mib-filter-pill'
                                     }
-                                    onClick={() => setMibSelectedDefinition(definition)}
+                                    onClick={() => setMibObjectFilter('all')}
                                   >
-                                    {(() => {
-                                      const kind = String(definition?.kind || '').toUpperCase();
-                                      const isFcom =
-                                        kind === 'NOTIFICATION-TYPE' || kind === 'TRAP-TYPE';
-                                      const isPcom = kind === 'OBJECT-TYPE';
-                                      const support = isFcom
-                                        ? mibSelectedSupport?.fcom ?? null
-                                        : isPcom
-                                          ? mibSelectedSupport?.pcom ?? null
-                                          : null;
-                                      const status = getMibSupportStatus(support);
-                                      return (
-                                        <>
-                                          <div className="mib-definition-main">
-                                            <span className="mib-definition-name">
-                                              {definition.name}
-                                            </span>
-                                            <span className="mib-definition-kind">
-                                              {definition.kind}
-                                            </span>
-                                          </div>
-                                          <div className="mib-definition-flags">
-                                            {isFcom && (
-                                              <span className="mib-support-badge mib-support-badge-fcom">
-                                                FCOM
-                                              </span>
-                                            )}
-                                            {isPcom && (
-                                              <span className="mib-support-badge mib-support-badge-pcom">
-                                                PCOM
-                                              </span>
-                                            )}
-                                            {(isFcom || isPcom) && (
-                                              <span
-                                                className={`mib-support-status mib-support-status-${status.status}`}
-                                                title={
-                                                  status.status === 'ok'
-                                                    ? 'Support found'
-                                                    : status.status === 'warn'
-                                                      ? 'Support not found'
-                                                      : 'Support unknown'
-                                                }
-                                              >
-                                                {status.label}
-                                              </span>
-                                            )}
-                                          </div>
-                                        </>
-                                      );
-                                    })()}
+                                    All
                                   </button>
-                                ))
+                                  <button
+                                    type="button"
+                                    className={
+                                      mibObjectFilter === 'fcom'
+                                        ? 'mib-filter-pill active'
+                                        : 'mib-filter-pill'
+                                    }
+                                    onClick={() => setMibObjectFilter('fcom')}
+                                  >
+                                    FCOM
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className={
+                                      mibObjectFilter === 'pcom'
+                                        ? 'mib-filter-pill active'
+                                        : 'mib-filter-pill'
+                                    }
+                                    onClick={() => setMibObjectFilter('pcom')}
+                                  >
+                                    PCOM
+                                  </button>
+                                </div>
+                              </div>
+                              <div className="mib-definition-list">
+                                {mibDetailsLoading ? (
+                                  <div className="mib-definition-loading" aria-busy="true">
+                                    <span className="mib-loading-spinner" aria-hidden="true" />
+                                    <span>Loading definitions…</span>
+                                  </div>
+                                ) : filteredMibDefinitions.length === 0 ? (
+                                  <div className="empty-state">No definitions found.</div>
+                                ) : (
+                                  filteredMibDefinitions.map((definition) => (
+                                    <button
+                                      key={`${definition.name}-${definition.oid || definition.kind}`}
+                                      type="button"
+                                      className={
+                                        mibSelectedDefinition?.name === definition.name
+                                          ? 'mib-definition-item mib-definition-item-active'
+                                          : 'mib-definition-item'
+                                      }
+                                      onClick={() => setMibSelectedDefinition(definition)}
+                                    >
+                                      {(() => {
+                                        const kind = String(definition?.kind || '').toUpperCase();
+                                        const isFcom =
+                                          kind === 'NOTIFICATION-TYPE' || kind === 'TRAP-TYPE';
+                                        const isPcom = kind === 'OBJECT-TYPE';
+                                        const support = isFcom
+                                          ? mibSelectedSupport?.fcom ?? null
+                                          : isPcom
+                                            ? mibSelectedSupport?.pcom ?? null
+                                            : null;
+                                        const status = getMibSupportStatus(support);
+                                        return (
+                                          <>
+                                            <div className="mib-definition-main">
+                                              <span className="mib-definition-name">
+                                                {definition.name}
+                                              </span>
+                                              <span className="mib-definition-kind">
+                                                {definition.kind}
+                                              </span>
+                                              <span className="mib-definition-oid">
+                                                {definition.fullOid || definition.oid || 'OID pending'}
+                                              </span>
+                                            </div>
+                                            <div className="mib-definition-flags">
+                                              {isFcom && (
+                                                <span className="mib-support-badge mib-support-badge-fcom">
+                                                  FCOM
+                                                </span>
+                                              )}
+                                              {isPcom && (
+                                                <span className="mib-support-badge mib-support-badge-pcom">
+                                                  PCOM
+                                                </span>
+                                              )}
+                                              {(isFcom || isPcom) && (
+                                                <span
+                                                  className={`mib-support-status mib-support-status-${status.status}`}
+                                                  title={
+                                                    status.status === 'ok'
+                                                      ? 'Support found'
+                                                      : status.status === 'warn'
+                                                        ? 'Support not found'
+                                                        : 'Support unknown'
+                                                  }
+                                                >
+                                                  {status.label}
+                                                </span>
+                                              )}
+                                            </div>
+                                          </>
+                                        );
+                                      })()}
+                                    </button>
+                                  ))
+                                )}
+                              </div>
+                            </div>
+                            <div className="mib-main-right">
+                              {!mibSelectedDefinition ? (
+                                <div className="empty-state">Select an object to view details.</div>
+                              ) : (
+                                (() => {
+                                  const kind = String(mibSelectedDefinition.kind || '').toUpperCase();
+                                  const isFault = kind === 'NOTIFICATION-TYPE' || kind === 'TRAP-TYPE';
+                                  const isPerf = kind === 'OBJECT-TYPE';
+                                  const activeTab = isFault ? 'fault' : isPerf ? 'performance' : 'fault';
+                                  return (
+                                    <div className="mib-definition-details">
+                                      <div className="mib-definition-header">
+                                        <div className="mib-definition-title">
+                                          {mibSelectedDefinition.name}
+                                        </div>
+                                        <span className="mib-definition-pill">
+                                          {activeTab === 'fault' ? 'Fault' : 'Performance'}
+                                        </span>
+                                      </div>
+                                      <div className="mib-definition-meta">
+                                        <span>Kind: {mibSelectedDefinition.kind}</span>
+                                        <span>
+                                          OID (numeric):
+                                          {' '}
+                                          {mibSelectedDefinition.fullOid || '—'}
+                                        </span>
+                                        <span>
+                                          OID (symbolic):
+                                          {' '}
+                                          {mibSelectedDefinition.oid || '—'}
+                                        </span>
+                                      </div>
+                                      <div className="mib-definition-meta">
+                                        {mibSelectedDefinition.module && (
+                                          <span>Module: {mibSelectedDefinition.module}</span>
+                                        )}
+                                        {mibSelectedDefinition.syntax && (
+                                          <span>Syntax: {mibSelectedDefinition.syntax}</span>
+                                        )}
+                                        {mibSelectedDefinition.access && (
+                                          <span>Access: {mibSelectedDefinition.access}</span>
+                                        )}
+                                        {mibSelectedDefinition.status && (
+                                          <span>Status: {mibSelectedDefinition.status}</span>
+                                        )}
+                                        {mibSelectedDefinition.defval && (
+                                          <span>Default: {mibSelectedDefinition.defval}</span>
+                                        )}
+                                        {mibSelectedDefinition.index && (
+                                          <span>Index: {mibSelectedDefinition.index}</span>
+                                        )}
+                                      </div>
+                                      {mibSelectedDefinition.description && (
+                                        <div className="mib-definition-description">
+                                          {mibSelectedDefinition.description}
+                                        </div>
+                                      )}
+                                      {activeTab === 'fault' ? (
+                                        <div className="mib-action-card">
+                                          <div className="mib-action-header">
+                                            <div>
+                                              <div className="mib-action-title">Send Trap (Test)</div>
+                                              <div className="mib-action-subtitle">
+                                                Build a test notification from this object.
+                                              </div>
+                                              {mibTrapDefaults?.parsed?.trapOid && (
+                                                <div className="mib-action-hint">
+                                                  Defaults loaded from FCOM test command.
+                                                </div>
+                                              )}
+                                            </div>
+                                            <button
+                                              type="button"
+                                              className="action-link"
+                                              disabled
+                                              title="Coming soon - will send a test trap"
+                                            >
+                                              Send Trap (Test)
+                                            </button>
+                                          </div>
+                                          <div className="mib-action-preview">
+                                            <div className="mib-action-preview-title">Payload preview</div>
+                                            <pre>{`{\n  "oid": "${
+  mibTrapDefaults?.parsed?.trapOid ||
+  mibSelectedDefinition.fullOid ||
+  mibSelectedDefinition.oid ||
+  '1.3.6.1.4.1'
+}",\n  "varbinds": [\n    { "oid": "${
+  mibTrapDefaults?.parsed?.varbinds?.[0]?.oid ||
+  `${mibTrapDefaults?.parsed?.trapOid ||
+  mibSelectedDefinition.fullOid ||
+  mibSelectedDefinition.oid ||
+  '1.3.6.1.4.1'}.1`
+}", "type": "${
+  mibTrapDefaults?.parsed?.varbinds?.[0]?.type || 'string'
+}", "value": "${
+  mibTrapDefaults?.parsed?.varbinds?.[0]?.value || 'example'
+}" }\n  ]\n}`}</pre>
+                                          </div>
+                                          <button
+                                            type="button"
+                                            className="action-link"
+                                            onClick={() => {
+                                              if (mibTrapDefaults?.parsed?.trapOid) {
+                                                void applyTrapDefaults(mibTrapDefaults.parsed, {
+                                                  objectName: mibTrapDefaults.objectName,
+                                                  source: 'fcom',
+                                                  fallbackModule: mibTrapDefaults.module,
+                                                });
+                                                return;
+                                              }
+                                              void openTrapComposer(
+                                                mibSelectedDefinition,
+                                                mibSelectedFile,
+                                              );
+                                            }}
+                                          >
+                                            Compose Trap
+                                          </button>
+                                        </div>
+                                      ) : (
+                                        <div className="mib-action-card">
+                                          <div className="mib-action-header">
+                                            <div>
+                                              <div className="mib-action-title">Run SNMP Poll</div>
+                                              <div className="mib-action-subtitle">
+                                                Targets devices with matching enterprise OID and valid
+                                                credentials.
+                                              </div>
+                                            </div>
+                                            <button
+                                              type="button"
+                                              className="action-link"
+                                              disabled
+                                              title="Coming soon - will query this object"
+                                            >
+                                              Run SNMP Poll
+                                            </button>
+                                          </div>
+                                          <div className="mib-action-grid">
+                                            <label className="mib-field">
+                                              Device
+                                              <select disabled>
+                                                <option>Devices will populate from UA catalog</option>
+                                              </select>
+                                            </label>
+                                            <label className="mib-field">
+                                              SNMP version
+                                              <select disabled>
+                                                <option>v2c</option>
+                                              </select>
+                                            </label>
+                                            <label className="mib-field">
+                                              Credential profile
+                                              <select disabled>
+                                                <option>Primary SNMP profile</option>
+                                              </select>
+                                            </label>
+                                          </div>
+                                          <div className="mib-action-preview">
+                                            <div className="mib-action-preview-title">Results</div>
+                                            <div className="mib-action-results">
+                                              <div>OID</div>
+                                              <div>Value</div>
+                                              <div>Type</div>
+                                              <div>Timestamp</div>
+                                              <div className="mib-action-results-empty">
+                                                Poll results will appear here.
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      )}
+                                    </div>
+                                  );
+                                })()
                               )}
                             </div>
                           </div>
-                          {mibSelectedDefinition && (
-                            <div className="mib-definition-details">
-                              <div className="mib-definition-title">
-                                {mibSelectedDefinition.name}
-                              </div>
-                              <div className="mib-definition-meta">
-                                <span>Kind: {mibSelectedDefinition.kind}</span>
-                                <span>OID: {mibSelectedDefinition.oid || '—'}</span>
-                              </div>
-                              <div className="mib-definition-meta">
-                                {mibSelectedDefinition.module && (
-                                  <span>Module: {mibSelectedDefinition.module}</span>
-                                )}
-                                {mibSelectedDefinition.syntax && (
-                                  <span>Syntax: {mibSelectedDefinition.syntax}</span>
-                                )}
-                                {mibSelectedDefinition.access && (
-                                  <span>Access: {mibSelectedDefinition.access}</span>
-                                )}
-                                {mibSelectedDefinition.status && (
-                                  <span>Status: {mibSelectedDefinition.status}</span>
-                                )}
-                                {mibSelectedDefinition.defval && (
-                                  <span>Default: {mibSelectedDefinition.defval}</span>
-                                )}
-                                {mibSelectedDefinition.index && (
-                                  <span>Index: {mibSelectedDefinition.index}</span>
-                                )}
-                              </div>
-                              {mibSelectedDefinition.description && (
-                                <div className="mib-definition-description">
-                                  {mibSelectedDefinition.description}
-                                </div>
-                              )}
-                              <button
-                                type="button"
-                                className="action-link"
-                                onClick={() =>
-                                  openTrapComposer(mibSelectedDefinition, mibSelectedFile)
-                                }
-                              >
-                                Compose Trap
-                              </button>
-                            </div>
-                          )}
                         </div>
                       )}
                     </div>

@@ -1,4 +1,4 @@
-import logger from '../utils/logger';
+import cacheLogger from '../utils/cacheLogger';
 import UAClient from './ua';
 import { requestOverviewRebuild } from './overviewIndex';
 import { rebuildAllFolderOverviewCaches } from '../routes/folders';
@@ -25,7 +25,7 @@ const warmedServers = new Set<string>();
 const buildBootstrapClient = () => {
   const client = getBootstrapClient();
   if (!client) {
-    logger.warn('Cache warmup skipped: bootstrap client unavailable.');
+    cacheLogger.warn('Cache warmup skipped: bootstrap client unavailable.');
     return null;
   }
   return client;
@@ -131,7 +131,7 @@ const warmupIfMissing = async (
       return 'fresh';
     };
 
-    logger.info(
+    cacheLogger.info(
       `Cache warmup check (${trigger}) server=${serverId} ` +
         `overview=${describeState(overviewMissing, overviewStale)} ` +
         `search=${describeState(searchMissing, searchStale)} ` +
@@ -140,27 +140,35 @@ const warmupIfMissing = async (
 
     if (overviewMissing || overviewStale) {
       if (overviewStale && !overviewMissing) {
-        logger.info(`Cache warmup: overview cache stale; scheduling refresh server=${serverId}`);
+        cacheLogger.info(
+          `Cache warmup: overview cache stale; scheduling refresh server=${serverId}`,
+        );
       }
-      logger.info(`Cache warmup: rebuilding overview cache (${overviewMissing ? 'empty' : 'stale'}) server=${serverId}`);
+      cacheLogger.info(
+        `Cache warmup: rebuilding overview cache (${overviewMissing ? 'empty' : 'stale'}) server=${serverId}`,
+      );
       requestOverviewRebuild(serverId, uaClient, 'startup');
     }
     if (searchMissing || searchStale) {
       if (searchStale && !searchMissing) {
-        logger.info(`Cache warmup: search cache stale; scheduling refresh server=${serverId}`);
+        cacheLogger.info(`Cache warmup: search cache stale; scheduling refresh server=${serverId}`);
       }
-      logger.info(`Cache warmup: rebuilding search index (${searchMissing ? 'empty' : 'stale'}) server=${serverId}`);
+      cacheLogger.info(
+        `Cache warmup: rebuilding search index (${searchMissing ? 'empty' : 'stale'}) server=${serverId}`,
+      );
       requestSearchIndexRebuild(serverId, uaClient, 'startup');
     }
     if (folderMissing || folderStale) {
       if (folderStale && !folderMissing) {
-        logger.info(`Cache warmup: folder cache stale; scheduling refresh server=${serverId}`);
+        cacheLogger.info(`Cache warmup: folder cache stale; scheduling refresh server=${serverId}`);
       }
-      logger.info(`Cache warmup: rebuilding folder cache (${folderMissing ? 'empty' : 'stale'}) server=${serverId}`);
+      cacheLogger.info(
+        `Cache warmup: rebuilding folder cache (${folderMissing ? 'empty' : 'stale'}) server=${serverId}`,
+      );
       await rebuildAllFolderOverviewCaches(uaClient, serverId, 25, 'startup');
     }
   } catch (error: any) {
-    logger.warn(`Cache warmup failed: ${error?.message || 'unknown error'}`);
+    cacheLogger.warn(`Cache warmup failed: ${error?.message || 'unknown error'}`);
   }
 };
 

@@ -152,6 +152,13 @@ class ApiClient {
     return this.client.get('/mibs/parse', { params: { path } });
   }
 
+  async translateMibNames(module: string | null, names: string[]) {
+    return this.client.post('/mibs/translate', {
+      module,
+      names,
+    });
+  }
+
   async runMib2Fcom(inputPath: string, outputName?: string, useParentMibs?: boolean) {
     return this.client.post('/mibs/mib2fcom', {
       inputPath,

@@ -65,6 +65,7 @@ export default function FcomBrowserPanel({
   handleOpenFile,
 }: FcomBrowserPanelProps) {
   const [isCompact, setIsCompact] = useState(false);
+  const favoritesCount = favoritesFolders.length + favoritesFiles.length;
 
   useEffect(() => {
     const media = window.matchMedia('(max-width: 1200px)');
@@ -120,7 +121,7 @@ export default function FcomBrowserPanel({
               <div className="global-search-row">
                 <input
                   type="text"
-                  placeholder="Search files and contents"
+                  placeholder="Search names + contents"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
@@ -136,23 +137,36 @@ export default function FcomBrowserPanel({
                   {searchLoading ? 'Searching…' : 'Search'}
                 </button>
               </div>
-              <div className="search-actions-row">
-                <button
-                  type="button"
-                  className="ghost-button"
-                  onClick={handleClearSearch}
-                  disabled={!searchQuery && searchResults.length === 0}
-                >
-                  Clear Search
-                </button>
-                <button type="button" className="ghost-button" onClick={handleResetNavigation}>
-                  Reset Navigation
-                </button>
+              <div className="search-meta-row">
+                <div className="search-helper">
+                  <span>
+                    Scope: {searchScope === 'all' ? 'All' : searchScope === 'name' ? 'Names' : 'Content'}
+                  </span>
+                  {searchQuery.trim() && (
+                    <span className="search-helper-query">Query: “{searchQuery.trim()}”</span>
+                  )}
+                </div>
+                <div className="search-actions-row">
+                  <button
+                    type="button"
+                    className="link-button"
+                    onClick={handleClearSearch}
+                    disabled={!searchQuery && searchResults.length === 0}
+                  >
+                    Clear
+                  </button>
+                  <button type="button" className="link-button" onClick={handleResetNavigation}>
+                    Reset
+                  </button>
+                </div>
               </div>
             </form>
           </div>
           <div className="panel-section">
             <div className="panel-section-title">Favorites</div>
+            <div className="favorites-header">
+              <span className="favorites-label">Pinned ({favoritesCount})</span>
+            </div>
             <div className="favorites-section">
               <div className="favorites-scroll">
                 <details open={!isCompact && favoritesFolders.length > 0}>
@@ -167,16 +181,15 @@ export default function FcomBrowserPanel({
                         <li key={`${fav.type}-${fav.pathId}`}>
                           <button
                             type="button"
-                            className="quick-link"
+                            className="favorite-link"
                             onClick={() =>
                               handleOpenFolder({ PathID: fav.pathId, PathName: fav.label })
                             }
                           >
-                            {fav.label}
+                            <span className="favorite-label">{fav.label}</span>
                             {getParentLabel(getParentPath(fav.pathId)) && (
                               <span className="favorite-parent">
-                                {' '}
-                                - ({getParentLabel(getParentPath(fav.pathId))})
+                                {getParentLabel(getParentPath(fav.pathId))}
                               </span>
                             )}
                           </button>
@@ -195,15 +208,12 @@ export default function FcomBrowserPanel({
                         <li key={`${fav.type}-${fav.pathId}`}>
                           <button
                             type="button"
-                            className="quick-link"
+                            className="favorite-link"
                             onClick={() => openFileFromUrl(fav.pathId, fav.node)}
                           >
-                            {fav.label}
+                            <span className="favorite-label">{fav.label}</span>
                             {fav.node && (
-                              <span className="favorite-parent">
-                                {' '}
-                                - ({getParentLabel(fav.node)})
-                              </span>
+                              <span className="favorite-parent">{getParentLabel(fav.node)}</span>
                             )}
                           </button>
                         </li>

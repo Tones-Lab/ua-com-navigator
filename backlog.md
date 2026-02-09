@@ -200,6 +200,8 @@ BUG - P1-bug002 - Need to fix the folder refresh / cache - curernt broken if you
 
 BUG - P1-bug003 -Still not showing correct count of overrides in any of the review / summmary pages - why not?
 
+BUG - P0-bug004 - CRITICAL - MIB Browser: SNMPtranslate numeric OID resolution is not working (no numeric OIDs shown).
+
 ✅ - BUG - If i click on a FCOOM file - and open the builder in edit mode, then click away to a new file, the builder should close and not be open on the new file / page. 
 
 ✅ - BUG - P0-bug001 - variables do not load the variables modal when typing $v_ - it should, but it doesn't.

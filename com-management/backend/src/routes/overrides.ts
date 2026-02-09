@@ -773,10 +773,16 @@ router.get('/', async (req: Request, res: Response) => {
       .map((obj: any) => obj?.['@objectName'])
       .filter((name: any) => typeof name === 'string' && name.length > 0) as string[];
     const objectNameSet = new Set(objectNames);
+    logger.info(
+      `Overrides lookup start for ${file_id}: vendor=${resolved.vendor} method=${resolved.method} objects=${objectNames.length}`,
+    );
 
     const listStart = Date.now();
     const overrideListing = await listRulesAll(uaClient, resolved.overrideRootId, 500);
     logTiming('listRulesAll', listStart);
+    logger.info(
+      `Overrides listing for ${file_id}: entries=${overrideListing.length} root=${resolved.overrideRootId}`,
+    );
     const legacyFileNames = buildLegacyOverrideFileNames(resolved.vendor, resolved.method);
     const legacyListingEntry = overrideListing.find((item: any) =>
       legacyFileNames.includes(String(item?.PathName || '')),
@@ -806,6 +812,13 @@ router.get('/', async (req: Request, res: Response) => {
     const overrides: any[] = [];
     const overrideMetaByObject: Record<string, any> = {};
     const overrideFilesByObject: Record<string, any> = {};
+    const objectStats = {
+      existing: 0,
+      legacyOnly: 0,
+      missing: 0,
+      withOverrides: 0,
+    };
+    const missingObjects: string[] = [];
 
     let overridesReadCount = 0;
     let overridesReadTime = 0;
@@ -821,6 +834,16 @@ router.get('/', async (req: Request, res: Response) => {
       );
       const exists = Boolean(entry);
       const legacyEntry = legacyOverridesByObject.get(objectName);
+      if (exists) {
+        objectStats.existing += 1;
+      } else if (legacyEntry) {
+        objectStats.legacyOnly += 1;
+      } else {
+        objectStats.missing += 1;
+        if (missingObjects.length < 5) {
+          missingObjects.push(objectName);
+        }
+      }
       overrideFilesByObject[objectName] = {
         fileName: entry?.PathName ?? legacyListingEntry?.PathName ?? fileName,
         pathId: entry?.PathID ?? legacyListingEntry?.PathID ?? overridePathId,
@@ -863,6 +886,7 @@ router.get('/', async (req: Request, res: Response) => {
         const hasOverrides = processors.length > 0;
         if (hasOverrides && normalized) {
           overrides.push(normalized);
+          objectStats.withOverrides += 1;
         }
 
         let overrideMeta: any = null;
@@ -943,6 +967,12 @@ router.get('/', async (req: Request, res: Response) => {
       }
     }
     logger.info(`Overrides total for ${file_id}: ${Date.now() - start}ms`);
+    logger.info(
+      `Overrides summary for ${file_id}: existing=${objectStats.existing} legacyOnly=${objectStats.legacyOnly} missing=${objectStats.missing} withOverrides=${objectStats.withOverrides} overrideEntries=${overrides.length}`,
+    );
+    if (missingObjects.length > 0) {
+      logger.info(`Overrides missing sample for ${file_id}: ${missingObjects.join(', ')}`);
+    }
 
     const etagPayload = JSON.stringify(overrides);
     const etag = crypto.createHash('md5').update(etagPayload).digest('hex');

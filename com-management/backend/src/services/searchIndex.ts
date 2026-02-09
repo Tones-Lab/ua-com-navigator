@@ -1,4 +1,4 @@
-import logger from '../utils/logger';
+import cacheLogger from '../utils/cacheLogger';
 import { UAClient } from './ua';
 import { getRedisClient } from './redisClient';
 
@@ -146,7 +146,7 @@ const listRulesWithRetry = async (
       return await uaClient.listRules('/', SEARCH_PAGE_LIMIT, node, false, start);
     } catch (error: any) {
       const message = error?.message || 'unknown error';
-      logger.warn(
+      cacheLogger.warn(
         `Search listRules failed (${context}) node=${node} start=${start} ` +
           `attempt=${attempt}/${maxAttempts}: ${message}`,
       );
@@ -175,7 +175,7 @@ const readRuleWithRetry = async (
       return await uaClient.readRule(pathId);
     } catch (error: any) {
       const message = error?.message || 'unknown error';
-      logger.warn(
+      cacheLogger.warn(
         `Search readRule failed (${context}) path=${pathId} ` +
           `attempt=${attempt}/${maxAttempts}: ${message}`,
       );
@@ -296,7 +296,7 @@ class SearchIndexService {
       total: 0,
       unit: 'files',
     };
-    logger.info(`Search index rebuild started (${trigger}) server=${this.serverId}`);
+    cacheLogger.info(`Search index rebuild started (${trigger}) server=${this.serverId}`);
     const start = Date.now();
     try {
       const nextIndex = await this.buildIndex(uaClient);
@@ -312,19 +312,18 @@ class SearchIndexService {
         unit: this.progress.unit,
       };
       await this.persistToCache();
-      logger.info(
+      cacheLogger.info(
         `Search index COMPLETE (${trigger}) server=${this.serverId} took ${this.lastDurationMs}ms`,
       );
     } catch (error: any) {
       this.lastError = error?.message || 'Search index rebuild failed';
-      logger.error(
+      cacheLogger.error(
         `Search index rebuild error server=${this.serverId}: ${this.lastError}`,
       );
     } finally {
       this.isBuilding = false;
     }
   }
-
   async rebuildIndex(
     uaClient: UAClient,
     trigger: 'startup' | 'manual' | 'auto' | 'update' = 'manual',
@@ -682,7 +681,7 @@ class SearchIndexService {
         unit: 'files',
       };
     } catch (error: any) {
-      logger.warn(`Search cache load failed: ${error?.message || 'read error'}`);
+      cacheLogger.warn(`Search cache load failed: ${error?.message || 'read error'}`);
     }
   }
 
@@ -700,7 +699,7 @@ class SearchIndexService {
       };
       await client.set(buildCacheKey(this.serverId), JSON.stringify(payload));
     } catch (error: any) {
-      logger.warn(`Search cache persist failed: ${error?.message || 'write error'}`);
+      cacheLogger.warn(`Search cache persist failed: ${error?.message || 'write error'}`);
     }
   }
 }
