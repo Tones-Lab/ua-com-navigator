@@ -31,8 +31,205 @@ tags:
     description: FCOM override file management
   - name: Microservices
     description: Microservice health and deployment status
+  - name: MIB Browser
+    description: Browse and test MIB definitions
+  - name: Devices
+    description: Device catalog and selection
+  - name: SNMP Access
+    description: SNMP access profiles for device discovery
 
 paths:
+  /devices:
+    get:
+      tags:
+        - Devices
+      summary: List devices for selection
+      description: |
+        Returns devices visible to the authenticated user, formatted for selection.
+      security:
+        - sessionCookie: []
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 500
+          required: false
+          description: Maximum number of devices to return.
+        - in: query
+          name: start
+          schema:
+            type: integer
+            default: 0
+          required: false
+          description: Offset for pagination.
+      responses:
+        '200':
+          description: Device list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  devices:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        name:
+                          type: string
+                        zoneName:
+                          type: string
+                        ip:
+                          type: string
+                        status:
+                          type: string
+                        sysOid:
+                          type: string
+                  total:
+                    type: integer
+                  start:
+                    type: integer
+                  limit:
+                    type: integer
+        '401':
+          description: No active session
+        '500':
+          description: Failed to load devices
+  /snmp-access/{id}:
+    get:
+      tags:
+        - SNMP Access
+      summary: Get an SNMP access profile by ID
+      description: |
+        Returns an SNMP access profile from UA by profile ID.
+      security:
+        - sessionCookie: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: SNMP access profile ID.
+      responses:
+        '200':
+          description: SNMP access profile
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  total:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        Community:
+                          type: string
+                        Username:
+                          type: string
+                          nullable: true
+                        SecurityLevel:
+                          type: string
+                          nullable: true
+                        AuthPassword:
+                          type: string
+                        AuthProtocol:
+                          type: string
+                          nullable: true
+                        PrivPassword:
+                          type: string
+                        PrivProtocol:
+                          type: string
+                          nullable: true
+                        SNMPPort:
+                          type: string
+                        MTU:
+                          type: string
+                        DeviceZoneID:
+                          type: string
+                        DeviceSNMPAccessID:
+                          type: string
+                        Description:
+                          type: string
+                        PriorityOrder:
+                          type: string
+                        SNMPVersion:
+                          type: string
+                        EngineID:
+                          type: string
+                        DeviceZoneName:
+                          type: string
+                        DeviceCount:
+                          type: string
+        '401':
+          description: No active session
+        '500':
+          description: Failed to load SNMP access profile
+  /mibs/poll:
+    post:
+      tags:
+        - MIB Browser
+      summary: Run SNMP walk against an OID
+      description: |
+        Executes snmpwalk with the provided host, community, version, and OID.
+        Only SNMP v2c is supported in this release.
+      security:
+        - sessionCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - host
+                - oid
+              properties:
+                host:
+                  type: string
+                  description: Device IP or hostname to poll.
+                version:
+                  type: string
+                  enum: [2c]
+                  default: 2c
+                community:
+                  type: string
+                  description: SNMP community string.
+                oid:
+                  type: string
+                  description: OID to walk (numeric or symbolic).
+                mibModule:
+                  type: string
+                  nullable: true
+                  description: Optional MIB module name to load.
+      responses:
+        '200':
+          description: SNMP walk output
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  stdout:
+                    type: string
+                  stderr:
+                    type: string
+        '400':
+          description: Invalid request
+        '401':
+          description: No active session
+        '500':
+          description: Failed to run snmpwalk
   /microservice/status:
     get:
       tags:

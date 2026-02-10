@@ -14,14 +14,18 @@ const A1_BASEDIR = process.env.A1BASEDIR || '/opt/assure1';
 const MIB_ROOT = process.env.UA_MIB_DIR || path.join(A1_BASEDIR, 'distrib', 'mibs');
 const MIB2FCOM_BIN = process.env.UA_MIB2FCOM_BIN || path.join(A1_BASEDIR, 'bin', 'sdk', 'MIB2FCOM');
 const TRAP_CMD = process.env.UA_SNMP_TRAP_CMD || 'snmptrap';
+const SNMP_WALK_CMD = process.env.UA_SNMP_WALK_CMD || 'snmpwalk';
 const SNMP_TRANSLATE_CMD = process.env.UA_SNMP_TRANSLATE_CMD || 'snmptranslate';
 const MIB_TRANSLATE_CACHE_PREFIX =
   process.env.MIB_TRANSLATE_CACHE_PREFIX || 'mib:translate:';
+const MIB_TRANSLATE_STATS_KEY =
+  process.env.MIB_TRANSLATE_STATS_KEY || 'mib:translate:stats';
 const DEFAULT_TRANSLATE_TTL_SECONDS = 7 * 24 * 60 * 60;
 const DEFAULT_TRANSLATE_NEGATIVE_TTL_SECONDS = 60 * 60;
 const DEFAULT_TRANSLATE_CONCURRENCY = 8;
 const DEFAULT_TRANSLATE_WARMUP_LIMIT = 500;
 const DEFAULT_TRANSLATE_WARMUP_CONCURRENCY = 6;
+const DEFAULT_TRANSLATE_STATS_TTL_SECONDS = 5 * 60;
 const MIB_TRANSLATE_CACHE_TTL_SECONDS = Math.max(
   60,
   Number(process.env.MIB_TRANSLATE_CACHE_TTL_SECONDS || DEFAULT_TRANSLATE_TTL_SECONDS),
@@ -42,12 +46,25 @@ const MIB_TRANSLATE_WARMUP_CONCURRENCY = Math.max(
   1,
   Number(process.env.MIB_TRANSLATE_WARMUP_CONCURRENCY || DEFAULT_TRANSLATE_WARMUP_CONCURRENCY),
 );
+const MIB_TRANSLATE_STATS_TTL_SECONDS = Math.max(
+  30,
+  Number(
+    process.env.MIB_TRANSLATE_STATS_TTL_SECONDS || DEFAULT_TRANSLATE_STATS_TTL_SECONDS,
+  ),
+);
 
 type CachedTranslateEntry = {
   fullOid: string | null;
   ok: boolean;
   error?: string;
   cachedAt: string;
+};
+
+type TranslateCacheStats = {
+  keyCount: number;
+  sizeBytes: number;
+  updatedAt: string;
+  expiresAtMs?: number;
 };
 
 const requireEditPermission = async (req: Request, res: Response): Promise<boolean> => {
@@ -113,7 +130,7 @@ const parseMibDefinitions = (content: string) => {
     defval?: string;
     index?: string;
   }> = [];
-  const matcher = /^(\w+)\s+(OBJECT-TYPE|NOTIFICATION-TYPE|TRAP-TYPE)\b/;
+  const matcher = /^\s*([\w-]+)\s+(OBJECT-TYPE|NOTIFICATION-TYPE|TRAP-TYPE)\b/;
   let moduleName = '';
 
   for (let i = 0; i < Math.min(lines.length, 80); i += 1) {
@@ -229,6 +246,61 @@ const getTranslateCacheClient = async () => {
   }
 };
 
+const parseTranslateStats = (raw: string | null): TranslateCacheStats | null => {
+  if (!raw) {
+    return null;
+  }
+  try {
+    const parsed = JSON.parse(raw);
+    if (typeof parsed?.keyCount !== 'number' || typeof parsed?.sizeBytes !== 'number') {
+      return null;
+    }
+    return parsed as TranslateCacheStats;
+  } catch {
+    return null;
+  }
+};
+
+const calculateTranslateCacheStats = async (): Promise<TranslateCacheStats | null> => {
+  const cacheClient = await getTranslateCacheClient();
+  if (!cacheClient) {
+    return null;
+  }
+  const cached = parseTranslateStats(await cacheClient.get(MIB_TRANSLATE_STATS_KEY));
+  if (cached?.expiresAtMs && cached.expiresAtMs > Date.now()) {
+    return cached;
+  }
+  let keyCount = 0;
+  let sizeBytes = 0;
+  for await (const key of cacheClient.scanIterator({
+    MATCH: `${MIB_TRANSLATE_CACHE_PREFIX}*`,
+    COUNT: 200,
+  })) {
+    if (String(key) === MIB_TRANSLATE_STATS_KEY) {
+      continue;
+    }
+    keyCount += 1;
+    try {
+      const length = await cacheClient.strLen(String(key));
+      if (typeof length === 'number') {
+        sizeBytes += length;
+      }
+    } catch {
+      // ignore size errors
+    }
+  }
+  const stats: TranslateCacheStats = {
+    keyCount,
+    sizeBytes,
+    updatedAt: new Date().toISOString(),
+    expiresAtMs: Date.now() + MIB_TRANSLATE_STATS_TTL_SECONDS * 1000,
+  };
+  await cacheClient.set(MIB_TRANSLATE_STATS_KEY, JSON.stringify(stats), {
+    EX: MIB_TRANSLATE_STATS_TTL_SECONDS,
+  });
+  return stats;
+};
+
 const normalizeTranslateNames = (names: string[]) =>
   Array.from(
     new Set(names.map((value) => String(value || '').trim()).filter((value) => value.length > 0)),
@@ -325,6 +397,40 @@ const execTranslate = (name: string, moduleOverride: string) =>
           logger.warn('MIB translate failed', {
             module: moduleName || undefined,
             target,
+            message,
+          });
+          reject(new Error(message || 'snmptranslate failed'));
+          return;
+        }
+        resolve(String(stdout || '').trim());
+      },
+    );
+  });
+
+const execTranslateOid = (oid: string) =>
+  new Promise<string>((resolve, reject) => {
+    const trimmedOid = String(oid || '').trim();
+    if (!trimmedOid) {
+      reject(new Error('Empty OID'));
+      return;
+    }
+    const args = ['-IR', '-m', 'ALL', '-M', MIB_ROOT, trimmedOid];
+    execFile(
+      SNMP_TRANSLATE_CMD,
+      args,
+      {
+        env: {
+          ...process.env,
+          MIBDIRS: MIB_ROOT,
+          MIBS: 'ALL',
+        },
+        timeout: 8000,
+      },
+      (error, stdout, stderr) => {
+        if (error) {
+          const message = String(stderr || error.message || '').trim();
+          logger.warn('MIB translate OID failed', {
+            oid: trimmedOid,
             message,
           });
           reject(new Error(message || 'snmptranslate failed'));
@@ -616,6 +722,38 @@ router.get('/parse', async (req: Request, res: Response) => {
   }
 });
 
+router.get('/translate/status', async (_req: Request, res: Response) => {
+  try {
+    const cacheStats = await calculateTranslateCacheStats();
+    res.json({ cacheStats });
+  } catch (error: any) {
+    logger.error(`MIB translate status error: ${error.message}`);
+    res.status(500).json({ error: error.message || 'Failed to read translate cache stats' });
+  }
+});
+
+router.get('/oid-lookup', async (req: Request, res: Response) => {
+  try {
+    const oid = String(req.query.oid || '').trim();
+    if (!oid) {
+      return res.status(400).json({ error: 'Missing oid' });
+    }
+    if (!existsSync(MIB_ROOT)) {
+      return res.status(500).json({ error: `MIB root not found at ${MIB_ROOT}` });
+    }
+    const resolved = await execTranslateOid(oid);
+    const line = String(resolved || '').split(/\r?\n/)[0]?.trim() || '';
+    const symbol = line.split(/\s+/)[0] || '';
+    const parts = symbol.split('::');
+    const module = parts.length > 1 ? parts[0].trim() : null;
+    const name = parts.length > 1 ? parts.slice(1).join('::').trim() : null;
+    res.json({ oid, resolved: symbol || null, module, name });
+  } catch (error: any) {
+    logger.error(`MIB OID lookup error: ${error.message}`);
+    res.status(500).json({ error: error.message || 'Failed to resolve OID' });
+  }
+});
+
 router.post('/translate', async (req: Request, res: Response) => {
   try {
     const { module, names } = req.body || {};
@@ -683,6 +821,64 @@ router.post('/mib2fcom', async (req: Request, res: Response) => {
   } catch (error: any) {
     logger.error(`MIB2FCOM error: ${error.message}`);
     res.status(500).json({ error: error.message || 'Failed to run MIB2FCOM' });
+  }
+});
+
+router.post('/poll', async (req: Request, res: Response) => {
+  try {
+    const { host, community, version, oid, mibModule } = req.body || {};
+    if (!host || !oid) {
+      return res.status(400).json({ error: 'Missing host or oid' });
+    }
+    const snmpVersion = version || '2c';
+    if (snmpVersion !== '2c') {
+      return res.status(400).json({ error: 'Only SNMP v2c is supported in this release' });
+    }
+    const normalizeOid = (value: string) => value.trim().replace(/\s+/g, '.');
+    const args = ['-v', '2c', '-c', community || 'public'];
+    if (mibModule) {
+      args.push('-M', MIB_ROOT, '-m', String(mibModule));
+    }
+    args.push(String(host).trim());
+    args.push(normalizeOid(String(oid)));
+
+    execFile(
+      SNMP_WALK_CMD,
+      args,
+      {
+        env: {
+          ...process.env,
+          MIBDIRS: MIB_ROOT,
+          MIBS: mibModule ? String(mibModule) : process.env.MIBS || '',
+        },
+      },
+      (error, stdout, stderr) => {
+        if (error) {
+          logger.error('snmpwalk failed', {
+            message: error.message,
+            code: (error as any).code,
+            signal: (error as any).signal,
+            host,
+            oid,
+            mibModule,
+            stderr: String(stderr || '').trim() || undefined,
+            stdout: String(stdout || '').trim() || undefined,
+          });
+          return res.status(500).json({
+            error: error.message || 'Failed to run snmpwalk',
+            stdout: String(stdout || '').trim(),
+            stderr: String(stderr || '').trim(),
+          });
+        }
+        res.json({
+          stdout: String(stdout || ''),
+          stderr: String(stderr || ''),
+        });
+      },
+    );
+  } catch (error: any) {
+    logger.error(`snmpwalk error: ${error.message}`);
+    res.status(500).json({ error: error.message || 'Failed to run snmpwalk' });
   }
 });
 

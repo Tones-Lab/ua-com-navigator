@@ -426,6 +426,45 @@ export class UAClient {
   }
 
   /**
+   * Get devices from UA Device Catalog.
+   */
+  async getDevices(params?: {
+    limit?: number;
+    start?: number;
+    excludeMetadata?: boolean;
+  }): Promise<any> {
+    try {
+      logger.info('[UA] Fetching devices');
+      const response = await this.client.get('/device/Devices', {
+        params: {
+          limit: params?.limit,
+          start: params?.start,
+          excludeMetadata: params?.excludeMetadata ?? true,
+        },
+      });
+      return response.data;
+    } catch (error: any) {
+      logger.error(`[UA] Error fetching devices: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
+   * Get SNMP access profile by id.
+   */
+  async getSnmpAccessProfile(accessId: string): Promise<any> {
+    try {
+      const trimmed = String(accessId || '').trim();
+      logger.info(`[UA] Fetching SNMP access profile: ${trimmed || 'missing'}`);
+      const response = await this.client.get(`/discovery/snmp/${trimmed}`);
+      return response.data;
+    } catch (error: any) {
+      logger.error(`[UA] Error fetching SNMP access profile: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
    * Get installed Helm charts (microservices).
    */
   async getInstalledHelmCharts(

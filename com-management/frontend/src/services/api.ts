@@ -159,6 +159,14 @@ class ApiClient {
     });
   }
 
+  async getMibTranslateStatus() {
+    return this.client.get('/mibs/translate/status');
+  }
+
+  async lookupMibOid(oid: string) {
+    return this.client.get('/mibs/oid-lookup', { params: { oid } });
+  }
+
   async runMib2Fcom(inputPath: string, outputName?: string, useParentMibs?: boolean) {
     return this.client.post('/mibs/mib2fcom', {
       inputPath,
@@ -177,6 +185,24 @@ class ApiClient {
     varbinds?: Array<{ oid: string; type?: string; value?: string }>;
   }) {
     return this.client.post('/mibs/trap/send', payload);
+  }
+
+  async snmpWalk(payload: {
+    host: string;
+    version?: string;
+    community?: string;
+    oid: string;
+    mibModule?: string;
+  }) {
+    return this.client.post('/mibs/poll', payload);
+  }
+
+  async getDevices(params?: { limit?: number; start?: number }) {
+    return this.client.get('/devices', { params });
+  }
+
+  async getSnmpAccessProfile(accessId: string) {
+    return this.client.get(`/snmp-access/${encodeURIComponent(accessId)}`);
   }
 
   // Schema

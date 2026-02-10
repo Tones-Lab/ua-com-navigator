@@ -122,6 +122,7 @@ export default function App() {
   const friendlyViewRef = useRef<HTMLDivElement | null>(null);
   const friendlyMainRef = useRef<HTMLDivElement | null>(null);
   const activeOverrideTooltipRef = useRef<HTMLElement | null>(null);
+  const mibUrlHydratingRef = useRef(false);
   const [browsePath] = useState('/');
   const [overviewStatus, setOverviewStatus] = useState<any | null>(null);
   const [overviewData, setOverviewData] = useState<any | null>(null);
@@ -190,6 +191,56 @@ export default function App() {
   const [trapVersion, setTrapVersion] = useState('2c');
   const [trapOid, setTrapOid] = useState('');
   const [trapMibModule, setTrapMibModule] = useState('');
+  const [pcomDeviceIp, setPcomDeviceIp] = useState('');
+  const [pcomSnmpVersion, setPcomSnmpVersion] = useState('2c');
+  const [pcomSnmpCommunity, setPcomSnmpCommunity] = useState('mtsro');
+  const [pcomAdvancedOpen, setPcomAdvancedOpen] = useState(false);
+  const [pcomAdvancedActive, setPcomAdvancedActive] = useState(false);
+  const [pcomAdvancedTargetMode, setPcomAdvancedTargetMode] = useState<'device' | 'manual'>(
+    'device',
+  );
+  const [pcomAdvancedDeviceIp, setPcomAdvancedDeviceIp] = useState('');
+  const [pcomAdvancedManualIp, setPcomAdvancedManualIp] = useState('');
+  const [pcomAdvancedSnmpVersion, setPcomAdvancedSnmpVersion] = useState<'1' | '2c' | '3'>('2c');
+  const [pcomAdvancedCommunity, setPcomAdvancedCommunity] = useState('mtsro');
+  const [pcomAdvancedSecurityLevel, setPcomAdvancedSecurityLevel] = useState<
+    'noAuthNoPriv' | 'authNoPriv' | 'authPriv'
+  >('authPriv');
+  const [pcomAdvancedUsername, setPcomAdvancedUsername] = useState('');
+  const [pcomAdvancedAuthProtocol, setPcomAdvancedAuthProtocol] = useState('');
+  const [pcomAdvancedAuthPassword, setPcomAdvancedAuthPassword] = useState('');
+  const [pcomAdvancedPrivProtocol, setPcomAdvancedPrivProtocol] = useState('');
+  const [pcomAdvancedPrivPassword, setPcomAdvancedPrivPassword] = useState('');
+  const [pcomAdvancedEngineId, setPcomAdvancedEngineId] = useState('');
+  const [pcomAdvancedOidEnabled, setPcomAdvancedOidEnabled] = useState(false);
+  const [pcomAdvancedOidValue, setPcomAdvancedOidValue] = useState('');
+  const [pcomSnmpProfile, setPcomSnmpProfile] = useState<null | {
+    accessId: string;
+    version: string;
+    community: string;
+    username: string;
+    securityLevel: string;
+    description: string;
+    zoneName: string;
+  }>(null);
+  const [pcomSnmpProfileLoading, setPcomSnmpProfileLoading] = useState(false);
+  const [pcomSnmpProfileError, setPcomSnmpProfileError] = useState<string | null>(null);
+  const [pcomPollLoading, setPcomPollLoading] = useState(false);
+  const [pcomPollError, setPcomPollError] = useState<string | null>(null);
+  const [pcomPollOutput, setPcomPollOutput] = useState('');
+  const [pcomDevices, setPcomDevices] = useState<
+    Array<{
+      id: string;
+      name: string;
+      zoneName: string;
+      ip: string;
+      status?: string;
+      sysOid?: string;
+      snmpAccessId?: string;
+    }>
+  >([]);
+  const [pcomDevicesLoading, setPcomDevicesLoading] = useState(false);
+  const [pcomDevicesError, setPcomDevicesError] = useState<string | null>(null);
   const [trapVarbinds, setTrapVarbinds] = useState<
     Array<{ oid: string; type: string; value: string }>
   >([]);
@@ -201,6 +252,7 @@ export default function App() {
   const [redeployPulse, setRedeployPulse] = useState(false);
   const [recentTargets, setRecentTargets] = useState<string[]>([]);
   const [folderOverviewStatus, setFolderOverviewStatus] = useState<any | null>(null);
+  const [mibTranslateStatus, setMibTranslateStatus] = useState<any | null>(null);
   const [fileTestLoading, setFileTestLoading] = useState<Record<string, boolean>>({});
   const [vendorTestLoading, setVendorTestLoading] = useState(false);
   const [bulkTrapContext, setBulkTrapContext] = useState<null | {
@@ -309,6 +361,21 @@ export default function App() {
   }, [recentTargets]);
 
   useEffect(() => {
+    setPcomPollError(null);
+    setPcomPollOutput('');
+    setPcomPollLoading(false);
+  }, [mibSelectedDefinition?.name, mibSelectedFile]);
+
+  useEffect(() => {
+    if (!pcomAdvancedOpen || pcomAdvancedOidEnabled) {
+      return;
+    }
+    const oidValue = mibSelectedDefinition?.fullOid || mibSelectedDefinition?.oid;
+    const nextOid = oidValue ? String(oidValue).trim() : '';
+    setPcomAdvancedOidValue(nextOid);
+  }, [mibSelectedDefinition?.fullOid, mibSelectedDefinition?.oid, pcomAdvancedOpen, pcomAdvancedOidEnabled]);
+
+  useEffect(() => {
     if (!redeployPulse) {
       return;
     }
@@ -319,6 +386,36 @@ export default function App() {
   }, [redeployPulse]);
 
   const formatOverviewNumber = (value: number) => new Intl.NumberFormat().format(value);
+
+  const formatBytes = (value?: number | null) => {
+    if (!Number.isFinite(value) || !value || value <= 0) {
+      return '0 B';
+    }
+    const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+    let size = value;
+    let unitIndex = 0;
+    while (size >= 1024 && unitIndex < units.length - 1) {
+      size /= 1024;
+      unitIndex += 1;
+    }
+    const precision = size >= 100 || unitIndex === 0 ? 0 : size >= 10 ? 1 : 2;
+    return `${size.toFixed(precision)} ${units[unitIndex]}`;
+  };
+
+  const formatCacheStatsLabel = (stats?: { keyCount?: number; sizeBytes?: number } | null) => {
+    if (!stats) {
+      return '';
+    }
+    const sizeLabel =
+      typeof stats.sizeBytes === 'number' ? formatBytes(stats.sizeBytes) : '';
+    const countValue = typeof stats.keyCount === 'number' ? stats.keyCount : null;
+    const countLabel =
+      countValue !== null ? `${countValue} ${countValue === 1 ? 'key' : 'keys'}` : '';
+    if (sizeLabel && countLabel) {
+      return `${sizeLabel} · ${countLabel}`;
+    }
+    return sizeLabel || countLabel;
+  };
 
   const loadOverview = async (options?: { forceRebuild?: boolean }) => {
     if (!isAuthenticated) {
@@ -388,6 +485,10 @@ export default function App() {
   const overviewProgress = overviewStatus?.progress;
   const searchProgress = searchStatus?.progress;
   const folderProgress = folderOverviewStatus?.progress;
+  const overviewCacheLabel = formatCacheStatsLabel(overviewStatus?.cacheStats);
+  const searchCacheLabel = formatCacheStatsLabel(searchStatus?.cacheStats);
+  const folderCacheLabel = formatCacheStatsLabel(folderOverviewStatus?.cacheStats);
+  const mibTranslateCacheLabel = formatCacheStatsLabel(mibTranslateStatus?.cacheStats);
   const overviewProgressPercent = overviewProgress?.total
     ? Math.min(100, Math.round((overviewProgress.processed / overviewProgress.total) * 100))
     : 0;
@@ -2331,8 +2432,11 @@ export default function App() {
     if (mibEntries.length > 0 || mibLoading) {
       return;
     }
+    if (mibUrlHydratingRef.current || (mibPath && mibPath !== '/')) {
+      return;
+    }
     void loadMibPath('/');
-  }, [activeApp, isAuthenticated, mibEntries.length, mibLoading]);
+  }, [activeApp, isAuthenticated, mibEntries.length, mibLoading, mibPath]);
 
   useEffect(() => {
     if (!saveLoading) {
@@ -3038,6 +3142,37 @@ export default function App() {
   }, [activeApp, isAuthenticated]);
 
   useEffect(() => {
+    if (!isAuthenticated || activeApp !== 'mib') {
+      return;
+    }
+    let isMounted = true;
+    const loadDevices = async () => {
+      setPcomDevicesLoading(true);
+      setPcomDevicesError(null);
+      try {
+        const resp = await api.getDevices({ limit: 500, start: 0 });
+        const devices = Array.isArray(resp.data?.devices) ? resp.data.devices : [];
+        if (isMounted) {
+          setPcomDevices(devices);
+        }
+      } catch (err: any) {
+        if (isMounted) {
+          setPcomDevicesError(err?.response?.data?.error || 'Failed to load devices');
+          setPcomDevices([]);
+        }
+      } finally {
+        if (isMounted) {
+          setPcomDevicesLoading(false);
+        }
+      }
+    };
+    loadDevices();
+    return () => {
+      isMounted = false;
+    };
+  }, [isAuthenticated, activeApp]);
+
+  useEffect(() => {
     if (isAuthenticated && entries.length === 0 && !browseLoading && !urlHydrated.current) {
       loadNode(null, '/');
     }
@@ -3072,6 +3207,8 @@ export default function App() {
     const fileParam = params.get('file');
     const viewParam = params.get('view');
     const appParam = params.get('app');
+    const mibPathParam = params.get('mibPath');
+    const mibFileParam = params.get('mibFile');
 
     if (viewParam === 'friendly' || viewParam === 'preview') {
       setViewMode(viewParam);
@@ -3079,6 +3216,19 @@ export default function App() {
 
     if (appParam === 'overview' || appParam === 'fcom' || appParam === 'pcom' || appParam === 'mib') {
       setActiveApp(appParam as AppTab);
+      if (appParam === 'mib') {
+        const fallbackPath = mibFileParam
+          ? mibFileParam.split('/').slice(0, -1).join('/')
+          : null;
+        const nextPath = mibPathParam || fallbackPath || '/';
+        mibUrlHydratingRef.current = true;
+        setMibPath(nextPath);
+        void loadMibPath(nextPath, { append: false });
+        if (mibFileParam) {
+          void openMibFileFromUrl(mibFileParam);
+        }
+        return;
+      }
     } else {
       const inferred = inferAppFromPath(fileParam || nodeParam);
       if (inferred) {
@@ -3109,15 +3259,28 @@ export default function App() {
       return;
     }
     const params = new URLSearchParams(window.location.search);
-    if (browseNode) {
-      params.set('node', browseNode);
-    } else {
+    if (activeApp === 'mib') {
       params.delete('node');
-    }
-    if (selectedFile?.PathID) {
-      params.set('file', selectedFile.PathID);
-    } else {
       params.delete('file');
+      params.set('mibPath', mibPath || '/');
+      if (mibSelectedFile) {
+        params.set('mibFile', mibSelectedFile);
+      } else {
+        params.delete('mibFile');
+      }
+    } else {
+      params.delete('mibPath');
+      params.delete('mibFile');
+      if (browseNode) {
+        params.set('node', browseNode);
+      } else {
+        params.delete('node');
+      }
+      if (selectedFile?.PathID) {
+        params.set('file', selectedFile.PathID);
+      } else {
+        params.delete('file');
+      }
     }
     params.set('app', activeApp);
     params.set('view', viewMode);
@@ -3127,7 +3290,7 @@ export default function App() {
     const query = params.toString();
     const nextUrl = query ? `${window.location.pathname}?${query}` : window.location.pathname;
     window.history.replaceState({}, '', nextUrl);
-  }, [browseNode, selectedFile, viewMode, isAuthenticated, session?.server_id]);
+  }, [activeApp, browseNode, selectedFile, viewMode, mibPath, mibSelectedFile, isAuthenticated, session?.server_id]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -3159,6 +3322,11 @@ export default function App() {
     } finally {
       clearSession();
       urlHydrated.current = false;
+      sessionStorage.removeItem('com.activeApp');
+      sessionStorage.removeItem('fcom.search.query');
+      sessionStorage.removeItem('fcom.search.scope');
+      sessionStorage.removeItem(redeployStorageKey);
+      localStorage.removeItem('mib.recentTargets');
       setActiveApp('overview');
       setSelectedFile(null);
       setFileData(null);
@@ -3169,10 +3337,16 @@ export default function App() {
       setSaveSuccess(null);
       setStagedToast(null);
       setRedeployReady(false);
-      sessionStorage.removeItem(redeployStorageKey);
       setRedeployModalOpen(false);
       setRedeployLoading(false);
       setRedeployError(null);
+      setSearchQuery('');
+      setSearchScope('all');
+      setSearchResults([]);
+      setSearchError(null);
+      setSearchLoading(false);
+      matchStateByFileRef.current = {};
+      scrollStateByFileRef.current = {};
       setSelectedFolder(null);
       setFolderOverview(null);
       setEntries([]);
@@ -3180,6 +3354,83 @@ export default function App() {
       setBrowseNode(null);
       setBreadcrumbs([{ label: '/', node: null }]);
       setViewMode('preview');
+      setMibPath('/');
+      setMibEntries([]);
+      setMibLoading(false);
+      setMibError(null);
+      setMibSearch('');
+      setMibSearchScope('folder');
+      setMibSearchMode('browse');
+      setMibOffset(0);
+      setMibHasMore(false);
+      setMibTotal(null);
+      setMibFilteredTotal(null);
+      setMibSelectedFile(null);
+      setMibDefinitions([]);
+      setMibDetailsLoading(false);
+      setMibDefinitionSearch('');
+      setMibObjectFilter('all');
+      setMibSelectedDefinition(null);
+      setMibOutput('');
+      setMibOutputName('');
+      setMib2FcomLoading(false);
+      setMib2FcomError(null);
+      setMibUseParent(true);
+      setMibTrapDefaults(null);
+      setTrapModalOpen(false);
+      setTrapSource('mib');
+      setTrapObjectName('');
+      setTrapHost('');
+      setTrapPort(162);
+      setTrapCommunity('public');
+      setTrapVersion('2c');
+      setTrapOid('');
+      setTrapMibModule('');
+      setTrapVarbinds([]);
+      setTrapServerList([]);
+      setTrapServerError(null);
+      setTrapManualOpen(false);
+      setTrapSending(false);
+      setTrapError(null);
+      setRecentTargets([]);
+      setBulkTrapContext(null);
+      setBulkTrapProgress({
+        current: 0,
+        total: 0,
+        failed: 0,
+        currentLabel: '',
+      });
+      setBulkTrapFailures([]);
+      setBulkTrapSummary(null);
+      setBulkTrapShowAllFailures(false);
+      setPcomDeviceIp('');
+      setPcomSnmpVersion('2c');
+      setPcomSnmpCommunity('mtsro');
+      setPcomAdvancedOpen(false);
+      setPcomAdvancedActive(false);
+      setPcomAdvancedTargetMode('device');
+      setPcomAdvancedDeviceIp('');
+      setPcomAdvancedManualIp('');
+      setPcomAdvancedSnmpVersion('2c');
+      setPcomAdvancedCommunity('mtsro');
+      setPcomAdvancedSecurityLevel('authPriv');
+      setPcomAdvancedUsername('');
+      setPcomAdvancedAuthProtocol('');
+      setPcomAdvancedAuthPassword('');
+      setPcomAdvancedPrivProtocol('');
+      setPcomAdvancedPrivPassword('');
+      setPcomAdvancedEngineId('');
+      setPcomAdvancedOidEnabled(false);
+      setPcomAdvancedOidValue('');
+      setPcomSnmpProfile(null);
+      setPcomSnmpProfileLoading(false);
+      setPcomSnmpProfileError(null);
+      setPcomPollLoading(false);
+      setPcomPollError(null);
+      setPcomPollOutput('');
+      setPcomDevices([]);
+      setPcomDevicesLoading(false);
+      setPcomDevicesError(null);
       window.history.replaceState({}, '', window.location.pathname);
     }
   };
@@ -3189,6 +3440,82 @@ export default function App() {
       void handleLogoutInternal();
     });
   };
+
+  const pcomEnterpriseBase = useMemo(() => {
+    const raw = String(mibSelectedDefinition?.fullOid || mibSelectedDefinition?.oid || '').trim();
+    if (!raw || raw === '—') {
+      return '';
+    }
+    const normalized = raw.replace(/\s+/g, '.').replace(/\.+/g, '.');
+    const numericOnly = normalized.replace(/^[^0-9]+/, '');
+    if (!/^\d+(\.\d+)+$/.test(numericOnly)) {
+      return '';
+    }
+    const parts = numericOnly.split('.').filter(Boolean);
+    if (parts.length < 7) {
+      return '';
+    }
+    const prefix = parts.slice(0, 6).join('.');
+    if (prefix !== '1.3.6.1.4.1') {
+      return '';
+    }
+    return parts.slice(0, 7).join('.');
+  }, [mibSelectedDefinition?.fullOid, mibSelectedDefinition?.oid]);
+
+  const pcomDeviceOptions = useMemo(() => {
+    return pcomDevices
+      .filter((device) => device.ip)
+      .filter((device) => {
+        if (!pcomEnterpriseBase) {
+          return true;
+        }
+        const sysOid = String(device.sysOid || '').trim();
+        if (!sysOid) {
+          return false;
+        }
+        return sysOid === pcomEnterpriseBase || sysOid.startsWith(`${pcomEnterpriseBase}.`);
+      })
+      .map((device) => ({
+        label: `${device.name} (${device.zoneName || 'Unknown zone'})`,
+        value: device.ip,
+      }));
+  }, [pcomDevices, pcomEnterpriseBase]);
+
+  const pcomDeviceOptionsWithManual = useMemo(() => {
+    const manualOption =
+      pcomAdvancedActive && pcomAdvancedTargetMode === 'manual' && pcomAdvancedManualIp
+        ? {
+            label: `Manual: ${pcomAdvancedManualIp}`,
+            value: pcomAdvancedManualIp,
+          }
+        : null;
+    return manualOption ? [manualOption, ...pcomDeviceOptions] : pcomDeviceOptions;
+  }, [pcomAdvancedActive, pcomAdvancedManualIp, pcomAdvancedTargetMode, pcomDeviceOptions]);
+
+  useEffect(() => {
+    if (pcomAdvancedActive && pcomAdvancedTargetMode === 'manual') {
+      return;
+    }
+    if (!pcomDeviceIp) {
+      return;
+    }
+    if (!pcomEnterpriseBase) {
+      return;
+    }
+    const matches = pcomDevices.some((device) => {
+      if (!device.ip || device.ip !== pcomDeviceIp) {
+        return false;
+      }
+      const sysOid = String(device.sysOid || '').trim();
+      if (!sysOid) {
+        return false;
+      }
+      return sysOid === pcomEnterpriseBase || sysOid.startsWith(`${pcomEnterpriseBase}.`);
+    });
+    if (!matches) {
+      setPcomDeviceIp('');
+    }
+  }, [pcomDeviceIp, pcomEnterpriseBase, pcomDevices, pcomAdvancedActive, pcomAdvancedTargetMode]);
 
   useEffect(() => {
     if (selectedFile) {
@@ -3259,6 +3586,15 @@ export default function App() {
     try {
       const resp = await api.getFolderOverviewStatus();
       setFolderOverviewStatus(resp.data);
+    } catch {
+      // ignore
+    }
+  };
+
+  const refreshMibTranslateStatus = async () => {
+    try {
+      const resp = await api.getMibTranslateStatus();
+      setMibTranslateStatus(resp.data);
     } catch {
       // ignore
     }
@@ -3527,6 +3863,7 @@ export default function App() {
     void refreshOverviewStatus();
     void refreshSearchStatus();
     void refreshFolderOverviewStatus();
+    void refreshMibTranslateStatus();
   }, [isAuthenticated, showUserMenu]);
 
   useEffect(() => {
@@ -4322,12 +4659,18 @@ export default function App() {
     } catch (err: any) {
       setMibError(err?.response?.data?.error || 'Failed to load MIB folder');
     } finally {
+      if (mibUrlHydratingRef.current) {
+        mibUrlHydratingRef.current = false;
+      }
       setMibLoading(false);
     }
   };
 
-  const loadMibSearch = async (options?: { append?: boolean }) => {
-    const query = mibSearch.trim();
+  const loadMibSearch = async (options?: { append?: boolean; queryOverride?: string }) => {
+    const query =
+      options?.queryOverride !== undefined
+        ? String(options.queryOverride).trim()
+        : mibSearch.trim();
     if (!query) {
       await loadMibPath(mibPath, { append: false });
       return;
@@ -4359,6 +4702,25 @@ export default function App() {
     setMibDefinitions([]);
     setMibSelectedDefinition(null);
     setMibOffset(0);
+    const query = mibSearch.trim();
+    const isNumericOid = /^\d+(?:\.\d+)+$/.test(query);
+    if (isNumericOid) {
+      try {
+        const resp = await api.lookupMibOid(query);
+        const moduleName = String(resp.data?.module || '').trim();
+        const resolvedName = String(resp.data?.name || '').trim();
+        if (moduleName) {
+          const label = resolvedName ? `${moduleName}::${resolvedName}` : moduleName;
+          triggerToast(`OID resolved to ${label}. Searching MIB files...`);
+          setMibSearch(moduleName);
+          setMibSearchScope('all');
+          await loadMibSearch({ append: false, queryOverride: moduleName });
+          return;
+        }
+      } catch {
+        // ignore lookup errors and fall back to filename search
+      }
+    }
     if (mibSearchScope === 'all') {
       await loadMibSearch({ append: false });
       return;
@@ -4597,6 +4959,21 @@ export default function App() {
     }
   };
 
+  const openMibFileFromUrl = async (filePath: string) => {
+    if (!filePath) {
+      return;
+    }
+    const normalized = filePath.startsWith('/') ? filePath : `/${filePath}`;
+    setMibSelectedFile(normalized);
+    setMibDefinitionSearch('');
+    setMibObjectFilter('all');
+    setMibOutput('');
+    setMibOutputName('');
+    setMib2FcomError(null);
+    setMibTrapDefaults(null);
+    await loadMibDefinitions(normalized);
+  };
+
   const handleOpenMibEntry = async (entry: any) => {
     if (entry?.isDir) {
       setMibSelectedFile(null);
@@ -4715,6 +5092,205 @@ export default function App() {
     }
     setTrapObjectName(defaults.objectName || '');
     return nextHost;
+  };
+
+  const pcomActiveTarget = pcomAdvancedActive
+    ? pcomAdvancedTargetMode === 'manual'
+      ? pcomAdvancedManualIp.trim()
+      : pcomAdvancedDeviceIp
+    : pcomDeviceIp;
+  const pcomActiveSnmpVersion = pcomAdvancedActive ? pcomAdvancedSnmpVersion : pcomSnmpVersion;
+  const pcomActiveCommunity = pcomAdvancedActive ? pcomAdvancedCommunity : pcomSnmpCommunity;
+
+  const normalizeSnmpVersion = (value: string) => {
+    const trimmed = String(value || '').trim().toLowerCase();
+    if (trimmed === '1' || trimmed === 'v1') {
+      return '1';
+    }
+    if (trimmed === '2' || trimmed === '2c' || trimmed === 'v2' || trimmed === 'v2c') {
+      return '2c';
+    }
+    if (trimmed === '3' || trimmed === 'v3') {
+      return '3';
+    }
+    return '';
+  };
+
+  const formatSnmpVersionLabel = (value: string) => {
+    if (value === '1') {
+      return 'v1';
+    }
+    if (value === '2c') {
+      return 'v2c';
+    }
+    if (value === '3') {
+      return 'v3';
+    }
+    return value || '-';
+  };
+
+  const formatSnmpProfileTooltip = (profile: NonNullable<typeof pcomSnmpProfile>) => {
+    const lines = [] as string[];
+    if (profile.description) {
+      lines.push(`Profile: ${profile.description}`);
+    }
+    lines.push(`Access ID: ${profile.accessId}`);
+    lines.push(`Version: ${formatSnmpVersionLabel(profile.version)}`);
+    if (profile.community) {
+      lines.push(`Community: ${profile.community}`);
+    }
+    if (profile.username) {
+      lines.push(`Username: ${profile.username}`);
+    }
+    if (profile.securityLevel) {
+      lines.push(`Security level: ${profile.securityLevel}`);
+    }
+    if (profile.zoneName) {
+      lines.push(`Zone: ${profile.zoneName}`);
+    }
+    return lines.join('\n');
+  };
+
+  useEffect(() => {
+    if (pcomAdvancedActive) {
+      return;
+    }
+    if (!pcomDeviceIp) {
+      setPcomSnmpProfile(null);
+      setPcomSnmpProfileError(null);
+      setPcomSnmpProfileLoading(false);
+      setPcomSnmpVersion('2c');
+      setPcomSnmpCommunity('');
+      return;
+    }
+    const device = pcomDevices.find((entry) => entry.ip === pcomDeviceIp);
+    const accessId = String(device?.snmpAccessId || '').trim();
+    if (!accessId || accessId === '0') {
+      setPcomSnmpProfile(null);
+      setPcomSnmpProfileError('No SNMP access profile assigned to this device.');
+      setPcomSnmpProfileLoading(false);
+      setPcomSnmpVersion('2c');
+      setPcomSnmpCommunity('');
+      return;
+    }
+    if (pcomSnmpProfile?.accessId === accessId) {
+      return;
+    }
+
+    let isMounted = true;
+    const loadProfile = async () => {
+      setPcomSnmpProfileLoading(true);
+      setPcomSnmpProfileError(null);
+      try {
+        const resp = await api.getSnmpAccessProfile(accessId);
+        const entry = Array.isArray(resp.data?.data) ? resp.data.data[0] : null;
+        if (!entry) {
+          if (isMounted) {
+            setPcomSnmpProfile(null);
+            setPcomSnmpProfileError('SNMP access profile not found.');
+          }
+          return;
+        }
+        const version = normalizeSnmpVersion(entry.SNMPVersion);
+        const community = String(entry.Community || '').trim();
+        const nextProfile = {
+          accessId,
+          version,
+          community,
+          username: String(entry.Username || '').trim(),
+          securityLevel: String(entry.SecurityLevel || '').trim(),
+          description: String(entry.Description || '').trim(),
+          zoneName: String(entry.DeviceZoneName || '').trim(),
+        };
+        if (isMounted) {
+          setPcomSnmpProfile(nextProfile);
+          if (version) {
+            setPcomSnmpVersion(version);
+          }
+          setPcomSnmpCommunity(community);
+        }
+      } catch (err: any) {
+        if (isMounted) {
+          setPcomSnmpProfile(null);
+          setPcomSnmpProfileError(
+            err?.response?.data?.error || err?.message || 'Failed to load SNMP access profile',
+          );
+        }
+      } finally {
+        if (isMounted) {
+          setPcomSnmpProfileLoading(false);
+        }
+      }
+    };
+
+    void loadProfile();
+    return () => {
+      isMounted = false;
+    };
+  }, [pcomAdvancedActive, pcomDeviceIp, pcomDevices, pcomSnmpProfile?.accessId]);
+
+  const openPcomAdvancedModal = () => {
+    if (!pcomAdvancedActive) {
+      setPcomAdvancedTargetMode('device');
+      setPcomAdvancedDeviceIp(pcomDeviceIp);
+      if (pcomSnmpVersion === '1' || pcomSnmpVersion === '2c' || pcomSnmpVersion === '3') {
+        setPcomAdvancedSnmpVersion(pcomSnmpVersion);
+      } else {
+        setPcomAdvancedSnmpVersion('2c');
+      }
+      setPcomAdvancedCommunity(pcomSnmpCommunity);
+    }
+    setPcomAdvancedOpen(true);
+  };
+
+  const applyPcomAdvanced = () => {
+    const targetIp =
+      pcomAdvancedTargetMode === 'manual'
+        ? pcomAdvancedManualIp.trim()
+        : pcomAdvancedDeviceIp;
+    setPcomDeviceIp(targetIp);
+    setPcomAdvancedActive(true);
+    setPcomAdvancedOpen(false);
+  };
+
+  const disablePcomAdvanced = () => {
+    setPcomAdvancedActive(false);
+    setPcomDeviceIp('');
+  };
+
+  const runPcomPoll = async () => {
+    const oidValue = mibSelectedDefinition?.fullOid || mibSelectedDefinition?.oid;
+    const baseOid = oidValue ? String(oidValue).trim() : '';
+    const overrideOid = pcomAdvancedActive && pcomAdvancedOidEnabled
+      ? String(pcomAdvancedOidValue || '').trim()
+      : '';
+    const trimmedOid = overrideOid || baseOid;
+    const targetHost = pcomActiveTarget;
+    if (!targetHost || !trimmedOid) {
+      setPcomPollError('Select a target and OID to poll.');
+      return;
+    }
+    setPcomPollError(null);
+    setPcomPollOutput('');
+    setPcomPollLoading(true);
+    try {
+      const resp = await api.snmpWalk({
+        host: targetHost,
+        version: pcomActiveSnmpVersion,
+        community: pcomActiveCommunity,
+        oid: trimmedOid,
+        mibModule: mibSelectedDefinition?.module || undefined,
+      });
+      const stdout = String(resp.data?.stdout || '').trim();
+      const stderr = String(resp.data?.stderr || '').trim();
+      const combined = stdout && stderr ? `${stdout}\n\n${stderr}` : stdout || stderr;
+      setPcomPollOutput(combined || 'No output received.');
+    } catch (err: any) {
+      const message = err?.response?.data?.error || err?.message || 'Failed to run snmpwalk';
+      setPcomPollError(message);
+    } finally {
+      setPcomPollLoading(false);
+    }
   };
 
   const openTrapComposer = async (definition: any, sourcePath?: string | null) => {
@@ -4895,29 +5471,60 @@ export default function App() {
   );
   const filteredMibDefinitions = useMemo(() => {
     const query = mibDefinitionSearch.trim().toLowerCase();
-    return mibDefinitions.filter((entry) => {
-      const name = String(entry?.name || '').toLowerCase();
-      const oid = String(entry?.oid || '').toLowerCase();
-      const fullOid = String(entry?.fullOid || '').toLowerCase();
-      const matchesQuery =
-        !query || name.includes(query) || oid.includes(query) || fullOid.includes(query);
-      if (!matchesQuery) {
-        return false;
-      }
-      if (mibObjectFilter === 'all') {
+    const results = mibDefinitions
+      .map((entry, index) => {
+        const name = String(entry?.name || '').toLowerCase();
+        const oid = String(entry?.oid || '').toLowerCase();
+        const fullOid = String(entry?.fullOid || '').toLowerCase();
+        const description = String(entry?.description || '').toLowerCase();
+        if (!query) {
+          return { entry, index, score: 0, matchesQuery: true };
+        }
+        const exactMatch =
+          name === query || oid === query || fullOid === query || description === query;
+        const startsWith =
+          name.startsWith(query) ||
+          oid.startsWith(query) ||
+          fullOid.startsWith(query) ||
+          description.startsWith(query);
+        const includesMatch =
+          name.includes(query) ||
+          oid.includes(query) ||
+          fullOid.includes(query) ||
+          description.includes(query);
+        const matchesQuery = exactMatch || startsWith || includesMatch;
+        const score = exactMatch ? 0 : startsWith ? 1 : includesMatch ? 2 : 3;
+        return { entry, index, score, matchesQuery };
+      })
+      .filter(({ entry, matchesQuery }) => {
+        if (!matchesQuery) {
+          return false;
+        }
+        if (mibObjectFilter === 'all') {
+          return true;
+        }
+        const kind = String(entry?.kind || '').toUpperCase();
+        const isFcom = kind === 'NOTIFICATION-TYPE' || kind === 'TRAP-TYPE';
+        const isPcom = kind === 'OBJECT-TYPE';
+        if (mibObjectFilter === 'fcom') {
+          return isFcom;
+        }
+        if (mibObjectFilter === 'pcom') {
+          return isPcom;
+        }
         return true;
-      }
-      const kind = String(entry?.kind || '').toUpperCase();
-      const isFcom = kind === 'NOTIFICATION-TYPE' || kind === 'TRAP-TYPE';
-      const isPcom = kind === 'OBJECT-TYPE';
-      if (mibObjectFilter === 'fcom') {
-        return isFcom;
-      }
-      if (mibObjectFilter === 'pcom') {
-        return isPcom;
-      }
-      return true;
-    });
+      });
+    if (!query) {
+      return results.map(({ entry }) => entry);
+    }
+    return results
+      .sort((a, b) => {
+        if (a.score !== b.score) {
+          return a.score - b.score;
+        }
+        return a.index - b.index;
+      })
+      .map(({ entry }) => entry);
   }, [mibDefinitions, mibDefinitionSearch, mibObjectFilter]);
   const mibDefinitionCounts = useMemo(() => {
     let fcomCount = 0;
@@ -13992,31 +14599,186 @@ export default function App() {
                                           {mibSelectedDefinition.description}
                                         </div>
                                       )}
+                                      {isPerf && (
+                                        <div className="mib-action-card">
+                                          <div className="mib-action-header">
+                                            <div>
+                                              <div className="mib-action-title">
+                                                PCOM SNMP Config (temporary)
+                                              </div>
+                                              <div className="mib-action-subtitle">
+                                                Draft device targeting for SNMP polling.
+                                              </div>
+                                              <div className="mib-action-hint">
+                                                Uses device IP only when polling.
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <div className="mib-snmp-profile-meta">
+                                            {pcomAdvancedActive ? (
+                                              <span className="muted">
+                                                Advanced settings override the device dropdown.
+                                              </span>
+                                            ) : pcomSnmpProfileLoading ? (
+                                              <span className="muted">Loading SNMP profile...</span>
+                                            ) : pcomSnmpProfileError ? (
+                                              <span className="error">{pcomSnmpProfileError}</span>
+                                            ) : pcomSnmpProfile ? (
+                                              <>
+                                                <span className="muted">
+                                                  SNMP profile: {pcomSnmpProfile.description || 'Profile'} ({
+                                                    formatSnmpVersionLabel(pcomSnmpProfile.version)
+                                                  })
+                                                  {pcomSnmpProfile.community
+                                                    ? ` · Community: ${pcomSnmpProfile.community}`
+                                                    : ''}
+                                                  {pcomSnmpProfile.zoneName
+                                                    ? ` · Zone: ${pcomSnmpProfile.zoneName}`
+                                                    : ''}
+                                                </span>
+                                                <button
+                                                  type="button"
+                                                  className="info-button"
+                                                  title={formatSnmpProfileTooltip(pcomSnmpProfile)}
+                                                >
+                                                  ?
+                                                </button>
+                                              </>
+                                            ) : (
+                                              <span className="muted">
+                                                Select a device to load its SNMP profile.
+                                              </span>
+                                            )}
+                                          </div>
+                                          <div className="mib-action-results">
+                                            <div className="mib-trap-grid mib-trap-grid-compact">
+                                              <label className="mib-field">
+                                                Device
+                                                <select
+                                                  value={pcomDeviceIp}
+                                                  onChange={(e) => setPcomDeviceIp(e.target.value)}
+                                                  disabled={pcomDevicesLoading || pcomAdvancedActive}
+                                                >
+                                                  <option value="">Select a device</option>
+                                                  {pcomDevicesLoading ? (
+                                                    <option value="" disabled>
+                                                      Loading devices…
+                                                    </option>
+                                                  ) : pcomDeviceOptions.length === 0 ? (
+                                                    <option value="" disabled>
+                                                      No devices available
+                                                    </option>
+                                                  ) : (
+                                                    pcomDeviceOptionsWithManual.map((device) => (
+                                                      <option key={device.value} value={device.value}>
+                                                        {device.label}
+                                                      </option>
+                                                    ))
+                                                  )}
+                                                </select>
+                                              </label>
+                                              <div className="mib-field mib-field-action">
+                                                <div className="action-row">
+                                                  <button
+                                                    type="button"
+                                                    className="mib-action-button-secondary"
+                                                    onClick={openPcomAdvancedModal}
+                                                  >
+                                                    Advanced
+                                                  </button>
+                                                  {pcomAdvancedActive && (
+                                                    <button
+                                                      type="button"
+                                                      className="mib-action-button-secondary"
+                                                      onClick={disablePcomAdvanced}
+                                                    >
+                                                      Use basic
+                                                    </button>
+                                                  )}
+                                                </div>
+                                              </div>
+                                              <div className="mib-field mib-field-action">
+                                                <button
+                                                  type="button"
+                                                  className="mib-action-button"
+                                                  onClick={runPcomPoll}
+                                                  disabled={
+                                                    pcomPollLoading ||
+                                                    !pcomActiveTarget ||
+                                                    !(mibSelectedDefinition?.fullOid ||
+                                                      mibSelectedDefinition?.oid)
+                                                  }
+                                                >
+                                                  {pcomPollLoading ? 'Running…' : 'Test Poll'}
+                                                </button>
+                                              </div>
+                                            </div>
+                                            {pcomDevicesError && (
+                                              <div className="error">{pcomDevicesError}</div>
+                                            )}
+                                          </div>
+                                        </div>
+                                      )}
                                       <div className="mib-action-card">
                                         <div className="mib-action-header">
                                           <div>
-                                            <div className="mib-action-title">{actionTitle}</div>
-                                            <div className="mib-action-subtitle">{actionSubtitle}</div>
-                                            <div className="mib-action-hint">
-                                              Stub generation is coming next.
+                                            <div className="mib-action-title">
+                                              {isPerf ? 'Test Poll Output' : actionTitle}
                                             </div>
+                                            <div className="mib-action-subtitle">
+                                              {isPerf
+                                                ? 'SNMP walk response from the selected device.'
+                                                : actionSubtitle}
+                                            </div>
+                                            {!isPerf && (
+                                              <div className="mib-action-hint">
+                                                Stub generation is coming next.
+                                              </div>
+                                            )}
                                           </div>
                                         </div>
-                                        <div className="mib-action-results">
-                                          <div className="mib-action-results-empty">
-                                            No actions configured yet.
-                                          </div>
+                                        <div
+                                          className={`mib-action-results${
+                                            isPerf ? ' mib-action-results-full' : ''
+                                          }`}
+                                        >
+                                          {isPerf ? (
+                                            pcomPollError || pcomPollOutput ? (
+                                              <div className="mib-poll-output">
+                                                {pcomPollError && (
+                                                  <div className="mib-poll-output-error">
+                                                    {pcomPollError}
+                                                  </div>
+                                                )}
+                                                {pcomPollOutput && (
+                                                  <pre className="mib-poll-output-body">
+                                                    {pcomPollOutput}
+                                                  </pre>
+                                                )}
+                                              </div>
+                                            ) : (
+                                              <div className="mib-action-results-empty">
+                                                Run Test Poll to see output here.
+                                              </div>
+                                            )
+                                          ) : (
+                                            <div className="mib-action-results-empty">
+                                              No actions configured yet.
+                                            </div>
+                                          )}
                                         </div>
                                       </div>
-                                      <button
-                                        type="button"
-                                        className="action-link"
-                                        onClick={() =>
-                                          openTrapComposer(mibSelectedDefinition, mibSelectedFile)
-                                        }
-                                      >
-                                        Compose Trap
-                                      </button>
+                                      {!isPerf && (
+                                        <button
+                                          type="button"
+                                          className="action-link"
+                                          onClick={() =>
+                                            openTrapComposer(mibSelectedDefinition, mibSelectedFile)
+                                          }
+                                        >
+                                          Compose Trap
+                                        </button>
+                                      )}
                                     </div>
                                   );
                                 })()
@@ -14376,6 +15138,223 @@ export default function App() {
                   </div>
                 </div>
               )}
+              {pcomAdvancedOpen && (
+                <div className="modal-overlay" role="dialog" aria-modal="true">
+                  <div className="modal modal-wide">
+                    <h3>SNMP Advanced Settings</h3>
+                    <div className="panel-section">
+                      <div className="panel-section-title">Target</div>
+                      <div className="mib-trap-grid">
+                        <label className="mib-field">
+                          Target mode
+                          <select
+                            value={pcomAdvancedTargetMode}
+                            onChange={(e) =>
+                              setPcomAdvancedTargetMode(e.target.value as 'device' | 'manual')
+                            }
+                          >
+                            <option value="device">Device list</option>
+                            <option value="manual">Manual IP</option>
+                          </select>
+                        </label>
+                        {pcomAdvancedTargetMode === 'device' ? (
+                          <label className="mib-field">
+                            Device
+                            <select
+                              value={pcomAdvancedDeviceIp}
+                              onChange={(e) => setPcomAdvancedDeviceIp(e.target.value)}
+                              disabled={pcomDevicesLoading}
+                            >
+                              <option value="">Select a device</option>
+                              {pcomDevicesLoading ? (
+                                <option value="" disabled>
+                                  Loading devices...
+                                </option>
+                              ) : pcomDeviceOptions.length === 0 ? (
+                                <option value="" disabled>
+                                  No devices available
+                                </option>
+                              ) : (
+                                pcomDeviceOptions.map((device) => (
+                                  <option key={device.value} value={device.value}>
+                                    {device.label}
+                                  </option>
+                                ))
+                              )}
+                            </select>
+                          </label>
+                        ) : (
+                          <label className="mib-field">
+                            IP address
+                            <input
+                              type="text"
+                              placeholder="10.0.0.10"
+                              value={pcomAdvancedManualIp}
+                              onChange={(e) => setPcomAdvancedManualIp(e.target.value)}
+                            />
+                          </label>
+                        )}
+                      </div>
+                    </div>
+                    <div className="panel-section">
+                      <div className="panel-section-title">SNMP</div>
+                      <div className="mib-trap-grid">
+                        <label className="mib-field">
+                          Version
+                          <select
+                            value={pcomAdvancedSnmpVersion}
+                            onChange={(e) =>
+                              setPcomAdvancedSnmpVersion(e.target.value as '1' | '2c' | '3')
+                            }
+                          >
+                            <option value="1">v1</option>
+                            <option value="2c">v2c</option>
+                            <option value="3">v3</option>
+                          </select>
+                        </label>
+                        {(pcomAdvancedSnmpVersion === '1' || pcomAdvancedSnmpVersion === '2c') && (
+                          <label className="mib-field">
+                            Community string
+                            <input
+                              type="password"
+                              value={pcomAdvancedCommunity}
+                              onChange={(e) => setPcomAdvancedCommunity(e.target.value)}
+                            />
+                          </label>
+                        )}
+                      </div>
+                      <details className="mib-advanced-oid" open={pcomAdvancedOidEnabled}>
+                        <summary
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setPcomAdvancedOidEnabled((prev) => !prev);
+                          }}
+                        >
+                          Customize OID (optional)
+                        </summary>
+                        {pcomAdvancedOidEnabled && (
+                          <div className="mib-advanced-oid-body">
+                            <label className="mib-field">
+                              OID override
+                              <input
+                                type="text"
+                                placeholder="1.3.6.1.4.1.x.y"
+                                value={pcomAdvancedOidValue}
+                                onChange={(e) => setPcomAdvancedOidValue(e.target.value)}
+                              />
+                            </label>
+                            <div className="muted">
+                              Defaults to the selected MIB OID. Append .x.y to target an instance.
+                            </div>
+                          </div>
+                        )}
+                      </details>
+                      {pcomAdvancedSnmpVersion === '3' && (
+                        <div className="mib-trap-grid">
+                          <label className="mib-field">
+                            Security level
+                            <select
+                              value={pcomAdvancedSecurityLevel}
+                              onChange={(e) =>
+                                setPcomAdvancedSecurityLevel(
+                                  e.target.value as 'noAuthNoPriv' | 'authNoPriv' | 'authPriv',
+                                )
+                              }
+                            >
+                              <option value="noAuthNoPriv">noAuthNoPriv</option>
+                              <option value="authNoPriv">authNoPriv</option>
+                              <option value="authPriv">authPriv</option>
+                            </select>
+                          </label>
+                          <label className="mib-field">
+                            Username
+                            <input
+                              type="text"
+                              value={pcomAdvancedUsername}
+                              onChange={(e) => setPcomAdvancedUsername(e.target.value)}
+                            />
+                          </label>
+                          {pcomAdvancedSecurityLevel !== 'noAuthNoPriv' && (
+                            <>
+                              <label className="mib-field">
+                                Authentication protocol
+                                <select
+                                  value={pcomAdvancedAuthProtocol}
+                                  onChange={(e) => setPcomAdvancedAuthProtocol(e.target.value)}
+                                >
+                                  <option value="">Select protocol</option>
+                                  <option value="MD5">MD5</option>
+                                  <option value="SHA">SHA</option>
+                                  <option value="SHA-224">SHA (224)</option>
+                                  <option value="SHA-256">SHA (256)</option>
+                                  <option value="SHA-384">SHA (384)</option>
+                                  <option value="SHA-512">SHA (512)</option>
+                                </select>
+                              </label>
+                              <label className="mib-field">
+                                Authentication password
+                                <input
+                                  type="password"
+                                  value={pcomAdvancedAuthPassword}
+                                  onChange={(e) => setPcomAdvancedAuthPassword(e.target.value)}
+                                />
+                              </label>
+                            </>
+                          )}
+                          {pcomAdvancedSecurityLevel === 'authPriv' && (
+                            <>
+                              <label className="mib-field">
+                                Privacy protocol
+                                <select
+                                  value={pcomAdvancedPrivProtocol}
+                                  onChange={(e) => setPcomAdvancedPrivProtocol(e.target.value)}
+                                >
+                                  <option value="">Select protocol</option>
+                                  <option value="DES">DES</option>
+                                  <option value="3DES">3DES</option>
+                                  <option value="AES-128">AES (128)</option>
+                                  <option value="AES-192">AES (192)</option>
+                                  <option value="AES-192-Cisco">AES (192) Cisco</option>
+                                  <option value="AES-256">AES (256)</option>
+                                  <option value="AES-256-Cisco">AES (256) Cisco</option>
+                                </select>
+                              </label>
+                              <label className="mib-field">
+                                Privacy password
+                                <input
+                                  type="password"
+                                  value={pcomAdvancedPrivPassword}
+                                  onChange={(e) => setPcomAdvancedPrivPassword(e.target.value)}
+                                />
+                              </label>
+                            </>
+                          )}
+                          <label className="mib-field">
+                            Engine ID
+                            <input
+                              type="text"
+                              value={pcomAdvancedEngineId}
+                              onChange={(e) => setPcomAdvancedEngineId(e.target.value)}
+                            />
+                          </label>
+                        </div>
+                      )}
+                    </div>
+                    <div className="modal-actions">
+                      <button
+                        type="button"
+                        className="ghost-button"
+                        onClick={() => setPcomAdvancedOpen(false)}
+                      >
+                        Close
+                      </button>
+                      <button type="button" className="modal-primary" onClick={applyPcomAdvanced}>
+                        Apply
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </>
           ) : (
             <div className="auth-screen">
@@ -14455,6 +15434,7 @@ export default function App() {
                     <span className="muted">
                       {overviewStatus.isStale ? 'Stale · ' : ''}
                       Last refresh {formatTime(overviewStatus.lastBuiltAt)}
+                      {overviewCacheLabel ? ` · Cache ${overviewCacheLabel}` : ''}
                       {overviewStatus.nextRefreshAt
                         ? ` · Next refresh ${formatTime(overviewStatus.nextRefreshAt)}`
                         : ''}
@@ -14501,6 +15481,7 @@ export default function App() {
                       {searchStatus.isStale ? 'Stale · ' : ''}
                       Indexed {searchStatus.counts?.files || 0} files · Last refresh{' '}
                       {formatTime(searchStatus.lastBuiltAt)}
+                      {searchCacheLabel ? ` · Cache ${searchCacheLabel}` : ''}
                       {searchStatus.nextRefreshAt
                         ? ` · Next refresh ${formatTime(searchStatus.nextRefreshAt)}`
                         : ''}
@@ -14547,8 +15528,10 @@ export default function App() {
                   ) : folderOverviewStatus?.lastBuiltAt ? (
                     <span className="muted">
                       {folderOverviewStatus.isStale ? 'Stale · ' : ''}
-                      {folderOverviewStatus.entryCount || 0} entries · Last refresh{' '}
-                      {formatTime(folderOverviewStatus.lastBuiltAt)}
+                      {folderCacheLabel
+                        ? `Cache ${folderCacheLabel} · `
+                        : `${folderOverviewStatus.entryCount || 0} entries · `}
+                      Last refresh {formatTime(folderOverviewStatus.lastBuiltAt)}
                       {folderOverviewStatus.nextRefreshAt
                         ? ` · Next refresh ${formatTime(folderOverviewStatus.nextRefreshAt)}`
                         : ''}
@@ -14567,6 +15550,23 @@ export default function App() {
                       onClick={handleRefreshFolderCache}
                     >
                       Refresh Cache
+                    </button>
+                  </div>
+                </div>
+                <div className="cache-section">
+                  <div className="cache-section-header">MIB Translate Cache</div>
+                  {mibTranslateCacheLabel ? (
+                    <span className="muted">Cache {mibTranslateCacheLabel}</span>
+                  ) : (
+                    <span className="muted">Cache not loaded yet.</span>
+                  )}
+                  <div className="cache-action-row">
+                    <button
+                      type="button"
+                      className="link-button"
+                      onClick={refreshMibTranslateStatus}
+                    >
+                      Refresh Stats
                     </button>
                   </div>
                 </div>

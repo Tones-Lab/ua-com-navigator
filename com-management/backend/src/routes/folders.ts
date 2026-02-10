@@ -41,6 +41,12 @@ const buildCacheKey = (serverId: string, node: string, limit: number) =>
   `${FOLDER_CACHE_PREFIX}${serverId}:${node}:${limit}`;
 const buildMetaKey = (serverId: string) => `${FOLDER_CACHE_META_PREFIX}${serverId}`;
 
+type CacheStats = {
+  keyCount: number;
+  sizeBytes: number;
+  updatedAt: string;
+};
+
 const buildStateByServer = new Map<
   string,
   {
@@ -89,7 +95,11 @@ const persistFolderCache = async (serverId: string, node: string, limit: number,
   }
 };
 
-const persistFolderMeta = async (serverId: string, lastBuiltAtMs: number) => {
+const persistFolderMeta = async (
+  serverId: string,
+  lastBuiltAtMs: number,
+  cacheStats?: CacheStats | null,
+) => {
   try {
     const client = await getRedisClient();
     await client.set(
@@ -97,6 +107,7 @@ const persistFolderMeta = async (serverId: string, lastBuiltAtMs: number) => {
       JSON.stringify({
         lastBuiltAtMs,
         expiresAtMs: Date.now() + CACHE_TTL_MS,
+        cacheStats: cacheStats ?? null,
       }),
     );
   } catch (error: any) {
@@ -120,6 +131,36 @@ const clearFolderCache = async (serverId: string) => {
     await client.del(buildMetaKey(serverId));
   } catch (error: any) {
     cacheLogger.warn(`Folder cache clear failed: ${error?.message || 'delete error'}`);
+  }
+};
+
+const calculateFolderCacheStats = async (serverId: string): Promise<CacheStats | null> => {
+  try {
+    const client = await getRedisClient();
+    let keyCount = 0;
+    let sizeBytes = 0;
+    for await (const key of client.scanIterator({
+      MATCH: `${FOLDER_CACHE_PREFIX}${serverId}:*`,
+      COUNT: 200,
+    })) {
+      keyCount += 1;
+      try {
+        const length = await client.strLen(String(key));
+        if (typeof length === 'number') {
+          sizeBytes += length;
+        }
+      } catch {
+        // ignore size errors
+      }
+    }
+    return {
+      keyCount,
+      sizeBytes,
+      updatedAt: new Date().toISOString(),
+    };
+  } catch (error: any) {
+    cacheLogger.warn(`Folder cache stats failed: ${error?.message || 'read error'}`);
+    return null;
   }
 };
 
@@ -284,6 +325,41 @@ const parseOverridePayload = (ruleText: string) => {
     return [parsed];
   }
   return [] as any[];
+};
+
+const countOverrideEntries = (overrides: any[]) => {
+  const entries = overrides.filter((entry) => entry && typeof entry === 'object');
+  if (entries.length === 0) {
+    return 0;
+  }
+  const typed = entries.filter(
+    (entry) => String(entry?._type || '').toLowerCase() === 'override',
+  );
+  return typed.length > 0 ? typed.length : entries.length;
+};
+
+const normalizeOverrideProtocol = (value: string) => {
+  const normalized = String(value || '').trim().toLowerCase();
+  if (normalized === 'trap' || normalized === 'syslog') {
+    return normalized;
+  }
+  return 'fcom';
+};
+
+const countOverridesForProtocol = (overrides: any[], protocol: string) => {
+  const target = normalizeOverrideProtocol(protocol);
+  const entries = overrides.filter((entry) => entry && typeof entry === 'object');
+  if (entries.length === 0) {
+    return 0;
+  }
+  const candidates = entries.filter((entry) => {
+    const method = String(entry?.method || '').trim();
+    if (!method) {
+      return target === 'fcom';
+    }
+    return normalizeOverrideProtocol(method) === target;
+  });
+  return countOverrideEntries(candidates);
 };
 
 const decodeJsonPointerSegment = (segment: string) =>
@@ -569,7 +645,7 @@ const buildFolderOverview = async (
   };
 };
 
-const resolveOverridePathFromNode = (node: string) => {
+const resolveOverrideRootFromNode = (node: string) => {
   const normalized = node.replace(/^\/+/, '');
   const parts = normalized.split('/').filter(Boolean);
   const fcomIndex = parts.lastIndexOf('fcom');
@@ -586,26 +662,44 @@ const resolveOverridePathFromNode = (node: string) => {
   }
 
   const basePath = parts.slice(0, fcomIndex + 1).join('/');
-  return `${basePath}/overrides/${vendor}.${protocol}.override.json`;
+  return {
+    root: `${basePath}/overrides`,
+    protocol,
+    vendor,
+  };
 };
 
 const getOverrideCountForNode = async (uaClient: UAClient, node: string) => {
-  const overridePath = resolveOverridePathFromNode(node);
-  if (!overridePath) {
+  const resolved = resolveOverrideRootFromNode(node);
+  if (!resolved) {
     return 0;
   }
-  const response = await readRuleWithRetry(uaClient, overridePath, 'HEAD', 'override-read');
-  const raw = extractRuleText(response);
-  const text = typeof raw === 'string' ? raw : JSON.stringify(raw ?? []);
-  const overrides = parseOverridePayload(text);
-  const targetKeys = new Set<string>();
-  overrides.forEach((entry: any) => {
-    const objectName = entry?.['@objectName'] || '__global__';
-    const processors = Array.isArray(entry?.processors) ? entry.processors : [];
-    collectOverrideTargets(processors, objectName, targetKeys);
-    collectEventOverrideTargets(entry, objectName, targetKeys);
+  const { root, vendor, protocol } = resolved;
+  const listing = await listDirectory(uaClient, root);
+  const vendorKey = String(vendor || '').toLowerCase();
+  const overrideFiles = listing.filter((entry: any) => {
+    const name = String(entry?.PathName || entry?.PathID || '').toLowerCase();
+    if (!name.endsWith('.override.json')) {
+      return false;
+    }
+    const base = name.split('/').pop() || name;
+    const stem = base.replace(/\.override\.json$/i, '');
+    const parts = stem.split('.').filter(Boolean);
+    return parts.length > 0 && parts[0] === vendorKey;
   });
-  return targetKeys.size;
+  let count = 0;
+  for (const entry of overrideFiles) {
+    const pathId = String(entry?.PathID || entry?.PathName || '');
+    if (!pathId) {
+      continue;
+    }
+    const response = await readRuleWithRetry(uaClient, pathId, 'HEAD', 'override-read');
+    const raw = extractRuleText(response);
+    const text = typeof raw === 'string' ? raw : JSON.stringify(raw ?? []);
+    const overrides = parseOverridePayload(text);
+    count += countOverridesForProtocol(overrides, protocol);
+  }
+  return count;
 };
 
 const isFolderEntry = (entry: any) => {
@@ -741,7 +835,8 @@ export const rebuildAllFolderOverviewCaches = async (
       limit,
       overviewIndex().getData(serverId),
     );
-    await persistFolderMeta(serverId, Date.now());
+    const cacheStats = await calculateFolderCacheStats(serverId);
+    await persistFolderMeta(serverId, Date.now(), cacheStats);
     const durationMs = Date.now() - start;
     logger.info(
       `Folder cache COMPLETE (${trigger}) server=${serverId} took ${durationMs}ms`,
@@ -807,15 +902,9 @@ router.get('/overview/status', async (req: Request, res: Response) => {
   const serverId = session.server_id;
   const buildState = getBuildState(serverId);
   const client = await getRedisClient();
-  let entryCount = 0;
-  for await (const _key of client.scanIterator({
-    MATCH: `${FOLDER_CACHE_PREFIX}${serverId}:*`,
-    COUNT: 100,
-  })) {
-    entryCount += 1;
-  }
   let lastBuiltAtMs: number | null = null;
   let expiresAtMs: number | null = null;
+  let cacheStats: CacheStats | null = null;
   try {
     const metaRaw = await client.get(buildMetaKey(serverId));
     if (metaRaw) {
@@ -826,11 +915,22 @@ router.get('/overview/status', async (req: Request, res: Response) => {
       if (typeof meta?.expiresAtMs === 'number') {
         expiresAtMs = meta.expiresAtMs;
       }
+      if (meta?.cacheStats && typeof meta.cacheStats === 'object') {
+        cacheStats = meta.cacheStats as CacheStats;
+      }
     }
   } catch {
     lastBuiltAtMs = null;
     expiresAtMs = null;
+    cacheStats = null;
   }
+  if (!cacheStats && lastBuiltAtMs) {
+    cacheStats = await calculateFolderCacheStats(serverId);
+    if (cacheStats) {
+      await persistFolderMeta(serverId, lastBuiltAtMs, cacheStats);
+    }
+  }
+  const entryCount = cacheStats?.keyCount ?? 0;
   const isStale =
     (!!lastBuiltAtMs && !expiresAtMs) ||
     (typeof expiresAtMs === 'number' && Date.now() > expiresAtMs);
@@ -857,6 +957,7 @@ router.get('/overview/status', async (req: Request, res: Response) => {
     buildId: buildState.buildId,
     progress: buildState.progress,
     entryCount,
+    cacheStats,
     ttlMs: CACHE_TTL_MS,
     lastBuiltAt: lastBuiltAtMs ? new Date(lastBuiltAtMs).toISOString() : null,
     nextRefreshAt: expiresAtMs ? new Date(expiresAtMs).toISOString() : null,

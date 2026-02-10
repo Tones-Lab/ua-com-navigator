@@ -83,6 +83,13 @@ type OverviewStatus = {
     files: number;
     objects: number;
   };
+  cacheStats: CacheStats | null;
+};
+
+type CacheStats = {
+  keyCount: number;
+  sizeBytes: number;
+  updatedAt: string;
 };
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -169,6 +176,7 @@ type OverviewState = {
   expiresAtMs: number | null;
   lastError: string | null;
   buildId: number | null;
+  cacheStats: CacheStats | null;
   progress: {
     phase: string | null;
     processed: number;
@@ -183,6 +191,7 @@ type OverviewCachePayload = {
   lastDurationMs: number | null;
   expiresAtMs: number | null;
   buildId: number | null;
+  cacheStats?: CacheStats | null;
 };
 
 const createEmptyCounts = (): OverviewCounts => ({
@@ -256,6 +265,26 @@ const parseOverridePayload = (ruleText: string) => {
     return [parsed];
   }
   return [] as any[];
+};
+
+const normalizeOverrideProtocol = (value: string) => {
+  const normalized = String(value || '').trim().toLowerCase();
+  if (normalized === 'trap' || normalized === 'syslog') {
+    return normalized;
+  }
+  return 'fcom';
+};
+
+const countOverridesForProtocol = (overrides: any[], protocol: string) => {
+  const target = normalizeOverrideProtocol(protocol);
+  const entries = overrides.filter((entry) => entry && typeof entry === 'object');
+  return entries.filter((entry) => {
+    const method = String(entry?.method || '').trim();
+    if (!method) {
+      return target === 'fcom';
+    }
+    return normalizeOverrideProtocol(method) === target;
+  }).length;
 };
 
 const decodeJsonPointerSegment = (segment: string) =>
@@ -411,6 +440,7 @@ class OverviewIndexService {
         expiresAtMs: null,
         lastError: null,
         buildId: null,
+        cacheStats: null,
         progress: {
           phase: null,
           processed: 0,
@@ -443,6 +473,7 @@ class OverviewIndexService {
       state.lastDurationMs = payload.lastDurationMs ?? null;
       state.expiresAtMs = typeof payload.expiresAtMs === 'number' ? payload.expiresAtMs : null;
       state.buildId = payload.buildId ?? null;
+      state.cacheStats = payload.cacheStats ?? null;
       state.isBuilding = false;
       state.lastError = null;
       state.progress = {
@@ -463,12 +494,19 @@ class OverviewIndexService {
     }
     try {
       const client = await getRedisClient();
+      const sizeBytes = Buffer.byteLength(JSON.stringify(state.data), 'utf-8');
+      state.cacheStats = {
+        keyCount: 1,
+        sizeBytes,
+        updatedAt: new Date().toISOString(),
+      };
       const payload: OverviewCachePayload = {
         data: state.data,
         lastBuiltAt: state.lastBuiltAt,
         lastDurationMs: state.lastDurationMs,
         expiresAtMs: state.expiresAtMs,
         buildId: state.buildId,
+        cacheStats: state.cacheStats,
       };
       await client.set(`${OVERVIEW_CACHE_PREFIX}${serverId}`, JSON.stringify(payload));
     } catch (error: any) {
@@ -479,6 +517,13 @@ class OverviewIndexService {
   getStatus(serverId: string): OverviewStatus {
     const state = this.getState(serverId);
     const isStale = this.isStale(serverId);
+    if (!state.cacheStats && state.data) {
+      state.cacheStats = {
+        keyCount: 1,
+        sizeBytes: Buffer.byteLength(JSON.stringify(state.data), 'utf-8'),
+        updatedAt: new Date().toISOString(),
+      };
+    }
     return {
       rootPath: PATH_PREFIX,
       isReady: !!state.data,
@@ -497,6 +542,7 @@ class OverviewIndexService {
         files: state.data?.totals.files || 0,
         objects: state.data?.totals.objects || 0,
       },
+      cacheStats: state.cacheStats,
     };
   }
 
@@ -656,21 +702,14 @@ class OverviewIndexService {
       return counts;
     };
 
-    const buildOverrideCounts = async (pathId: string) => {
+    const buildOverrideCounts = async (pathId: string, protocol: string) => {
       const response = await readRuleWithRetry(uaClient, pathId, 'refresh-override', {
         timeoutMs: OVERVIEW_OVERRIDE_TIMEOUT_MS,
       });
       const raw = extractRuleText(response);
       const text = typeof raw === 'string' ? raw : JSON.stringify(raw ?? []);
       const overrides = parseOverridePayload(text);
-      const targetKeys = new Set<string>();
-      overrides.forEach((entry: any) => {
-        const objectName = entry?.['@objectName'] || '__global__';
-        const processors = Array.isArray(entry?.processors) ? entry.processors : [];
-        collectOverrideTargets(processors, objectName, targetKeys);
-        collectEventOverrideTargets(entry, objectName, targetKeys);
-      });
-      return targetKeys.size;
+      return countOverridesForProtocol(overrides, protocol);
     };
 
     const overridesRoot = PATH_PREFIX.includes('/_objects')
@@ -724,7 +763,7 @@ class OverviewIndexService {
         if (!pathId) {
           continue;
         }
-        overrideCount += await buildOverrideCounts(pathId);
+        overrideCount += await buildOverrideCounts(pathId, protocolName);
       }
       nextCounts.overrides = overrideCount;
     }
@@ -859,15 +898,7 @@ class OverviewIndexService {
       });
       const raw = extractRuleText(response);
       const text = typeof raw === 'string' ? raw : JSON.stringify(raw ?? []);
-      const overrides = parseOverridePayload(text);
-      const targetKeys = new Set<string>();
-      overrides.forEach((entry: any) => {
-        const objectName = entry?.['@objectName'] || '__global__';
-        const processors = Array.isArray(entry?.processors) ? entry.processors : [];
-        collectOverrideTargets(processors, objectName, targetKeys);
-        collectEventOverrideTargets(entry, objectName, targetKeys);
-      });
-      return targetKeys.size;
+      return parseOverridePayload(text);
     };
 
     const normalizeVendorName = (value: string) => value.trim().toLowerCase();
@@ -875,7 +906,7 @@ class OverviewIndexService {
       string,
       { name: string; count: number; protocol: string }
     >();
-    const rootOverrideCounts: Array<{ name: string; count: number }> = [];
+    const rootOverrideCounts = new Map<string, number>();
     const appliedOverrides = new Set<string>();
     let unassignedOverrideCount = 0;
     const applyVendorOverride = (protocol: string, vendor: string) => {
@@ -939,20 +970,31 @@ class OverviewIndexService {
               ? folderProtocol
               : null;
             const vendorName = nameParts.length > 0 ? nameParts[0] : baseStem;
-            const protocolName = protocol || 'fcom';
-            const overrideCount = await buildOverrideCounts(
+            const overrides = await buildOverrideCounts(
               String(overrideEntry?.PathID || fileName),
             );
-            if (protocolName) {
-              const key = `${protocolName.toLowerCase()}::${normalizeVendorName(vendorName)}`;
-              overrideCountsByProtocolVendor.set(key, {
-                name: vendorName,
-                count: overrideCount,
-                protocol: protocolName,
-              });
-            } else {
-              rootOverrideCounts.push({ name: vendorName, count: overrideCount });
-            }
+            const entries = overrides.filter(
+              (entry: any) => entry && typeof entry === 'object',
+            );
+            entries.forEach((entry: any) => {
+              const method = String(entry?.method || '').trim();
+              const methodProtocol = method ? normalizeOverrideProtocol(method) : '';
+              const protocolName = methodProtocol || (protocol ? normalizeOverrideProtocol(protocol) : 'fcom');
+              if (protocolName) {
+                const key = `${protocolName.toLowerCase()}::${normalizeVendorName(vendorName)}`;
+                const existing = overrideCountsByProtocolVendor.get(key);
+                const nextCount = (existing?.count || 0) + 1;
+                overrideCountsByProtocolVendor.set(key, {
+                  name: vendorName,
+                  count: nextCount,
+                  protocol: protocolName,
+                });
+              } else {
+                const vendorKey = normalizeVendorName(vendorName);
+                const existingCount = rootOverrideCounts.get(vendorKey) || 0;
+                rootOverrideCounts.set(vendorKey, existingCount + 1);
+              }
+            });
             state.progress.processed += 1;
           }
         });
@@ -1056,19 +1098,19 @@ class OverviewIndexService {
       applyVendorOverride(pair.protocol, pair.vendor);
     }
 
-    for (const entry of rootOverrideCounts) {
-      const targetVendorKey = normalizeVendorName(entry.name);
+    for (const [vendorKey, count] of rootOverrideCounts.entries()) {
+      const targetVendorKey = vendorKey;
       const match = vendorPairs.find(
         (pair) => normalizeVendorName(pair.vendor) === targetVendorKey,
       );
       if (match) {
         recordCounts(match.protocol, match.vendor, {
           ...createEmptyCounts(),
-          overrides: entry.count,
+          overrides: count,
         });
         continue;
       }
-      unassignedOverrideCount += entry.count;
+      unassignedOverrideCount += count;
     }
 
     const protocols: ProtocolEntry[] = Array.from(protocolMap.entries())

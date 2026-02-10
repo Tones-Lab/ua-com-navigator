@@ -54,6 +54,12 @@ type SearchResult = {
   matches?: Array<{ line: number; column: number; preview: string }>;
 };
 
+type CacheStats = {
+  keyCount: number;
+  sizeBytes: number;
+  updatedAt: string;
+};
+
 type SearchIndexData = {
   nameEntries: NameEntry[];
   contentEntries: ContentEntry[];
@@ -85,6 +91,7 @@ type SearchIndexStatus = {
     contentFiles: number;
     totalBytes: number;
   };
+  cacheStats: CacheStats | null;
 };
 
 type SearchIndexCachePayload = {
@@ -92,6 +99,7 @@ type SearchIndexCachePayload = {
   lastBuiltAt: string | null;
   lastDurationMs: number | null;
   expiresAtMs: number | null;
+  cacheStats?: CacheStats | null;
 };
 
 const normalizePathId = (value: string) => value.replace(/^\/+/, '');
@@ -220,6 +228,7 @@ class SearchIndexService {
   private buildId: number | null = null;
   private cacheLoaded = false;
   private loadPromise: Promise<void> | null = null;
+  private cacheStats: CacheStats | null = null;
   private progress = {
     phase: null as string | null,
     processed: 0,
@@ -254,6 +263,13 @@ class SearchIndexService {
   getStatus(): SearchIndexStatus {
     void this.ensureHydrated();
     const isStale = this.isStale();
+    if (!this.cacheStats && this.index) {
+      this.cacheStats = {
+        keyCount: 1,
+        sizeBytes: Buffer.byteLength(JSON.stringify(this.index), 'utf-8'),
+        updatedAt: new Date().toISOString(),
+      };
+    }
     return {
       rootPath: this.rootPath,
       isReady: !!this.index,
@@ -271,6 +287,7 @@ class SearchIndexService {
         contentFiles: this.index?.contentFileCount || 0,
         totalBytes: this.index?.totalBytes || 0,
       },
+      cacheStats: this.cacheStats,
     };
   }
 
@@ -673,6 +690,7 @@ class SearchIndexService {
       this.nextRefreshAt = this.expiresAtMs
         ? new Date(this.expiresAtMs).toISOString()
         : null;
+      this.cacheStats = parsed.cacheStats ?? null;
       this.lastError = null;
       this.progress = {
         phase: 'Loaded',
@@ -691,11 +709,18 @@ class SearchIndexService {
     }
     try {
       const client = await getRedisClient();
+      const sizeBytes = Buffer.byteLength(JSON.stringify(this.index), 'utf-8');
+      this.cacheStats = {
+        keyCount: 1,
+        sizeBytes,
+        updatedAt: new Date().toISOString(),
+      };
       const payload: SearchIndexCachePayload = {
         data: this.index,
         lastBuiltAt: this.lastBuiltAt,
         lastDurationMs: this.lastDurationMs,
         expiresAtMs: this.expiresAtMs,
+        cacheStats: this.cacheStats,
       };
       await client.set(buildCacheKey(this.serverId), JSON.stringify(payload));
     } catch (error: any) {
