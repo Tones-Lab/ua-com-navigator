@@ -46,6 +46,14 @@ Explicit requirement: if a code change requires a restart to take effect, you (t
 - Use the shared helper script at [scripts/ua_api_helper.py](scripts/ua_api_helper.py) for UA REST calls.
 - This file contains the canonical host, port, auth, and TLS settings for this environment.
 
+## UA Chatbot mirror (reference-only)
+
+- A mirrored UA Chatbot repo exists at `.context/ua-assistant`.
+- Use it as **read-only reference** for UA Chatbot configuration, service definitions, layout, and API endpoints.
+- **Do not edit or commit** anything inside `.context/ua-assistant`.
+- **All edits must remain in the current project** (`/root/navigator`).
+- It is OK to cite or quote small snippets from the mirrored repo when explaining integration.
+
 ## Git commit messages (strict)
 
 All commits must follow this format:
