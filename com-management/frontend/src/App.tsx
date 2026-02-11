@@ -4,16 +4,22 @@ import { useSessionStore } from './stores';
 import api from './services/api';
 import AppTabs from './app/AppTabs';
 import OverviewPage from './features/overview/OverviewPage';
-import PcomPage from './features/pcom/PcomPage';
 import MibBrowserPage from './features/mib/MibBrowserPage';
 import FcomBrowserPanel from './features/fcom/FcomBrowserPanel';
 import FcomFileHeader from './features/fcom/FcomFileHeader';
 import FcomFolderOverview from './features/fcom/FcomFolderOverview';
 import FcomFilePreview from './features/fcom/FcomFilePreview';
 import FcomBuilderSidebar from './features/fcom/FcomBuilderSidebar';
+import FcomRawPreview from './features/fcom/FcomRawPreview';
+import ComFilePreview from './components/ComFilePreview';
+import { FileTitleRow, ViewToggle } from './components/FileHeaderCommon';
 import './App.css';
 
 const COMS_PATH_PREFIX = 'id-core/default/processing/event/fcom/_objects';
+const DEFAULT_FCOM_NODE = 'id-core/default/processing/event/fcom';
+const DEFAULT_PCOM_NODE = 'id-core/default/collection/metric/snmp/_objects/pcom';
+const COM_SEARCH_QUERY_KEY = 'com.search.query';
+const COM_SEARCH_SCOPE_KEY = 'com.search.scope';
 const FILE_LOAD_STAGE_ORDER = ['original', 'overrides', 'compare', 'render'] as const;
 const FILE_LOAD_STAGE_TIMING = {
   showDelayMs: 120,
@@ -63,7 +69,8 @@ class ErrorBoundary extends React.Component<
   }
 }
 
-type AppTab = 'overview' | 'fcom' | 'pcom' | 'mib';
+type AppTab = 'overview' | 'fcom' | 'pcom' | 'mib' | 'legacy';
+type FavoriteScope = 'fcom' | 'pcom' | 'mib';
 
 export default function App() {
   const { session, servers, isAuthenticated, setSession, clearSession, setServers } =
@@ -228,6 +235,7 @@ export default function App() {
   const [pcomPollLoading, setPcomPollLoading] = useState(false);
   const [pcomPollError, setPcomPollError] = useState<string | null>(null);
   const [pcomPollOutput, setPcomPollOutput] = useState('');
+  const [pcomSelectedObjectKey, setPcomSelectedObjectKey] = useState<string | null>(null);
   const [pcomDevices, setPcomDevices] = useState<
     Array<{
       id: string;
@@ -303,19 +311,29 @@ export default function App() {
   const [bulkTrapShowAllFailures, setBulkTrapShowAllFailures] = useState(false);
 
   useEffect(() => {
-    const savedQuery = sessionStorage.getItem('fcom.search.query');
-    const savedScope = sessionStorage.getItem('fcom.search.scope');
+    const savedQuery =
+      sessionStorage.getItem(COM_SEARCH_QUERY_KEY) ||
+      sessionStorage.getItem('fcom.search.query');
+    const savedScope =
+      sessionStorage.getItem(COM_SEARCH_SCOPE_KEY) ||
+      sessionStorage.getItem('fcom.search.scope');
     if (savedQuery && !searchQuery) {
       setSearchQuery(savedQuery);
     }
     if (savedScope === 'all' || savedScope === 'name' || savedScope === 'content') {
       setSearchScope(savedScope);
     }
+    if (savedQuery && !sessionStorage.getItem(COM_SEARCH_QUERY_KEY)) {
+      sessionStorage.setItem(COM_SEARCH_QUERY_KEY, savedQuery);
+    }
+    if (savedScope && !sessionStorage.getItem(COM_SEARCH_SCOPE_KEY)) {
+      sessionStorage.setItem(COM_SEARCH_SCOPE_KEY, savedScope);
+    }
   }, []);
 
   useEffect(() => {
-    sessionStorage.setItem('fcom.search.query', searchQuery);
-    sessionStorage.setItem('fcom.search.scope', searchScope);
+    sessionStorage.setItem(COM_SEARCH_QUERY_KEY, searchQuery);
+    sessionStorage.setItem(COM_SEARCH_SCOPE_KEY, searchScope);
   }, [searchQuery, searchScope]);
 
   useEffect(() => {
@@ -615,6 +633,16 @@ export default function App() {
     return null;
   };
 
+  const getDefaultBrowseNode = (app: AppTab) => {
+    if (app === 'fcom') {
+      return DEFAULT_FCOM_NODE;
+    }
+    if (app === 'pcom') {
+      return DEFAULT_PCOM_NODE;
+    }
+    return null;
+  };
+
   const normalizePathId = (pathId?: string | null) =>
     pathId ? pathId.replace(/^\/+/, '') : '';
 
@@ -762,6 +790,8 @@ export default function App() {
   const [favorites, setFavorites] = useState<
     Array<{ type: 'file' | 'folder'; pathId: string; label: string; node?: string }>
   >([]);
+    const getFavoriteScope = (app: AppTab): FavoriteScope =>
+      app === 'pcom' || app === 'mib' ? app : 'fcom';
   const [favoritesLoading, setFavoritesLoading] = useState(false);
   const [favoritesError, setFavoritesError] = useState<string | null>(null);
   const [selectedFolder, setSelectedFolder] = useState<any>(null);
@@ -845,7 +875,7 @@ export default function App() {
   >([]);
   const overrideSaveDisplayRef = useRef(overrideSaveDisplayStatus);
   const overrideSaveStatusTimersRef = useRef<number[]>([]);
-  const [viewMode, setViewMode] = useState<'friendly' | 'preview'>('preview');
+  const [viewMode, setViewMode] = useState<'friendly' | 'preview'>('friendly');
   const [originalText, setOriginalText] = useState('');
   const [showCommitModal, setShowCommitModal] = useState(false);
   const [showReviewModal, setShowReviewModal] = useState(false);
@@ -870,6 +900,9 @@ export default function App() {
   const [panelEditState, setPanelEditState] = useState<Record<string, boolean>>({});
   const [panelDrafts, setPanelDrafts] = useState<Record<string, any>>({});
   const [panelEvalModes, setPanelEvalModes] = useState<Record<string, Record<string, boolean>>>({});
+  const [panelOverrideBaselines, setPanelOverrideBaselines] = useState<
+    Record<string, { objectName: string; method: string; entries: any[] }>
+  >({});
   const [redeployReady, setRedeployReady] = useState(false);
   const [redeployModalOpen, setRedeployModalOpen] = useState(false);
   const [redeployLoading, setRedeployLoading] = useState(false);
@@ -2055,10 +2088,10 @@ export default function App() {
   const parseAccessValue = (value: any) => {
     if (typeof value === 'string') {
       const normalized = value.trim().toLowerCase();
-      if (/(write|update|edit|modify|rw|readwrite)/.test(normalized)) {
+      if (/\b(write|update|edit|modify|rw|readwrite)\b/.test(normalized)) {
         return true;
       }
-      if (/(read|ro|view|readonly|read-only)/.test(normalized)) {
+      if (/\b(read|ro|view|readonly|read-only)\b/.test(normalized)) {
         return false;
       }
     }
@@ -3128,7 +3161,8 @@ export default function App() {
       storedApp === 'overview' ||
       storedApp === 'fcom' ||
       storedApp === 'pcom' ||
-      storedApp === 'mib'
+      storedApp === 'mib' ||
+      storedApp === 'legacy'
     ) {
       setActiveApp(storedApp as AppTab);
     }
@@ -3174,19 +3208,28 @@ export default function App() {
 
   useEffect(() => {
     if (isAuthenticated && entries.length === 0 && !browseLoading && !urlHydrated.current) {
-      loadNode(null, '/');
+      if (activeApp === 'fcom' || activeApp === 'pcom') {
+        loadDefaultBrowseNode(activeApp);
+      } else {
+        loadNode(null, '/');
+      }
     }
-  }, [isAuthenticated, entries.length, browseLoading]);
+  }, [isAuthenticated, entries.length, browseLoading, activeApp]);
 
   useEffect(() => {
     if (!isAuthenticated) {
       return;
     }
+    if (activeApp !== 'fcom' && activeApp !== 'pcom' && activeApp !== 'mib') {
+      setFavorites([]);
+      return;
+    }
+    const scope = getFavoriteScope(activeApp);
     const loadFavorites = async () => {
       setFavoritesError(null);
       setFavoritesLoading(true);
       try {
-        const resp = await api.getFavorites();
+        const resp = await api.getFavorites(scope);
         setFavorites(resp.data?.favorites || []);
       } catch (err: any) {
         setFavoritesError(err?.response?.data?.error || 'Failed to load favorites');
@@ -3195,7 +3238,7 @@ export default function App() {
       }
     };
     loadFavorites();
-  }, [isAuthenticated]);
+  }, [isAuthenticated, activeApp]);
 
   useEffect(() => {
     if (!isAuthenticated || urlHydrated.current) {
@@ -3209,13 +3252,21 @@ export default function App() {
     const appParam = params.get('app');
     const mibPathParam = params.get('mibPath');
     const mibFileParam = params.get('mibFile');
+    let initialApp: AppTab | null = null;
 
-    if (viewParam === 'friendly' || viewParam === 'preview') {
-      setViewMode(viewParam);
+    if (viewParam === 'friendly') {
+      setViewMode('friendly');
     }
 
-    if (appParam === 'overview' || appParam === 'fcom' || appParam === 'pcom' || appParam === 'mib') {
+    if (
+      appParam === 'overview' ||
+      appParam === 'fcom' ||
+      appParam === 'pcom' ||
+      appParam === 'mib' ||
+      appParam === 'legacy'
+    ) {
       setActiveApp(appParam as AppTab);
+      initialApp = appParam as AppTab;
       if (appParam === 'mib') {
         const fallbackPath = mibFileParam
           ? mibFileParam.split('/').slice(0, -1).join('/')
@@ -3233,6 +3284,7 @@ export default function App() {
       const inferred = inferAppFromPath(fileParam || nodeParam);
       if (inferred) {
         setActiveApp(inferred);
+        initialApp = inferred;
       }
     }
 
@@ -3247,6 +3299,10 @@ export default function App() {
       return;
     }
 
+    if (initialApp === 'fcom' || initialApp === 'pcom') {
+      void loadDefaultBrowseNode(initialApp);
+      return;
+    }
     void loadNodeInternal(null, '/');
   }, [isAuthenticated]);
 
@@ -3268,6 +3324,11 @@ export default function App() {
       } else {
         params.delete('mibFile');
       }
+    } else if (activeApp === 'legacy') {
+      params.delete('node');
+      params.delete('file');
+      params.delete('mibPath');
+      params.delete('mibFile');
     } else {
       params.delete('mibPath');
       params.delete('mibFile');
@@ -3323,6 +3384,8 @@ export default function App() {
       clearSession();
       urlHydrated.current = false;
       sessionStorage.removeItem('com.activeApp');
+      sessionStorage.removeItem(COM_SEARCH_QUERY_KEY);
+      sessionStorage.removeItem(COM_SEARCH_SCOPE_KEY);
       sessionStorage.removeItem('fcom.search.query');
       sessionStorage.removeItem('fcom.search.scope');
       sessionStorage.removeItem(redeployStorageKey);
@@ -3353,7 +3416,7 @@ export default function App() {
       setBrowseData(null);
       setBrowseNode(null);
       setBreadcrumbs([{ label: '/', node: null }]);
-      setViewMode('preview');
+      setViewMode('friendly');
       setMibPath('/');
       setMibEntries([]);
       setMibLoading(false);
@@ -3552,11 +3615,16 @@ export default function App() {
     node?: string;
   }) => {
     try {
+      const scope = getFavoriteScope(activeApp);
       if (isFavorite(favorite.type, favorite.pathId)) {
-        const resp = await api.removeFavorite({ type: favorite.type, pathId: favorite.pathId });
+        const resp = await api.removeFavorite({
+          type: favorite.type,
+          pathId: favorite.pathId,
+          scope,
+        });
         setFavorites(resp.data?.favorites || []);
       } else {
-        const resp = await api.addFavorite(favorite);
+        const resp = await api.addFavorite({ ...favorite, scope });
         setFavorites(resp.data?.favorites || []);
       }
     } catch (err: any) {
@@ -3783,12 +3851,15 @@ export default function App() {
     setSearchQuery('');
     setSearchResults([]);
     setSearchError(null);
+    sessionStorage.removeItem(COM_SEARCH_QUERY_KEY);
     sessionStorage.removeItem('fcom.search.query');
   };
 
-  const handleResetNavigationInternal = async () => {
+  const handleResetNavigationInternal = async (appOverride?: AppTab) => {
+    const targetApp = appOverride || activeApp;
     handleClearSearch();
     setSearchScope('all');
+    sessionStorage.removeItem(COM_SEARCH_SCOPE_KEY);
     sessionStorage.removeItem('fcom.search.scope');
     matchStateByFileRef.current = {};
     scrollStateByFileRef.current = {};
@@ -3800,14 +3871,14 @@ export default function App() {
     setBrowseData(null);
     setEntries([]);
     setBreadcrumbs([{ label: '/', node: null }]);
-    setViewMode('preview');
+    setViewMode('friendly');
     setHighlightQuery(null);
     setHighlightPathId(null);
     setHighlightObjectKeys([]);
     setCurrentMatchIndex(0);
     setMatchObjectOptions([]);
     setSearchHighlightActive(false);
-    await loadNodeInternal(null, '/');
+    await loadDefaultBrowseNode(targetApp);
   };
 
   const handleResetNavigation = () => {
@@ -3822,6 +3893,9 @@ export default function App() {
     }
     confirmDiscardIfDirty(() => {
       setActiveApp(next);
+      if (next === 'fcom' || next === 'pcom') {
+        void handleResetNavigationInternal(next);
+      }
     });
   };
 
@@ -3993,6 +4067,17 @@ export default function App() {
     return crumbs;
   };
 
+  const loadDefaultBrowseNode = async (app: AppTab) => {
+    const node = getDefaultBrowseNode(app);
+    if (node) {
+      setBreadcrumbs(buildBreadcrumbsFromPath(node));
+      await loadNodeInternal(node);
+      return;
+    }
+    setBreadcrumbs([{ label: '/', node: null }]);
+    await loadNodeInternal(null, '/');
+  };
+
   const isFolder = (entry: any) => {
     const icon = String(entry?.icon || '').toLowerCase();
     const name = String(entry?.PathName || '').toLowerCase();
@@ -4085,18 +4170,24 @@ export default function App() {
       const resp = await readWithRetry();
       logTiming('readFile', readStart);
       setFileData(resp.data);
-      setFileLoadStageTarget('overrides');
-      setOverrideLoading(true);
-      try {
-        const overridesStart = nowMs();
-        const overridesResp = await api.getOverrides(entry.PathID);
-        logTiming('getOverrides', overridesStart);
-        setOverrideInfo(overridesResp.data);
-      } catch (err: any) {
-        setOverrideError(err?.response?.data?.error || 'Failed to load overrides');
+      const shouldLoadOverrides = activeApp === 'fcom';
+      if (shouldLoadOverrides) {
+        setFileLoadStageTarget('overrides');
+        setOverrideLoading(true);
+        try {
+          const overridesStart = nowMs();
+          const overridesResp = await api.getOverrides(entry.PathID);
+          logTiming('getOverrides', overridesStart);
+          setOverrideInfo(overridesResp.data);
+        } catch (err: any) {
+          setOverrideError(err?.response?.data?.error || 'Failed to load overrides');
+          setOverrideInfo(null);
+        } finally {
+          setOverrideLoading(false);
+        }
+      } else {
         setOverrideInfo(null);
-      } finally {
-        setOverrideLoading(false);
+        setOverrideError(null);
       }
       setFileLoadStageTarget('compare');
       const parseStart = nowMs();
@@ -4118,7 +4209,7 @@ export default function App() {
       }
       logTiming('parse+format', parseStart);
       setCommitMessage('');
-      setViewMode((prev) => (prev === 'preview' ? prev : 'friendly'));
+      setViewMode('friendly');
       setFileLoadStageTarget('render');
     } catch (err: any) {
       setFileError(err?.response?.data?.error || 'Failed to load file');
@@ -4996,6 +5087,22 @@ export default function App() {
     setMib2FcomError(null);
     setMibTrapDefaults(null);
     await loadMibDefinitions(entry.path);
+  };
+
+  const openMibFavorite = async (favorite: {
+    type: 'file' | 'folder';
+    pathId: string;
+  }) => {
+    if (!favorite?.pathId) {
+      return;
+    }
+    if (favorite.type === 'folder') {
+      await loadMibPath(favorite.pathId, { append: false });
+      return;
+    }
+    const parent = favorite.pathId.split('/').slice(0, -1).join('/') || '/';
+    await loadMibPath(parent, { append: false });
+    await openMibFileFromUrl(favorite.pathId);
   };
 
   const runMib2Fcom = async () => {
@@ -7334,6 +7441,13 @@ export default function App() {
     return { editable: true, display: JSON.stringify(value), isEval: false };
   };
 
+  const cloneOverrideEntry = (entry: any) => JSON.parse(JSON.stringify(entry));
+
+  const getObjectOverrideEntries = (overrides: any[], objectName: string, method: string) =>
+    overrides.filter(
+      (entry: any) => entry?.['@objectName'] === objectName && entry?.method === method,
+    );
+
   const getBaseEventDisplay = (obj: any, field: string) => {
     const objectName = obj?.['@objectName'];
     const baseValue = getBaseObjectValue(objectName, `$.event.${field}`);
@@ -7365,6 +7479,19 @@ export default function App() {
       ...prev,
       [key]: evalModes,
     }));
+    const objectName = obj?.['@objectName'];
+    const method = getOverrideMethod();
+    if (objectName) {
+      const baselineEntries = getObjectOverrideEntries(
+        getWorkingOverrides(),
+        objectName,
+        method,
+      ).map(cloneOverrideEntry);
+      setPanelOverrideBaselines((prev) => ({
+        ...prev,
+        [key]: { objectName, method, entries: baselineEntries },
+      }));
+    }
     setPanelEditState((prev) => ({ ...prev, [key]: true }));
     setBuilderOpen(false);
     window.setTimeout(() => {
@@ -7393,6 +7520,14 @@ export default function App() {
       delete next[key];
       return next;
     });
+    setPanelOverrideBaselines((prev) => {
+      if (!prev[key]) {
+        return prev;
+      }
+      const next = { ...prev };
+      delete next[key];
+      return next;
+    });
     setPanelNavWarning((prev) => {
       if (!prev.fields[key]) {
         return prev;
@@ -7412,8 +7547,56 @@ export default function App() {
     }
   };
 
+  const hasPanelOverrideChanges = (panelKey: string) => {
+    const baseline = panelOverrideBaselines[panelKey];
+    if (!baseline) {
+      return false;
+    }
+    const current = getObjectOverrideEntries(
+      getWorkingOverrides(),
+      baseline.objectName,
+      baseline.method,
+    );
+    return JSON.stringify(current) !== JSON.stringify(baseline.entries);
+  };
+
+  const discardPanelOverrides = (panelKey: string) => {
+    const baseline = panelOverrideBaselines[panelKey];
+    if (!baseline) {
+      return;
+    }
+    const { objectName, method, entries } = baseline;
+    const current = getWorkingOverrides();
+    const next: any[] = [];
+    let inserted = false;
+    current.forEach((entry: any) => {
+      if (entry?.['@objectName'] === objectName && entry?.method === method) {
+        if (!inserted) {
+          entries.forEach((item) => next.push(item));
+          inserted = true;
+        }
+        return;
+      }
+      next.push(entry);
+    });
+    if (!inserted && entries.length > 0) {
+      next.push(...entries);
+    }
+    const diff = diffOverrides(getBaseOverrides(), next);
+    if (diff.totalChanges === 0) {
+      setPendingOverrideSave(null);
+      return;
+    }
+    setPendingOverrideSave(next);
+  };
+
+  const discardEventEdit = (panelKey: string) => {
+    discardPanelOverrides(panelKey);
+    cancelEventEdit(panelKey);
+  };
+
   const requestCancelEventEdit = (obj: any, key: string) => {
-    if (getPanelDirtyFields(obj, key).length > 0) {
+    if (getPanelDirtyFields(obj, key).length > 0 || hasPanelOverrideChanges(key)) {
       setPendingCancel({ type: 'panel', panelKey: key });
       return;
     }
@@ -11011,6 +11194,26 @@ export default function App() {
     setEvalModeForField(builderTarget.panelKey, builderTarget.field, true);
   };
 
+  const varTooltipHoverProps = {
+    onMouseEnter: (event: any) => {
+      activeOverrideTooltipRef.current = event.currentTarget;
+      positionOverrideTooltip(event.currentTarget);
+    },
+    onMouseMove: (event: any) => {
+      positionOverrideTooltip(event.currentTarget);
+    },
+    onMouseLeave: () => {
+      activeOverrideTooltipRef.current = null;
+    },
+    onFocus: (event: any) => {
+      activeOverrideTooltipRef.current = event.currentTarget;
+      positionOverrideTooltip(event.currentTarget);
+    },
+    onBlur: () => {
+      activeOverrideTooltipRef.current = null;
+    },
+  };
+
   const renderVarToken = (token: string, trapVars?: any[]) => {
     const index = Number(token.replace('$v', '')) - 1;
     const variable = Array.isArray(trapVars) ? trapVars[index] : null;
@@ -11018,7 +11221,11 @@ export default function App() {
       ? variable.description.filter(Boolean).join(' ')
       : renderValue(variable?.description);
     return (
-      <span className="override-summary var-token-wrap" tabIndex={0}>
+      <span
+        className="override-summary var-token-wrap"
+        tabIndex={0}
+        {...varTooltipHoverProps}
+      >
         <button
           type="button"
           className="var-token"
@@ -11776,6 +11983,65 @@ export default function App() {
     return Array.from(removed);
   }, [advancedFlowTarget, advancedProcessorScope, stagedDiff.sections]);
   const rawPreviewText = editorText || JSON.stringify(getPreviewContent(fileData), null, 2);
+  const formatPcomValue = (value: any) => {
+    if (value === null || value === undefined || value === '') {
+      return '—';
+    }
+    if (Array.isArray(value)) {
+      return value.join(', ');
+    }
+    if (typeof value === 'object') {
+      return JSON.stringify(value);
+    }
+    return String(value);
+  };
+  const getPcomObjectName = (obj: any) => String(obj?.['@objectName'] || obj?.objectName || '');
+  const pcomParsed = useMemo(() => {
+    if (activeApp !== 'pcom') {
+      return null;
+    }
+    const source = rawPreviewText.trim();
+    if (!source || (!source.startsWith('{') && !source.startsWith('['))) {
+      return null;
+    }
+    try {
+      return JSON.parse(source);
+    } catch {
+      return null;
+    }
+  }, [activeApp, rawPreviewText]);
+  const pcomObjectEntries = useMemo(() => {
+    const objects = Array.isArray(pcomParsed?.objects) ? pcomParsed.objects : [];
+    return objects.map((obj: any, index: number) => {
+      const name = getPcomObjectName(obj);
+      return {
+        key: name || `object-${index}`,
+        name: name || `Object ${index + 1}`,
+        obj,
+      };
+    });
+  }, [pcomParsed]);
+  const pcomSelectedObject = useMemo(() => {
+    if (pcomObjectEntries.length === 0) {
+      return null;
+    }
+    const match = pcomObjectEntries.find((entry) => entry.key === pcomSelectedObjectKey);
+    return match || pcomObjectEntries[0];
+  }, [pcomObjectEntries, pcomSelectedObjectKey]);
+  useEffect(() => {
+    if (activeApp !== 'pcom') {
+      return;
+    }
+    if (pcomObjectEntries.length === 0) {
+      if (pcomSelectedObjectKey) {
+        setPcomSelectedObjectKey(null);
+      }
+      return;
+    }
+    if (!pcomSelectedObjectKey || !pcomObjectEntries.some((entry) => entry.key === pcomSelectedObjectKey)) {
+      setPcomSelectedObjectKey(pcomObjectEntries[0].key);
+    }
+  }, [activeApp, pcomObjectEntries, pcomSelectedObjectKey]);
   const renderFlowJsonPreview = (fullJson: string) => (
     <div className="flow-preview">
       <div className="flow-preview-title-row">
@@ -12082,6 +12348,36 @@ export default function App() {
     </div>
   ) : null;
 
+  const comBrowserPanelProps = {
+    hasEditPermission,
+    setShowPathModal,
+    breadcrumbs,
+    handleCrumbClick,
+    searchQuery,
+    setSearchQuery,
+    searchScope,
+    setSearchScope,
+    handleSearchSubmit,
+    searchLoading,
+    handleClearSearch,
+    handleResetNavigation,
+    favoritesFolders,
+    favoritesFiles,
+    favoritesLoading,
+    favoritesError,
+    handleOpenFolder,
+    openFileFromUrl,
+    handleOpenSearchResult,
+    searchResults,
+    searchError,
+    getSearchResultName,
+    browseError,
+    browseLoading,
+    entries,
+    isFolder,
+    handleOpenFile,
+  };
+
   return (
     <ErrorBoundary>
       <div className="app">
@@ -12168,37 +12464,7 @@ export default function App() {
                 />
               ) : activeApp === 'fcom' ? (
                 <div className="split-layout">
-                  <FcomBrowserPanel
-                    hasEditPermission={hasEditPermission}
-                    setShowPathModal={setShowPathModal}
-                    breadcrumbs={breadcrumbs}
-                    handleCrumbClick={handleCrumbClick}
-                    searchQuery={searchQuery}
-                    setSearchQuery={setSearchQuery}
-                    searchScope={searchScope}
-                    setSearchScope={setSearchScope}
-                    handleSearchSubmit={handleSearchSubmit}
-                    searchLoading={searchLoading}
-                    handleClearSearch={handleClearSearch}
-                    handleResetNavigation={handleResetNavigation}
-                    favoritesFolders={favoritesFolders}
-                    favoritesFiles={favoritesFiles}
-                    favoritesLoading={favoritesLoading}
-                    favoritesError={favoritesError}
-                    handleOpenFolder={handleOpenFolder}
-                    openFileFromUrl={openFileFromUrl}
-                    handleOpenSearchResult={handleOpenSearchResult}
-                    getParentLabel={getParentLabel}
-                    getParentPath={getParentPath}
-                    searchResults={searchResults}
-                    searchError={searchError}
-                    getSearchResultName={getSearchResultName}
-                    browseError={browseError}
-                    browseLoading={browseLoading}
-                    entries={entries}
-                    isFolder={isFolder}
-                    handleOpenFile={handleOpenFile}
-                  />
+                  <FcomBrowserPanel {...comBrowserPanelProps} />
                   <div className="panel">
                     <div className="panel-scroll">
                       <div className="file-details">
@@ -13756,7 +14022,7 @@ export default function App() {
                                       return;
                                     }
                                     if (next.type === 'panel' && next.panelKey) {
-                                      cancelEventEdit(next.panelKey);
+                                      discardEventEdit(next.panelKey);
                                     }
                                   }}
                                 >
@@ -14137,7 +14403,304 @@ export default function App() {
                   </div>
                 </div>
               ) : activeApp === 'pcom' ? (
-                <PcomPage />
+                <div className="split-layout">
+                  <FcomBrowserPanel {...comBrowserPanelProps} />
+                  <div className="panel">
+                    <div className="panel-scroll">
+                      <div className="file-details">
+                        <FileTitleRow
+                          title={selectedFile?.PathName ? selectedFile.PathName : 'Select a PCOM file'}
+                          path={selectedFile?.PathID ? formatDisplayPath(selectedFile.PathID) : null}
+                          favorite={
+                            selectedFile
+                              ? {
+                                  active: isFavorite('file', selectedFile.PathID),
+                                  onToggle: () =>
+                                    toggleFavorite({
+                                      type: 'file',
+                                      pathId: selectedFile.PathID,
+                                      label: selectedFile.PathName,
+                                      node: browseNode || undefined,
+                                    }),
+                                }
+                              : null
+                          }
+                        />
+                        <div className="action-row">
+                          <ViewToggle viewMode={viewMode} onChange={setViewMode} />
+                          <button
+                            type="button"
+                            className="action-link"
+                            disabled
+                            title="Stub only (no file creation yet)"
+                          >
+                            Create PCOM (Stub)
+                          </button>
+                        </div>
+                        <ComFilePreview
+                          selectedFile={selectedFile}
+                          viewMode={viewMode}
+                          emptyState={
+                            <div className="empty-state">Select a file on the left to view it.</div>
+                          }
+                          friendlyView={
+                            <div className="friendly-view pcom-friendly-view">
+                              {!pcomParsed ? (
+                                <div className="empty-state">No PCOM data loaded.</div>
+                              ) : (
+                                <>
+                                  <div className="pcom-card pcom-summary-card">
+                                    <div className="pcom-section-title">Vendor Summary</div>
+                                    <div className="pcom-summary-grid">
+                                      <div className="pcom-summary-item">
+                                        <div className="pcom-summary-label">Vendor</div>
+                                        <div className="pcom-summary-value">
+                                          {formatPcomValue(pcomParsed['@vendor'])}
+                                        </div>
+                                      </div>
+                                      <div className="pcom-summary-item">
+                                        <div className="pcom-summary-label">MIBs</div>
+                                        <div className="pcom-summary-value">
+                                          {formatPcomValue(pcomParsed.mibs)}
+                                        </div>
+                                      </div>
+                                      <div className="pcom-summary-item">
+                                        <div className="pcom-summary-label">Enterprise OIDs</div>
+                                        <div className="pcom-summary-value">
+                                          {formatPcomValue(pcomParsed.enterpriseOids)}
+                                        </div>
+                                      </div>
+                                      <div className="pcom-summary-item">
+                                        <div className="pcom-summary-label">Aliases</div>
+                                        <div className="pcom-summary-value">
+                                          {formatPcomValue(pcomParsed.aliases)}
+                                        </div>
+                                      </div>
+                                      <div className="pcom-summary-item">
+                                        <div className="pcom-summary-label">Notes</div>
+                                        <div className="pcom-summary-value">
+                                          {formatPcomValue(pcomParsed.notes)}
+                                        </div>
+                                      </div>
+                                      <div className="pcom-summary-item">
+                                        <div className="pcom-summary-label">Objects</div>
+                                        <div className="pcom-summary-value">
+                                          {pcomObjectEntries.length}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="pcom-friendly-layout">
+                                    <div className="pcom-friendly-column">
+                                      <div className="pcom-card pcom-object-card">
+                                        <div className="pcom-section-title">
+                                          Objects ({pcomObjectEntries.length})
+                                        </div>
+                                        <div className="pcom-object-list">
+                                          {pcomObjectEntries.length === 0 ? (
+                                            <div className="empty-state">No objects found.</div>
+                                          ) : (
+                                            pcomObjectEntries.map((entry) => (
+                                              <button
+                                                key={entry.key}
+                                                type="button"
+                                                className={`pcom-object-row${
+                                                  entry.key === pcomSelectedObject?.key
+                                                    ? ' pcom-object-row-active'
+                                                    : ''
+                                                }`}
+                                                onClick={() => setPcomSelectedObjectKey(entry.key)}
+                                              >
+                                                <div className="pcom-object-row-title">
+                                                  {entry.name}
+                                                </div>
+                                                <div className="pcom-object-row-meta">
+                                                  {entry.obj?.class && (
+                                                    <span className="pill">{entry.obj.class}</span>
+                                                  )}
+                                                  {entry.obj?.subClass && (
+                                                    <span className="pill">{entry.obj.subClass}</span>
+                                                  )}
+                                                  {entry.obj?.certification && (
+                                                    <span className="pill">
+                                                      {entry.obj.certification}
+                                                    </span>
+                                                  )}
+                                                </div>
+                                              </button>
+                                            ))
+                                          )}
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div className="pcom-friendly-column">
+                                      <div className="pcom-card pcom-detail-card">
+                                        <div className="pcom-section-title">Object Details</div>
+                                        {!pcomSelectedObject ? (
+                                          <div className="empty-state">
+                                            Select an object to view details.
+                                          </div>
+                                        ) : (
+                                          (() => {
+                                            const obj = pcomSelectedObject.obj || {};
+                                            const snmp = obj.snmp || {};
+                                            const values = Array.isArray(snmp.values)
+                                              ? snmp.values
+                                              : [];
+                                            const discovery = snmp.discovery || {};
+                                            const filterLabel = Array.isArray(snmp.filter)
+                                              ? `${snmp.filter.length} filter(s)`
+                                              : formatPcomValue(snmp.filter);
+                                            return (
+                                              <>
+                                                <div className="pcom-detail-title">
+                                                  {pcomSelectedObject.name}
+                                                </div>
+                                                <div className="pcom-detail-grid">
+                                                  <div className="pcom-detail-label">Class</div>
+                                                  <div className="pcom-detail-value">
+                                                    {formatPcomValue(obj.class)}
+                                                  </div>
+                                                  <div className="pcom-detail-label">SubClass</div>
+                                                  <div className="pcom-detail-value">
+                                                    {formatPcomValue(obj.subClass)}
+                                                  </div>
+                                                  <div className="pcom-detail-label">Certification</div>
+                                                  <div className="pcom-detail-value">
+                                                    {formatPcomValue(obj.certification)}
+                                                  </div>
+                                                  <div className="pcom-detail-label">Weight</div>
+                                                  <div className="pcom-detail-value">
+                                                    {formatPcomValue(obj.weight)}
+                                                  </div>
+                                                  <div className="pcom-detail-label">Domain</div>
+                                                  <div className="pcom-detail-value">
+                                                    {formatPcomValue(obj.domain)}
+                                                  </div>
+                                                  <div className="pcom-detail-label">Method</div>
+                                                  <div className="pcom-detail-value">
+                                                    {formatPcomValue(obj.method)}
+                                                  </div>
+                                                  <div className="pcom-detail-label">Description</div>
+                                                  <div className="pcom-detail-value">
+                                                    {formatPcomValue(obj.description)}
+                                                  </div>
+                                                </div>
+                                                <div className="pcom-section-subtitle">SNMP</div>
+                                                <div className="pcom-detail-grid">
+                                                  <div className="pcom-detail-label">Discovery Name</div>
+                                                  <div className="pcom-detail-value">
+                                                    {formatPcomValue(discovery.name)}
+                                                  </div>
+                                                  <div className="pcom-detail-label">Discovery OID</div>
+                                                  <div className="pcom-detail-value">
+                                                    {formatPcomValue(discovery.oid)}
+                                                  </div>
+                                                  <div className="pcom-detail-label">Instance</div>
+                                                  <div className="pcom-detail-value">
+                                                    {formatPcomValue(snmp.instance)}
+                                                  </div>
+                                                  <div className="pcom-detail-label">Factor</div>
+                                                  <div className="pcom-detail-value">
+                                                    {formatPcomValue(snmp.factor)}
+                                                  </div>
+                                                  <div className="pcom-detail-label">Maximum</div>
+                                                  <div className="pcom-detail-value">
+                                                    {formatPcomValue(snmp.maximum)}
+                                                  </div>
+                                                  <div className="pcom-detail-label">Filter</div>
+                                                  <div className="pcom-detail-value">{filterLabel}</div>
+                                                  <div className="pcom-detail-label">Values</div>
+                                                  <div className="pcom-detail-value">
+                                                    {values.length}
+                                                  </div>
+                                                </div>
+                                                <div className="pcom-section-subtitle">Values</div>
+                                                <div className="pcom-values-list">
+                                                  {values.length === 0 ? (
+                                                    <div className="empty-state">No values defined.</div>
+                                                  ) : (
+                                                    values.map((value: any, index: number) => {
+                                                      const title =
+                                                        value?.name ||
+                                                        value?.metricType ||
+                                                        `Value ${index + 1}`;
+                                                      return (
+                                                        <div key={`${title}-${index}`} className="pcom-value-row">
+                                                          <div className="pcom-value-title">{title}</div>
+                                                          <div className="pcom-value-meta">
+                                                            <span>
+                                                              Metric: {formatPcomValue(value?.metricType)}
+                                                            </span>
+                                                            <span>
+                                                              Type: {formatPcomValue(value?.valueType)}
+                                                            </span>
+                                                            {value?.oid && (
+                                                              <span>OID: {formatPcomValue(value?.oid)}</span>
+                                                            )}
+                                                            {value?.eval && <span>Eval</span>}
+                                                          </div>
+                                                        </div>
+                                                      );
+                                                    })
+                                                  )}
+                                                </div>
+                                              </>
+                                            );
+                                          })()
+                                        )}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </>
+                              )}
+                            </div>
+                          }
+                          rawView={
+                            <FcomRawPreview
+                              searchHighlightActive={searchHighlightActive}
+                              highlightQuery={highlightQuery}
+                              rawMatchPositions={rawMatchPositions}
+                              rawMatchIndex={rawMatchIndex}
+                              handlePrevRawMatch={handlePrevRawMatch}
+                              handleNextRawMatch={handleNextRawMatch}
+                              rawPreviewText={editorText}
+                              renderRawHighlightedText={renderRawHighlightedText}
+                            />
+                          }
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : activeApp === 'legacy' ? (
+                <div className="panel">
+                  <div className="panel-scroll">
+                    <div className="panel-header">
+                      <div className="panel-title-row">
+                        <h2>Legacy Conversion</h2>
+                      </div>
+                      <div className="panel-section">
+                        <div className="panel-section-title">Purpose</div>
+                        <div className="muted">
+                          Upload legacy rules, analyze them, and convert to PCOM or FCOM as much as
+                          possible.
+                        </div>
+                      </div>
+                      <div className="panel-section">
+                        <div className="panel-section-title">Integration</div>
+                        <ul>
+                          <li>UA assistant/chatbot-assisted conversion workflow.</li>
+                          <li>Standalone script option for batch conversion.</li>
+                        </ul>
+                      </div>
+                      <div className="panel-section">
+                        <div className="panel-section-title">Status</div>
+                        <div className="empty-state">Stub only (upload + conversion coming soon).</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               ) : (
                 <div className="split-layout">
                   <div className="panel">
@@ -14332,9 +14895,23 @@ export default function App() {
                         <div className="empty-state">Select a MIB file to inspect.</div>
                       ) : (
                         <div className="mib-details">
-                          <div className="file-title">
-                            <strong>{mibSelectedFile}</strong>
-                          </div>
+                          <FileTitleRow
+                            title={getMibBaseName(mibSelectedFile) || mibSelectedFile}
+                            path={mibSelectedFile}
+                            favorite={
+                              mibSelectedFile
+                                ? {
+                                    active: isFavorite('file', mibSelectedFile),
+                                    onToggle: () =>
+                                      toggleFavorite({
+                                        type: 'file',
+                                        pathId: mibSelectedFile,
+                                        label: getMibBaseName(mibSelectedFile) || mibSelectedFile,
+                                      }),
+                                  }
+                                : null
+                            }
+                          />
                           <div className="mib-overview">
                             {(() => {
                               const fcomStatus = getMibSupportStatus(
