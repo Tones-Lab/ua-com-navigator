@@ -3,7 +3,21 @@
 ## Now (P0)
 - ✅ Feature - ability to restart FCOM processing microservice from the UI.
 - ✅ Persist active tab across refresh (preserve current page instead of defaulting to Overview).
-- 🔥 BUG - Critical - microservice status in UI header shows orange and reports incorrect health while CLI tests show services healthy.
+- ✅ BUG - Critical - microservice status in UI header shows orange and reports incorrect health while CLI tests show services healthy.
+- Ability to generate new FCOM files from MIBs via the MIB Browser view.
+	- Notes: Use UBNT/Ubiquiti MIBs as the primary test set.
+- PCOM creator integration using the DeVesco PCOM creator.
+	- Notes: Source from internal Oracle Orahub application.
+- Strengthen PCOM UI/UX for viewing and editing (align with FCOM edit capabilities).
+	- Notes: Bring PCOM edit affordances closer to FCOM field editing flow.
+- Extend MSA status view to include PCOM pipeline basics.
+	- Notes: This refers to the existing FCOM processor pipeline status modal; extend it to show additional pipelines and their status.
+- Explore dynamic pipeline status view by querying configs for inputs/outputs.
+	- Notes: Model full input-to-output paths (e.g., trap-collector to event-sink), including possible multi-path flows.
+- UA chatbot integration (phase 1): documentation + rules-writing helper with RAG.
+	- Notes: Grounded in docs, FCOM/PCOM files, and schemas; provide guidance on processors, placement, and how-to questions.
+- Legacy rules conversion.
+	- Notes: Start with default foundation rules; evaluate converting legacy fault/performance rules into FCOM/PCOM, including older v4 SNMP polling artifacts.
 - 🔥 Framework modernization (OJET-first, single runtime).
 	- Plan: architecture/framework-modernization-plan.md
 - 🔥 Unify Global/Object processor palettes using a single registry source-of-truth.

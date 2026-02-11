@@ -46,13 +46,15 @@ Explicit requirement: if a code change requires a restart to take effect, you (t
 - Use the shared helper script at [scripts/ua_api_helper.py](scripts/ua_api_helper.py) for UA REST calls.
 - This file contains the canonical host, port, auth, and TLS settings for this environment.
 
-## UA Chatbot mirror (reference-only)
+## UA Assistant Mirror (Reference-Only)
 
-- A mirrored UA Chatbot repo exists at `.context/ua-assistant`.
-- Use it as **read-only reference** for UA Chatbot configuration, service definitions, layout, and API endpoints.
-- **Do not edit or commit** anything inside `.context/ua-assistant`.
-- **All edits must remain in the current project** (`/root/navigator`).
-- It is OK to cite or quote small snippets from the mirrored repo when explaining integration.
+- A mirrored UA Assistant/Chatbot repository exists at `./.gitcontext/ua-assistant`.
+- Use this directory as the **Ground Truth** read-only reference for UA Assistant configuration, service definitions, layout, and API endpoints.
+- **Strict Rule:** Do not edit, create, or commit any files inside `./.gitcontext/ua-assistant`.
+- The mirror is ignored by git and must never be published with this repo.
+- All code modifications and new feature implementations must remain within the current `navigator` project scope.
+- If a conflict exists between this project’s assumptions and the mirrored folder, prioritize the mirrored folder’s definitions for cross-project semantics and API structures, but **do not override this repository’s own operational, safety, or style rules.**
+- It is encouraged to cite or quote snippets from the mirrored repo when explaining integration or cross-project logic.
 
 ## Git commit messages (strict)
 
