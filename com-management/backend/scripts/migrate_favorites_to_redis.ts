@@ -17,14 +17,15 @@ type FavoriteItem = {
   label: string;
   pathId: string;
   node?: string;
+  scope?: 'fcom' | 'pcom' | 'mib';
 };
 
 type FavoritesState = Record<string, Record<string, FavoriteItem[]>>;
 
-const FAVORITES_PREFIX = 'fcom:favorites:';
+const FAVORITES_PREFIX = 'favorites:';
 
-const buildFavoritesKey = (user: string, serverId: string) =>
-  `${FAVORITES_PREFIX}${serverId}:${user}`;
+const buildFavoritesKey = (user: string, serverId: string, scope: 'fcom' | 'pcom' | 'mib') =>
+  `${FAVORITES_PREFIX}${scope}:${serverId}:${user}`;
 
 const buildFavoriteHashKey = (favorite: FavoriteItem) => `${favorite.type}:${favorite.pathId}`;
 
@@ -67,13 +68,14 @@ const migrate = async () => {
         if (!Array.isArray(favorites)) {
           continue;
         }
-        const key = buildFavoritesKey(user, serverId);
+        const key = buildFavoritesKey(user, serverId, 'fcom');
         for (const favorite of favorites) {
           if (!favorite?.type || !favorite?.pathId) {
             continue;
           }
-          const hashKey = buildFavoriteHashKey(favorite);
-          await client.hSet(key, hashKey, JSON.stringify(favorite));
+          const normalized = { ...favorite, scope: 'fcom' };
+          const hashKey = buildFavoriteHashKey(normalized);
+          await client.hSet(key, hashKey, JSON.stringify(normalized));
           migrated += 1;
         }
       }

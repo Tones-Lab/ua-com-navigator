@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
+import FavoritesPanel from '../../components/FavoritesPanel';
 
 type FcomBrowserPanelProps = {
   hasEditPermission: boolean;
@@ -21,8 +22,6 @@ type FcomBrowserPanelProps = {
   handleOpenFolder: (entry: any) => void;
   openFileFromUrl: (pathId: string, node?: string | null) => void | Promise<boolean>;
   handleOpenSearchResult: (result: any) => void;
-  getParentLabel: (node?: string) => string;
-  getParentPath: (node?: string) => string;
   searchResults: any[];
   searchError: string | null;
   getSearchResultName: (result: any) => string;
@@ -53,8 +52,6 @@ export default function FcomBrowserPanel({
   handleOpenFolder,
   openFileFromUrl,
   handleOpenSearchResult,
-  getParentLabel,
-  getParentPath,
   searchResults,
   searchError,
   getSearchResultName,
@@ -65,7 +62,6 @@ export default function FcomBrowserPanel({
   handleOpenFile,
 }: FcomBrowserPanelProps) {
   const [isCompact, setIsCompact] = useState(false);
-  const favoritesCount = favoritesFolders.length + favoritesFiles.length;
 
   useEffect(() => {
     const media = window.matchMedia('(max-width: 1200px)');
@@ -162,68 +158,15 @@ export default function FcomBrowserPanel({
               </div>
             </form>
           </div>
-          <div className="panel-section">
-            <div className="panel-section-title">Favorites</div>
-            <div className="favorites-header">
-              <span className="favorites-label">Pinned ({favoritesCount})</span>
-            </div>
-            <div className="favorites-section">
-              <div className="favorites-scroll">
-                <details open={!isCompact && favoritesFolders.length > 0}>
-                  <summary>Favorite Folders</summary>
-                  {favoritesLoading && <div className="muted">Loading…</div>}
-                  {favoritesError && <div className="error">{favoritesError}</div>}
-                  {favoritesFolders.length === 0 ? (
-                    <div className="empty-state">No favorites yet.</div>
-                  ) : (
-                    <ul className="favorites-list">
-                      {favoritesFolders.map((fav) => (
-                        <li key={`${fav.type}-${fav.pathId}`}>
-                          <button
-                            type="button"
-                            className="favorite-link"
-                            onClick={() =>
-                              handleOpenFolder({ PathID: fav.pathId, PathName: fav.label })
-                            }
-                          >
-                            <span className="favorite-label">{fav.label}</span>
-                            {getParentLabel(getParentPath(fav.pathId)) && (
-                              <span className="favorite-parent">
-                                {getParentLabel(getParentPath(fav.pathId))}
-                              </span>
-                            )}
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </details>
-                <details open={!isCompact && favoritesFiles.length > 0}>
-                  <summary>Favorite Files</summary>
-                  {favoritesFiles.length === 0 ? (
-                    <div className="empty-state">No favorites yet.</div>
-                  ) : (
-                    <ul className="favorites-list">
-                      {favoritesFiles.map((fav) => (
-                        <li key={`${fav.type}-${fav.pathId}`}>
-                          <button
-                            type="button"
-                            className="favorite-link"
-                            onClick={() => openFileFromUrl(fav.pathId, fav.node)}
-                          >
-                            <span className="favorite-label">{fav.label}</span>
-                            {fav.node && (
-                              <span className="favorite-parent">{getParentLabel(fav.node)}</span>
-                            )}
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </details>
-              </div>
-            </div>
-          </div>
+          <FavoritesPanel
+            favoritesFolders={favoritesFolders}
+            favoritesFiles={favoritesFiles}
+            favoritesLoading={favoritesLoading}
+            favoritesError={favoritesError}
+            isCompact={isCompact}
+            onOpenFolder={(fav) => handleOpenFolder({ PathID: fav.pathId, PathName: fav.label })}
+            onOpenFile={(fav) => openFileFromUrl(fav.pathId, fav.node)}
+          />
         </div>
         {searchQuery.trim() && (
           <details className="search-results" open={!isCompact}>

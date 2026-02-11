@@ -40,6 +40,18 @@
 - Docs reference: see architecture/fcom-processor-docs-summary.md (UA FCOM processor/override specs).
 
 ## Next (P1)
+- PCOM COM Navigator UI:
+	- Dedicated PCOM workspace (browse, search, edit, validate).
+	- Align with FCOM UX patterns while supporting PCOM-specific schema.
+	- ✅ Focus now: build the friendly view shell (vendor summary + object list + detail panel).
+	- Add PCOM parsing helpers for mixed-type fields (notes, factor, instance) and wire to the friendly view.
+	- Stub “Create PCOM” modal (UI-only) with vendor/mib/enterprise OID inputs.
+- PCOM creation helper (UI + script):
+	- Guided creation flow for new PCOM files with validation.
+	- Scripted helper for batch/seeded creation (CLI).
+- Legacy rule to COM helper (script):
+	- Convert legacy rule formats into COM (FCOM/PCOM) with validation output.
+	- Add Legacy Conversion UI entry (tab/link) with upload stub; tie into UA assistant/chatbot or standalone script based on complexity.
 - Testing & quality:
 	- 🧪 UI testing strategy (Vitest + RTL; Playwright/Cypress for E2E).
 	- ✅ Code formatting automation (Prettier + ESLint + Husky/lint-staged).

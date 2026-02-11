@@ -1,3 +1,4 @@
+import { FileTitleRow, ViewToggle } from '../../components/FileHeaderCommon';
 type FcomFileHeaderProps = {
   selectedFile: any | null;
   browseNode: string | null;
@@ -122,34 +123,24 @@ export default function FcomFileHeader({
   };
   return (
     <>
-      <div className="file-title">
-        <strong>
-          {selectedFile?.PathName ? renderHighlightedText(selectedFile.PathName) : 'Select a file'}
-          {selectedFile && (
-            <button
-              type="button"
-              className={
-                isFavorite('file', selectedFile.PathID) ? 'star-button star-active' : 'star-button'
+      <FileTitleRow
+        title={selectedFile?.PathName ? renderHighlightedText(selectedFile.PathName) : 'Select a file'}
+        path={selectedFile?.PathID ? formatDisplayPath(selectedFile.PathID) : null}
+        favorite={
+          selectedFile
+            ? {
+                active: isFavorite('file', selectedFile.PathID),
+                onToggle: () =>
+                  toggleFavorite({
+                    type: 'file',
+                    pathId: selectedFile.PathID,
+                    label: selectedFile.PathName,
+                    node: browseNode || undefined,
+                  }),
               }
-              onClick={() =>
-                toggleFavorite({
-                  type: 'file',
-                  pathId: selectedFile.PathID,
-                  label: selectedFile.PathName,
-                  node: browseNode || undefined,
-                })
-              }
-              aria-label="Toggle favorite file"
-              title="Toggle favorite file"
-            >
-              ★
-            </button>
-          )}
-        </strong>
-        {selectedFile?.PathID && (
-          <span className="file-path">{formatDisplayPath(selectedFile.PathID)}</span>
-        )}
-      </div>
+            : null
+        }
+      />
       {(fileMethod || fileSubMethod) && (
         <div className="file-meta-row">
           {fileMethod && <span>Method: {fileMethod}</span>}
@@ -160,36 +151,7 @@ export default function FcomFileHeader({
       <div className="action-row">
         {selectedFile ? (
           <>
-            <div className="view-toggle">
-              <span
-                className={
-                  viewMode === 'friendly' ? 'view-toggle-label active' : 'view-toggle-label'
-                }
-              >
-                Friendly
-              </span>
-              <label className="switch" aria-label="Toggle friendly/raw view">
-                <input
-                  type="checkbox"
-                  checked={viewMode !== 'friendly'}
-                  onChange={(e) => {
-                    if (e.target.checked) {
-                      setViewMode('preview');
-                    } else {
-                      setViewMode('friendly');
-                    }
-                  }}
-                />
-                <span className="slider" />
-              </label>
-              <span
-                className={
-                  viewMode !== 'friendly' ? 'view-toggle-label active' : 'view-toggle-label'
-                }
-              >
-                Raw
-              </span>
-            </div>
+            <ViewToggle viewMode={viewMode} onChange={setViewMode} />
             {showTestControls && (
               <button
                 type="button"

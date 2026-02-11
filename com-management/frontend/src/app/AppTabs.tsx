@@ -1,6 +1,6 @@
 import React from 'react';
 
-type AppTab = 'overview' | 'fcom' | 'pcom' | 'mib';
+type AppTab = 'overview' | 'fcom' | 'pcom' | 'mib' | 'legacy';
 
 type AppTabsProps = {
   activeApp: AppTab;
@@ -11,6 +11,7 @@ const tabs: Array<{ key: AppTab; label: string }> = [
   { key: 'overview', label: 'Overview' },
   { key: 'fcom', label: 'FCOM' },
   { key: 'pcom', label: 'PCOM' },
+  { key: 'legacy', label: 'Legacy Conversion' },
   { key: 'mib', label: 'MIB Browser' },
 ];
 

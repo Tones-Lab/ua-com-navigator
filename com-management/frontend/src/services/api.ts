@@ -241,8 +241,8 @@ class ApiClient {
   }
 
   // Favorites
-  async getFavorites() {
-    return this.client.get('/favorites');
+  async getFavorites(scope: 'fcom' | 'pcom' | 'mib') {
+    return this.client.get('/favorites', { params: { scope } });
   }
 
   async addFavorite(favorite: {
@@ -250,12 +250,20 @@ class ApiClient {
     pathId: string;
     label: string;
     node?: string;
+    scope: 'fcom' | 'pcom' | 'mib';
   }) {
-    return this.client.post('/favorites', favorite);
+    return this.client.post('/favorites', favorite, { params: { scope: favorite.scope } });
   }
 
-  async removeFavorite(favorite: { type: 'file' | 'folder'; pathId: string }) {
-    return this.client.delete('/favorites', { data: favorite });
+  async removeFavorite(favorite: {
+    type: 'file' | 'folder';
+    pathId: string;
+    scope: 'fcom' | 'pcom' | 'mib';
+  }) {
+    return this.client.delete('/favorites', {
+      data: favorite,
+      params: { scope: favorite.scope },
+    });
   }
 
   // Folder Overview

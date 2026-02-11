@@ -23,6 +23,9 @@ This roadmap tracks high‑level workstreams. Items are grouped by status rather
 - Expanded test automation
 - CI/CD deployment guidance
 - Schema update automation
+- PCOM COM Navigator UI (dedicated PCOM workflows)
+- PCOM creation UI/helper (guided UI + scripted creation)
+- Legacy rule to COM conversion helper (scripted migration)
 
 ## Future
 

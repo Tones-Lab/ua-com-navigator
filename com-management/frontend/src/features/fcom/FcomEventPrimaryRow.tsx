@@ -182,33 +182,23 @@ export default function FcomEventPrimaryRow({
               const stagedRemoved = isFieldStagedRemoved(obj, 'Summary');
               const isProcessorField = processorTargets.has('$.event.Summary');
               const processorSummary = getProcessorFieldSummary(obj, 'Summary');
-              return isProcessorField ? (
-                <div
-                  className={`${
-                    isFieldHighlighted(eventPanelKey, 'Summary')
-                      ? 'panel-input panel-input-warning'
-                      : 'panel-input'
-                  } panel-input-processor${
-                    isFieldPendingRemoval(eventPanelKey, 'Summary') || stagedRemoved
-                      ? ' panel-input-removed'
-                      : ''
-                  }`}
-                  title="Value set by processor"
-                >
-                  Processor{processorSummary ? ` • ${processorSummary}` : ''}
-                </div>
-              ) : (
+              const processorTitle = processorSummary
+                ? `Value set by processor • ${processorSummary}`
+                : 'Value set by processor';
+              const draftValue = panelDrafts?.[eventPanelKey]?.event?.Summary;
+              const displayValue = draftValue ?? (editable.display ?? '');
+              return (
                 <input
                   className={`${
                     isFieldHighlighted(eventPanelKey, 'Summary')
                       ? 'panel-input panel-input-warning'
                       : 'panel-input'
-                  }${
+                  }${isProcessorField ? ' panel-input-processor' : ''}${
                     isFieldPendingRemoval(eventPanelKey, 'Summary') || stagedRemoved
                       ? ' panel-input-removed'
                       : ''
                   }`}
-                  value={panelDrafts?.[eventPanelKey]?.event?.Summary ?? ''}
+                  value={displayValue}
                   onChange={(e) =>
                     handleEventInputChange(
                       obj,
@@ -231,7 +221,9 @@ export default function FcomEventPrimaryRow({
                         ? 'Finish or cancel the builder to edit other fields'
                         : isFieldPendingRemoval(eventPanelKey, 'Summary') || stagedRemoved
                           ? 'Marked for removal'
-                          : ''
+                          : isProcessorField
+                            ? processorTitle
+                            : ''
                   }
                 />
               );
@@ -342,34 +334,25 @@ export default function FcomEventPrimaryRow({
               const stagedRemoved = isFieldStagedRemoved(obj, 'Severity');
               const isProcessorField = processorTargets.has('$.event.Severity');
               const processorSummary = getProcessorFieldSummary(obj, 'Severity');
-              return isProcessorField ? (
-                <div
-                  className={`${
-                    isFieldHighlighted(eventPanelKey, 'Severity')
-                      ? 'panel-input panel-input-warning'
-                      : 'panel-input'
-                  } panel-input-processor${
-                    isFieldPendingRemoval(eventPanelKey, 'Severity') || stagedRemoved
-                      ? ' panel-input-removed'
-                      : ''
-                  }`}
-                  title="Value set by processor"
-                >
-                  Processor{processorSummary ? ` • ${processorSummary}` : ''}
-                </div>
-              ) : (
+              const processorTitle = processorSummary
+                ? `Value set by processor • ${processorSummary}`
+                : 'Value set by processor';
+              const draftValue = panelDrafts?.[eventPanelKey]?.event?.Severity;
+              const displayValue =
+                draftValue ?? (getEditableValue(getEffectiveEventValue(obj, 'Severity')).display ?? '');
+              return (
                 <input
                   className={`${
                     isFieldHighlighted(eventPanelKey, 'Severity')
                       ? 'panel-input panel-input-warning'
                       : 'panel-input'
-                  }${
+                  }${isProcessorField ? ' panel-input-processor' : ''}${
                     isFieldPendingRemoval(eventPanelKey, 'Severity') ||
                     isFieldStagedRemoved(obj, 'Severity')
                       ? ' panel-input-removed'
                       : ''
                   }`}
-                  value={panelDrafts?.[eventPanelKey]?.event?.Severity ?? ''}
+                  value={displayValue}
                   onChange={(e) =>
                     handleEventInputChange(
                       obj,
@@ -391,7 +374,9 @@ export default function FcomEventPrimaryRow({
                       : isFieldPendingRemoval(eventPanelKey, 'Severity') ||
                           isFieldStagedRemoved(obj, 'Severity')
                         ? 'Marked for removal'
-                        : ''
+                        : isProcessorField
+                          ? processorTitle
+                          : ''
                   }
                 />
               );

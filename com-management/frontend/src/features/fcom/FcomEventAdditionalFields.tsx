@@ -193,54 +193,41 @@ export default function FcomEventAdditionalFields({
                 const stagedRemoved = isFieldStagedRemoved(obj, field);
                 const isProcessorField = processorTargets.has(`$.event.${field}`);
                 const processorSummary = getProcessorFieldSummary(obj, field);
-                if (isProcessorField) {
-                  const processorValue = overrideValueMap.get(`$.event.${field}`);
-                  const processorDisplay = (() => {
-                    if (processorValue === undefined) {
-                      return `Processor${processorSummary ? ` • ${processorSummary}` : ''}`;
-                    }
-                    if (
-                      typeof processorValue === 'string' ||
-                      typeof processorValue === 'number' ||
-                      typeof processorValue === 'boolean'
-                    ) {
-                      return String(processorValue);
-                    }
-                    try {
-                      return JSON.stringify(processorValue);
-                    } catch {
-                      return String(processorValue);
-                    }
-                  })();
-                  return (
-                    <input
-                      className={`${
-                        isFieldHighlighted(eventPanelKey, field)
-                          ? 'panel-input panel-input-warning'
-                          : 'panel-input'
-                      }${
-                        isFieldPendingRemoval(eventPanelKey, field) || stagedRemoved
-                          ? ' panel-input-removed'
-                          : ''
-                      }`}
-                      value={processorDisplay}
-                      disabled
-                      title="Value set by processor"
-                    />
-                  );
-                }
+                const processorTitle = processorSummary
+                  ? `Value set by processor • ${processorSummary}`
+                  : 'Value set by processor';
+                const draftValue = panelDrafts?.[eventPanelKey]?.event?.[field];
+                const effectiveValue =
+                  overrideValueMap.get(`$.event.${field}`) ?? obj?.event?.[field];
+                const displayValue = draftValue ?? (() => {
+                  if (effectiveValue === undefined || effectiveValue === null) {
+                    return '';
+                  }
+                  if (
+                    typeof effectiveValue === 'string' ||
+                    typeof effectiveValue === 'number' ||
+                    typeof effectiveValue === 'boolean'
+                  ) {
+                    return String(effectiveValue);
+                  }
+                  try {
+                    return JSON.stringify(effectiveValue);
+                  } catch {
+                    return String(effectiveValue);
+                  }
+                })();
                 return (
                   <input
                     className={`${
                       isFieldHighlighted(eventPanelKey, field)
                         ? 'panel-input panel-input-warning'
                         : 'panel-input'
-                    }${
+                    }${isProcessorField ? ' panel-input-processor' : ''}${
                       isFieldPendingRemoval(eventPanelKey, field) || stagedRemoved
                         ? ' panel-input-removed'
                         : ''
                     }`}
-                    value={panelDrafts?.[eventPanelKey]?.event?.[field] ?? ''}
+                    value={displayValue}
                     onChange={(e) =>
                       handleEventInputChange(
                         obj,
@@ -260,7 +247,9 @@ export default function FcomEventAdditionalFields({
                         ? 'Finish or cancel the builder to edit other fields'
                         : isFieldPendingRemoval(eventPanelKey, field) || stagedRemoved
                           ? 'Marked for removal'
-                          : ''
+                          : isProcessorField
+                            ? processorTitle
+                            : ''
                     }
                   />
                 );

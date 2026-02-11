@@ -17,11 +17,12 @@ type FavoriteItem = {
   label: string;
   pathId: string;
   node?: string;
+  scope?: 'fcom' | 'pcom' | 'mib';
 };
 
-type FavoritesState = Record<string, Record<string, FavoriteItem[]>>;
+type FavoritesState = Record<string, Record<string, Record<string, FavoriteItem[]>>>;
 
-const FAVORITES_PREFIX = 'fcom:favorites:';
+const FAVORITES_PREFIX = 'favorites:';
 
 const resolveExportPath = () => {
   const overridePath = process.env.FAVORITES_EXPORT_PATH;
@@ -36,13 +37,20 @@ const parseKey = (key: string) => {
     return null;
   }
   const stripped = key.slice(FAVORITES_PREFIX.length);
+  const parts = stripped.split(':');
+  if (parts.length < 3) {
+    return null;
+  }
+  const scope = parts[0];
+  const rest = parts.slice(1).join(':');
   const lastColon = stripped.lastIndexOf(':');
   if (lastColon <= 0) {
     return null;
   }
   return {
-    serverId: stripped.slice(0, lastColon),
-    user: stripped.slice(lastColon + 1),
+    scope,
+    serverId: rest.slice(0, rest.lastIndexOf(':')),
+    user: rest.slice(rest.lastIndexOf(':') + 1),
   };
 };
 
@@ -70,7 +78,7 @@ const exportFavorites = async () => {
       if (!parsed) {
         continue;
       }
-      const { serverId, user } = parsed;
+      const { serverId, user, scope } = parsed;
       const entries = await client.hGetAll(key as string);
       const favorites = Object.values(entries)
         .map((entry) => parseFavoriteEntry(entry))
@@ -80,7 +88,10 @@ const exportFavorites = async () => {
       if (!state[user]) {
         state[user] = {};
       }
-      state[user][serverId] = favorites;
+      if (!state[user][serverId]) {
+        state[user][serverId] = {};
+      }
+      state[user][serverId][scope] = favorites;
       totalFavorites += favorites.length;
       totalKeys += 1;
     }

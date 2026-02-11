@@ -37,6 +37,8 @@ tags:
     description: Device catalog and selection
   - name: SNMP Access
     description: SNMP access profiles for device discovery
+  - name: Favorites
+    description: User favorites by section (FCOM/PCOM/MIB)
 
 paths:
   /devices:
@@ -230,6 +232,184 @@ paths:
           description: No active session
         '500':
           description: Failed to run snmpwalk
+  /favorites:
+    get:
+      tags:
+        - Favorites
+      summary: List favorites for a section
+      description: |
+        Returns favorites scoped to a section (FCOM, PCOM, or MIB) for the active user/server.
+      security:
+        - sessionCookie: []
+      parameters:
+        - in: query
+          name: scope
+          schema:
+            type: string
+            enum: [fcom, pcom, mib]
+            default: fcom
+          required: false
+          description: Section scope for favorites.
+      responses:
+        '200':
+          description: Favorites list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  favorites:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          enum: [file, folder]
+                        label:
+                          type: string
+                        pathId:
+                          type: string
+                        node:
+                          type: string
+                          nullable: true
+                        scope:
+                          type: string
+                          enum: [fcom, pcom, mib]
+        '401':
+          description: No active session
+    post:
+      tags:
+        - Favorites
+      summary: Add a favorite
+      security:
+        - sessionCookie: []
+      parameters:
+        - in: query
+          name: scope
+          schema:
+            type: string
+            enum: [fcom, pcom, mib]
+            default: fcom
+          required: false
+          description: Section scope for favorites.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - type
+                - pathId
+                - label
+              properties:
+                type:
+                  type: string
+                  enum: [file, folder]
+                label:
+                  type: string
+                pathId:
+                  type: string
+                node:
+                  type: string
+                  nullable: true
+                scope:
+                  type: string
+                  enum: [fcom, pcom, mib]
+      responses:
+        '200':
+          description: Favorites list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  favorites:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          enum: [file, folder]
+                        label:
+                          type: string
+                        pathId:
+                          type: string
+                        node:
+                          type: string
+                          nullable: true
+                        scope:
+                          type: string
+                          enum: [fcom, pcom, mib]
+        '400':
+          description: Missing favorite type or pathId
+        '401':
+          description: No active session
+    delete:
+      tags:
+        - Favorites
+      summary: Remove a favorite
+      security:
+        - sessionCookie: []
+      parameters:
+        - in: query
+          name: scope
+          schema:
+            type: string
+            enum: [fcom, pcom, mib]
+            default: fcom
+          required: false
+          description: Section scope for favorites.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - type
+                - pathId
+              properties:
+                type:
+                  type: string
+                  enum: [file, folder]
+                pathId:
+                  type: string
+                scope:
+                  type: string
+                  enum: [fcom, pcom, mib]
+      responses:
+        '200':
+          description: Favorites list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  favorites:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          enum: [file, folder]
+                        label:
+                          type: string
+                        pathId:
+                          type: string
+                        node:
+                          type: string
+                          nullable: true
+                        scope:
+                          type: string
+                          enum: [fcom, pcom, mib]
+        '400':
+          description: Missing favorite type or pathId
+        '401':
+          description: No active session
   /microservice/status:
     get:
       tags:

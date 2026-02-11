@@ -1,4 +1,5 @@
 import type { ReactNode, RefObject } from 'react';
+import ComFilePreview from '../../components/ComFilePreview';
 import FcomObjectCard from './FcomObjectCard';
 import FcomRawPreview from './FcomRawPreview';
 import FcomMatchBar from './FcomMatchBar';
@@ -212,191 +213,199 @@ export default function FcomFilePreview({
     fileLoadStage === 'render' && !fileLoading
       ? loadSteps.length
       : loadSteps.findIndex((step) => step.key === fileLoadStage);
-  return (
-    <div className="file-preview">
-      {selectedFile && fileLoadStage && (
-        <div className="file-preview-loading" aria-live="polite" aria-busy="true">
-          <div className="file-preview-loading-card">
-            <div className="file-preview-loading-header">
-              <div className="file-preview-loading-spinner" aria-hidden="true" />
-              <div>
-                <div className="file-preview-loading-title">Loading rules…</div>
-                <div className="file-preview-loading-subtitle">
-                  Preparing preview{fileLoading ? '…' : ''}
-                </div>
+  const loadingOverlay = (
+    <div className="file-preview-loading" aria-live="polite" aria-busy="true">
+      <div className="file-preview-loading-card">
+        <div className="file-preview-loading-header">
+          <div className="file-preview-loading-spinner" aria-hidden="true" />
+          <div>
+            <div className="file-preview-loading-title">Loading rules…</div>
+            <div className="file-preview-loading-subtitle">
+              Preparing preview{fileLoading ? '…' : ''}
+            </div>
+          </div>
+        </div>
+        <div className="file-preview-loading-steps">
+          {loadSteps.map((step, index) => {
+            const status =
+              activeIndex === -1
+                ? 'pending'
+                : index < activeIndex
+                  ? 'done'
+                  : index === activeIndex
+                    ? 'active'
+                    : 'pending';
+            return (
+              <div key={step.key} className="file-preview-loading-step">
+                <span
+                  className={`file-preview-loading-dot file-preview-loading-dot-${status}`}
+                  aria-hidden="true"
+                />
+                <span className="file-preview-loading-label">{step.label}</span>
               </div>
-            </div>
-            <div className="file-preview-loading-steps">
-              {loadSteps.map((step, index) => {
-                const status =
-                  activeIndex === -1
-                    ? 'pending'
-                    : index < activeIndex
-                      ? 'done'
-                      : index === activeIndex
-                        ? 'active'
-                        : 'pending';
-                return (
-                  <div key={step.key} className="file-preview-loading-step">
-                    <span
-                      className={`file-preview-loading-dot file-preview-loading-dot-${status}`}
-                      aria-hidden="true"
-                    />
-                    <span className="file-preview-loading-label">{step.label}</span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+            );
+          })}
         </div>
-      )}
-      {!selectedFile ? (
-        <div className="empty-state">Select a file on the left to view and edit.</div>
-      ) : fileLoading ? (
-        <div>Loading preview…</div>
-      ) : viewMode === 'friendly' ? (
-        <div
-          className={isAnyPanelEditing ? 'friendly-layout' : 'friendly-view'}
-          ref={friendlyViewRef}
-          onScroll={handleFileScroll}
-        >
-          <div
-            className={isAnyPanelEditing ? 'friendly-main' : ''}
-            ref={friendlyMainRef}
-            onScroll={handleFileScroll}
-          >
-            {searchHighlightActive && highlightObjectKeys.length > 0 && (
-              <FcomMatchBar
-                label={`Match ${currentMatchIndex + 1} of ${highlightObjectKeys.length}`}
-                onPrev={handlePrevMatch}
-                onNext={handleNextMatch}
-              >
-                {matchObjectOptions.length > 0 && (
-                  <label className="match-jump">
-                    <span className="match-jump-label">Jump to</span>
-                    <select
-                      value={highlightObjectKeys[currentMatchIndex] || ''}
-                      onChange={(e) => handleJumpToMatch(e.target.value)}
-                    >
-                      {matchObjectOptions.map((option, index) => (
-                        <option key={option.key} value={option.key}>
-                          {index + 1}. {option.label}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                )}
-              </FcomMatchBar>
-            )}
-            {overrideObjectKeys.length > 0 && (
-              <FcomMatchBar
-                label={`Override ${overrideMatchIndex + 1} of ${overrideObjectKeys.length}`}
-                onPrev={handlePrevOverride}
-                onNext={handleNextOverride}
-              >
-                {overrideObjectOptions.length > 0 && (
-                  <label className="match-jump">
-                    <span className="match-jump-label">Jump to</span>
-                    <select
-                      value={overrideObjectKeys[overrideMatchIndex] || ''}
-                      onChange={(e) => handleJumpToOverride(e.target.value)}
-                    >
-                      {overrideObjectOptions.map((option, index) => (
-                        <option key={option.key} value={option.key}>
-                          {index + 1}. {option.label}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                )}
-              </FcomMatchBar>
-            )}
-            {friendlyObjects.length === 0 ? (
-              <div className="empty-state">No objects found.</div>
-            ) : (
-              friendlyObjects.map((obj: any, idx: number) => {
-                const objectKey = getObjectKey(obj, idx);
-                return (
-                  <FcomObjectCard
-                    key={obj?.['@objectName'] || idx}
-                    registerObjectRowRef={registerObjectRowRef}
-                    obj={obj}
-                    idx={idx}
-                    objectKey={objectKey}
-                    matchPingKey={matchPingKey}
-                    highlightObjectKeys={highlightObjectKeys}
-                    searchHighlightActive={searchHighlightActive}
-                    getOverrideFlags={getOverrideFlags}
-                    getOverrideTargets={getOverrideTargets}
-                    getProcessorTargets={getProcessorTargets}
-                    getProcessorFieldSummary={getProcessorFieldSummary}
-                    getOverrideValueMap={getOverrideValueMap}
-                    getOverrideVersionInfo={getOverrideVersionInfo}
-                    canConvertOverrideToV3={canConvertOverrideToV3}
-                    convertOverrideToV3={convertOverrideToV3}
-                    openAdvancedFlowForObject={openAdvancedFlowForObject}
-                    getOverrideFileInfoForObject={getOverrideFileInfoForObject}
-                    getOverrideMetaForObject={getOverrideMetaForObject}
-                    getOverrideRuleLinkForObject={getOverrideRuleLinkForObject}
-                    getEventOverrideFields={getEventOverrideFields}
-                    panelEditState={panelEditState}
-                    getPanelDirtyFields={getPanelDirtyFields}
-                    getBaseEventFields={getBaseEventFields}
-                    hasEditPermission={hasEditPermission}
-                    showTestControls={showTestControls}
-                    isTrapFileContext={isTrapFileContext}
-                    openTrapComposerFromTest={openTrapComposerFromTest}
-                    getObjectDescription={getObjectDescription}
-                    isTestableObject={isTestableObject}
-                    startEventEdit={startEventEdit}
-                    openRemoveAllOverridesModal={openRemoveAllOverridesModal}
-                    openAddFieldModal={openAddFieldModal}
-                    builderTarget={builderTarget}
-                    saveEventEdit={saveEventEdit}
-                    requestCancelEventEdit={requestCancelEventEdit}
-                    isFieldHighlighted={isFieldHighlighted}
-                    renderFieldBadges={renderFieldBadges}
-                    overrideTooltipHoverProps={overrideTooltipHoverProps}
-                    openRemoveOverrideModal={openRemoveOverrideModal}
-                    renderOverrideSummaryCard={renderOverrideSummaryCard}
-                    isFieldDirty={isFieldDirty}
-                    isFieldPendingRemoval={isFieldPendingRemoval}
-                    isFieldNew={isFieldNew}
-                    getStagedDirtyFields={getStagedDirtyFields}
-                    isFieldStagedDirty={isFieldStagedDirty}
-                    isFieldStagedRemoved={isFieldStagedRemoved}
-                    openBuilderForField={openBuilderForField}
-                    isFieldLockedByBuilder={isFieldLockedByBuilder}
-                    getEffectiveEventValue={getEffectiveEventValue}
-                    getEditableValue={getEditableValue}
-                    panelDrafts={panelDrafts}
-                    handleEventInputChange={handleEventInputChange}
-                    renderSummary={renderSummary}
-                    renderValue={renderValue}
-                    getAdditionalEventFields={getAdditionalEventFields}
-                    getEventFieldDescription={getEventFieldDescription}
-                    formatEventFieldLabel={formatEventFieldLabel}
-                    getBaseEventDisplay={getBaseEventDisplay}
-                    renderTrapVariables={renderTrapVariables}
-                  />
-                );
-              })
-            )}
-          </div>
-          {builderSidebar}
-        </div>
-      ) : (
-        <FcomRawPreview
-          searchHighlightActive={searchHighlightActive}
-          highlightQuery={highlightQuery}
-          rawMatchPositions={rawMatchPositions}
-          rawMatchIndex={rawMatchIndex}
-          handlePrevRawMatch={handlePrevRawMatch}
-          handleNextRawMatch={handleNextRawMatch}
-          rawPreviewText={rawPreviewText}
-          renderRawHighlightedText={renderRawHighlightedText}
-        />
-      )}
+      </div>
     </div>
+  );
+
+  const friendlyView = (
+    <div
+      className={isAnyPanelEditing ? 'friendly-layout' : 'friendly-view'}
+      ref={friendlyViewRef}
+      onScroll={handleFileScroll}
+    >
+      <div
+        className={isAnyPanelEditing ? 'friendly-main' : ''}
+        ref={friendlyMainRef}
+        onScroll={handleFileScroll}
+      >
+        {searchHighlightActive && highlightObjectKeys.length > 0 && (
+          <FcomMatchBar
+            label={`Match ${currentMatchIndex + 1} of ${highlightObjectKeys.length}`}
+            onPrev={handlePrevMatch}
+            onNext={handleNextMatch}
+          >
+            {matchObjectOptions.length > 0 && (
+              <label className="match-jump">
+                <span className="match-jump-label">Jump to</span>
+                <select
+                  value={highlightObjectKeys[currentMatchIndex] || ''}
+                  onChange={(e) => handleJumpToMatch(e.target.value)}
+                >
+                  {matchObjectOptions.map((option, index) => (
+                    <option key={option.key} value={option.key}>
+                      {index + 1}. {option.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            )}
+          </FcomMatchBar>
+        )}
+        {overrideObjectKeys.length > 0 && (
+          <FcomMatchBar
+            label={`Override ${overrideMatchIndex + 1} of ${overrideObjectKeys.length}`}
+            onPrev={handlePrevOverride}
+            onNext={handleNextOverride}
+          >
+            {overrideObjectOptions.length > 0 && (
+              <label className="match-jump">
+                <span className="match-jump-label">Jump to</span>
+                <select
+                  value={overrideObjectKeys[overrideMatchIndex] || ''}
+                  onChange={(e) => handleJumpToOverride(e.target.value)}
+                >
+                  {overrideObjectOptions.map((option, index) => (
+                    <option key={option.key} value={option.key}>
+                      {index + 1}. {option.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            )}
+          </FcomMatchBar>
+        )}
+        {friendlyObjects.length === 0 ? (
+          <div className="empty-state">No objects found.</div>
+        ) : (
+          friendlyObjects.map((obj: any, idx: number) => {
+            const objectKey = getObjectKey(obj, idx);
+            return (
+              <FcomObjectCard
+                key={obj?.['@objectName'] || idx}
+                registerObjectRowRef={registerObjectRowRef}
+                obj={obj}
+                idx={idx}
+                objectKey={objectKey}
+                matchPingKey={matchPingKey}
+                highlightObjectKeys={highlightObjectKeys}
+                searchHighlightActive={searchHighlightActive}
+                getOverrideFlags={getOverrideFlags}
+                getOverrideTargets={getOverrideTargets}
+                getProcessorTargets={getProcessorTargets}
+                getProcessorFieldSummary={getProcessorFieldSummary}
+                getOverrideValueMap={getOverrideValueMap}
+                getOverrideVersionInfo={getOverrideVersionInfo}
+                canConvertOverrideToV3={canConvertOverrideToV3}
+                convertOverrideToV3={convertOverrideToV3}
+                openAdvancedFlowForObject={openAdvancedFlowForObject}
+                getOverrideFileInfoForObject={getOverrideFileInfoForObject}
+                getOverrideMetaForObject={getOverrideMetaForObject}
+                getOverrideRuleLinkForObject={getOverrideRuleLinkForObject}
+                getEventOverrideFields={getEventOverrideFields}
+                panelEditState={panelEditState}
+                getPanelDirtyFields={getPanelDirtyFields}
+                getBaseEventFields={getBaseEventFields}
+                hasEditPermission={hasEditPermission}
+                showTestControls={showTestControls}
+                isTrapFileContext={isTrapFileContext}
+                openTrapComposerFromTest={openTrapComposerFromTest}
+                getObjectDescription={getObjectDescription}
+                isTestableObject={isTestableObject}
+                startEventEdit={startEventEdit}
+                openRemoveAllOverridesModal={openRemoveAllOverridesModal}
+                openAddFieldModal={openAddFieldModal}
+                builderTarget={builderTarget}
+                saveEventEdit={saveEventEdit}
+                requestCancelEventEdit={requestCancelEventEdit}
+                isFieldHighlighted={isFieldHighlighted}
+                renderFieldBadges={renderFieldBadges}
+                overrideTooltipHoverProps={overrideTooltipHoverProps}
+                openRemoveOverrideModal={openRemoveOverrideModal}
+                renderOverrideSummaryCard={renderOverrideSummaryCard}
+                isFieldDirty={isFieldDirty}
+                isFieldPendingRemoval={isFieldPendingRemoval}
+                isFieldNew={isFieldNew}
+                getStagedDirtyFields={getStagedDirtyFields}
+                isFieldStagedDirty={isFieldStagedDirty}
+                isFieldStagedRemoved={isFieldStagedRemoved}
+                openBuilderForField={openBuilderForField}
+                isFieldLockedByBuilder={isFieldLockedByBuilder}
+                getEffectiveEventValue={getEffectiveEventValue}
+                getEditableValue={getEditableValue}
+                panelDrafts={panelDrafts}
+                handleEventInputChange={handleEventInputChange}
+                renderSummary={renderSummary}
+                renderValue={renderValue}
+                getAdditionalEventFields={getAdditionalEventFields}
+                getEventFieldDescription={getEventFieldDescription}
+                formatEventFieldLabel={formatEventFieldLabel}
+                getBaseEventDisplay={getBaseEventDisplay}
+                renderTrapVariables={renderTrapVariables}
+              />
+            );
+          })
+        )}
+      </div>
+      {builderSidebar}
+    </div>
+  );
+
+  const rawView = (
+    <FcomRawPreview
+      searchHighlightActive={searchHighlightActive}
+      highlightQuery={highlightQuery}
+      rawMatchPositions={rawMatchPositions}
+      rawMatchIndex={rawMatchIndex}
+      handlePrevRawMatch={handlePrevRawMatch}
+      handleNextRawMatch={handleNextRawMatch}
+      rawPreviewText={rawPreviewText}
+      renderRawHighlightedText={renderRawHighlightedText}
+    />
+  );
+
+  return (
+    <ComFilePreview
+      selectedFile={selectedFile}
+      viewMode={viewMode}
+      emptyState={<div className="empty-state">Select a file on the left to view and edit.</div>}
+      friendlyView={friendlyView}
+      rawView={rawView}
+      loadingState={fileLoading ? <div>Loading preview…</div> : undefined}
+      showLoadingOverlay={Boolean(selectedFile && fileLoadStage)}
+      loadingOverlay={loadingOverlay}
+    />
   );
 }

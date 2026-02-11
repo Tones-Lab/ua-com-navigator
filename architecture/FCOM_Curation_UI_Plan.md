@@ -41,6 +41,7 @@
 3.  **Expert Mode:**
     *   Add a toggle to show a side-by-side view with the structured form and the raw JSON.
     *   The raw JSON editor should include syntax highlighting and **auto-formatting (pretty-printing)** for readability.
+    *   Friendly view is the default for every file open; raw view does not persist across files or sections.
 
 ---
 
