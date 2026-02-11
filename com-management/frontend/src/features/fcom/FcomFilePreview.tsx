@@ -2,6 +2,7 @@ import type { ReactNode, RefObject } from 'react';
 import ComFilePreview from '../../components/ComFilePreview';
 import FcomObjectCard from './FcomObjectCard';
 import FcomRawPreview from './FcomRawPreview';
+import EmptyState from '../../components/EmptyState';
 import FcomMatchBar from './FcomMatchBar';
 
 type FcomFilePreviewProps = {
@@ -308,7 +309,7 @@ export default function FcomFilePreview({
           </FcomMatchBar>
         )}
         {friendlyObjects.length === 0 ? (
-          <div className="empty-state">No objects found.</div>
+          <EmptyState>No objects found.</EmptyState>
         ) : (
           friendlyObjects.map((obj: any, idx: number) => {
             const objectKey = getObjectKey(obj, idx);
@@ -400,7 +401,7 @@ export default function FcomFilePreview({
     <ComFilePreview
       selectedFile={selectedFile}
       viewMode={viewMode}
-      emptyState={<div className="empty-state">Select a file on the left to view and edit.</div>}
+      emptyState={<EmptyState>Select a file on the left to view and edit.</EmptyState>}
       friendlyView={friendlyView}
       rawView={rawView}
       loadingState={fileLoading ? <div>Loading preview…</div> : undefined}

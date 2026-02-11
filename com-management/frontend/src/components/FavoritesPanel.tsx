@@ -1,3 +1,6 @@
+import EmptyState from './EmptyState';
+import InlineMessage from './InlineMessage';
+
 type FavoriteEntry = { type: 'file' | 'folder'; pathId: string; label: string; node?: string };
 
 type FavoritesPanelProps = {
@@ -33,10 +36,10 @@ export default function FavoritesPanel({
         <div className="favorites-scroll">
           <details open={!isCompact && favoritesFolders.length > 0}>
             <summary>Favorite Folders</summary>
-            {favoritesLoading && <div className="muted">Loading…</div>}
-            {favoritesError && <div className="error">{favoritesError}</div>}
+            {favoritesLoading && <InlineMessage tone="muted">Loading…</InlineMessage>}
+            {favoritesError && <InlineMessage tone="error">{favoritesError}</InlineMessage>}
             {favoritesFolders.length === 0 ? (
-              <div className="empty-state">No favorites yet.</div>
+              <EmptyState>No favorites yet.</EmptyState>
             ) : (
               <ul className="favorites-list">
                 {favoritesFolders.map((fav) => (
@@ -56,7 +59,7 @@ export default function FavoritesPanel({
           <details open={!isCompact && favoritesFiles.length > 0}>
             <summary>Favorite Files</summary>
             {favoritesFiles.length === 0 ? (
-              <div className="empty-state">No favorites yet.</div>
+              <EmptyState>No favorites yet.</EmptyState>
             ) : (
               <ul className="favorites-list">
                 {favoritesFiles.map((fav) => (

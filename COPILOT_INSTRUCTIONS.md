@@ -114,6 +114,7 @@ Hard rule: do not use one‑line commit messages for non‑trivial changes.
   - Backend: 3001
   - Frontend: 5173
 - **Hard rule (UI parity):** Object and Global Advanced Flow override modals must match feature/functionality and share core code. Differences must be minor and implemented as overrides on top of shared core logic, not separate forks.
+- **Design rule (shared UI):** All left-panel search and breadcrumb UI must use shared components (`SearchPanel` and `PathBreadcrumbs`). Do not introduce bespoke search/breadcrumb layouts.
 
 ## Why this exists
 

@@ -1,4 +1,9 @@
 import React from 'react';
+import EmptyState from '../../components/EmptyState';
+import InlineMessage from '../../components/InlineMessage';
+import PanelHeader from '../../components/PanelHeader';
+import SearchPanel from '../../components/SearchPanel';
+import PathBreadcrumbs from '../../components/PathBreadcrumbs';
 
 type MibBrowserPageProps = {
   mibPath: string;
@@ -47,54 +52,38 @@ export default function MibBrowserPage({
     <div className="split-layout">
       <div className="panel">
         <div className="panel-scroll">
-          <div className="panel-header">
-            <div className="panel-title-row">
-              <h2>MIB Browser</h2>
+          <PanelHeader
+            title="MIB Browser"
+            actions={
               <button type="button" className="ghost-button" onClick={() => loadMibPath(mibPath)}>
                 Refresh
               </button>
-            </div>
-            <div className="panel-section">
-              <div className="panel-section-title">Path</div>
-              <div className="breadcrumbs mib-breadcrumbs">
-                {buildBreadcrumbsFromPath(mibPath).map((crumb, index, items) => {
-                  const targetPath = crumb.node ? `/${crumb.node}` : '/';
-                  return (
-                    <button
-                      key={`${crumb.label}-${index}`}
-                      type="button"
-                      className="crumb"
-                      onClick={() => loadMibPath(targetPath)}
-                      disabled={index === items.length - 1}
-                    >
-                      {crumb.label}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-            <div className="panel-section">
-              <div className="panel-section-title">Search</div>
-              <form className="mib-search" onSubmit={handleMibSearchSubmit}>
-                <div className="mib-search-row">
-                  <input
-                    type="text"
-                    placeholder="Search MIBs and OIDs"
-                    value={mibSearch}
-                    onChange={(event) => setMibSearch(event.target.value)}
-                  />
-                  <button type="submit" className="search-button" disabled={!mibSearch.trim()}>
-                    Search
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-          {mibError && <div className="error">{mibError}</div>}
+            }
+          >
+            <PathBreadcrumbs
+              items={buildBreadcrumbsFromPath(mibPath).map((crumb) => ({
+                label: crumb.label,
+                value: crumb.node,
+              }))}
+              onSelect={(index) => {
+                const target = buildBreadcrumbsFromPath(mibPath)[index];
+                const targetPath = target?.node ? `/${target.node}` : '/';
+                loadMibPath(targetPath);
+              }}
+            />
+            <SearchPanel
+              placeholder="Search MIBs and OIDs"
+              query={mibSearch}
+              onQueryChange={setMibSearch}
+              onSubmit={handleMibSearchSubmit}
+              disableSearch={!mibSearch.trim()}
+            />
+          </PanelHeader>
+          {mibError && <InlineMessage tone="error">{mibError}</InlineMessage>}
           {mibLoading ? (
-            <div className="empty-state">Loading MIBs…</div>
+            <EmptyState>Loading MIBs…</EmptyState>
           ) : mibEntries.length === 0 ? (
-            <div className="empty-state">No MIB entries found.</div>
+            <EmptyState>No MIB entries found.</EmptyState>
           ) : (
             <ul className="browse-list">
               {mibEntries.map((entry) => {
@@ -133,13 +122,13 @@ export default function MibBrowserPage({
               <h2>MIB Details</h2>
             </div>
           </div>
-          {mibDetailsError && <div className="error">{mibDetailsError}</div>}
+          {mibDetailsError && <InlineMessage tone="error">{mibDetailsError}</InlineMessage>}
           {mibDetailsLoading ? (
-            <div className="empty-state">Loading details…</div>
+            <EmptyState>Loading details…</EmptyState>
           ) : selectedMibEntry && mibDetails ? (
             <div className="mib-details">{renderMibDetails(mibDetails)}</div>
           ) : (
-            <div className="empty-state">Select a MIB entry to view details.</div>
+            <EmptyState>Select a MIB entry to view details.</EmptyState>
           )}
         </div>
       </div>

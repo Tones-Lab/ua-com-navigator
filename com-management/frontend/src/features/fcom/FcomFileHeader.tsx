@@ -1,3 +1,4 @@
+import ActionRow from '../../components/ActionRow';
 import { FileTitleRow, ViewToggle } from '../../components/FileHeaderCommon';
 type FcomFileHeaderProps = {
   selectedFile: any | null;
@@ -148,7 +149,7 @@ export default function FcomFileHeader({
         </div>
       )}
       {overrideError && <div className="error">{overrideError}</div>}
-      <div className="action-row">
+      <ActionRow>
         {selectedFile ? (
           <>
             <ViewToggle viewMode={viewMode} onChange={setViewMode} />
@@ -158,7 +159,6 @@ export default function FcomFileHeader({
                 className="action-link"
                 onClick={onTestFile}
                 disabled={!hasEditPermission || fileTestLoading}
-                title={hasEditPermission ? '' : 'Read-only access'}
               >
                 {fileTestLoading
                   ? 'Testing…'
@@ -215,7 +215,7 @@ export default function FcomFileHeader({
         ) : (
           <span className="muted">Select a file on the left to view and edit.</span>
         )}
-      </div>
+      </ActionRow>
       {fileError && <div className="error">{fileError}</div>}
       {saveError && <div className="error">{saveError}</div>}
       {saveSuccess && <div className="success">{saveSuccess}</div>}

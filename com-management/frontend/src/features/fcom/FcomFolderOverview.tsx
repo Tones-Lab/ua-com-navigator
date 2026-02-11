@@ -1,4 +1,6 @@
 import type { ReactNode } from 'react';
+import ActionRow from '../../components/ActionRow';
+import PanelSection from '../../components/PanelSection';
 
 type FcomFolderOverviewProps = {
   selectedFolder: any | null;
@@ -47,8 +49,7 @@ export default function FcomFolderOverview({
   }
 
   return (
-    <div className="panel-section">
-      <div className="panel-section-title">Folder Overview</div>
+    <PanelSection title="Folder Overview">
       <div className="file-title">
         <strong>{selectedFolder.PathName || selectedFolder.PathID}</strong>
         {selectedFolder.PathID && (
@@ -56,7 +57,7 @@ export default function FcomFolderOverview({
         )}
       </div>
       {showTestControls && (
-        <div className="action-row">
+        <ActionRow>
           <button
             type="button"
             className="action-link"
@@ -66,7 +67,7 @@ export default function FcomFolderOverview({
           >
             {isVendorTesting ? 'Testing…' : 'Test Vendor SNMP Traps (All Files)'}
           </button>
-        </div>
+        </ActionRow>
       )}
       {folderLoading && <div className="muted">Loading overview…</div>}
       {!folderLoading && folderOverview && (
@@ -205,6 +206,6 @@ export default function FcomFolderOverview({
           )}
         </div>
       )}
-    </div>
+    </PanelSection>
   );
 }

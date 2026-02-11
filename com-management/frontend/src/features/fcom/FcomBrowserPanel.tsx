@@ -1,6 +1,11 @@
 import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
+import EmptyState from '../../components/EmptyState';
 import FavoritesPanel from '../../components/FavoritesPanel';
+import InlineMessage from '../../components/InlineMessage';
+import PanelHeader from '../../components/PanelHeader';
+import SearchPanel from '../../components/SearchPanel';
+import PathBreadcrumbs from '../../components/PathBreadcrumbs';
 
 type FcomBrowserPanelProps = {
   hasEditPermission: boolean;
@@ -78,9 +83,9 @@ export default function FcomBrowserPanel({
   return (
     <div className="panel">
       <div className="panel-scroll">
-        <div className="panel-header">
-          <div className="panel-title-row">
-            <h2>File Browser</h2>
+        <PanelHeader
+          title="File Browser"
+          actions={
             <button
               type="button"
               className="info-button"
@@ -90,74 +95,58 @@ export default function FcomBrowserPanel({
             >
               ?
             </button>
-          </div>
-          {!hasEditPermission && (
-            <div className="panel-flag-row">
+          }
+          flag={
+            !hasEditPermission ? (
               <span className="read-only-flag" title="You do not have permission to edit rules.">
                 Read-only access
               </span>
-            </div>
-          )}
-          <div className="breadcrumbs">
-            {breadcrumbs.map((crumb, index) => (
-              <button
-                key={`${crumb.label}-${index}`}
-                type="button"
-                className="crumb"
-                onClick={() => handleCrumbClick(index)}
-                disabled={index === breadcrumbs.length - 1}
-              >
-                {crumb.label}
-              </button>
-            ))}
-          </div>
-          <div className="panel-section panel-section-search">
-            <div className="panel-section-title">Search</div>
-            <form className="global-search" onSubmit={handleSearchSubmit}>
-              <div className="global-search-row">
-                <input
-                  type="text"
-                  placeholder="Search names + contents"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-                <select
-                  value={searchScope}
-                  onChange={(e) => setSearchScope(e.target.value as 'all' | 'name' | 'content')}
+            ) : null
+          }
+        >
+          <PathBreadcrumbs
+            items={breadcrumbs.map((crumb) => ({ label: crumb.label, value: crumb.node }))}
+            onSelect={handleCrumbClick}
+          />
+          <SearchPanel
+            placeholder="Search names + contents"
+            query={searchQuery}
+            onQueryChange={setSearchQuery}
+            onSubmit={handleSearchSubmit}
+            scopes={[
+              { value: 'all', label: 'All' },
+              { value: 'name', label: 'Names' },
+              { value: 'content', label: 'Content' },
+            ]}
+            scopeValue={searchScope}
+            onScopeChange={(value) => setSearchScope(value as 'all' | 'name' | 'content')}
+            isLoading={searchLoading}
+            helperContent={
+              <>
+                <span>
+                  Scope: {searchScope === 'all' ? 'All' : searchScope === 'name' ? 'Names' : 'Content'}
+                </span>
+                {searchQuery.trim() && (
+                  <span className="search-helper-query">Query: “{searchQuery.trim()}”</span>
+                )}
+              </>
+            }
+            actions={
+              <>
+                <button
+                  type="button"
+                  className="link-button"
+                  onClick={handleClearSearch}
+                  disabled={!searchQuery && searchResults.length === 0}
                 >
-                  <option value="all">All</option>
-                  <option value="name">Names</option>
-                  <option value="content">Content</option>
-                </select>
-                <button type="submit" className="search-button" disabled={searchLoading}>
-                  {searchLoading ? 'Searching…' : 'Search'}
+                  Clear
                 </button>
-              </div>
-              <div className="search-meta-row">
-                <div className="search-helper">
-                  <span>
-                    Scope: {searchScope === 'all' ? 'All' : searchScope === 'name' ? 'Names' : 'Content'}
-                  </span>
-                  {searchQuery.trim() && (
-                    <span className="search-helper-query">Query: “{searchQuery.trim()}”</span>
-                  )}
-                </div>
-                <div className="search-actions-row">
-                  <button
-                    type="button"
-                    className="link-button"
-                    onClick={handleClearSearch}
-                    disabled={!searchQuery && searchResults.length === 0}
-                  >
-                    Clear
-                  </button>
-                  <button type="button" className="link-button" onClick={handleResetNavigation}>
-                    Reset
-                  </button>
-                </div>
-              </div>
-            </form>
-          </div>
+                <button type="button" className="link-button" onClick={handleResetNavigation}>
+                  Reset
+                </button>
+              </>
+            }
+          />
           <FavoritesPanel
             favoritesFolders={favoritesFolders}
             favoritesFiles={favoritesFiles}
@@ -167,7 +156,7 @@ export default function FcomBrowserPanel({
             onOpenFolder={(fav) => handleOpenFolder({ PathID: fav.pathId, PathName: fav.label })}
             onOpenFile={(fav) => openFileFromUrl(fav.pathId, fav.node)}
           />
-        </div>
+        </PanelHeader>
         {searchQuery.trim() && (
           <details className="search-results" open={!isCompact}>
             <summary className="search-results-summary">
@@ -200,9 +189,9 @@ export default function FcomBrowserPanel({
               </div>
             </summary>
             <div className="search-results-body">
-              {searchError && <div className="error">{searchError}</div>}
+              {searchError && <InlineMessage tone="error">{searchError}</InlineMessage>}
               {!searchLoading && !searchError && searchResults.length === 0 && (
-                <div className="empty-state">No matches found.</div>
+                <EmptyState>No matches found.</EmptyState>
               )}
               {!searchLoading && !searchError && searchResults.length > 0 && (
                 <ul className="search-results-list">
@@ -230,13 +219,13 @@ export default function FcomBrowserPanel({
             </div>
           </details>
         )}
-        {browseError && <div className="error">{browseError}</div>}
+        {browseError && <InlineMessage tone="error">{browseError}</InlineMessage>}
         {browseLoading ? (
           <div className="browse-loading">Refreshing folders…</div>
         ) : (
           <div className="browse-results">
             {entries.length === 0 ? (
-              <div className="empty-state">No files or folders found.</div>
+              <EmptyState>No files or folders found.</EmptyState>
             ) : (
               <ul className="browse-list">
                 {entries.map((entry) => {

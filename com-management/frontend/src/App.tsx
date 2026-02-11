@@ -12,6 +12,11 @@ import FcomFilePreview from './features/fcom/FcomFilePreview';
 import FcomBuilderSidebar from './features/fcom/FcomBuilderSidebar';
 import FcomRawPreview from './features/fcom/FcomRawPreview';
 import ComFilePreview from './components/ComFilePreview';
+import SearchPanel from './components/SearchPanel';
+import ActionRow from './components/ActionRow';
+import Modal from './components/Modal';
+import PanelHeader from './components/PanelHeader';
+import PathBreadcrumbs from './components/PathBreadcrumbs';
 import { FileTitleRow, ViewToggle } from './components/FileHeaderCommon';
 import './App.css';
 
@@ -911,6 +916,7 @@ export default function App() {
   const [microserviceStatus, setMicroserviceStatus] = useState<any | null>(null);
   const [microserviceStatusLoading, setMicroserviceStatusLoading] = useState(false);
   const [microserviceStatusError, setMicroserviceStatusError] = useState<string | null>(null);
+  const [microserviceLastRefreshed, setMicroserviceLastRefreshed] = useState<string | null>(null);
   const [eventsSchemaFields, setEventsSchemaFields] = useState<string[]>([]);
   const [overrideInfo, setOverrideInfo] = useState<any | null>(null);
   const [overrideLoading, setOverrideLoading] = useState(false);
@@ -3016,6 +3022,13 @@ export default function App() {
           : microserviceIndicatorState === 'ok'
             ? 'All required microservices running'
             : 'Microservice issues detected';
+    const microserviceStaleMs = 2 * 60 * 1000;
+    const microserviceLastRefreshedAt = microserviceLastRefreshed
+      ? new Date(microserviceLastRefreshed).getTime()
+      : null;
+    const microserviceIsStale =
+      microserviceLastRefreshedAt !== null &&
+      Date.now() - microserviceLastRefreshedAt > microserviceStaleMs;
   const getServiceTone = (entry: any): 'ok' | 'warn' | 'error' => {
     if (!entry?.installed) {
       return 'error';
@@ -3062,8 +3075,8 @@ export default function App() {
     try {
       const resp = await api.getMicroserviceStatus(options);
       setMicroserviceStatus(resp.data);
+      setMicroserviceLastRefreshed(new Date().toISOString());
     } catch (err: any) {
-      setMicroserviceStatus(null);
       setMicroserviceStatusError(
         err?.response?.data?.error || 'Failed to load microservice status',
       );
@@ -5014,10 +5027,13 @@ export default function App() {
       if (names.length > 0) {
         try {
           const translateResp = await api.translateMibNames(resolvedModule || null, names);
-          const entries = Array.isArray(translateResp.data?.entries)
+          const entries: Array<{ name?: string; fullOid?: string }> = Array.isArray(
+            translateResp.data?.entries,
+          )
             ? translateResp.data.entries
             : [];
-          const lowered = entries.reduce<Record<string, string>>((acc, entry) => {
+          const lowered = entries.reduce<Record<string, string>>(
+            (acc: Record<string, string>, entry: { name?: string; fullOid?: string }) => {
             if (entry?.name && entry?.fullOid) {
               acc[String(entry.name).toLowerCase()] = String(entry.fullOid);
             }
@@ -12010,7 +12026,7 @@ export default function App() {
       return null;
     }
   }, [activeApp, rawPreviewText]);
-  const pcomObjectEntries = useMemo(() => {
+  const pcomObjectEntries = useMemo<Array<{ key: string; name: string; obj: any }>>(() => {
     const objects = Array.isArray(pcomParsed?.objects) ? pcomParsed.objects : [];
     return objects.map((obj: any, index: number) => {
       const name = getPcomObjectName(obj);
@@ -12025,7 +12041,9 @@ export default function App() {
     if (pcomObjectEntries.length === 0) {
       return null;
     }
-    const match = pcomObjectEntries.find((entry) => entry.key === pcomSelectedObjectKey);
+    const match = pcomObjectEntries.find(
+      (entry: { key: string }) => entry.key === pcomSelectedObjectKey,
+    );
     return match || pcomObjectEntries[0];
   }, [pcomObjectEntries, pcomSelectedObjectKey]);
   useEffect(() => {
@@ -12038,7 +12056,12 @@ export default function App() {
       }
       return;
     }
-    if (!pcomSelectedObjectKey || !pcomObjectEntries.some((entry) => entry.key === pcomSelectedObjectKey)) {
+    if (
+      !pcomSelectedObjectKey ||
+      !pcomObjectEntries.some(
+        (entry: { key: string }) => entry.key === pcomSelectedObjectKey,
+      )
+    ) {
       setPcomSelectedObjectKey(pcomObjectEntries[0].key);
     }
   }, [activeApp, pcomObjectEntries, pcomSelectedObjectKey]);
@@ -12209,8 +12232,7 @@ export default function App() {
   );
 
   const microserviceModal = redeployModalOpen ? (
-    <div className="modal-overlay" role="dialog" aria-modal="true">
-      <div className="modal modal-wide">
+    <Modal className="modal-wide" ariaLabel="Microservice Status">
         <h3>Microservice Status</h3>
         <p>
           Trap processing requires the chain below to be installed and running:
@@ -12229,11 +12251,22 @@ export default function App() {
         {microserviceStatusError && (
           <div className="builder-hint builder-hint-warning">{microserviceStatusError}</div>
         )}
-        {redeployError && <div className="error-message">{redeployError}</div>}
-        {microserviceActionLabel && (
-          <div className="microservice-action-banner">{microserviceActionLabel}</div>
+        {microserviceIsStale && (
+          <div className="builder-hint builder-hint-warning">
+            Status may be stale. Last refresh was {formatTime(microserviceLastRefreshed)}.
+          </div>
         )}
-        {microserviceStatusLoading ? (
+        {redeployError && <div className="error-message">{redeployError}</div>}
+        <div className="microservice-action-banner">
+          {microserviceStatusLoading
+            ? microserviceLastRefreshed
+              ? `Refreshing... Last refreshed at ${formatTime(microserviceLastRefreshed)}`
+              : 'Refreshing...'
+            : microserviceLastRefreshed
+              ? `Last refreshed at ${formatTime(microserviceLastRefreshed)}`
+              : 'Status not refreshed yet.'}
+        </div>
+        {requiredMicroservices.length === 0 && microserviceStatusLoading ? (
           <div className="microservice-loading">Loading status...</div>
         ) : (
           <div className="microservice-chain">
@@ -12255,8 +12288,14 @@ export default function App() {
                   <div
                     className={`microservice-card microservice-card-${tone}${
                       isWorking ? ' microservice-card-working' : ''
-                    }`}
+                    }${microserviceStatusLoading ? ' microservice-card-refreshing' : ''}`}
                   >
+                    {microserviceStatusLoading && (
+                      <div className="microservice-card-overlay">
+                        <span className="microservice-spinner" aria-hidden="true" />
+                        Refreshing...
+                      </div>
+                    )}
                     <div className="microservice-card-header">
                       <span
                         className={`microservice-dot microservice-dot-${tone}`}
@@ -12344,8 +12383,7 @@ export default function App() {
             </button>
           )}
         </div>
-      </div>
-    </div>
+      </Modal>
   ) : null;
 
   const comBrowserPanelProps = {
@@ -12617,8 +12655,7 @@ export default function App() {
                           renderRawHighlightedText={renderRawHighlightedText}
                         />
                         {showReviewModal && (
-                          <div className="modal-overlay" role="dialog" aria-modal="true">
-                            <div className="modal modal-wide">
+                          <Modal className="modal-wide" ariaLabel="Review staged changes">
                               {reviewStep === 'review' ? (
                                 <>
                                   <div className="staged-review-header">
@@ -12971,8 +13008,7 @@ export default function App() {
                                   </div>
                                 </>
                               )}
-                            </div>
-                          </div>
+                          </Modal>
                         )}
                         {showBuilderHelpModal && (
                           <div className="modal-overlay" role="dialog" aria-modal="true">
@@ -14426,7 +14462,7 @@ export default function App() {
                               : null
                           }
                         />
-                        <div className="action-row">
+                        <ActionRow>
                           <ViewToggle viewMode={viewMode} onChange={setViewMode} />
                           <button
                             type="button"
@@ -14436,7 +14472,7 @@ export default function App() {
                           >
                             Create PCOM (Stub)
                           </button>
-                        </div>
+                        </ActionRow>
                         <ComFilePreview
                           selectedFile={selectedFile}
                           viewMode={viewMode}
@@ -14676,10 +14712,7 @@ export default function App() {
               ) : activeApp === 'legacy' ? (
                 <div className="panel">
                   <div className="panel-scroll">
-                    <div className="panel-header">
-                      <div className="panel-title-row">
-                        <h2>Legacy Conversion</h2>
-                      </div>
+                    <PanelHeader title="Legacy Conversion">
                       <div className="panel-section">
                         <div className="panel-section-title">Purpose</div>
                         <div className="muted">
@@ -14698,7 +14731,7 @@ export default function App() {
                         <div className="panel-section-title">Status</div>
                         <div className="empty-state">Stub only (upload + conversion coming soon).</div>
                       </div>
-                    </div>
+                    </PanelHeader>
                   </div>
                 </div>
               ) : (
@@ -14716,68 +14749,54 @@ export default function App() {
                             Refresh
                           </button>
                         </div>
-                        <div className="panel-section">
-                          <div className="panel-section-title">Path</div>
-                          <div className="breadcrumbs mib-breadcrumbs">
-                            {buildBreadcrumbsFromPath(mibPath).map((crumb, index, items) => {
-                              const targetPath = crumb.node ? `/${crumb.node}` : '/';
-                              return (
-                                <button
-                                  key={`${crumb.label}-${index}`}
-                                  type="button"
-                                  className="crumb"
-                                  onClick={() => loadMibPath(targetPath)}
-                                  disabled={index === items.length - 1}
-                                >
-                                  {crumb.label}
-                                </button>
-                              );
-                            })}
-                          </div>
-                        </div>
-                        <div className="panel-section">
-                          <div className="panel-section-title">Search</div>
-                          <form className="mib-search" onSubmit={handleMibSearchSubmit}>
-                            <div className="mib-search-row">
-                              <input
-                                type="text"
-                                placeholder="Search MIBs"
-                                value={mibSearch}
-                                onChange={(e) => setMibSearch(e.target.value)}
-                              />
-                              <select
-                                value={mibSearchScope}
-                                onChange={(e) =>
-                                  setMibSearchScope(e.target.value as 'folder' | 'all')
-                                }
-                              >
-                                <option value="folder">Current folder</option>
-                                <option value="all">All folders</option>
-                              </select>
-                              <button type="submit" className="search-button">
-                                Search
-                              </button>
-                              <button
-                                type="button"
-                                className="ghost-button"
-                                onClick={handleMibClearSearch}
-                                disabled={!mibSearch}
-                              >
-                                Clear
-                              </button>
-                            </div>
-                            {mibSearchMode === 'search' && mibSearch.trim() && (
-                              <div className="muted">
-                                Searching all MIBs for “{mibSearch.trim()}”.
-                              </div>
-                            )}
-                            {mibSearchMode !== 'search' && mibSearch.trim() && (
-                              <div className="muted">
-                                Filtering current folder for “{mibSearch.trim()}”.
-                              </div>
-                            )}
-                          </form>
-                        </div>
+                        <PathBreadcrumbs
+                          items={buildBreadcrumbsFromPath(mibPath).map((crumb) => ({
+                            label: crumb.label,
+                            value: crumb.node,
+                          }))}
+                          onSelect={(index) => {
+                            const target = buildBreadcrumbsFromPath(mibPath)[index];
+                            const targetPath = target?.node ? `/${target.node}` : '/';
+                            loadMibPath(targetPath);
+                          }}
+                        />
+                        <SearchPanel
+                          placeholder="Search MIBs"
+                          query={mibSearch}
+                          onQueryChange={setMibSearch}
+                          onSubmit={handleMibSearchSubmit}
+                          scopes={[
+                            { value: 'folder', label: 'Folder' },
+                            { value: 'all', label: 'All' },
+                          ]}
+                          scopeValue={mibSearchScope}
+                          onScopeChange={(value) => setMibSearchScope(value as 'folder' | 'all')}
+                          isLoading={mibLoading}
+                          helperContent={
+                            <>
+                              <span>
+                                Scope: {mibSearchScope === 'all' ? 'All' : 'Folder'}
+                              </span>
+                              {mibSearch.trim() && (
+                                <span className="search-helper-query">
+                                  {mibSearchMode === 'search'
+                                    ? `Searching all MIBs for “${mibSearch.trim()}”.`
+                                    : `Filtering current folder for “${mibSearch.trim()}”.`}
+                                </span>
+                              )}
+                            </>
+                          }
+                          actions={
+                            <button
+                              type="button"
+                              className="link-button"
+                              onClick={handleMibClearSearch}
+                              disabled={!mibSearch}
+                            >
+                              Clear
+                            </button>
+                          }
+                        />
                       </div>
                       {mibError && <div className="error">{mibError}</div>}
                       {mibLoading ? (
