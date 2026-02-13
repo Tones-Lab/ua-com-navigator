@@ -1,7 +1,12 @@
 import EmptyState from './EmptyState';
 import InlineMessage from './InlineMessage';
 
-type FavoriteEntry = { type: 'file' | 'folder'; pathId: string; label: string; node?: string };
+export type FavoriteEntry = {
+  type: 'file' | 'folder';
+  pathId: string;
+  label: string;
+  node?: string;
+};
 
 type FavoritesPanelProps = {
   favoritesFolders: FavoriteEntry[];

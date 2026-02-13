@@ -21,6 +21,7 @@ type FcomObjectCardProps = {
   };
   canConvertOverrideToV3: (objectName: string) => boolean;
   convertOverrideToV3: (objectName: string) => void;
+  hasPendingOverrideConversion: (objectName?: string | null) => boolean;
   openAdvancedFlowForObject: (objectName: string) => void;
   getOverrideFileInfoForObject: (objectName?: string | null) => any;
   getOverrideMetaForObject: (objectName?: string | null) => any;
@@ -100,6 +101,7 @@ export default function FcomObjectCard({
   getOverrideVersionInfo,
   canConvertOverrideToV3,
   convertOverrideToV3,
+  hasPendingOverrideConversion,
   openAdvancedFlowForObject,
   getOverrideFileInfoForObject,
   getOverrideMetaForObject,
@@ -180,6 +182,7 @@ export default function FcomObjectCard({
   const processorTargets = getProcessorTargets(obj);
   const overrideValueMap = getOverrideValueMap(obj);
   const overrideVersionInfo = getOverrideVersionInfo(obj?.['@objectName']);
+  const hasPendingConversion = hasPendingOverrideConversion(obj?.['@objectName']);
   const overrideFileInfo = getOverrideFileInfoForObject(obj?.['@objectName']);
   const overrideMeta = getOverrideMetaForObject(obj?.['@objectName']);
   const overrideRuleLink = getOverrideRuleLinkForObject(obj?.['@objectName']);
@@ -201,8 +204,10 @@ export default function FcomObjectCard({
     : [];
   const stagedDirtyFields = panelEditState[eventPanelKey] ? [] : getStagedDirtyFields(obj);
   const unsavedCount = panelEditState[eventPanelKey]
-    ? panelDirtyFields.length
+    ? panelDirtyFields.length + (hasPendingConversion ? 1 : 0)
     : stagedDirtyFields.length;
+  const canSave = panelDirtyFields.length > 0 || hasPendingConversion;
+  const saveLabel = hasPendingConversion ? 'Save Conversion' : 'Save';
   const baseFields = getBaseEventFields(obj, eventPanelKey);
   const additionalFields = getAdditionalEventFields(obj, eventPanelKey);
   const eventFields = [...baseFields, ...additionalFields];
@@ -642,8 +647,6 @@ export default function FcomObjectCard({
                   type="button"
                   className="override-remove-all-button"
                   onClick={() => openRemoveAllOverridesModal(obj, eventPanelKey)}
-                  disabled={isOverrideEditLocked}
-                  title={isOverrideEditLocked ? overrideEditLockReason : ''}
                 >
                   Remove All Overrides
                 </button>
@@ -652,14 +655,6 @@ export default function FcomObjectCard({
                 type="button"
                 className="panel-edit-button"
                 onClick={() => openAddFieldModal(eventPanelKey, obj)}
-                disabled={builderTarget?.panelKey === eventPanelKey || isOverrideEditLocked}
-                title={
-                  builderTarget?.panelKey === eventPanelKey
-                    ? 'Finish or cancel the builder to add fields'
-                    : isOverrideEditLocked
-                      ? overrideEditLockReason
-                      : ''
-                }
               >
                 Add Field
               </button>
@@ -667,16 +662,14 @@ export default function FcomObjectCard({
                 type="button"
                 className="panel-edit-button"
                 onClick={() => saveEventEdit(obj, eventPanelKey)}
-                disabled={panelDirtyFields.length === 0 || isOverrideEditLocked}
+                disabled={!canSave}
                 title={
-                  panelDirtyFields.length === 0
+                  !canSave
                     ? 'No changes to save'
-                    : isOverrideEditLocked
-                      ? overrideEditLockReason
-                      : ''
+                    : ''
                 }
               >
-                Save
+                {saveLabel}
               </button>
               <button
                 type="button"

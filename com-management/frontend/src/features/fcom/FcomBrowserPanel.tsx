@@ -1,11 +1,8 @@
-import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
+import BrowsePanelHeader from '../../components/BrowsePanelHeader';
 import EmptyState from '../../components/EmptyState';
-import FavoritesPanel from '../../components/FavoritesPanel';
 import InlineMessage from '../../components/InlineMessage';
-import PanelHeader from '../../components/PanelHeader';
-import SearchPanel from '../../components/SearchPanel';
-import PathBreadcrumbs from '../../components/PathBreadcrumbs';
+import useCompactPanel from '../../components/useCompactPanel';
 
 type FcomBrowserPanelProps = {
   hasEditPermission: boolean;
@@ -66,24 +63,12 @@ export default function FcomBrowserPanel({
   isFolder,
   handleOpenFile,
 }: FcomBrowserPanelProps) {
-  const [isCompact, setIsCompact] = useState(false);
-
-  useEffect(() => {
-    const media = window.matchMedia('(max-width: 1200px)');
-    const update = () => setIsCompact(media.matches);
-    update();
-    if (typeof media.addEventListener === 'function') {
-      media.addEventListener('change', update);
-      return () => media.removeEventListener('change', update);
-    }
-    media.addListener(update);
-    return () => media.removeListener(update);
-  }, []);
+  const isCompact = useCompactPanel();
 
   return (
     <div className="panel">
       <div className="panel-scroll">
-        <PanelHeader
+        <BrowsePanelHeader
           title="File Browser"
           actions={
             <button
@@ -103,25 +88,22 @@ export default function FcomBrowserPanel({
               </span>
             ) : null
           }
-        >
-          <PathBreadcrumbs
-            items={breadcrumbs.map((crumb) => ({ label: crumb.label, value: crumb.node }))}
-            onSelect={handleCrumbClick}
-          />
-          <SearchPanel
-            placeholder="Search names + contents"
-            query={searchQuery}
-            onQueryChange={setSearchQuery}
-            onSubmit={handleSearchSubmit}
-            scopes={[
+          breadcrumbs={breadcrumbs.map((crumb) => ({ label: crumb.label, value: crumb.node }))}
+          onCrumbSelect={handleCrumbClick}
+          search={{
+            placeholder: 'Search names + contents',
+            query: searchQuery,
+            onQueryChange: setSearchQuery,
+            onSubmit: handleSearchSubmit,
+            scopes: [
               { value: 'all', label: 'All' },
               { value: 'name', label: 'Names' },
               { value: 'content', label: 'Content' },
-            ]}
-            scopeValue={searchScope}
-            onScopeChange={(value) => setSearchScope(value as 'all' | 'name' | 'content')}
-            isLoading={searchLoading}
-            helperContent={
+            ],
+            scopeValue: searchScope,
+            onScopeChange: (value) => setSearchScope(value as 'all' | 'name' | 'content'),
+            isLoading: searchLoading,
+            helperContent: (
               <>
                 <span>
                   Scope: {searchScope === 'all' ? 'All' : searchScope === 'name' ? 'Names' : 'Content'}
@@ -130,8 +112,8 @@ export default function FcomBrowserPanel({
                   <span className="search-helper-query">Query: “{searchQuery.trim()}”</span>
                 )}
               </>
-            }
-            actions={
+            ),
+            actions: (
               <>
                 <button
                   type="button"
@@ -145,18 +127,18 @@ export default function FcomBrowserPanel({
                   Reset
                 </button>
               </>
-            }
-          />
-          <FavoritesPanel
-            favoritesFolders={favoritesFolders}
-            favoritesFiles={favoritesFiles}
-            favoritesLoading={favoritesLoading}
-            favoritesError={favoritesError}
-            isCompact={isCompact}
-            onOpenFolder={(fav) => handleOpenFolder({ PathID: fav.pathId, PathName: fav.label })}
-            onOpenFile={(fav) => openFileFromUrl(fav.pathId, fav.node)}
-          />
-        </PanelHeader>
+            ),
+          }}
+          favorites={{
+            folders: favoritesFolders,
+            files: favoritesFiles,
+            loading: favoritesLoading,
+            error: favoritesError,
+            onOpenFolder: (fav) => handleOpenFolder({ PathID: fav.pathId, PathName: fav.label }),
+            onOpenFile: (fav) => openFileFromUrl(fav.pathId, fav.node),
+          }}
+          isCompact={isCompact}
+        />
         {searchQuery.trim() && (
           <details className="search-results" open={!isCompact}>
             <summary className="search-results-summary">

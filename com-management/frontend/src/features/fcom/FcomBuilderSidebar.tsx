@@ -4,6 +4,12 @@ type FcomBuilderSidebarProps = {
   isAnyPanelEditing: boolean;
   builderOpen: boolean;
   builderTarget: { panelKey: string; field: string } | null;
+  builderOverrideVersion: {
+    mode: 'none' | 'v2' | 'v3' | 'mixed';
+    label: string;
+    detail: string;
+  } | null;
+    builderOverrideVersion,
   builderDirty: boolean;
   canUndoBuilder: boolean;
   canRedoBuilder: boolean;
@@ -13,6 +19,8 @@ type FcomBuilderSidebarProps = {
   requestCancelBuilder: () => void;
   setBuilderOpen: Dispatch<SetStateAction<boolean>>;
   builderFocus: 'literal' | 'eval' | 'processor' | null;
+  builderPatchMode: boolean;
+  builderPatchPreview: any | null;
   isBuilderTargetReady: boolean;
   builderTypeLocked: 'literal' | 'eval' | 'processor' | null;
   setBuilderSwitchModal: Dispatch<
@@ -131,6 +139,7 @@ export default function FcomBuilderSidebar({
   isAnyPanelEditing,
   builderOpen,
   builderTarget,
+  builderOverrideVersion,
   builderDirty,
   canUndoBuilder,
   canRedoBuilder,
@@ -140,6 +149,8 @@ export default function FcomBuilderSidebar({
   requestCancelBuilder,
   setBuilderOpen,
   builderFocus,
+  builderPatchMode,
+  builderPatchPreview,
   isBuilderTargetReady,
   builderTypeLocked,
   setBuilderSwitchModal,
@@ -205,6 +216,7 @@ export default function FcomBuilderSidebar({
     return null;
   }
 
+
   return (
     <aside className={`builder-sidebar${builderOpen ? '' : ' builder-sidebar-collapsed'}`}>
       <div className="builder-header">
@@ -214,6 +226,16 @@ export default function FcomBuilderSidebar({
             {builderTarget ? (
               <div className="builder-target-row">
                 <span className="builder-target-badge">Editing: {builderTarget.field}</span>
+                {(builderOverrideVersion?.mode === 'v2' ||
+                  builderOverrideVersion?.mode === 'mixed') && (
+                  <span
+                    className="pill override-pill"
+                    title="We recommend moving to v3. Click Convert from the main edit panel."
+                    aria-label="V2 override warning"
+                  >
+                    !
+                  </span>
+                )}
                 {builderDirty && <span className="pill unsaved-pill">Unsaved</span>}
               </div>
             ) : (
@@ -271,11 +293,6 @@ export default function FcomBuilderSidebar({
             )}
             {isBuilderTargetReady && !builderFocus && (
               <div className="builder-hint">Choose Eval or Processor to continue.</div>
-            )}
-            {isBuilderTargetReady && builderTarget && (
-              <div className="builder-lock-note">
-                Other fields are locked while this builder is active.
-              </div>
             )}
             <div className="builder-focus-row">
               <button
@@ -709,7 +726,9 @@ export default function FcomBuilderSidebar({
           {builderFocus === 'processor' && (
             <div className="builder-section processor-builder">
               <div className="builder-section-title-row">
-                <div className="builder-section-title">Processor Builder</div>
+                <div className="builder-section-title">
+                  {builderPatchMode ? 'V3 Patch Builder' : 'Processor Builder'}
+                </div>
                 <button
                   type="button"
                   className="builder-link"
@@ -729,6 +748,11 @@ export default function FcomBuilderSidebar({
               )}
               {isBuilderTargetReady && (
                 <>
+                  {builderPatchMode && (
+                    <div className="builder-hint">
+                      Editing a v3 patch. The value below is the processor payload.
+                    </div>
+                  )}
                   <div className="builder-steps">
                     {[
                       { key: 'select', label: 'Select' },
@@ -737,7 +761,9 @@ export default function FcomBuilderSidebar({
                     ].map((stepItem, index) => {
                       const isActive = processorStep === stepItem.key;
                       const isConfigureReady = Boolean(processorType);
-                      const isReviewReady = Boolean(processorPayload);
+                      const isReviewReady = builderPatchMode
+                        ? Boolean(builderPatchPreview)
+                        : Boolean(processorPayload);
                       const isEnabled =
                         stepItem.key === 'select' ||
                         (stepItem.key === 'configure' && isConfigureReady) ||
@@ -787,7 +813,9 @@ export default function FcomBuilderSidebar({
                             <button
                               type="button"
                               className={
-                                isSelected ? 'builder-card builder-card-selected' : 'builder-card'
+                                isSelected
+                                  ? 'builder-card builder-card-selected'
+                                  : 'builder-card'
                               }
                               onClick={() => handleBuilderSelect(item, isEnabled)}
                               disabled={!isEnabled}
@@ -1177,7 +1205,9 @@ export default function FcomBuilderSidebar({
                     <div className="processor-review">
                       <div className="builder-preview">
                         <div className="builder-preview-header">
-                          <div className="builder-preview-label">Preview</div>
+                          <div className="builder-preview-label">
+                            {builderPatchMode ? 'Patch Preview' : 'Preview'}
+                          </div>
                           <button
                             type="button"
                             className="builder-link"
@@ -1186,14 +1216,20 @@ export default function FcomBuilderSidebar({
                             {showProcessorJson ? 'Hide JSON' : 'Show JSON'}
                           </button>
                         </div>
-                        <div className="builder-preview-lines">
-                          {(getProcessorSummaryLines(processorPayload) || []).map((line, idx) => (
-                            <span key={`${line}-${idx}`}>{line}</span>
-                          ))}
-                        </div>
+                        {!builderPatchMode && (
+                          <div className="builder-preview-lines">
+                            {(getProcessorSummaryLines(processorPayload) || []).map((line, idx) => (
+                              <span key={`${line}-${idx}`}>{line}</span>
+                            ))}
+                          </div>
+                        )}
                         {showProcessorJson && (
                           <pre className="code-block">
-                            {JSON.stringify(processorPayload, null, 2) || '—'}
+                            {JSON.stringify(
+                              builderPatchMode ? builderPatchPreview : processorPayload,
+                              null,
+                              2,
+                            ) || '—'}
                           </pre>
                         )}
                       </div>

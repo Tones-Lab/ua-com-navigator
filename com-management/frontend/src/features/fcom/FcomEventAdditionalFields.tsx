@@ -162,13 +162,11 @@ export default function FcomEventAdditionalFields({
                   type="button"
                   className="builder-link builder-link-iconic"
                   onClick={() => openBuilderForField(obj, eventPanelKey, field)}
-                  disabled={isFieldLockedByBuilder(eventPanelKey, field) || isOverrideEditLocked}
+                  disabled={isFieldLockedByBuilder(eventPanelKey, field)}
                   title={
-                    isOverrideEditLocked
-                      ? overrideEditLockReason
-                      : isFieldLockedByBuilder(eventPanelKey, field)
-                        ? 'Finish or cancel the builder to edit other fields'
-                        : ''
+                    isFieldLockedByBuilder(eventPanelKey, field)
+                      ? 'Finish or cancel the builder to edit other fields'
+                      : ''
                   }
                   aria-label="Open Builder"
                 >

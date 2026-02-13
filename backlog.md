@@ -1,6 +1,7 @@
 # Project Backlog
 
 ## Now (P0)
+- 🔥 Investigate and fix the file issue causing refactor edits to reset/corrupt.
 - ✅ Feature - ability to restart FCOM processing microservice from the UI.
 - ✅ Persist active tab across refresh (preserve current page instead of defaulting to Overview).
 - ✅ BUG - Critical - microservice status in UI header shows orange and reports incorrect health while CLI tests show services healthy.

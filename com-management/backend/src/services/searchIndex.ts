@@ -635,6 +635,7 @@ class SearchIndexService {
           cursor += 1;
           const entry = items[idx];
           try {
+            cacheLogger.debug(`Search index read file path=${entry.pathId}`);
             const response = await readRuleWithRetry(uaClient, entry.pathId, 'build-read');
             const raw = extractRuleText(response);
             const text = typeof raw === 'string' ? raw : JSON.stringify(raw ?? {}, null, 2);

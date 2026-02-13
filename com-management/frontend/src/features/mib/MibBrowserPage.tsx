@@ -1,9 +1,8 @@
 import React from 'react';
+import BrowsePanelHeader from '../../components/BrowsePanelHeader';
 import EmptyState from '../../components/EmptyState';
 import InlineMessage from '../../components/InlineMessage';
-import PanelHeader from '../../components/PanelHeader';
-import SearchPanel from '../../components/SearchPanel';
-import PathBreadcrumbs from '../../components/PathBreadcrumbs';
+import useCompactPanel from '../../components/useCompactPanel';
 
 type MibBrowserPageProps = {
   mibPath: string;
@@ -48,37 +47,37 @@ export default function MibBrowserPage({
   renderMibEntryType,
   renderMibEntryStatus,
 }: MibBrowserPageProps) {
+  const isCompact = useCompactPanel();
+
   return (
     <div className="split-layout">
       <div className="panel">
         <div className="panel-scroll">
-          <PanelHeader
+          <BrowsePanelHeader
             title="MIB Browser"
             actions={
               <button type="button" className="ghost-button" onClick={() => loadMibPath(mibPath)}>
                 Refresh
               </button>
             }
-          >
-            <PathBreadcrumbs
-              items={buildBreadcrumbsFromPath(mibPath).map((crumb) => ({
-                label: crumb.label,
-                value: crumb.node,
-              }))}
-              onSelect={(index) => {
-                const target = buildBreadcrumbsFromPath(mibPath)[index];
-                const targetPath = target?.node ? `/${target.node}` : '/';
-                loadMibPath(targetPath);
-              }}
-            />
-            <SearchPanel
-              placeholder="Search MIBs and OIDs"
-              query={mibSearch}
-              onQueryChange={setMibSearch}
-              onSubmit={handleMibSearchSubmit}
-              disableSearch={!mibSearch.trim()}
-            />
-          </PanelHeader>
+            breadcrumbs={buildBreadcrumbsFromPath(mibPath).map((crumb) => ({
+              label: crumb.label,
+              value: crumb.node,
+            }))}
+            onCrumbSelect={(index) => {
+              const target = buildBreadcrumbsFromPath(mibPath)[index];
+              const targetPath = target?.node ? `/${target.node}` : '/';
+              loadMibPath(targetPath);
+            }}
+            search={{
+              placeholder: 'Search MIBs and OIDs',
+              query: mibSearch,
+              onQueryChange: setMibSearch,
+              onSubmit: handleMibSearchSubmit,
+              disableSearch: !mibSearch.trim(),
+            }}
+            isCompact={isCompact}
+          />
           {mibError && <InlineMessage tone="error">{mibError}</InlineMessage>}
           {mibLoading ? (
             <EmptyState>Loading MIBs…</EmptyState>

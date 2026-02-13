@@ -42,6 +42,7 @@ type FcomFilePreviewProps = {
   };
   canConvertOverrideToV3: (objectName: string) => boolean;
   convertOverrideToV3: (objectName: string) => void;
+  hasPendingOverrideConversion: (objectName?: string | null) => boolean;
   openAdvancedFlowForObject: (objectName: string) => void;
   getOverrideFileInfoForObject: (objectName?: string | null) => any;
   getOverrideMetaForObject: (objectName?: string | null) => any;
@@ -148,6 +149,7 @@ export default function FcomFilePreview({
   getOverrideVersionInfo,
   canConvertOverrideToV3,
   convertOverrideToV3,
+  hasPendingOverrideConversion,
   openAdvancedFlowForObject,
   getOverrideFileInfoForObject,
   getOverrideMetaForObject,
@@ -331,6 +333,7 @@ export default function FcomFilePreview({
                 getOverrideVersionInfo={getOverrideVersionInfo}
                 canConvertOverrideToV3={canConvertOverrideToV3}
                 convertOverrideToV3={convertOverrideToV3}
+                hasPendingOverrideConversion={hasPendingOverrideConversion}
                 openAdvancedFlowForObject={openAdvancedFlowForObject}
                 getOverrideFileInfoForObject={getOverrideFileInfoForObject}
                 getOverrideMetaForObject={getOverrideMetaForObject}

@@ -4,20 +4,22 @@ import { useSessionStore } from './stores';
 import api from './services/api';
 import AppTabs from './app/AppTabs';
 import OverviewPage from './features/overview/OverviewPage';
-import MibBrowserPage from './features/mib/MibBrowserPage';
 import FcomBrowserPanel from './features/fcom/FcomBrowserPanel';
 import FcomFileHeader from './features/fcom/FcomFileHeader';
 import FcomFolderOverview from './features/fcom/FcomFolderOverview';
 import FcomFilePreview from './features/fcom/FcomFilePreview';
 import FcomBuilderSidebar from './features/fcom/FcomBuilderSidebar';
 import FcomRawPreview from './features/fcom/FcomRawPreview';
+import FcomAdvancedFlowModal from './features/fcom/FcomAdvancedFlowModal';
+import FcomFlowEditorModal from './features/fcom/FcomFlowEditorModal';
 import ComFilePreview from './components/ComFilePreview';
-import SearchPanel from './components/SearchPanel';
 import ActionRow from './components/ActionRow';
+import useCompactPanel from './components/useCompactPanel';
 import Modal from './components/Modal';
 import PanelHeader from './components/PanelHeader';
-import PathBreadcrumbs from './components/PathBreadcrumbs';
 import { FileTitleRow, ViewToggle } from './components/FileHeaderCommon';
+import MibWorkspace from './features/mib/MibWorkspace';
+import useMibWorkspace from './features/mib/useMibWorkspace';
 import './App.css';
 
 const COMS_PATH_PREFIX = 'id-core/default/processing/event/fcom/_objects';
@@ -134,7 +136,6 @@ export default function App() {
   const friendlyViewRef = useRef<HTMLDivElement | null>(null);
   const friendlyMainRef = useRef<HTMLDivElement | null>(null);
   const activeOverrideTooltipRef = useRef<HTMLElement | null>(null);
-  const mibUrlHydratingRef = useRef(false);
   const [browsePath] = useState('/');
   const [overviewStatus, setOverviewStatus] = useState<any | null>(null);
   const [overviewData, setOverviewData] = useState<any | null>(null);
@@ -152,34 +153,6 @@ export default function App() {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [cacheActionMessage, setCacheActionMessage] = useState<string | null>(null);
   const [showPathModal, setShowPathModal] = useState(false);
-  const [mibPath, setMibPath] = useState('/');
-  const [mibEntries, setMibEntries] = useState<any[]>([]);
-  const [mibLoading, setMibLoading] = useState(false);
-  const [mibLoadingElapsed, setMibLoadingElapsed] = useState(0);
-  const [mibShowLoadingTimer, setMibShowLoadingTimer] = useState(false);
-  const [mibError, setMibError] = useState<string | null>(null);
-  const [mibSearch, setMibSearch] = useState('');
-  const [mibSearchScope, setMibSearchScope] = useState<'folder' | 'all'>('folder');
-  const [mibSearchMode, setMibSearchMode] = useState<'browse' | 'search'>('browse');
-  const [mibLimit] = useState(30);
-  const [mibOffset, setMibOffset] = useState(0);
-  const [mibHasMore, setMibHasMore] = useState(false);
-  const [mibTotal, setMibTotal] = useState<number | null>(null);
-  const [mibFilteredTotal, setMibFilteredTotal] = useState<number | null>(null);
-  const [mibSelectedFile, setMibSelectedFile] = useState<string | null>(null);
-  const [mibDefinitions, setMibDefinitions] = useState<any[]>([]);
-  const [mibDetailsLoading, setMibDetailsLoading] = useState(false);
-  const [mibDefinitionSearch, setMibDefinitionSearch] = useState('');
-  const [mibObjectFilter, setMibObjectFilter] = useState<'all' | 'fcom' | 'pcom'>('all');
-  const [mibSelectedDefinition, setMibSelectedDefinition] = useState<any | null>(null);
-  const [mibSupportByPath, setMibSupportByPath] = useState<
-    Record<string, { fcom: boolean | null; pcom: boolean | null; checkedAt: number }>
-  >({});
-  const [mibOutput, setMibOutput] = useState('');
-  const [mibOutputName, setMibOutputName] = useState('');
-  const [mib2FcomLoading, setMib2FcomLoading] = useState(false);
-  const [mib2FcomError, setMib2FcomError] = useState<string | null>(null);
-  const [mibUseParent, setMibUseParent] = useState(true);
   const [mibTrapDefaults, setMibTrapDefaults] = useState<null | {
     objectName: string;
     module?: string;
@@ -314,6 +287,62 @@ export default function App() {
     total: number;
   }>(null);
   const [bulkTrapShowAllFailures, setBulkTrapShowAllFailures] = useState(false);
+  const isCompactPanel = useCompactPanel();
+  const triggerToast = (message: string, pulse = false) => {
+    setStagedToast(message);
+    setToastPulseAfter(pulse);
+  };
+  const {
+    mibUrlHydratingRef,
+    mibPath,
+    mibEntries,
+    mibLoading,
+    mibLoadingElapsed,
+    mibShowLoadingTimer,
+    mibError,
+    mibSearch,
+    mibSearchScope,
+    mibSearchMode,
+    mibHasMore,
+    mibTotal,
+    mibFilteredTotal,
+    mibSelectedFile,
+    mibDetailsLoading,
+    mibDefinitionSearch,
+    mibObjectFilter,
+    mibSelectedDefinition,
+    mibSupportByPath,
+    mibOutput,
+    mibOutputName,
+    mib2FcomLoading,
+    mib2FcomError,
+    mibUseParent,
+    mibDefinitionCounts,
+    filteredMibDefinitions,
+    mibSelectedSupport,
+    setMibPath,
+    setMibSearch,
+    setMibSearchScope,
+    setMibSelectedFile,
+    setMibDefinitionSearch,
+    setMibObjectFilter,
+    setMibSelectedDefinition,
+    setMibOutput,
+    setMibOutputName,
+    setMibUseParent,
+    loadMibPath,
+    loadMibSearch,
+    handleMibSearchSubmit,
+    handleMibClearSearch,
+    getMibBaseName,
+    getMibSupportStatus,
+    getSupportedCountLabel,
+    openMibFileFromUrl,
+    handleOpenMibEntry,
+    openMibFavorite,
+    runMib2Fcom,
+    resetMibState,
+  } = useMibWorkspace({ api, triggerToast });
 
   useEffect(() => {
     const savedQuery =
@@ -340,26 +369,6 @@ export default function App() {
     sessionStorage.setItem(COM_SEARCH_QUERY_KEY, searchQuery);
     sessionStorage.setItem(COM_SEARCH_SCOPE_KEY, searchScope);
   }, [searchQuery, searchScope]);
-
-  useEffect(() => {
-    if (!mibLoading) {
-      setMibLoadingElapsed(0);
-      setMibShowLoadingTimer(false);
-      return;
-    }
-    setMibLoadingElapsed(0);
-    setMibShowLoadingTimer(false);
-    const timerId = window.setTimeout(() => {
-      setMibShowLoadingTimer(true);
-    }, 2000);
-    const intervalId = window.setInterval(() => {
-      setMibLoadingElapsed((prev) => prev + 1);
-    }, 1000);
-    return () => {
-      window.clearTimeout(timerId);
-      window.clearInterval(intervalId);
-    };
-  }, [mibLoading]);
 
   useEffect(() => {
     try {
@@ -902,6 +911,7 @@ export default function App() {
   const [saveElapsed, setSaveElapsed] = useState(0);
   const [redeployElapsed, setRedeployElapsed] = useState(0);
   const [pendingNav, setPendingNav] = useState<null | (() => void)>(null);
+  const [pendingReviewDiscard, setPendingReviewDiscard] = useState(false);
   const [panelEditState, setPanelEditState] = useState<Record<string, boolean>>({});
   const [panelDrafts, setPanelDrafts] = useState<Record<string, any>>({});
   const [panelEvalModes, setPanelEvalModes] = useState<Record<string, Record<string, boolean>>>({});
@@ -922,6 +932,9 @@ export default function App() {
   const [overrideLoading, setOverrideLoading] = useState(false);
   const [overrideError, setOverrideError] = useState<string | null>(null);
   const [pendingOverrideSave, setPendingOverrideSave] = useState<any[] | null>(null);
+  const [pendingOverrideConversions, setPendingOverrideConversions] = useState<
+    Record<string, { entry: any; method: string; scope: 'post' }>
+  >({});
   const [removeOverrideModal, setRemoveOverrideModal] = useState<{
     open: boolean;
     objectName?: string;
@@ -943,6 +956,7 @@ export default function App() {
     newFields?: string[];
     processorFields?: string[];
     objectName?: string;
+    hasAdvancedFlow?: boolean;
   }>({ open: false });
   const [showAddFieldModal, setShowAddFieldModal] = useState(false);
   const [addFieldSearch, setAddFieldSearch] = useState('');
@@ -972,6 +986,8 @@ export default function App() {
     null,
   );
   const [builderFocus, setBuilderFocus] = useState<'eval' | 'processor' | 'literal' | null>(null);
+  const [builderPatchMode, setBuilderPatchMode] = useState(false);
+  const [builderPatchOp, setBuilderPatchOp] = useState<any | null>(null);
   const [builderTypeLocked, setBuilderTypeLocked] = useState<
     'eval' | 'processor' | 'literal' | null
   >(null);
@@ -993,6 +1009,8 @@ export default function App() {
   const [showProcessorJson, setShowProcessorJson] = useState(true);
   const [showAdvancedProcessorModal, setShowAdvancedProcessorModal] = useState(false);
   const [advancedFlowDefaultTarget, setAdvancedFlowDefaultTarget] = useState<string | null>(null);
+  const [advancedFlowNotice, setAdvancedFlowNotice] = useState<string | null>(null);
+  const [showAdvancedFlowJsonPreview, setShowAdvancedFlowJsonPreview] = useState(false);
   const [modalStack, setModalStack] = useState<string[]>([]);
   const flowEditorModalRef = useRef<HTMLDivElement | null>(null);
   const advancedFlowModalRef = useRef<HTMLDivElement | null>(null);
@@ -2685,11 +2703,6 @@ export default function App() {
   }, [selectedFile?.PathID]);
   const isAnyPanelEditing = Object.values(panelEditState).some(Boolean);
 
-  const triggerToast = (message: string, pulse = false) => {
-    setStagedToast(message);
-    setToastPulseAfter(pulse);
-  };
-
   const togglePanelEdit = (key: string) => {
     setPanelEditState((prev) => ({
       ...prev,
@@ -3430,28 +3443,7 @@ export default function App() {
       setBrowseNode(null);
       setBreadcrumbs([{ label: '/', node: null }]);
       setViewMode('friendly');
-      setMibPath('/');
-      setMibEntries([]);
-      setMibLoading(false);
-      setMibError(null);
-      setMibSearch('');
-      setMibSearchScope('folder');
-      setMibSearchMode('browse');
-      setMibOffset(0);
-      setMibHasMore(false);
-      setMibTotal(null);
-      setMibFilteredTotal(null);
-      setMibSelectedFile(null);
-      setMibDefinitions([]);
-      setMibDetailsLoading(false);
-      setMibDefinitionSearch('');
-      setMibObjectFilter('all');
-      setMibSelectedDefinition(null);
-      setMibOutput('');
-      setMibOutputName('');
-      setMib2FcomLoading(false);
-      setMib2FcomError(null);
-      setMibUseParent(true);
+      resetMibState();
       setMibTrapDefaults(null);
       setTrapModalOpen(false);
       setTrapSource('mib');
@@ -4183,7 +4175,8 @@ export default function App() {
       const resp = await readWithRetry();
       logTiming('readFile', readStart);
       setFileData(resp.data);
-      const shouldLoadOverrides = activeApp === 'fcom';
+      const inferredApp = inferAppFromPath(entry?.PathID);
+      const shouldLoadOverrides = (inferredApp ?? activeApp) === 'fcom';
       if (shouldLoadOverrides) {
         setFileLoadStageTarget('overrides');
         setOverrideLoading(true);
@@ -4730,217 +4723,51 @@ export default function App() {
     }
   };
 
-  const loadMibPath = async (
-    nextPath?: string,
-    options?: { append?: boolean; searchOverride?: string | null },
-  ) => {
-    const append = options?.append ?? false;
-    const targetPath = (nextPath ?? mibPath ?? '/') || '/';
-    const offset = append ? mibOffset : 0;
-    const effectiveSearch =
-      options?.searchOverride !== undefined ? String(options.searchOverride) : mibSearch;
-    const searchParam =
-      mibSearchScope === 'folder' && effectiveSearch.trim() ? effectiveSearch.trim() : undefined;
-
-    setMibLoading(true);
-    setMibError(null);
+  const loadBrokerServers = async (options?: {
+    currentHost?: string | null;
+    forceDefault?: boolean;
+  }) => {
+    setTrapServerError(null);
     try {
-      const resp = await api.browseMibs(targetPath !== '/' ? targetPath : undefined, {
-        search: searchParam,
-        limit: mibLimit,
-        offset,
-      });
-      const entries = Array.isArray(resp.data?.entries) ? resp.data.entries : [];
-      setMibEntries((prev) => (append ? [...prev, ...entries] : entries));
-      setMibOffset(offset + entries.length);
-      setMibHasMore(Boolean(resp.data?.hasMore));
-      setMibTotal(typeof resp.data?.total === 'number' ? resp.data.total : null);
-      setMibFilteredTotal(
-        typeof resp.data?.filtered_total === 'number' ? resp.data.filtered_total : null,
-      );
-      setMibPath(resp.data?.path || '/');
-      setMibSearchMode('browse');
+      const resp = await api.getBrokerServers();
+      type BrokerServer = Record<string, unknown>;
+      const data: BrokerServer[] = Array.isArray(resp.data?.data)
+        ? (resp.data.data as BrokerServer[])
+        : [];
+      setTrapServerList(data);
+      const currentHost = options?.currentHost ?? trapHost;
+      const allowDefault = options?.forceDefault ? !currentHost : !trapHost;
+      if (allowDefault && data.length > 0) {
+        const activeServerId = String(session?.server_id || serverId || '').trim();
+        const getServerId = (entry: BrokerServer) =>
+          String(
+            entry?.ServerID ?? entry?.server_id ?? entry?.id ?? entry?.ID ?? entry?.ServerName ?? '',
+          ).trim();
+        const getServerHost = (entry: BrokerServer) =>
+          String(
+            entry?.ServerHostFQDN ??
+              entry?.ServerName ??
+              entry?.server_host_fqdn ??
+              entry?.server_name ??
+              entry?.hostname ??
+              entry?.host ??
+              '',
+          ).trim();
+        const matchedServer = activeServerId ? data.find((entry) => getServerId(entry) === activeServerId) : null;
+        const fallbackServer = matchedServer || (data.length === 1 ? data[0] : null);
+        const hostValue = fallbackServer ? getServerHost(fallbackServer) : '';
+        if (hostValue) {
+          setTrapHost(hostValue);
+        }
+      }
+      if (data.length === 0) {
+        setTrapManualOpen(true);
+      }
     } catch (err: any) {
-      setMibError(err?.response?.data?.error || 'Failed to load MIB folder');
-    } finally {
-      if (mibUrlHydratingRef.current) {
-        mibUrlHydratingRef.current = false;
-      }
-      setMibLoading(false);
+      setTrapServerError(err?.response?.data?.error || 'Failed to load servers');
+      setTrapManualOpen(true);
     }
   };
-
-  const loadMibSearch = async (options?: { append?: boolean; queryOverride?: string }) => {
-    const query =
-      options?.queryOverride !== undefined
-        ? String(options.queryOverride).trim()
-        : mibSearch.trim();
-    if (!query) {
-      await loadMibPath(mibPath, { append: false });
-      return;
-    }
-    const append = options?.append ?? false;
-    const offset = append ? mibOffset : 0;
-    setMibLoading(true);
-    setMibError(null);
-    try {
-      const resp = await api.searchMibs(query, { limit: mibLimit, offset });
-      const entries = Array.isArray(resp.data?.entries) ? resp.data.entries : [];
-      setMibEntries((prev) => (append ? [...prev, ...entries] : entries));
-      setMibOffset(offset + entries.length);
-      setMibHasMore(Boolean(resp.data?.hasMore));
-      setMibTotal(typeof resp.data?.matches === 'number' ? resp.data.matches : null);
-      setMibFilteredTotal(null);
-      setMibPath('/');
-      setMibSearchMode('search');
-    } catch (err: any) {
-      setMibError(err?.response?.data?.error || 'Failed to search MIBs');
-    } finally {
-      setMibLoading(false);
-    }
-  };
-
-  const handleMibSearchSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setMibSelectedFile(null);
-    setMibDefinitions([]);
-    setMibSelectedDefinition(null);
-    setMibOffset(0);
-    const query = mibSearch.trim();
-    const isNumericOid = /^\d+(?:\.\d+)+$/.test(query);
-    if (isNumericOid) {
-      try {
-        const resp = await api.lookupMibOid(query);
-        const moduleName = String(resp.data?.module || '').trim();
-        const resolvedName = String(resp.data?.name || '').trim();
-        if (moduleName) {
-          const label = resolvedName ? `${moduleName}::${resolvedName}` : moduleName;
-          triggerToast(`OID resolved to ${label}. Searching MIB files...`);
-          setMibSearch(moduleName);
-          setMibSearchScope('all');
-          await loadMibSearch({ append: false, queryOverride: moduleName });
-          return;
-        }
-      } catch {
-        // ignore lookup errors and fall back to filename search
-      }
-    }
-    if (mibSearchScope === 'all') {
-      await loadMibSearch({ append: false });
-      return;
-    }
-    await loadMibPath(mibPath, { append: false });
-  };
-
-  const handleMibClearSearch = async () => {
-    setMibSearch('');
-    setMibOffset(0);
-    await loadMibPath(mibPath, { append: false, searchOverride: '' });
-  };
-
-  const getMibBaseName = (value?: string | null) => {
-    if (!value) {
-      return '';
-    }
-    const name = value.split('/').pop() || value;
-    return name.replace(/\.(mib|txt)$/i, '');
-  };
-
-  const getMibSupportStatus = (supported: boolean | null) => {
-    if (supported === true) {
-      return { label: 'OK', status: 'ok' as const };
-    }
-    if (supported === false) {
-      return { label: '!', status: 'warn' as const };
-    }
-    return { label: '?', status: 'unknown' as const };
-  };
-
-  const getSupportedCountLabel = (supported: boolean | null, total: number) => {
-    if (supported === null) {
-      return 'N/A';
-    }
-    return supported ? total : 0;
-  };
-
-  const resolveMibSupport = async (pathValue: string) => {
-    if (!pathValue) {
-      return;
-    }
-    if (mibSupportByPath[pathValue]) {
-      return;
-    }
-    const baseName = getMibBaseName(pathValue);
-    if (!baseName) {
-      setMibSupportByPath((prev) => ({
-        ...prev,
-        [pathValue]: { fcom: null, pcom: null, checkedAt: Date.now() },
-      }));
-      return;
-    }
-    const lookupComsFile = async (fileName: string) => {
-      try {
-        const resp = await api.searchComs(fileName, 'name', 5);
-        const results = Array.isArray(resp.data?.results) ? resp.data.results : [];
-        const lower = fileName.toLowerCase();
-        return results.some((result: any) => {
-          const pathId = String(result?.pathId || '').toLowerCase();
-          const name = String(result?.name || '').toLowerCase();
-          return pathId.endsWith(lower) || name === lower;
-        });
-      } catch {
-        return null;
-      }
-    };
-    const [fcomSupported, pcomSupported] = await Promise.all([
-      lookupComsFile(`${baseName}-FCOM.json`),
-      lookupComsFile(`${baseName}-PCOM.json`),
-    ]);
-    setMibSupportByPath((prev) => ({
-      ...prev,
-      [pathValue]: {
-        fcom: fcomSupported,
-        pcom: pcomSupported,
-        checkedAt: Date.now(),
-      },
-    }));
-  };
-
-  useEffect(() => {
-    if (mibEntries.length === 0) {
-      return;
-    }
-    let active = true;
-    const run = async () => {
-      for (const entry of mibEntries) {
-        if (!active) {
-          return;
-        }
-        if (entry?.isDir) {
-          continue;
-        }
-        const pathValue = entry?.path;
-        if (!pathValue) {
-          continue;
-        }
-        if (mibSupportByPath[pathValue]) {
-          continue;
-        }
-        await resolveMibSupport(pathValue);
-      }
-    };
-    void run();
-    return () => {
-      active = false;
-    };
-  }, [mibEntries, mibSupportByPath]);
-
-  useEffect(() => {
-    if (!mibSelectedFile) {
-      return;
-    }
-    void resolveMibSupport(mibSelectedFile);
-  }, [mibSelectedFile]);
 
   useEffect(() => {
     let active = true;
@@ -4956,11 +4783,13 @@ export default function App() {
         return;
       }
       const moduleName = String(mibSelectedDefinition?.module || '').trim() || baseName;
-      const expectedNames = new Set([
-        `${moduleName}::${definitionName}`,
-        `${baseName}::${definitionName}`,
-        definitionName,
-      ].map((value) => value.toLowerCase()));
+      const expectedNames = new Set(
+        [
+          `${moduleName}::${definitionName}`,
+          `${baseName}::${definitionName}`,
+          definitionName,
+        ].map((value) => value.toLowerCase()),
+      );
       try {
         const resp = await api.searchComs(`${baseName}-FCOM.json`, 'name', 10);
         const results = Array.isArray(resp.data?.results) ? resp.data.results : [];
@@ -5011,178 +4840,7 @@ export default function App() {
     return () => {
       active = false;
     };
-  }, [mibSelectedDefinition, mibSelectedFile]);
-
-  const loadMibDefinitions = async (filePath: string) => {
-    setMibDetailsLoading(true);
-    setMibError(null);
-    try {
-      const resp = await api.parseMib(filePath);
-      const defs = Array.isArray(resp.data?.definitions) ? resp.data.definitions : [];
-      const baseName = filePath.split('/').pop()?.replace(/\.(mib|txt)$/i, '') || '';
-      const moduleName = defs.length > 0 ? String(defs[0]?.module || '').trim() : '';
-      const resolvedModule = moduleName || baseName;
-      const names = defs.map((definition: any) => String(definition?.name || '').trim()).filter(Boolean);
-      let translateMap: Record<string, string> = {};
-      if (names.length > 0) {
-        try {
-          const translateResp = await api.translateMibNames(resolvedModule || null, names);
-          const entries: Array<{ name?: string; fullOid?: string }> = Array.isArray(
-            translateResp.data?.entries,
-          )
-            ? translateResp.data.entries
-            : [];
-          const lowered = entries.reduce<Record<string, string>>(
-            (acc: Record<string, string>, entry: { name?: string; fullOid?: string }) => {
-            if (entry?.name && entry?.fullOid) {
-              acc[String(entry.name).toLowerCase()] = String(entry.fullOid);
-            }
-            return acc;
-          }, {});
-          translateMap = lowered;
-          console.info('[MIB] translate summary', {
-            module: resolvedModule || null,
-            total: names.length,
-            resolved: entries.filter((entry: any) => entry?.fullOid).length,
-          });
-        } catch {
-          console.info('[MIB] translate failed', {
-            module: resolvedModule || null,
-            total: names.length,
-          });
-          translateMap = {};
-        }
-      }
-      const enriched = defs.map((definition: any) => ({
-        ...definition,
-        fullOid: translateMap[String(definition?.name || '').toLowerCase()] || definition?.fullOid || null,
-      }));
-      setMibDefinitions(enriched);
-      setMibSelectedDefinition(null);
-    } catch (err: any) {
-      setMibError(err?.response?.data?.error || 'Failed to parse MIB');
-    } finally {
-      setMibDetailsLoading(false);
-    }
-  };
-
-  const openMibFileFromUrl = async (filePath: string) => {
-    if (!filePath) {
-      return;
-    }
-    const normalized = filePath.startsWith('/') ? filePath : `/${filePath}`;
-    setMibSelectedFile(normalized);
-    setMibDefinitionSearch('');
-    setMibObjectFilter('all');
-    setMibOutput('');
-    setMibOutputName('');
-    setMib2FcomError(null);
-    setMibTrapDefaults(null);
-    await loadMibDefinitions(normalized);
-  };
-
-  const handleOpenMibEntry = async (entry: any) => {
-    if (entry?.isDir) {
-      setMibSelectedFile(null);
-      setMibDefinitions([]);
-      setMibSelectedDefinition(null);
-      setMibObjectFilter('all');
-      setMibTrapDefaults(null);
-      setMibOffset(0);
-      await loadMibPath(entry.path, { append: false });
-      return;
-    }
-    if (!entry?.path) {
-      return;
-    }
-    setMibSelectedFile(entry.path);
-    setMibDefinitionSearch('');
-    setMibObjectFilter('all');
-    setMibOutput('');
-    setMibOutputName('');
-    setMib2FcomError(null);
-    setMibTrapDefaults(null);
-    await loadMibDefinitions(entry.path);
-  };
-
-  const openMibFavorite = async (favorite: {
-    type: 'file' | 'folder';
-    pathId: string;
-  }) => {
-    if (!favorite?.pathId) {
-      return;
-    }
-    if (favorite.type === 'folder') {
-      await loadMibPath(favorite.pathId, { append: false });
-      return;
-    }
-    const parent = favorite.pathId.split('/').slice(0, -1).join('/') || '/';
-    await loadMibPath(parent, { append: false });
-    await openMibFileFromUrl(favorite.pathId);
-  };
-
-  const runMib2Fcom = async () => {
-    if (!mibSelectedFile || !hasEditPermission) {
-      return;
-    }
-    setMib2FcomLoading(true);
-    setMib2FcomError(null);
-    try {
-      const resp = await api.runMib2Fcom(mibSelectedFile, undefined, mibUseParent);
-      setMibOutput(resp.data?.content || '');
-      setMibOutputName(resp.data?.outputName || '');
-    } catch (err: any) {
-      setMib2FcomError(err?.response?.data?.error || 'Failed to run MIB2FCOM');
-    } finally {
-      setMib2FcomLoading(false);
-    }
-  };
-
-  const loadBrokerServers = async (options?: {
-    currentHost?: string | null;
-    forceDefault?: boolean;
-  }) => {
-    setTrapServerError(null);
-    try {
-      const resp = await api.getBrokerServers();
-      type BrokerServer = Record<string, unknown>;
-      const data: BrokerServer[] = Array.isArray(resp.data?.data)
-        ? (resp.data.data as BrokerServer[])
-        : [];
-      setTrapServerList(data);
-      const currentHost = options?.currentHost ?? trapHost;
-      const allowDefault = options?.forceDefault ? !currentHost : !trapHost;
-      if (allowDefault && data.length > 0) {
-        const activeServerId = String(session?.server_id || serverId || '').trim();
-        const getServerId = (entry: BrokerServer) =>
-          String(
-            entry?.ServerID ?? entry?.server_id ?? entry?.id ?? entry?.ID ?? entry?.ServerName ?? '',
-          ).trim();
-        const getServerHost = (entry: BrokerServer) =>
-          String(
-            entry?.ServerHostFQDN ??
-              entry?.ServerName ??
-              entry?.server_host_fqdn ??
-              entry?.server_name ??
-              entry?.hostname ??
-              entry?.host ??
-              '',
-          ).trim();
-        const matchedServer = activeServerId ? data.find((entry) => getServerId(entry) === activeServerId) : null;
-        const fallbackServer = matchedServer || (data.length === 1 ? data[0] : null);
-        const hostValue = fallbackServer ? getServerHost(fallbackServer) : '';
-        if (hostValue) {
-          setTrapHost(hostValue);
-        }
-      }
-      if (data.length === 0) {
-        setTrapManualOpen(true);
-      }
-    } catch (err: any) {
-      setTrapServerError(err?.response?.data?.error || 'Failed to load servers');
-      setTrapManualOpen(true);
-    }
-  };
+  }, [mibSelectedDefinition, mibSelectedFile, getMibBaseName]);
 
   const applyTrapDefaults = (defaults: NonNullable<typeof mibTrapDefaults>) => {
     const parsed = defaults.parsed;
@@ -5592,77 +5250,6 @@ export default function App() {
   const favoritesFolders = favorites.filter(
     (fav): fav is { type: 'folder'; pathId: string; label: string } => fav.type === 'folder',
   );
-  const filteredMibDefinitions = useMemo(() => {
-    const query = mibDefinitionSearch.trim().toLowerCase();
-    const results = mibDefinitions
-      .map((entry, index) => {
-        const name = String(entry?.name || '').toLowerCase();
-        const oid = String(entry?.oid || '').toLowerCase();
-        const fullOid = String(entry?.fullOid || '').toLowerCase();
-        const description = String(entry?.description || '').toLowerCase();
-        if (!query) {
-          return { entry, index, score: 0, matchesQuery: true };
-        }
-        const exactMatch =
-          name === query || oid === query || fullOid === query || description === query;
-        const startsWith =
-          name.startsWith(query) ||
-          oid.startsWith(query) ||
-          fullOid.startsWith(query) ||
-          description.startsWith(query);
-        const includesMatch =
-          name.includes(query) ||
-          oid.includes(query) ||
-          fullOid.includes(query) ||
-          description.includes(query);
-        const matchesQuery = exactMatch || startsWith || includesMatch;
-        const score = exactMatch ? 0 : startsWith ? 1 : includesMatch ? 2 : 3;
-        return { entry, index, score, matchesQuery };
-      })
-      .filter(({ entry, matchesQuery }) => {
-        if (!matchesQuery) {
-          return false;
-        }
-        if (mibObjectFilter === 'all') {
-          return true;
-        }
-        const kind = String(entry?.kind || '').toUpperCase();
-        const isFcom = kind === 'NOTIFICATION-TYPE' || kind === 'TRAP-TYPE';
-        const isPcom = kind === 'OBJECT-TYPE';
-        if (mibObjectFilter === 'fcom') {
-          return isFcom;
-        }
-        if (mibObjectFilter === 'pcom') {
-          return isPcom;
-        }
-        return true;
-      });
-    if (!query) {
-      return results.map(({ entry }) => entry);
-    }
-    return results
-      .sort((a, b) => {
-        if (a.score !== b.score) {
-          return a.score - b.score;
-        }
-        return a.index - b.index;
-      })
-      .map(({ entry }) => entry);
-  }, [mibDefinitions, mibDefinitionSearch, mibObjectFilter]);
-  const mibDefinitionCounts = useMemo(() => {
-    let fcomCount = 0;
-    let pcomCount = 0;
-    mibDefinitions.forEach((definition) => {
-      const kind = String(definition?.kind || '').toUpperCase();
-      if (kind === 'NOTIFICATION-TYPE' || kind === 'TRAP-TYPE') {
-        fcomCount += 1;
-      } else if (kind === 'OBJECT-TYPE') {
-        pcomCount += 1;
-      }
-    });
-    return { fcomCount, pcomCount };
-  }, [mibDefinitions]);
-  const mibSelectedSupport = mibSelectedFile ? mibSupportByPath[mibSelectedFile] : null;
   const saveWithContent = async (content: any, message: string) => {
     if (!selectedFile) {
       return null;
@@ -7024,8 +6611,15 @@ export default function App() {
         return;
       }
       const dirty = getPanelDirtyFields(obj, panelKey);
-      if (dirty.length > 0) {
-        map[panelKey] = dirty;
+      const hasPendingConversion = Boolean(
+        getPendingOverrideConversion(obj?.['@objectName']),
+      );
+      if (dirty.length > 0 || hasPendingConversion) {
+        const nextDirty = dirty.length > 0 ? [...dirty] : [];
+        if (hasPendingConversion) {
+          nextDirty.push('conversion');
+        }
+        map[panelKey] = nextDirty;
       }
     });
     return map;
@@ -7520,6 +7114,8 @@ export default function App() {
 
   const cancelEventEdit = (key: string) => {
     const baseKey = key.includes(':') ? key.slice(0, key.lastIndexOf(':')) : key;
+    const objectName = getObjectByPanelKey(key)?.['@objectName'];
+    clearPendingOverrideConversion(objectName);
     setPanelDrafts((prev) => {
       const next = { ...prev };
       delete next[key];
@@ -7607,12 +7203,35 @@ export default function App() {
   };
 
   const discardEventEdit = (panelKey: string) => {
+    const objectName = getObjectByPanelKey(panelKey)?.['@objectName'];
+    clearPendingOverrideConversion(objectName);
     discardPanelOverrides(panelKey);
     cancelEventEdit(panelKey);
   };
 
+  const discardAllEdits = () => {
+    setPendingOverrideSave(null);
+    setPendingOverrideConversions({});
+    setPanelEditState({});
+    setPanelDrafts({});
+    setPanelEvalModes({});
+    setPanelOverrideRemovals({});
+    setPanelAddedFields({});
+    setPanelOverrideBaselines({});
+    setPanelNavWarning({ open: false, fields: {} });
+    setPendingCancel(null);
+    closeBuilder();
+  };
+
   const requestCancelEventEdit = (obj: any, key: string) => {
-    if (getPanelDirtyFields(obj, key).length > 0 || hasPanelOverrideChanges(key)) {
+    const hasPendingConversion = Boolean(
+      getPendingOverrideConversion(getObjectByPanelKey(key)?.['@objectName']),
+    );
+    if (
+      getPanelDirtyFields(obj, key).length > 0 ||
+      hasPanelOverrideChanges(key) ||
+      hasPendingConversion
+    ) {
       setPendingCancel({ type: 'panel', panelKey: key });
       return;
     }
@@ -7622,8 +7241,35 @@ export default function App() {
   const buildOverridePatchOp = (objectName: string, field: string, value: any) =>
     buildEventPatchOp(objectName, field, value);
 
+  const getPendingOverrideConversion = (objectName?: string | null) => {
+    if (!objectName) {
+      return null;
+    }
+    return pendingOverrideConversions[objectName] || null;
+  };
+
+  const hasPendingOverrideConversion = (objectName?: string | null) =>
+    Boolean(getPendingOverrideConversion(objectName));
+
+  const clearPendingOverrideConversion = (objectName?: string | null) => {
+    if (!objectName) {
+      return;
+    }
+    setPendingOverrideConversions((prev) => {
+      if (!prev[objectName]) {
+        return prev;
+      }
+      const next = { ...prev };
+      delete next[objectName];
+      return next;
+    });
+  };
+
   const canConvertOverrideToV3 = (objectName: string) => {
     if (!objectName) {
+      return false;
+    }
+    if (pendingOverrideConversions[objectName]) {
       return false;
     }
     const overrides = getWorkingOverrides();
@@ -7665,6 +7311,7 @@ export default function App() {
         entry?.['@objectName'] === objectName && entry?.method === method && entry?.scope === scope,
     );
     if (matchIndex < 0) {
+      triggerToast('Conversion failed: override not found.', false);
       return;
     }
     const entry = overrides[matchIndex];
@@ -7694,6 +7341,7 @@ export default function App() {
     });
 
     if (patchOps.length === 0) {
+      triggerToast('Conversion failed: no compatible processors found.', false);
       return;
     }
 
@@ -7702,10 +7350,18 @@ export default function App() {
       version: 'v3',
       processors: patchOps,
     };
-    const nextOverrides = [...overrides];
-    nextOverrides[matchIndex] = converted;
-    setPendingOverrideSave(nextOverrides);
-    triggerToast(`Converted ${objectName} override to v3 patch mode (staged).`, true);
+    setPendingOverrideConversions((prev) => ({
+      ...prev,
+      [objectName]: {
+        entry: converted,
+        method,
+        scope,
+      },
+    }));
+    triggerToast(
+      `Conversion successful for ${objectName}. Click 'Save Conversion' to stage the update.`,
+      false,
+    );
   };
 
   const openAdvancedFlowForObject = (objectName: string) => {
@@ -7726,11 +7382,19 @@ export default function App() {
     if (!objectName) {
       return;
     }
+    const method =
+      overrideInfo?.method ||
+      (String(selectedFile.PathID || '').includes('/syslog/') ? 'syslog' : 'trap');
+    const scope = 'post';
+    const pendingConversion = getPendingOverrideConversion(objectName);
+    const hasPendingConversion = Boolean(
+      pendingConversion &&
+        pendingConversion.method === method &&
+        pendingConversion.scope === scope,
+    );
     const versionInfo = getOverrideVersionInfo(objectName);
-    if (versionInfo.mode === 'v2' || versionInfo.mode === 'mixed') {
-      setSaveError('This object uses v2 processor overrides. Convert to v3 before editing.');
-      return;
-    }
+    const isV2Mode =
+      !hasPendingConversion && (versionInfo.mode === 'v2' || versionInfo.mode === 'mixed');
     const draft = panelDrafts?.[key]?.event || {};
     const overrideValueMap = getOverrideValueMap(obj);
     const removalFields = new Set(panelOverrideRemovals[key] || []);
@@ -7781,7 +7445,7 @@ export default function App() {
 
     autoRemovalFields.forEach((field) => removalFields.add(field));
 
-    if (updates.length === 0 && removalFields.size === 0) {
+    if (updates.length === 0 && removalFields.size === 0 && !hasPendingConversion) {
       setSaveError(null);
       setSaveSuccess('No changes made.');
       return;
@@ -7791,15 +7455,11 @@ export default function App() {
       ? [...overrideInfo.overrides]
       : [];
     const baseOverrides = pendingOverrideSave ? [...pendingOverrideSave] : existingOverrides;
-    const method =
-      overrideInfo?.method ||
-      (String(selectedFile.PathID || '').includes('/syslog/') ? 'syslog' : 'trap');
-    const scope = 'post';
     const matchIndex = baseOverrides.findIndex(
       (entry: any) =>
         entry?.['@objectName'] === objectName && entry?.method === method && entry?.scope === scope,
     );
-    const overrideEntry =
+    let overrideEntry =
       matchIndex >= 0
         ? { ...baseOverrides[matchIndex] }
         : {
@@ -7810,39 +7470,84 @@ export default function App() {
             scope,
             '@objectName': objectName,
             _type: 'override',
-            version: 'v3',
+            version: isV2Mode ? 'v2' : 'v3',
             processors: [],
           };
 
     let processors = Array.isArray(overrideEntry.processors) ? [...overrideEntry.processors] : [];
-    const hasNonPatch = processors.some((proc: any) => !(proc?.op && proc?.path));
-    if (hasNonPatch) {
-      setSaveError('Advanced processors are not supported in v3 override files yet.');
-      return;
-    }
-    if (!overrideEntry.version) {
-      overrideEntry.version = 'v3';
+
+    if (
+      pendingConversion?.entry &&
+      pendingConversion.method === method &&
+      pendingConversion.scope === scope
+    ) {
+      overrideEntry = {
+        ...overrideEntry,
+        ...pendingConversion.entry,
+        version: 'v3',
+      };
+      processors = Array.isArray(pendingConversion.entry.processors)
+        ? [...pendingConversion.entry.processors]
+        : [];
     }
 
-    if (removalFields.size > 0) {
-      processors = processors.filter((proc: any) => {
-        const target = getPatchTargetField(proc);
-        if (!target) {
-          return true;
+    if (isV2Mode) {
+      if (removalFields.size > 0) {
+        processors = processors.filter((proc: any) => {
+          const target = getProcessorTargetField(proc);
+          if (!target) {
+            return true;
+          }
+          const field = target.replace('$.event.', '');
+          return !removalFields.has(field);
+        });
+      }
+
+      updates.forEach(({ field, value }) => {
+        if (removalFields.has(field)) {
+          return;
         }
-        const field = target.replace('$.event.', '');
-        return !removalFields.has(field);
+        const targetField = `$.event.${field}`;
+        processors = processors.filter((proc: any) => getProcessorTargetField(proc) !== targetField);
+        processors.push({
+          set: {
+            source: value,
+            targetField,
+          },
+        });
       });
-    }
 
-    updates.forEach(({ field, value }) => {
-      if (removalFields.has(field)) {
+      overrideEntry.version = 'v2';
+    } else {
+      const hasNonPatch = processors.some((proc: any) => !(proc?.op && proc?.path));
+      if (hasNonPatch) {
+        setSaveError('Advanced processors are not supported in v3 override files yet.');
         return;
       }
-      const targetField = `$.event.${field}`;
-      processors = processors.filter((proc: any) => getPatchTargetField(proc) !== targetField);
-      processors.push(buildOverridePatchOp(objectName, field, value));
-    });
+      if (!overrideEntry.version) {
+        overrideEntry.version = 'v3';
+      }
+
+      if (removalFields.size > 0) {
+        processors = processors.filter((proc: any) => {
+          const target = getPatchTargetField(proc);
+          if (!target) {
+            return true;
+          }
+          const field = target.replace('$.event.', '');
+          return !removalFields.has(field);
+        });
+      }
+
+      updates.forEach(({ field, value }) => {
+        if (removalFields.has(field)) {
+          return;
+        }
+        const targetField = `$.event.${field}`;
+        processors = processors.filter((proc: any) => getPatchTargetField(proc) !== targetField);
+        processors.push(buildOverridePatchOp(objectName, field, value));
+      });
+    }
 
     if (processors.length === 0) {
       if (matchIndex >= 0) {
@@ -7857,9 +7562,12 @@ export default function App() {
       }
     }
 
-    const stagedCount = updates.length + removalFields.size;
+    const stagedCount = updates.length + removalFields.size + (hasPendingConversion ? 1 : 0);
     setPendingOverrideSave(baseOverrides);
     triggerToast(`Staged ${stagedCount} event override change(s) for ${objectName}`, true);
+    if (hasPendingConversion) {
+      clearPendingOverrideConversion(objectName);
+    }
     if (removalFields.size > 0) {
       const removedNewFields = Array.from(removalFields).filter(
         (field) => getBaseObjectValue(objectName, `$.event.${field}`) === undefined,
@@ -7965,6 +7673,12 @@ export default function App() {
     }
     const overrides = overrideIndex.get(objectName) || [];
     const eventOverrideFields = new Set<string>();
+    const processors = overrides.flatMap((entry: any) =>
+      Array.isArray(entry?.processors) ? entry.processors : [],
+    );
+    const hasAdvancedFlow = processors.some(
+      (proc: any) => !getProcessorTargetField(proc) && !(proc?.op && proc?.path),
+    );
     overrides.forEach((entry: any) => {
       const eventOverrides = getOverrideEventMap(entry);
       Object.keys(eventOverrides).forEach((field) => eventOverrideFields.add(field));
@@ -7972,10 +7686,20 @@ export default function App() {
     const processorTargets = getDirectOverrideTargets(obj);
     const baseValues: Record<string, string> = {};
     const newFields: string[] = [];
-    const removableFields: string[] = [];
+    const removableFields = new Set<string>();
     const processorFields: string[] = [];
     eventOverrideFields.forEach((field) => {
-      removableFields.push(field);
+      removableFields.add(field);
+    });
+    processorTargets.forEach((target) => {
+      if (target?.startsWith('$.event.')) {
+        const field = target.replace('$.event.', '');
+        processorFields.push(field);
+        removableFields.add(field);
+      }
+    });
+
+    removableFields.forEach((field) => {
       const baseValue = getBaseEventDisplay(obj, field) || '—';
       if (baseValue === 'New') {
         newFields.push(field);
@@ -7984,22 +7708,19 @@ export default function App() {
         baseValues[field] = baseValue;
       }
     });
-    processorTargets.forEach((target) => {
-      if (target?.startsWith('$.event.')) {
-        processorFields.push(target.replace('$.event.', ''));
-      }
-    });
-    if (removableFields.length === 0 && processorFields.length === 0) {
+
+    if (removableFields.size === 0 && !hasAdvancedFlow) {
       return;
     }
     setRemoveAllOverridesModal({
       open: true,
       panelKey,
-      fields: removableFields,
+      fields: Array.from(removableFields),
       baseValues,
       newFields,
       processorFields,
       objectName,
+      hasAdvancedFlow,
     });
   };
 
@@ -8936,7 +8657,8 @@ export default function App() {
     }
     const versionInfo = getOverrideVersionInfo(obj?.['@objectName']);
     if (versionInfo.mode === 'v2' || versionInfo.mode === 'mixed') {
-      triggerToast('Open Advanced Flow or convert to v3 before using the builder.', false);
+      const objectName = obj?.['@objectName'] || null;
+      openAdvancedFlowModal('object', objectName, `$.event.${field}`);
       return;
     }
     if (!panelEditState[panelKey]) {
@@ -8959,10 +8681,20 @@ export default function App() {
     })();
     const targetPath = `$.event.${field}`;
     const existingProcessor = overrideProcessors.find(
-      (proc: any) => getProcessorTargetField(proc) === targetPath,
+      (proc: any) => (getProcessorTargetField(proc) || getPatchTargetField(proc)) === targetPath,
     );
+    const builderProcessor =
+      existingProcessor?.op && existingProcessor?.path
+        ? existingProcessor?.value && typeof existingProcessor.value === 'object'
+          ? existingProcessor.value
+          : null
+        : existingProcessor;
+    const isPatchMode =
+      Boolean(existingProcessor?.op && existingProcessor?.path) || versionInfo.mode === 'v3';
+    setBuilderPatchMode(isPatchMode);
+    setBuilderPatchOp(existingProcessor?.op && existingProcessor?.path ? existingProcessor : null);
     const draftValue = panelDrafts?.[panelKey]?.event?.[field];
-    const evalSource = existingProcessor?.set?.source;
+    const evalSource = builderProcessor?.set?.source;
     const evalTextFromOverride =
       typeof evalSource === 'object' && typeof evalSource.eval === 'string'
         ? evalSource.eval
@@ -8987,8 +8719,8 @@ export default function App() {
     setBuilderTarget({ panelKey, field });
     setBuilderOpen(true);
     setShowProcessorJson(true);
-    const builderConfig = existingProcessor
-      ? buildBuilderConfigFromProcessor(existingProcessor, targetPath)
+    const builderConfig = builderProcessor
+      ? buildBuilderConfigFromProcessor(builderProcessor, targetPath)
       : null;
     if (builderConfig) {
       setBuilderFocus('processor');
@@ -9053,13 +8785,11 @@ export default function App() {
   };
 
   const isBuilderTargetReady = Boolean(builderTarget && panelEditState[builderTarget.panelKey]);
-  const isFieldLockedByBuilder = (panelKey: string, field: string) =>
-    Boolean(
-      builderTarget &&
-      panelEditState[builderTarget.panelKey] &&
-      builderTarget.panelKey === panelKey &&
-      builderTarget.field !== field,
-    );
+  const isFieldLockedByBuilder = (panelKey: string, field: string) => {
+    void panelKey;
+    void field;
+    return false;
+  };
   const getCurrentFieldValue = (obj: any, panelKey: string, field: string) => {
     const draftValue = panelDrafts?.[panelKey]?.event?.[field];
     if (draftValue !== undefined) {
@@ -9113,6 +8843,8 @@ export default function App() {
     setProcessorType(null);
     setBuilderLiteralText('');
     setBuilderTypeLocked(null);
+    setBuilderPatchMode(false);
+    setBuilderPatchOp(null);
     setBuilderSwitchModal({ open: false });
     setBuilderOpen(false);
     resetBuilderHistory(null);
@@ -9790,6 +9522,11 @@ export default function App() {
     scope: 'object' | 'global',
     lane: 'object' | 'pre' | 'post',
     nodeErrorsMap?: FlowNodeErrorMap,
+    versionInfo?: {
+      mode: 'none' | 'v2' | 'v3' | 'mixed';
+      label: string;
+      detail: string;
+    } | null,
   ) => (
     <div
       className={`flow-lane${advancedFlowFocusTarget ? ' flow-lane-focused' : ''}`}
@@ -9799,6 +9536,13 @@ export default function App() {
       {nodes.length === 0 && <div className="flow-empty">Drop processors here</div>}
       {nodes.map((node) => {
         const isFocused = nodeMatchesFocusTarget(node, advancedFlowFocusTarget);
+        const versionMode = versionInfo?.mode;
+        const showVersionBadge = scope === 'object' && versionMode && versionMode !== 'none';
+        const isV3 = versionMode === 'v3';
+        const badgeText = showVersionBadge ? (isV3 ? 'v3' : '! v2') : '';
+        const badgeTitle = isV3
+          ? 'JSON Patch (v3) processor.'
+          : 'Legacy v2 processor. We recommend moving to v3.';
         return (
           <div
             key={node.id}
@@ -9814,7 +9558,19 @@ export default function App() {
             }}
           >
             <div className="flow-node-header">
-              <div className="flow-node-title">{getFlowNodeLabel(node)}</div>
+              <div className="flow-node-title">
+                {getFlowNodeLabel(node)}
+                {showVersionBadge && (
+                  <span
+                    className={`flow-node-version-badge${
+                      isV3 ? ' flow-node-version-badge-v3' : ' flow-node-version-badge-v2'
+                    }`}
+                    title={badgeTitle}
+                  >
+                    {badgeText}
+                  </span>
+                )}
+              </div>
               <div className="flow-node-actions">
                 {isFocused && <span className="flow-node-focus-badge">Focused</span>}
                 {nodeErrorsMap?.[node.id]?.length ? (
@@ -9849,6 +9605,7 @@ export default function App() {
                     scope,
                     lane,
                     nodeErrorsMap,
+                    versionInfo,
                   )}
                 </div>
                 <div className="flow-branch">
@@ -9860,6 +9617,7 @@ export default function App() {
                     scope,
                     lane,
                     nodeErrorsMap,
+                    versionInfo,
                   )}
                 </div>
               </div>
@@ -9875,6 +9633,7 @@ export default function App() {
                     scope,
                     lane,
                     nodeErrorsMap,
+                    versionInfo,
                   )}
                 </div>
               </div>
@@ -9893,6 +9652,7 @@ export default function App() {
                         scope,
                         lane,
                         nodeErrorsMap,
+                        versionInfo,
                       )}
                     </div>
                   ))}
@@ -9908,6 +9668,7 @@ export default function App() {
                     scope,
                     lane,
                     nodeErrorsMap,
+                    versionInfo,
                   )}
                 </div>
               </div>
@@ -10481,6 +10242,8 @@ export default function App() {
     if (!selectedFile) {
       return;
     }
+    setAdvancedFlowNotice(null);
+    setShowAdvancedFlowJsonPreview(false);
     const getObjectName = () => {
       if (scope === 'global') {
         return null;
@@ -10665,6 +10428,31 @@ export default function App() {
     setPendingOverrideSave(baseOverrides);
     setSaveError(null);
   };
+
+  const advancedFlowPatchPreview = useMemo(() => {
+    if (!advancedFlowTarget?.objectName) {
+      return null;
+    }
+    const pendingConversion = getPendingOverrideConversion(advancedFlowTarget.objectName);
+    if (pendingConversion?.entry) {
+      return JSON.stringify(pendingConversion.entry, null, 2);
+    }
+    const method = advancedFlowTarget.method || getOverrideMethod();
+    const entry = getOverrideEntry({
+      objectName: advancedFlowTarget.objectName,
+      scope: 'post',
+      method,
+    });
+    if (!entry) {
+      return null;
+    }
+    const processors = Array.isArray(entry?.processors) ? entry.processors : [];
+    const hasPatchOps = processors.some((proc: any) => proc?.op && proc?.path);
+    if (!hasPatchOps && entry?.version !== 'v3') {
+      return null;
+    }
+    return JSON.stringify(entry, null, 2);
+  }, [advancedFlowTarget, overrideInfo, pendingOverrideSave, pendingOverrideConversions, selectedFile]);
 
   const handleBuilderSelect = (item: ProcessorCatalogItem, isEnabled: boolean) => {
     if (!isEnabled) {
@@ -11942,6 +11730,22 @@ export default function App() {
     : false;
   const builderDirty = hasBuilderUnsavedChanges();
   const processorPayload = buildProcessorPayload();
+  const builderPatchPreview = (() => {
+    if (!builderPatchMode || !builderTarget || !processorPayload) {
+      return null;
+    }
+    const obj = getObjectByPanelKey(builderTarget.panelKey);
+    const objectName = obj?.['@objectName'];
+    if (!objectName) {
+      return null;
+    }
+    const target = getProcessorTargetField(processorPayload);
+    if (!target || !target.startsWith('$.event.') || !processorPayload?.set) {
+      return null;
+    }
+    const field = target.replace('$.event.', '');
+    return buildOverridePatchOp(objectName, field, processorPayload.set.source);
+  })();
   const builderTrapVars = builderTarget
     ? getObjectByPanelKey(builderTarget.panelKey)?.trap?.variables || []
     : [];
@@ -11964,6 +11768,20 @@ export default function App() {
   const flowEditorNodeErrors = flowEditorValidation.nodeErrors;
   const flowEditorHasErrors =
     flowEditorNodeErrors.length > 0 || Object.keys(flowEditorFieldErrors).length > 0;
+  const handleCancelFlowEditor = () => {
+    setFlowEditor(null);
+    setFlowEditorDraft(null);
+  };
+  const handleSaveFlowEditor = () => {
+    if (!flowEditor || !flowEditorDraft) {
+      return;
+    }
+    const setNodes =
+      flowEditor.setNodesOverride || getFlowStateByLane(flowEditor.scope, flowEditor.lane).setNodes;
+    setNodes((prev) => replaceNodeById(prev, flowEditor.nodeId, flowEditorDraft));
+    setFlowEditor(null);
+    setFlowEditorDraft(null);
+  };
   const focusedFlowJson = focusedFlowMatch
     ? JSON.stringify(focusedFlowMatch.processor, null, 2)
     : '';
@@ -12066,76 +11884,23 @@ export default function App() {
     }
   }, [activeApp, pcomObjectEntries, pcomSelectedObjectKey]);
   const renderFlowJsonPreview = (fullJson: string) => (
-    <div className="flow-preview">
+    <div
+      className={`flow-preview${showAdvancedFlowJsonPreview ? '' : ' flow-preview-collapsed'}`}
+    >
       <div className="flow-preview-title-row">
         <div className="flow-preview-title">JSON Preview</div>
-        {advancedFlowFocusTarget && (
-          <div className="flow-focus-actions">
-            <button
-              type="button"
-              className="builder-link"
-              onClick={() => setAdvancedFlowFocusOnly((prev) => !prev)}
-              disabled={!focusedFlowMatch}
-            >
-              {advancedFlowFocusOnly ? 'Show full JSON' : 'Focus only'}
-            </button>
-            <button
-              type="button"
-              className="builder-link"
-              onClick={() => {
-                setAdvancedFlowFocusTarget(null);
-                setAdvancedFlowFocusIndex(0);
-                setAdvancedFlowFocusOnly(false);
-              }}
-            >
-              Clear focus
-            </button>
-          </div>
-        )}
+        <button
+          type="button"
+          className="builder-link"
+          onClick={() => setShowAdvancedFlowJsonPreview((prev) => !prev)}
+        >
+          {showAdvancedFlowJsonPreview ? 'Hide JSON' : 'Show JSON'}
+        </button>
       </div>
-      {advancedFlowFocusTarget && (
-        <div className="flow-focus-card">
-          <div className="flow-focus-row">
-            <div className="flow-focus-title">
-              Focused target: <span className="monospace">{advancedFlowFocusTarget}</span>
-            </div>
-            <div className="flow-focus-count">
-              {focusedFlowMatches.length > 0
-                ? `Match ${advancedFlowFocusIndex + 1} of ${focusedFlowMatches.length} (${focusedLaneLabel})`
-                : 'No matching processors found'}
-            </div>
-          </div>
-          {focusedFlowMatches.length > 1 && (
-            <div className="flow-focus-controls">
-              <button
-                type="button"
-                className="builder-link"
-                onClick={() =>
-                  setAdvancedFlowFocusIndex((prev) =>
-                    prev <= 0 ? focusedFlowMatches.length - 1 : prev - 1,
-                  )
-                }
-              >
-                Previous
-              </button>
-              <button
-                type="button"
-                className="builder-link"
-                onClick={() =>
-                  setAdvancedFlowFocusIndex((prev) =>
-                    prev >= focusedFlowMatches.length - 1 ? 0 : prev + 1,
-                  )
-                }
-              >
-                Next
-              </button>
-            </div>
-          )}
-        </div>
-      )}
-      {advancedFlowFocusOnly && focusedFlowMatch
-        ? renderJsonWithFocus(focusedFlowJson, focusedFlowJson)
-        : renderJsonWithFocus(fullJson, focusedFlowJson)}
+      {showAdvancedFlowJsonPreview &&
+        (advancedFlowFocusOnly && focusedFlowMatch
+          ? renderJsonWithFocus(focusedFlowJson, focusedFlowJson)
+          : renderJsonWithFocus(fullJson, focusedFlowJson))}
     </div>
   );
   const getFieldChangeLabel = (change: {
@@ -12159,6 +11924,11 @@ export default function App() {
       isAnyPanelEditing={isAnyPanelEditing}
       builderOpen={builderOpen}
       builderTarget={builderTarget}
+      builderOverrideVersion={
+        builderTarget
+          ? getOverrideVersionInfo(getObjectByPanelKey(builderTarget.panelKey)?.['@objectName'])
+          : null
+      }
       builderDirty={builderDirty}
       canUndoBuilder={canUndoBuilder}
       canRedoBuilder={canRedoBuilder}
@@ -12168,6 +11938,8 @@ export default function App() {
       requestCancelBuilder={requestCancelBuilder}
       setBuilderOpen={setBuilderOpen}
       builderFocus={builderFocus}
+      builderPatchMode={builderPatchMode}
+      builderPatchPreview={builderPatchPreview}
       isBuilderTargetReady={isBuilderTargetReady}
       builderTypeLocked={builderTypeLocked}
       setBuilderSwitchModal={setBuilderSwitchModal}
@@ -12599,6 +12371,7 @@ export default function App() {
                           getOverrideVersionInfo={getOverrideVersionInfo}
                           canConvertOverrideToV3={canConvertOverrideToV3}
                           convertOverrideToV3={convertOverrideToV3}
+                          hasPendingOverrideConversion={hasPendingOverrideConversion}
                           openAdvancedFlowForObject={openAdvancedFlowForObject}
                           getOverrideFileInfoForObject={getOverrideFileInfoForObject}
                           getOverrideMetaForObject={getOverrideMetaForObject}
@@ -12950,8 +12723,7 @@ export default function App() {
                                       type="button"
                                       className="ghost-button"
                                       onClick={() => {
-                                        setPendingOverrideSave(null);
-                                        setShowReviewModal(false);
+                                        setPendingReviewDiscard(true);
                                       }}
                                       disabled={saveLoading}
                                     >
@@ -13054,713 +12826,97 @@ export default function App() {
                             </div>
                           </div>
                         )}
-                        {showAdvancedProcessorModal && (
-                          <div
-                            className="modal-overlay modal-overlay-top"
-                            style={getModalOverlayStyle('advancedFlow', 0)}
-                            role="dialog"
-                            aria-modal="true"
-                          >
-                            <div className="modal modal-flow" ref={advancedFlowModalRef}>
-                              <div className="flow-modal-header">
-                                <h3>
-                                  {advancedProcessorScope === 'global'
-                                    ? 'Advanced Processors (Global)'
-                                    : 'Advanced Processors (Object)'}
-                                </h3>
-                                <button
-                                  type="button"
-                                  className="flow-modal-close"
-                                  onClick={requestCloseAdvancedFlowModal}
-                                >
-                                  Close
-                                </button>
-                              </div>
-                              <div className="flow-modal-subtitle">
-                                {advancedProcessorScope === 'global'
-                                  ? 'Wireframe: configure global pre/post processors for the file. Drag from the palette into the lanes.'
-                                  : 'Wireframe: configure object processors. Drag from the palette into the flow lanes.'}
-                              </div>
-                              {(advancedFlowDirty || flowErrorCount > 0) && (
-                                <div className="builder-hint builder-hint-warning">
-                                  {flowErrorCount > 0
-                                    ? `Resolve ${flowErrorCount} validation issue(s) before saving.`
-                                    : 'Pending Advanced Flow changes. Save to stage.'}
-                                </div>
-                              )}
-                              {advancedFlowRemovedTargets.length > 0 && (
-                                <div className="flow-removed-card">
-                                  <div className="flow-removed-title">
-                                    Marked for deletion on save
-                                  </div>
-                                  <div className="flow-removed-list">
-                                    {advancedFlowRemovedTargets.map((target) => (
-                                      <div key={target} className="flow-removed-item">
-                                        <span className="flow-removed-label">
-                                          {formatFlowTargetLabel(target)}
-                                        </span>
-                                        <span className="pill removed-pill">To be deleted</span>
-                                      </div>
-                                    ))}
-                                  </div>
-                                </div>
-                              )}
-                              <div className="flow-modal-body">
-                                <div className="flow-palette">
-                                  <div className="flow-palette-title">Palette</div>
-                                  <input
-                                    className="flow-palette-search"
-                                    placeholder="Search processors"
-                                    value={advancedProcessorSearch}
-                                    onChange={(event) =>
-                                      setAdvancedProcessorSearch(event.target.value)
-                                    }
-                                  />
-                                  <div className="flow-palette-list">
-                                    {paletteSections.map((section) => (
-                                      <div key={section.status} className="flow-palette-section">
-                                        <div className="flow-palette-section-title">
-                                          {section.title}
-                                        </div>
-                                        {section.items.length === 0 ? (
-                                          <div className="flow-palette-empty">None</div>
-                                        ) : (
-                                          <div className="flow-palette-section-grid">
-                                            {section.items.map((item) => {
-                                              const isEnabled = item.status !== 'planned';
-                                              return (
-                                                <div
-                                                  key={`${item.label}-${item.nodeKind}`}
-                                                  className={
-                                                    isEnabled
-                                                      ? 'flow-palette-item'
-                                                      : 'flow-palette-item flow-palette-item-disabled'
-                                                  }
-                                                  draggable={isEnabled}
-                                                  onDragStart={(event) => {
-                                                    if (!isEnabled) {
-                                                      return;
-                                                    }
-                                                    const payload = JSON.stringify({
-                                                      source: 'palette',
-                                                      nodeKind: item.nodeKind,
-                                                      processorType: item.processorType,
-                                                    });
-                                                    event.dataTransfer.setData(
-                                                      'application/json',
-                                                      payload,
-                                                    );
-                                                    event.dataTransfer.setData(
-                                                      'text/plain',
-                                                      payload,
-                                                    );
-                                                    event.dataTransfer.effectAllowed = 'copyMove';
-                                                  }}
-                                                >
-                                                  <span>{item.label}</span>
-                                                  {renderProcessorHelp(
-                                                    (item.nodeKind === 'if'
-                                                      ? 'if'
-                                                      : item.processorType) as keyof typeof processorHelp,
-                                                  )}
-                                                </div>
-                                              );
-                                            })}
-                                          </div>
-                                        )}
-                                      </div>
-                                    ))}
-                                  </div>
-                                </div>
-                                <div className="flow-canvas">
-                                  {advancedProcessorScope === 'global' ? (
-                                    <>
-                                      <div className="flow-canvas-title">Global Flow</div>
-                                      <div className="flow-global-sections">
-                                        <div className="flow-global-section">
-                                          <div className="flow-global-title">Pre</div>
-                                          {renderFlowList(
-                                            globalPreFlow,
-                                            { kind: 'root' },
-                                            setGlobalPreFlow,
-                                            'global',
-                                            'pre',
-                                            flowValidation.pre,
-                                          )}
-                                        </div>
-                                        <div className="flow-global-section">
-                                          <div className="flow-global-title">Post</div>
-                                          {renderFlowList(
-                                            globalPostFlow,
-                                            { kind: 'root' },
-                                            setGlobalPostFlow,
-                                            'global',
-                                            'post',
-                                            flowValidation.post,
-                                          )}
-                                        </div>
-                                      </div>
-                                      {renderFlowJsonPreview(
-                                        JSON.stringify(
-                                          {
-                                            pre: buildFlowProcessors(globalPreFlow),
-                                            post: buildFlowProcessors(globalPostFlow),
-                                          },
-                                          null,
-                                          2,
-                                        ),
-                                      )}
-                                    </>
-                                  ) : (
-                                    <>
-                                      <div className="flow-canvas-title">Flow</div>
-                                      {renderFlowList(
-                                        advancedFlow,
-                                        { kind: 'root' },
-                                        setAdvancedFlow,
-                                        'object',
-                                        'object',
-                                        flowValidation.object,
-                                      )}
-                                      {renderFlowJsonPreview(
-                                        JSON.stringify(buildFlowProcessors(advancedFlow), null, 2),
-                                      )}
-                                    </>
-                                  )}
-                                </div>
-                              </div>
-                              <div className="modal-actions">
-                                <button type="button" onClick={requestCloseAdvancedFlowModal}>
-                                  Close
-                                </button>
-                                <button
-                                  type="button"
-                                  aria-disabled={
-                                    !advancedFlowDirty || flowErrorCount > 0 || !hasEditPermission
-                                  }
-                                  className={`builder-card builder-card-primary${
-                                    !advancedFlowDirty || flowErrorCount > 0 || !hasEditPermission
-                                      ? ' button-disabled'
-                                      : ''
-                                  }`}
-                                  onClick={() => {
-                                    if (
-                                      !advancedFlowDirty ||
-                                      flowErrorCount > 0 ||
-                                      !hasEditPermission
-                                    ) {
-                                      if (flowErrorCount > 0) {
-                                        triggerFlowErrorPulse(advancedFlowModalRef.current);
-                                      }
-                                      return;
-                                    }
-                                    saveAdvancedFlow();
-                                  }}
-                                >
-                                  Save Changes
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-                        {flowEditor && flowEditorDraft && (
-                          <div
-                            className="modal-overlay modal-overlay-top"
-                            style={getModalOverlayStyle('flowEditor', 1)}
-                            role="dialog"
-                            aria-modal="true"
-                          >
-                            <div className="modal modal-wide" ref={flowEditorModalRef}>
-                              <div className="flow-editor-header">
-                                <h3>
-                                  Configure Processor
-                                  {flowEditorDraft ? ` — ${getFlowNodeLabel(flowEditorDraft)}` : ''}
-                                </h3>
-                                <button
-                                  type="button"
-                                  className="builder-link"
-                                  onClick={() => setShowFieldReferenceModal(true)}
-                                >
-                                  Field reference
-                                </button>
-                              </div>
-                              {processorHelp[
-                                flowEditorDraft.kind === 'if' ? 'if' : flowEditorDraft.processorType
-                              ] && (
-                                <div className="builder-hint">
-                                  <div>
-                                    {
-                                      processorHelp[
-                                        flowEditorDraft.kind === 'if'
-                                          ? 'if'
-                                          : flowEditorDraft.processorType
-                                      ].description
-                                    }
-                                  </div>
-                                  <div className="builder-example-row">
-                                    <button
-                                      type="button"
-                                      className="builder-link"
-                                      onClick={applyFlowEditorExample}
-                                    >
-                                      Apply example
-                                    </button>
-                                    <span className="builder-example-code">
-                                      {
-                                        processorHelp[
-                                          flowEditorDraft.kind === 'if'
-                                            ? 'if'
-                                            : flowEditorDraft.processorType
-                                        ].example
-                                      }
-                                    </span>
-                                  </div>
-                                </div>
-                              )}
-                              {flowEditorDraft.kind === 'processor' &&
-                                ['set', 'regex'].includes(flowEditorDraft.processorType) && (
-                                  <div className="processor-form">
-                                    {renderProcessorConfigFields(
-                                      flowEditorDraft.processorType,
-                                      flowEditorDraft.config || {},
-                                      (key, value) =>
-                                        setFlowEditorDraft((prev) =>
-                                          prev
-                                            ? {
-                                                ...prev,
-                                                config: {
-                                                  ...(prev as FlowProcessorNode).config,
-                                                  [key]: value,
-                                                },
-                                              }
-                                            : prev,
-                                        ),
-                                      'flow',
-                                      flowEditorFieldErrors,
-                                    )}
-                                  </div>
-                                )}
-                              {flowEditorDraft.kind === 'if' && (
-                                <div className="processor-form">
-                                  <div className="processor-row">
-                                    <label className="builder-label">Property</label>
-                                    <input
-                                      className="builder-input"
-                                      value={flowEditorDraft.condition.property}
-                                      onChange={(e) =>
-                                        handleFlowEditorInputChange(
-                                          'flowEditor.condition.property',
-                                          e.target.value,
-                                          e.target.selectionStart,
-                                          (e.nativeEvent as InputEvent | undefined)?.inputType,
-                                        )
-                                      }
-                                    />
-                                  </div>
-                                  <div className="processor-row">
-                                    <label className="builder-label">Operator</label>
-                                    <select
-                                      className="builder-select"
-                                      value={flowEditorDraft.condition.operator}
-                                      onChange={(e) =>
-                                        setFlowEditorDraft((prev) =>
-                                          prev
-                                            ? {
-                                                ...prev,
-                                                condition: {
-                                                  ...(prev as FlowIfNode).condition,
-                                                  operator: e.target.value,
-                                                },
-                                              }
-                                            : prev,
-                                        )
-                                      }
-                                    >
-                                      <option value="==">==</option>
-                                      <option value="!=">!=</option>
-                                      <option value=">">&gt;</option>
-                                      <option value="<">&lt;</option>
-                                      <option value=">=">&gt;=</option>
-                                      <option value="<=">&lt;=</option>
-                                      <option value="=~">=~</option>
-                                    </select>
-                                  </div>
-                                  <div className="processor-row">
-                                    <label className="builder-label">Value</label>
-                                    <input
-                                      className="builder-input"
-                                      value={flowEditorDraft.condition.value}
-                                      onChange={(e) =>
-                                        handleFlowEditorInputChange(
-                                          'flowEditor.condition.value',
-                                          e.target.value,
-                                          e.target.selectionStart,
-                                          (e.nativeEvent as InputEvent | undefined)?.inputType,
-                                        )
-                                      }
-                                    />
-                                  </div>
-                                </div>
-                              )}
-                              {flowEditorDraft.kind === 'processor' &&
-                                flowEditorDraft.processorType === 'foreach' && (
-                                  <div className="processor-form">
-                                    <div className="processor-row">
-                                      <label className="builder-label">Source</label>
-                                      <input
-                                        className="builder-input"
-                                        value={flowEditorDraft.config?.source || ''}
-                                        onChange={(e) =>
-                                          setFlowEditorDraft((prev) =>
-                                            prev
-                                              ? {
-                                                  ...prev,
-                                                  config: {
-                                                    ...(prev as FlowProcessorNode).config,
-                                                    source: e.target.value,
-                                                  },
-                                                }
-                                              : prev,
-                                          )
-                                        }
-                                      />
-                                    </div>
-                                    <div className="processor-row">
-                                      <label className="builder-label">Key</label>
-                                      <input
-                                        className="builder-input"
-                                        value={flowEditorDraft.config?.keyVal || ''}
-                                        onChange={(e) =>
-                                          setFlowEditorDraft((prev) =>
-                                            prev
-                                              ? {
-                                                  ...prev,
-                                                  config: {
-                                                    ...(prev as FlowProcessorNode).config,
-                                                    keyVal: e.target.value,
-                                                  },
-                                                }
-                                              : prev,
-                                          )
-                                        }
-                                      />
-                                    </div>
-                                    <div className="processor-row">
-                                      <label className="builder-label">Value</label>
-                                      <input
-                                        className="builder-input"
-                                        value={flowEditorDraft.config?.valField || ''}
-                                        onChange={(e) =>
-                                          setFlowEditorDraft((prev) =>
-                                            prev
-                                              ? {
-                                                  ...prev,
-                                                  config: {
-                                                    ...(prev as FlowProcessorNode).config,
-                                                    valField: e.target.value,
-                                                  },
-                                                }
-                                              : prev,
-                                          )
-                                        }
-                                      />
-                                    </div>
-                                    <div className="processor-row">
-                                      <label className="builder-label">Processors</label>
-                                      {renderFlowList(
-                                        Array.isArray(flowEditorDraft.config?.processors)
-                                          ? (flowEditorDraft.config?.processors as FlowNode[])
-                                          : [],
-                                        { kind: 'root' },
-                                        (updater) => {
-                                          setFlowEditorDraft((prev) => {
-                                            if (!prev || prev.kind !== 'processor') {
-                                              return prev;
-                                            }
-                                            const current = Array.isArray(prev.config?.processors)
-                                              ? prev.config.processors
-                                              : [];
-                                            const next =
-                                              typeof updater === 'function'
-                                                ? (updater as (items: FlowNode[]) => FlowNode[])(
-                                                    current,
-                                                  )
-                                                : updater;
-                                            return {
-                                              ...prev,
-                                              config: {
-                                                ...(prev as FlowProcessorNode).config,
-                                                processors: next,
-                                              },
-                                            } as FlowNode;
-                                          });
-                                        },
-                                        flowEditor?.scope || 'object',
-                                        flowEditor?.lane || 'object',
-                                        validateFlowNodes(
-                                          Array.isArray(flowEditorDraft.config?.processors)
-                                            ? (flowEditorDraft.config?.processors as FlowNode[])
-                                            : [],
-                                          flowEditor?.lane || 'object',
-                                        ),
-                                      )}
-                                    </div>
-                                  </div>
-                                )}
-                              {flowEditorDraft.kind === 'processor' &&
-                                flowEditorDraft.processorType === 'switch' && (
-                                  <div className="processor-form">
-                                    <div className="processor-row">
-                                      <label className="builder-label">Source</label>
-                                      <input
-                                        className="builder-input"
-                                        value={flowEditorDraft.config?.source || ''}
-                                        onChange={(e) =>
-                                          setFlowEditorDraft((prev) =>
-                                            prev
-                                              ? {
-                                                  ...prev,
-                                                  config: {
-                                                    ...(prev as FlowProcessorNode).config,
-                                                    source: e.target.value,
-                                                  },
-                                                }
-                                              : prev,
-                                          )
-                                        }
-                                      />
-                                    </div>
-                                    <div className="processor-row">
-                                      <label className="builder-label">Operator</label>
-                                      <input
-                                        className="builder-input"
-                                        value={flowEditorDraft.config?.operator || ''}
-                                        onChange={(e) =>
-                                          setFlowEditorDraft((prev) =>
-                                            prev
-                                              ? {
-                                                  ...prev,
-                                                  config: {
-                                                    ...(prev as FlowProcessorNode).config,
-                                                    operator: e.target.value,
-                                                  },
-                                                }
-                                              : prev,
-                                          )
-                                        }
-                                      />
-                                    </div>
-                                    <div className="processor-row">
-                                      <label className="builder-label">Cases</label>
-                                      <div className="flow-switch-cases">
-                                        {(Array.isArray(flowEditorDraft.config?.cases)
-                                          ? flowEditorDraft.config?.cases
-                                          : []
-                                        ).map((item: any) => (
-                                          <div key={item.id} className="flow-switch-case">
-                                            <div className="flow-switch-case-row">
-                                              <label className="builder-label">Match</label>
-                                              <input
-                                                className="builder-input"
-                                                value={item.match ?? ''}
-                                                onChange={(e) =>
-                                                  setFlowEditorDraft((prev) => {
-                                                    if (!prev || prev.kind !== 'processor') {
-                                                      return prev;
-                                                    }
-                                                    const cases = Array.isArray(prev.config?.cases)
-                                                      ? prev.config.cases
-                                                      : [];
-                                                    return {
-                                                      ...prev,
-                                                      config: {
-                                                        ...(prev as FlowProcessorNode).config,
-                                                        cases: cases.map((entry: any) =>
-                                                          entry.id === item.id
-                                                            ? { ...entry, match: e.target.value }
-                                                            : entry,
-                                                        ),
-                                                      },
-                                                    } as FlowNode;
-                                                  })
-                                                }
-                                              />
-                                            </div>
-                                            <div className="flow-switch-case-row">
-                                              <label className="builder-label">
-                                                Operator (optional)
-                                              </label>
-                                              <input
-                                                className="builder-input"
-                                                value={item.operator ?? ''}
-                                                onChange={(e) =>
-                                                  setFlowEditorDraft((prev) => {
-                                                    if (!prev || prev.kind !== 'processor') {
-                                                      return prev;
-                                                    }
-                                                    const cases = Array.isArray(prev.config?.cases)
-                                                      ? prev.config.cases
-                                                      : [];
-                                                    return {
-                                                      ...prev,
-                                                      config: {
-                                                        ...(prev as FlowProcessorNode).config,
-                                                        cases: cases.map((entry: any) =>
-                                                          entry.id === item.id
-                                                            ? { ...entry, operator: e.target.value }
-                                                            : entry,
-                                                        ),
-                                                      },
-                                                    } as FlowNode;
-                                                  })
-                                                }
-                                              />
-                                            </div>
-                                            <div className="flow-switch-case-row">
-                                              <button
-                                                type="button"
-                                                className="builder-link"
-                                                onClick={() =>
-                                                  setFlowEditorDraft((prev) => {
-                                                    if (!prev || prev.kind !== 'processor') {
-                                                      return prev;
-                                                    }
-                                                    const cases = Array.isArray(prev.config?.cases)
-                                                      ? prev.config.cases
-                                                      : [];
-                                                    return {
-                                                      ...prev,
-                                                      config: {
-                                                        ...(prev as FlowProcessorNode).config,
-                                                        cases: cases.filter(
-                                                          (entry: any) => entry.id !== item.id,
-                                                        ),
-                                                      },
-                                                    } as FlowNode;
-                                                  })
-                                                }
-                                              >
-                                                Remove case
-                                              </button>
-                                            </div>
-                                          </div>
-                                        ))}
-                                        <button
-                                          type="button"
-                                          className="builder-link"
-                                          onClick={() =>
-                                            setFlowEditorDraft((prev) => {
-                                              if (!prev || prev.kind !== 'processor') {
-                                                return prev;
-                                              }
-                                              const cases = Array.isArray(prev.config?.cases)
-                                                ? prev.config.cases
-                                                : [];
-                                              return {
-                                                ...prev,
-                                                config: {
-                                                  ...(prev as FlowProcessorNode).config,
-                                                  cases: [
-                                                    ...cases,
-                                                    {
-                                                      id: nextSwitchCaseId(),
-                                                      match: '',
-                                                      operator: '',
-                                                      processors: [],
-                                                    },
-                                                  ],
-                                                },
-                                              } as FlowNode;
-                                            })
-                                          }
-                                        >
-                                          Add case
-                                        </button>
-                                      </div>
-                                    </div>
-                                    <div className="builder-hint">
-                                      Drag processors into each case or the Default lane on the
-                                      canvas.
-                                    </div>
-                                  </div>
-                                )}
-                              {flowEditorDraft.kind === 'processor' &&
-                                !['set', 'regex', 'foreach', 'switch'].includes(
-                                  flowEditorDraft.processorType,
-                                ) && (
-                                  <div className="processor-form">
-                                    {(processorConfigSpecs[flowEditorDraft.processorType] || [])
-                                      .length === 0 ? (
-                                      <div className="builder-hint">
-                                        No configuration required for this processor.
-                                      </div>
-                                    ) : (
-                                      renderProcessorConfigFields(
-                                        flowEditorDraft.processorType,
-                                        flowEditorDraft.config || {},
-                                        (key, value) =>
-                                          setFlowEditorDraft((prev) =>
-                                            prev
-                                              ? {
-                                                  ...prev,
-                                                  config: {
-                                                    ...(prev as FlowProcessorNode).config,
-                                                    [key]: value,
-                                                  },
-                                                }
-                                              : prev,
-                                          ),
-                                        'flow',
-                                      )
-                                    )}
-                                  </div>
-                                )}
-                              {flowEditorNodeErrors.length > 0 && (
-                                <div className="builder-hint builder-hint-warning">
-                                  {flowEditorNodeErrors.map((item) => (
-                                    <div key={item}>{item}</div>
-                                  ))}
-                                </div>
-                              )}
-                              <div className="modal-actions">
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    setFlowEditor(null);
-                                    setFlowEditorDraft(null);
-                                  }}
-                                >
-                                  Cancel
-                                </button>
-                                <button
-                                  type="button"
-                                  aria-disabled={flowEditorHasErrors}
-                                  className={`builder-card builder-card-primary${flowEditorHasErrors ? ' button-disabled' : ''}`}
-                                  onClick={() => {
-                                    if (!flowEditor || !flowEditorDraft) {
-                                      return;
-                                    }
-                                    if (flowEditorHasErrors) {
-                                      triggerValidationPulse(flowEditorModalRef.current);
-                                      return;
-                                    }
-                                    const setNodes =
-                                      flowEditor.setNodesOverride ||
-                                      getFlowStateByLane(flowEditor.scope, flowEditor.lane)
-                                        .setNodes;
-                                    setNodes((prev) =>
-                                      replaceNodeById(prev, flowEditor.nodeId, flowEditorDraft),
-                                    );
-                                    setFlowEditor(null);
-                                    setFlowEditorDraft(null);
-                                  }}
-                                >
-                                  Save
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        )}
+                        <FcomAdvancedFlowModal
+                          showAdvancedProcessorModal={showAdvancedProcessorModal}
+                          pendingAdvancedFlowClose={pendingAdvancedFlowClose}
+                          getModalOverlayStyle={getModalOverlayStyle}
+                          advancedFlowModalRef={advancedFlowModalRef}
+                          advancedProcessorScope={advancedProcessorScope}
+                          requestCloseAdvancedFlowModal={requestCloseAdvancedFlowModal}
+                          advancedFlowDirty={advancedFlowDirty}
+                          flowErrorCount={flowErrorCount}
+                          advancedFlowRemovedTargets={advancedFlowRemovedTargets}
+                          formatFlowTargetLabel={formatFlowTargetLabel}
+                          advancedProcessorSearch={advancedProcessorSearch}
+                          onAdvancedProcessorSearchChange={setAdvancedProcessorSearch}
+                          advancedFlowVersionInfo={
+                            advancedFlowTarget?.objectName
+                              ? getOverrideVersionInfo(advancedFlowTarget.objectName)
+                              : null
+                          }
+                          advancedFlowNotice={advancedFlowNotice}
+                          advancedFlowPatchPreview={advancedFlowPatchPreview}
+                          canConvertToV3={
+                            Boolean(
+                              advancedFlowTarget?.objectName &&
+                                canConvertOverrideToV3(advancedFlowTarget.objectName),
+                            )
+                          }
+                          onConvertToV3={() => {
+                            if (advancedFlowTarget?.objectName) {
+                              convertOverrideToV3(advancedFlowTarget.objectName);
+                              setAdvancedFlowNotice(
+                                'Conversion ready. Save the object to stage the v3 patch.',
+                              );
+                            }
+                          }}
+                          advancedFlowFocusTarget={advancedFlowFocusTarget}
+                          advancedFlowFocusIndex={advancedFlowFocusIndex}
+                          advancedFlowFocusOnly={advancedFlowFocusOnly}
+                          focusedFlowMatch={Boolean(focusedFlowMatch)}
+                          focusedFlowMatches={focusedFlowMatches}
+                          focusedLaneLabel={focusedLaneLabel}
+                          setAdvancedFlowFocusTarget={setAdvancedFlowFocusTarget}
+                          setAdvancedFlowFocusIndex={setAdvancedFlowFocusIndex}
+                          setAdvancedFlowFocusOnly={setAdvancedFlowFocusOnly}
+                          paletteSections={paletteSections}
+                          renderProcessorHelp={renderProcessorHelp}
+                          renderFlowList={renderFlowList}
+                          globalPreFlow={globalPreFlow}
+                          setGlobalPreFlow={setGlobalPreFlow}
+                          globalPostFlow={globalPostFlow}
+                          setGlobalPostFlow={setGlobalPostFlow}
+                          advancedFlow={advancedFlow}
+                          setAdvancedFlow={setAdvancedFlow}
+                          flowValidation={flowValidation}
+                          renderFlowJsonPreview={renderFlowJsonPreview}
+                          buildFlowProcessors={(nodes, _normalizeSourcePath) =>
+                            buildFlowProcessors(nodes)
+                          }
+                          normalizeSourcePath={normalizeSourcePath}
+                          hasEditPermission={hasEditPermission}
+                          triggerFlowErrorPulse={triggerFlowErrorPulse}
+                          saveAdvancedFlow={saveAdvancedFlow}
+                          onCancelAdvancedFlowClose={() => setPendingAdvancedFlowClose(false)}
+                          onConfirmAdvancedFlowClose={() => {
+                            setPendingAdvancedFlowClose(false);
+                            setShowAdvancedProcessorModal(false);
+                            setFlowEditor(null);
+                            setFlowEditorDraft(null);
+                            setAdvancedFlowDefaultTarget(null);
+                          }}
+                        />
+                        <FcomFlowEditorModal
+                          flowEditor={flowEditor}
+                          flowEditorDraft={flowEditorDraft}
+                          flowEditorModalRef={flowEditorModalRef}
+                          getModalOverlayStyle={getModalOverlayStyle}
+                          getFlowNodeLabel={getFlowNodeLabel}
+                          onShowFieldReference={() => setShowFieldReferenceModal(true)}
+                          applyFlowEditorExample={applyFlowEditorExample}
+                          renderProcessorConfigFields={renderProcessorConfigFields}
+                          flowEditorFieldErrors={flowEditorFieldErrors}
+                          handleFlowEditorInputChange={handleFlowEditorInputChange}
+                          setFlowEditorDraft={setFlowEditorDraft}
+                          renderFlowList={renderFlowList}
+                          validateFlowNodes={validateFlowNodes}
+                          nextSwitchCaseId={nextSwitchCaseId}
+                          flowEditorNodeErrors={flowEditorNodeErrors}
+                          flowEditorHasErrors={flowEditorHasErrors}
+                          triggerValidationPulse={triggerValidationPulse}
+                          onCancelFlowEditor={handleCancelFlowEditor}
+                          onSaveFlowEditor={handleSaveFlowEditor}
+                        />
                         {showFieldReferenceModal && (
                           <div
                             className={`modal-overlay${
@@ -13901,28 +13057,21 @@ export default function App() {
                               ) : (
                                 <p>No direct overrides can be removed here.</p>
                               )}
-                              {(removeAllOverridesModal.processorFields?.length || 0) > 0 && (
+                              {removeAllOverridesModal.hasAdvancedFlow && (
                                 <>
                                   <p className="modal-warning">
-                                    These fields are set by Advanced Flow and won’t be removed here:
+                                    Advanced Flow processors won’t be removed here.
                                   </p>
-                                  <ul className="modal-warning-list">
-                                    {removeAllOverridesModal.processorFields?.map((field) => (
-                                      <li key={field}>{field}</li>
-                                    ))}
-                                  </ul>
                                   <button
                                     type="button"
                                     className="link-button"
                                     onClick={() => {
-                                      const focusField =
-                                        removeAllOverridesModal.processorFields?.[0];
                                       const objectName = removeAllOverridesModal.objectName;
                                       if (objectName) {
                                         openAdvancedFlowModal(
                                           'object',
                                           objectName,
-                                          focusField ? `$.event.${focusField}` : null,
+                                          null,
                                         );
                                       }
                                     }}
@@ -13992,42 +13141,10 @@ export default function App() {
                                   onClick={() => {
                                     const action = pendingNav;
                                     setPendingNav(null);
+                                    discardAllEdits();
                                     if (action) {
                                       action();
                                     }
-                                  }}
-                                >
-                                  Discard
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-                        {pendingAdvancedFlowClose && (
-                          <div
-                            className="modal-overlay modal-overlay-top"
-                            style={getModalOverlayStyle('advancedFlowConfirm', 3)}
-                            role="dialog"
-                            aria-modal="true"
-                          >
-                            <div className="modal">
-                              <h3>Discard Advanced Flow changes?</h3>
-                              <p>You have unsaved Advanced Flow edits. Discard them?</p>
-                              <div className="modal-actions">
-                                <button
-                                  type="button"
-                                  onClick={() => setPendingAdvancedFlowClose(false)}
-                                >
-                                  Cancel
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    setPendingAdvancedFlowClose(false);
-                                    setShowAdvancedProcessorModal(false);
-                                    setFlowEditor(null);
-                                    setFlowEditorDraft(null);
-                                    setAdvancedFlowDefaultTarget(null);
                                   }}
                                 >
                                   Discard
@@ -14060,6 +13177,32 @@ export default function App() {
                                     if (next.type === 'panel' && next.panelKey) {
                                       discardEventEdit(next.panelKey);
                                     }
+                                  }}
+                                >
+                                  Discard
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                        {pendingReviewDiscard && (
+                          <div className="modal-overlay" role="dialog" aria-modal="true">
+                            <div className="modal">
+                              <h3>Discard changes?</h3>
+                              <p>Discard all staged changes?</p>
+                              <div className="modal-actions">
+                                <button
+                                  type="button"
+                                  onClick={() => setPendingReviewDiscard(false)}
+                                >
+                                  Cancel
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setPendingReviewDiscard(false);
+                                    discardAllEdits();
+                                    setShowReviewModal(false);
                                   }}
                                 >
                                   Discard
@@ -14735,657 +13878,80 @@ export default function App() {
                   </div>
                 </div>
               ) : (
-                <div className="split-layout">
-                  <div className="panel">
-                    <div className="panel-scroll">
-                      <div className="panel-header">
-                        <div className="panel-title-row">
-                          <h2>MIB Browser</h2>
-                          <button
-                            type="button"
-                            className="ghost-button"
-                            onClick={() => loadMibPath(mibPath)}
-                          >
-                            Refresh
-                          </button>
-                        </div>
-                        <PathBreadcrumbs
-                          items={buildBreadcrumbsFromPath(mibPath).map((crumb) => ({
-                            label: crumb.label,
-                            value: crumb.node,
-                          }))}
-                          onSelect={(index) => {
-                            const target = buildBreadcrumbsFromPath(mibPath)[index];
-                            const targetPath = target?.node ? `/${target.node}` : '/';
-                            loadMibPath(targetPath);
-                          }}
-                        />
-                        <SearchPanel
-                          placeholder="Search MIBs"
-                          query={mibSearch}
-                          onQueryChange={setMibSearch}
-                          onSubmit={handleMibSearchSubmit}
-                          scopes={[
-                            { value: 'folder', label: 'Folder' },
-                            { value: 'all', label: 'All' },
-                          ]}
-                          scopeValue={mibSearchScope}
-                          onScopeChange={(value) => setMibSearchScope(value as 'folder' | 'all')}
-                          isLoading={mibLoading}
-                          helperContent={
-                            <>
-                              <span>
-                                Scope: {mibSearchScope === 'all' ? 'All' : 'Folder'}
-                              </span>
-                              {mibSearch.trim() && (
-                                <span className="search-helper-query">
-                                  {mibSearchMode === 'search'
-                                    ? `Searching all MIBs for “${mibSearch.trim()}”.`
-                                    : `Filtering current folder for “${mibSearch.trim()}”.`}
-                                </span>
-                              )}
-                            </>
-                          }
-                          actions={
-                            <button
-                              type="button"
-                              className="link-button"
-                              onClick={handleMibClearSearch}
-                              disabled={!mibSearch}
-                            >
-                              Clear
-                            </button>
-                          }
-                        />
-                      </div>
-                      {mibError && <div className="error">{mibError}</div>}
-                      {mibLoading ? (
-                        <div className="mib-list-loading" aria-busy="true">
-                          <span className="mib-loading-spinner" aria-hidden="true" />
-                          <span>Loading MIBs…</span>
-                          {mibShowLoadingTimer && (
-                            <span className="mib-loading-timer">{mibLoadingElapsed}s</span>
-                          )}
-                        </div>
-                      ) : (
-                        <div className="browse-results">
-                          {mibEntries.length === 0 ? (
-                            <div className="empty-state">No MIB files found.</div>
-                          ) : (
-                            <ul className="browse-list">
-                              {mibEntries.map((entry) => {
-                                const entrySupport = entry?.path
-                                  ? mibSupportByPath[entry.path]
-                                  : null;
-                                const fcomStatus = getMibSupportStatus(entrySupport?.fcom ?? null);
-                                const pcomStatus = getMibSupportStatus(entrySupport?.pcom ?? null);
-                                return (
-                                  <li key={entry.path || entry.name}>
-                                    <button
-                                      type="button"
-                                      className={
-                                        entry.isDir ? 'browse-link' : 'browse-link file-link'
-                                      }
-                                      onClick={() => handleOpenMibEntry(entry)}
-                                    >
-                                      <span className="browse-icon" aria-hidden="true">
-                                        {entry.isDir ? '📁' : '📄'}
-                                      </span>
-                                      {entry.name}
-                                    </button>
-                                    {!entry.isDir && (
-                                      <div className="mib-entry-meta">
-                                        <span className="mib-support-badge mib-support-badge-fcom">
-                                          FCOM
-                                        </span>
-                                        <span
-                                          className={`mib-support-status mib-support-status-${fcomStatus.status}`}
-                                          title={
-                                            fcomStatus.status === 'ok'
-                                              ? 'FCOM support found'
-                                              : fcomStatus.status === 'warn'
-                                                ? 'FCOM support not found'
-                                                : 'FCOM support unknown'
-                                          }
-                                        >
-                                          {fcomStatus.label}
-                                        </span>
-                                        <span className="mib-support-badge mib-support-badge-pcom">
-                                          PCOM
-                                        </span>
-                                        <span
-                                          className={`mib-support-status mib-support-status-${pcomStatus.status}`}
-                                          title={
-                                            pcomStatus.status === 'ok'
-                                              ? 'PCOM support found'
-                                              : pcomStatus.status === 'warn'
-                                                ? 'PCOM support not found'
-                                                : 'PCOM support unknown'
-                                          }
-                                        >
-                                          {pcomStatus.label}
-                                        </span>
-                                        <span className="browse-meta">
-                                          {entry.size ? `${Math.round(entry.size / 1024)} KB` : ''}
-                                        </span>
-                                      </div>
-                                    )}
-                                  </li>
-                                );
-                              })}
-                            </ul>
-                          )}
-                          {(mibTotal !== null || mibFilteredTotal !== null) && (
-                            <div className="muted">
-                              Showing {mibEntries.length} of{' '}
-                              {mibFilteredTotal ?? mibTotal ?? mibEntries.length}
-                              {mibSearch.trim() ? ' matches' : ' items'}.
-                              {mibSearchMode === 'search' &&
-                                mibHasMore &&
-                                ' (more matches available)'}
-                            </div>
-                          )}
-                          {mibHasMore && (
-                            <button
-                              type="button"
-                              className="ghost-button"
-                              onClick={() => {
-                                if (mibSearchScope === 'all' && mibSearch.trim()) {
-                                  void loadMibSearch({ append: true });
-                                } else {
-                                  void loadMibPath(mibPath, { append: true });
-                                }
-                              }}
-                              disabled={mibLoading}
-                            >
-                              Load more
-                            </button>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  <div className="panel">
-                    <div className="panel-scroll">
-                      <div className="panel-header">
-                        <h2>MIB Details</h2>
-                      </div>
-                      {!mibSelectedFile ? (
-                        <div className="empty-state">Select a MIB file to inspect.</div>
-                      ) : (
-                        <div className="mib-details">
-                          <FileTitleRow
-                            title={getMibBaseName(mibSelectedFile) || mibSelectedFile}
-                            path={mibSelectedFile}
-                            favorite={
-                              mibSelectedFile
-                                ? {
-                                    active: isFavorite('file', mibSelectedFile),
-                                    onToggle: () =>
-                                      toggleFavorite({
-                                        type: 'file',
-                                        pathId: mibSelectedFile,
-                                        label: getMibBaseName(mibSelectedFile) || mibSelectedFile,
-                                      }),
-                                  }
-                                : null
-                            }
-                          />
-                          <div className="mib-overview">
-                            {(() => {
-                              const fcomStatus = getMibSupportStatus(
-                                mibSelectedSupport?.fcom ?? null,
-                              );
-                              const pcomStatus = getMibSupportStatus(
-                                mibSelectedSupport?.pcom ?? null,
-                              );
-                              const fcomSupportedLabel = getSupportedCountLabel(
-                                mibSelectedSupport?.fcom ?? null,
-                                mibDefinitionCounts.fcomCount,
-                              );
-                              const pcomSupportedLabel = getSupportedCountLabel(
-                                mibSelectedSupport?.pcom ?? null,
-                                mibDefinitionCounts.pcomCount,
-                              );
-                              return (
-                                <>
-                                  <div className="mib-summary-left">
-                                    <div className="mib-summary-chip mib-summary-chip-fcom">
-                                      <span className="mib-summary-tag">FCOM</span>
-                                      <span
-                                        className={`mib-support-status mib-support-status-${fcomStatus.status}`}
-                                      >
-                                        {fcomStatus.label}
-                                      </span>
-                                      <span className="mib-summary-count">
-                                        {fcomSupportedLabel}/{mibDefinitionCounts.fcomCount}
-                                      </span>
-                                    </div>
-                                    <div className="mib-summary-chip mib-summary-chip-pcom">
-                                      <span className="mib-summary-tag">PCOM</span>
-                                      <span
-                                        className={`mib-support-status mib-support-status-${pcomStatus.status}`}
-                                      >
-                                        {pcomStatus.label}
-                                      </span>
-                                      <span className="mib-summary-count">
-                                        {pcomSupportedLabel}/{mibDefinitionCounts.pcomCount}
-                                      </span>
-                                    </div>
-                                  </div>
-                                  <div className="mib-summary-meta">Supported / Total</div>
-                                </>
-                              );
-                            })()}
-                          </div>
-                          <div className="mib-actions">
-                            <button
-                              type="button"
-                              className="action-link"
-                              onClick={runMib2Fcom}
-                              disabled={!hasEditPermission || mib2FcomLoading}
-                              title={hasEditPermission ? '' : 'Read-only access'}
-                            >
-                              {mib2FcomLoading ? 'Running…' : 'Run MIB2FCOM'}
-                            </button>
-                            <label className="mib-checkbox">
-                              <input
-                                type="checkbox"
-                                checked={mibUseParent}
-                                onChange={(e) => setMibUseParent(e.target.checked)}
-                                disabled={!hasEditPermission}
-                              />
-                              Use parent MIBs
-                            </label>
-                          </div>
-                          {mib2FcomError && <div className="error">{mib2FcomError}</div>}
-                          {mibOutput && (
-                            <div className="panel-section">
-                              <div className="panel-section-title">
-                                MIB2FCOM Output{mibOutputName ? ` (${mibOutputName})` : ''}
-                              </div>
-                              <textarea
-                                className="mib-output"
-                                value={mibOutput}
-                                onChange={(e) => setMibOutput(e.target.value)}
-                                disabled={!hasEditPermission}
-                              />
-                            </div>
-                          )}
-                          <div className="mib-main-split">
-                            <div className="mib-main-left">
-                              <div className="panel-section-title">Objects</div>
-                              <div className="mib-object-toolbar">
-                                <input
-                                  type="text"
-                                  placeholder="Search objects"
-                                  value={mibDefinitionSearch}
-                                  onChange={(e) => setMibDefinitionSearch(e.target.value)}
-                                />
-                                <div className="mib-filter-toggle" role="tablist">
-                                  <button
-                                    type="button"
-                                    className={
-                                      mibObjectFilter === 'all'
-                                        ? 'mib-filter-pill active'
-                                        : 'mib-filter-pill'
-                                    }
-                                    onClick={() => setMibObjectFilter('all')}
-                                  >
-                                    All
-                                  </button>
-                                  <button
-                                    type="button"
-                                    className={
-                                      mibObjectFilter === 'fcom'
-                                        ? 'mib-filter-pill active'
-                                        : 'mib-filter-pill'
-                                    }
-                                    onClick={() => setMibObjectFilter('fcom')}
-                                  >
-                                    FCOM
-                                  </button>
-                                  <button
-                                    type="button"
-                                    className={
-                                      mibObjectFilter === 'pcom'
-                                        ? 'mib-filter-pill active'
-                                        : 'mib-filter-pill'
-                                    }
-                                    onClick={() => setMibObjectFilter('pcom')}
-                                  >
-                                    PCOM
-                                  </button>
-                                </div>
-                              </div>
-                              <div className="mib-definition-list">
-                                {mibDetailsLoading ? (
-                                  <div className="mib-definition-loading" aria-busy="true">
-                                    <span className="mib-loading-spinner" aria-hidden="true" />
-                                    <span>Loading definitions…</span>
-                                  </div>
-                                ) : filteredMibDefinitions.length === 0 ? (
-                                  <div className="empty-state">No definitions found.</div>
-                                ) : (
-                                  filteredMibDefinitions.map((definition) => (
-                                    <button
-                                      key={`${definition.name}-${definition.oid || definition.kind}`}
-                                      type="button"
-                                      className={
-                                        mibSelectedDefinition?.name === definition.name
-                                          ? 'mib-definition-item mib-definition-item-active'
-                                          : 'mib-definition-item'
-                                      }
-                                      onClick={() => setMibSelectedDefinition(definition)}
-                                    >
-                                      {(() => {
-                                        const kind = String(definition?.kind || '').toUpperCase();
-                                        const isFcom =
-                                          kind === 'NOTIFICATION-TYPE' || kind === 'TRAP-TYPE';
-                                        const isPcom = kind === 'OBJECT-TYPE';
-                                        const support = isFcom
-                                          ? mibSelectedSupport?.fcom ?? null
-                                          : isPcom
-                                            ? mibSelectedSupport?.pcom ?? null
-                                            : null;
-                                        const status = getMibSupportStatus(support);
-                                        return (
-                                          <>
-                                            <div className="mib-definition-main">
-                                              <span className="mib-definition-name">
-                                                {definition.name}
-                                              </span>
-                                              <span className="mib-definition-kind">
-                                                {definition.kind}
-                                              </span>
-                                              <span className="mib-definition-oid">
-                                                {definition.fullOid || definition.oid || 'OID pending'}
-                                              </span>
-                                            </div>
-                                            <div className="mib-definition-flags">
-                                              {isFcom && (
-                                                <span className="mib-support-badge mib-support-badge-fcom">
-                                                  FCOM
-                                                </span>
-                                              )}
-                                              {isPcom && (
-                                                <span className="mib-support-badge mib-support-badge-pcom">
-                                                  PCOM
-                                                </span>
-                                              )}
-                                              {(isFcom || isPcom) && (
-                                                <span
-                                                  className={`mib-support-status mib-support-status-${status.status}`}
-                                                  title={
-                                                    status.status === 'ok'
-                                                      ? 'Support found'
-                                                      : status.status === 'warn'
-                                                        ? 'Support not found'
-                                                        : 'Support unknown'
-                                                  }
-                                                >
-                                                  {status.label}
-                                                </span>
-                                              )}
-                                            </div>
-                                          </>
-                                        );
-                                      })()}
-                                    </button>
-                                  ))
-                                )}
-                              </div>
-                            </div>
-                            <div className="mib-main-right">
-                              {!mibSelectedDefinition ? (
-                                <div className="empty-state">Select an object to view details.</div>
-                              ) : (
-                                (() => {
-                                  const kind = String(mibSelectedDefinition.kind || '').toUpperCase();
-                                  const isFault = kind === 'NOTIFICATION-TYPE' || kind === 'TRAP-TYPE';
-                                  const isPerf = kind === 'OBJECT-TYPE';
-                                  const activeTab = isFault ? 'fault' : isPerf ? 'performance' : 'fault';
-                                  const actionTitle =
-                                    activeTab === 'fault' ? 'Fault Actions' : 'Performance Actions';
-                                  const actionSubtitle =
-                                    activeTab === 'fault'
-                                      ? 'Draft your fault pipeline and correlate events.'
-                                      : 'Draft performance handling and metric tags.';
-                                  return (
-                                    <div className="mib-definition-details">
-                                      <div className="mib-definition-header">
-                                        <div className="mib-definition-title">
-                                          {mibSelectedDefinition.name}
-                                        </div>
-                                        <span className="mib-definition-pill">
-                                          {activeTab === 'fault' ? 'Fault' : 'Performance'}
-                                        </span>
-                                      </div>
-                                      <div className="mib-definition-meta">
-                                        <span>Kind: {mibSelectedDefinition.kind}</span>
-                                        <span>
-                                          OID (numeric): {mibSelectedDefinition.fullOid || '—'}
-                                        </span>
-                                        <span>
-                                          OID (symbolic): {mibSelectedDefinition.oid || '—'}
-                                        </span>
-                                      </div>
-                                      <div className="mib-definition-meta">
-                                        {mibSelectedDefinition.module && (
-                                          <span>Module: {mibSelectedDefinition.module}</span>
-                                        )}
-                                        {mibSelectedDefinition.syntax && (
-                                          <span>Syntax: {mibSelectedDefinition.syntax}</span>
-                                        )}
-                                        {mibSelectedDefinition.access && (
-                                          <span>Access: {mibSelectedDefinition.access}</span>
-                                        )}
-                                        {mibSelectedDefinition.status && (
-                                          <span>Status: {mibSelectedDefinition.status}</span>
-                                        )}
-                                        {mibSelectedDefinition.defval && (
-                                          <span>Default: {mibSelectedDefinition.defval}</span>
-                                        )}
-                                        {mibSelectedDefinition.index && (
-                                          <span>Index: {mibSelectedDefinition.index}</span>
-                                        )}
-                                      </div>
-                                      {mibSelectedDefinition.description && (
-                                        <div className="mib-definition-description">
-                                          {mibSelectedDefinition.description}
-                                        </div>
-                                      )}
-                                      {isPerf && (
-                                        <div className="mib-action-card">
-                                          <div className="mib-action-header">
-                                            <div>
-                                              <div className="mib-action-title">
-                                                PCOM SNMP Config (temporary)
-                                              </div>
-                                              <div className="mib-action-subtitle">
-                                                Draft device targeting for SNMP polling.
-                                              </div>
-                                              <div className="mib-action-hint">
-                                                Uses device IP only when polling.
-                                              </div>
-                                            </div>
-                                          </div>
-                                          <div className="mib-snmp-profile-meta">
-                                            {pcomAdvancedActive ? (
-                                              <span className="muted">
-                                                Advanced settings override the device dropdown.
-                                              </span>
-                                            ) : pcomSnmpProfileLoading ? (
-                                              <span className="muted">Loading SNMP profile...</span>
-                                            ) : pcomSnmpProfileError ? (
-                                              <span className="error">{pcomSnmpProfileError}</span>
-                                            ) : pcomSnmpProfile ? (
-                                              <>
-                                                <span className="muted">
-                                                  SNMP profile: {pcomSnmpProfile.description || 'Profile'} ({
-                                                    formatSnmpVersionLabel(pcomSnmpProfile.version)
-                                                  })
-                                                  {pcomSnmpProfile.community
-                                                    ? ` · Community: ${pcomSnmpProfile.community}`
-                                                    : ''}
-                                                  {pcomSnmpProfile.zoneName
-                                                    ? ` · Zone: ${pcomSnmpProfile.zoneName}`
-                                                    : ''}
-                                                </span>
-                                                <button
-                                                  type="button"
-                                                  className="info-button"
-                                                  title={formatSnmpProfileTooltip(pcomSnmpProfile)}
-                                                >
-                                                  ?
-                                                </button>
-                                              </>
-                                            ) : (
-                                              <span className="muted">
-                                                Select a device to load its SNMP profile.
-                                              </span>
-                                            )}
-                                          </div>
-                                          <div className="mib-action-results">
-                                            <div className="mib-trap-grid mib-trap-grid-compact">
-                                              <label className="mib-field">
-                                                Device
-                                                <select
-                                                  value={pcomDeviceIp}
-                                                  onChange={(e) => setPcomDeviceIp(e.target.value)}
-                                                  disabled={pcomDevicesLoading || pcomAdvancedActive}
-                                                >
-                                                  <option value="">Select a device</option>
-                                                  {pcomDevicesLoading ? (
-                                                    <option value="" disabled>
-                                                      Loading devices…
-                                                    </option>
-                                                  ) : pcomDeviceOptions.length === 0 ? (
-                                                    <option value="" disabled>
-                                                      No devices available
-                                                    </option>
-                                                  ) : (
-                                                    pcomDeviceOptionsWithManual.map((device) => (
-                                                      <option key={device.value} value={device.value}>
-                                                        {device.label}
-                                                      </option>
-                                                    ))
-                                                  )}
-                                                </select>
-                                              </label>
-                                              <div className="mib-field mib-field-action">
-                                                <div className="action-row">
-                                                  <button
-                                                    type="button"
-                                                    className="mib-action-button-secondary"
-                                                    onClick={openPcomAdvancedModal}
-                                                  >
-                                                    Advanced
-                                                  </button>
-                                                  {pcomAdvancedActive && (
-                                                    <button
-                                                      type="button"
-                                                      className="mib-action-button-secondary"
-                                                      onClick={disablePcomAdvanced}
-                                                    >
-                                                      Use basic
-                                                    </button>
-                                                  )}
-                                                </div>
-                                              </div>
-                                              <div className="mib-field mib-field-action">
-                                                <button
-                                                  type="button"
-                                                  className="mib-action-button"
-                                                  onClick={runPcomPoll}
-                                                  disabled={
-                                                    pcomPollLoading ||
-                                                    !pcomActiveTarget ||
-                                                    !(mibSelectedDefinition?.fullOid ||
-                                                      mibSelectedDefinition?.oid)
-                                                  }
-                                                >
-                                                  {pcomPollLoading ? 'Running…' : 'Test Poll'}
-                                                </button>
-                                              </div>
-                                            </div>
-                                            {pcomDevicesError && (
-                                              <div className="error">{pcomDevicesError}</div>
-                                            )}
-                                          </div>
-                                        </div>
-                                      )}
-                                      <div className="mib-action-card">
-                                        <div className="mib-action-header">
-                                          <div>
-                                            <div className="mib-action-title">
-                                              {isPerf ? 'Test Poll Output' : actionTitle}
-                                            </div>
-                                            <div className="mib-action-subtitle">
-                                              {isPerf
-                                                ? 'SNMP walk response from the selected device.'
-                                                : actionSubtitle}
-                                            </div>
-                                            {!isPerf && (
-                                              <div className="mib-action-hint">
-                                                Stub generation is coming next.
-                                              </div>
-                                            )}
-                                          </div>
-                                        </div>
-                                        <div
-                                          className={`mib-action-results${
-                                            isPerf ? ' mib-action-results-full' : ''
-                                          }`}
-                                        >
-                                          {isPerf ? (
-                                            pcomPollError || pcomPollOutput ? (
-                                              <div className="mib-poll-output">
-                                                {pcomPollError && (
-                                                  <div className="mib-poll-output-error">
-                                                    {pcomPollError}
-                                                  </div>
-                                                )}
-                                                {pcomPollOutput && (
-                                                  <pre className="mib-poll-output-body">
-                                                    {pcomPollOutput}
-                                                  </pre>
-                                                )}
-                                              </div>
-                                            ) : (
-                                              <div className="mib-action-results-empty">
-                                                Run Test Poll to see output here.
-                                              </div>
-                                            )
-                                          ) : (
-                                            <div className="mib-action-results-empty">
-                                              No actions configured yet.
-                                            </div>
-                                          )}
-                                        </div>
-                                      </div>
-                                      {!isPerf && (
-                                        <button
-                                          type="button"
-                                          className="action-link"
-                                          onClick={() =>
-                                            openTrapComposer(mibSelectedDefinition, mibSelectedFile)
-                                          }
-                                        >
-                                          Compose Trap
-                                        </button>
-                                      )}
-                                    </div>
-                                  );
-                                })()
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
+                <MibWorkspace
+                  isCompactPanel={isCompactPanel}
+                  mibPath={mibPath}
+                  mibSearch={mibSearch}
+                  mibSearchScope={mibSearchScope}
+                  mibSearchMode={mibSearchMode}
+                  mibLoading={mibLoading}
+                  mibShowLoadingTimer={mibShowLoadingTimer}
+                  mibLoadingElapsed={mibLoadingElapsed}
+                  mibError={mibError}
+                  mibEntries={mibEntries}
+                  mibTotal={mibTotal}
+                  mibFilteredTotal={mibFilteredTotal}
+                  mibHasMore={mibHasMore}
+                  mibSelectedFile={mibSelectedFile}
+                  mibSelectedSupport={mibSelectedSupport}
+                  mibDefinitionCounts={mibDefinitionCounts}
+                  mib2FcomLoading={mib2FcomLoading}
+                  mibUseParent={mibUseParent}
+                  mib2FcomError={mib2FcomError}
+                  mibOutput={mibOutput}
+                  mibOutputName={mibOutputName}
+                  mibDefinitionSearch={mibDefinitionSearch}
+                  mibObjectFilter={mibObjectFilter}
+                  mibDetailsLoading={mibDetailsLoading}
+                  mibSelectedDefinition={mibSelectedDefinition}
+                  filteredMibDefinitions={filteredMibDefinitions}
+                  mibSupportByPath={mibSupportByPath}
+                  pcomAdvancedActive={pcomAdvancedActive}
+                  pcomSnmpProfileLoading={pcomSnmpProfileLoading}
+                  pcomSnmpProfileError={pcomSnmpProfileError}
+                  pcomSnmpProfile={pcomSnmpProfile}
+                  pcomDeviceIp={pcomDeviceIp}
+                  pcomDevicesLoading={pcomDevicesLoading}
+                  pcomDeviceOptions={pcomDeviceOptions}
+                  pcomDeviceOptionsWithManual={pcomDeviceOptionsWithManual}
+                  pcomActiveTarget={pcomActiveTarget}
+                  pcomPollLoading={pcomPollLoading}
+                  pcomPollError={pcomPollError}
+                  pcomPollOutput={pcomPollOutput}
+                  pcomDevicesError={pcomDevicesError}
+                  favoritesFolders={favoritesFolders}
+                  favoritesFiles={favoritesFiles}
+                  favoritesLoading={favoritesLoading}
+                  favoritesError={favoritesError}
+                  hasEditPermission={hasEditPermission}
+                  buildBreadcrumbsFromPath={buildBreadcrumbsFromPath}
+                  handleMibSearchSubmit={handleMibSearchSubmit}
+                  handleMibClearSearch={handleMibClearSearch}
+                  loadMibPath={loadMibPath}
+                  loadMibSearch={loadMibSearch}
+                  handleOpenMibEntry={handleOpenMibEntry}
+                  openMibFavorite={openMibFavorite}
+                  getMibSupportStatus={getMibSupportStatus}
+                  getSupportedCountLabel={getSupportedCountLabel}
+                  getMibBaseName={getMibBaseName}
+                  runMib2Fcom={runMib2Fcom}
+                  setMibUseParent={setMibUseParent}
+                  setMibOutput={setMibOutput}
+                  setMibDefinitionSearch={setMibDefinitionSearch}
+                  setMibObjectFilter={setMibObjectFilter}
+                  setMibSelectedDefinition={setMibSelectedDefinition}
+                  formatSnmpVersionLabel={formatSnmpVersionLabel}
+                  formatSnmpProfileTooltip={formatSnmpProfileTooltip}
+                  openPcomAdvancedModal={openPcomAdvancedModal}
+                  disablePcomAdvanced={disablePcomAdvanced}
+                  runPcomPoll={runPcomPoll}
+                  setPcomDeviceIp={setPcomDeviceIp}
+                  openTrapComposer={openTrapComposer}
+                  isFavorite={isFavorite}
+                  toggleFavorite={toggleFavorite}
+                  setMibSearch={setMibSearch}
+                  setMibSearchScope={setMibSearchScope}
+                />
               )}
               {trapModalOpen && (
                 <div className="modal-overlay" role="dialog" aria-modal="true">

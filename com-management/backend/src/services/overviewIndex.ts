@@ -679,6 +679,7 @@ class OverviewIndexService {
 
     const buildFileCounts = async (pathId: string) => {
       const counts = createEmptyCounts();
+      cacheLogger.debug(`Overview refresh read file path=${pathId}`);
       const response = await readRuleWithRetry(uaClient, pathId, 'refresh-read');
       const raw = extractRuleText(response);
       const parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
@@ -703,6 +704,9 @@ class OverviewIndexService {
     };
 
     const buildOverrideCounts = async (pathId: string, protocol: string) => {
+      cacheLogger.debug(
+        `Overview refresh read overrides path=${pathId} protocol=${protocol}`,
+      );
       const response = await readRuleWithRetry(uaClient, pathId, 'refresh-override', {
         timeoutMs: OVERVIEW_OVERRIDE_TIMEOUT_MS,
       });
@@ -869,6 +873,7 @@ class OverviewIndexService {
 
     const buildFileCounts = async (pathId: string) => {
       const counts = createEmptyCounts();
+      cacheLogger.debug(`Overview build read file path=${pathId}`);
       const response = await readRuleWithRetry(uaClient, pathId, 'build-read');
       const raw = extractRuleText(response);
       const parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
@@ -893,6 +898,7 @@ class OverviewIndexService {
     };
 
     const buildOverrideCounts = async (pathId: string) => {
+      cacheLogger.debug(`Overview build read overrides path=${pathId}`);
       const response = await readRuleWithRetry(uaClient, pathId, 'build-override', {
         timeoutMs: OVERVIEW_OVERRIDE_TIMEOUT_MS,
       });

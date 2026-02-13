@@ -5,6 +5,25 @@ import UAClient from '../services/ua';
 import { getCredentials, getServer, getSession } from '../services/sessionStore';
 import { refreshOverviewNode } from '../services/overviewIndex';
 import { refreshFolderOverviewForNode } from './folders';
+import {
+  buildOverrideFileName,
+  buildLegacyOverrideFileNames,
+  resolveOverrideLocation,
+  extractRuleText,
+  buildRuleTextDiagnostics,
+  isOverrideEntry,
+  isLikelyListResponse,
+  isValidOverridePayload,
+  parseOverridePayload,
+  extractRuleObjects,
+  isPatchOperation,
+  normalizeOverrideEntry,
+  parseRevisionName,
+  isMissingRule,
+  extractHistoryEntries,
+  buildOverrideMetaFromHistory,
+  mergeOverrideMeta,
+} from '../services/com/overrides';
 
 const router = Router();
 
@@ -34,6 +53,19 @@ const getUaClientFromSession = async (req: Request): Promise<UAClient> => {
   });
 };
 
+const getServerIdFromSession = async (req: Request): Promise<string> => {
+  const sessionId = req.cookies.FCOM_SESSION_ID;
+  if (!sessionId) {
+    throw new Error('No active session');
+  }
+
+  const server = await getServer(sessionId);
+  if (!server?.server_id) {
+    throw new Error('Session not found or expired');
+  }
+  return server.server_id;
+};
+
 const requireEditPermission = async (req: Request, res: Response): Promise<boolean> => {
   const sessionId = req.cookies.FCOM_SESSION_ID;
   if (!sessionId) {
@@ -52,202 +84,28 @@ const requireEditPermission = async (req: Request, res: Response): Promise<boole
   return true;
 };
 
-const getServerIdFromSession = async (req: Request): Promise<string> => {
-  const sessionId = req.cookies.FCOM_SESSION_ID;
-  if (!sessionId) {
-    throw new Error('No active session');
-  }
-  const server = await getServer(sessionId);
-  if (!server) {
-    throw new Error('Session not found or expired');
-  }
-  return server.server_id;
-};
-
-const normalizePath = (pathValue: string) => pathValue.replace(/^\/+/, '').replace(/\/+$/, '');
-
-const toIdCorePath = (pathValue: string) => {
-  const normalized = normalizePath(pathValue);
-  if (normalized.startsWith('id-core/')) {
-    return normalized;
-  }
-  if (normalized.startsWith('core/')) {
-    return `id-core/${normalized.slice('core/'.length)}`;
-  }
-  return normalized;
-};
-
-const resolveOverrideLocation = (fileId: string) => {
-  const normalized = normalizePath(fileId);
-  const parts = normalized.split('/').filter(Boolean);
-  const fcomIndex = parts.lastIndexOf('fcom');
-  if (fcomIndex === -1) {
-    throw new Error('File path does not include fcom');
-  }
-
-  const objectsIndex = parts.indexOf('_objects', fcomIndex + 1);
-  const basePath = parts.slice(0, fcomIndex + 1).join('/');
-  const methodIndex = objectsIndex !== -1 ? objectsIndex + 1 : fcomIndex + 1;
-  const method = parts[methodIndex];
-  const vendor = parts[methodIndex + 1];
-
-  if (!method || !vendor) {
-    throw new Error('Unable to resolve method or vendor from file path');
-  }
-
-  const overrideRoot = `${basePath}/overrides`;
-  const overridePath = `${overrideRoot}`;
-  const overrideRootId = toIdCorePath(overrideRoot);
-
-  return {
-    basePath,
-    vendor,
-    method,
-    overrideRoot,
-    overridePath,
-    overrideRootId,
-  };
-};
-
-const normalizeOverrideSegment = (value: string) =>
-  String(value || '')
-    .trim()
-    .toLowerCase()
-    .replace(/::/g, '.')
-    .replace(/[^a-z0-9.-]+/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/\.{2,}/g, '.')
-    .replace(/^-+|-+$/g, '')
-    .replace(/^\.+|\.+$/g, '');
-
-const splitObjectName = (objectName: string) => {
-  const [mib, obj] = String(objectName || '').split('::');
-  return {
-    mib: mib || 'unknown',
-    object: obj || mib || 'object',
-  };
-};
-
-const buildOverrideFileName = (vendor: string, objectName: string) => {
-  const { mib, object } = splitObjectName(objectName);
-  const vendorPart = normalizeOverrideSegment(vendor) || 'vendor';
-  const mibPart = normalizeOverrideSegment(mib) || 'mib';
-  const objectPart = normalizeOverrideSegment(object) || 'object';
-  return `${vendorPart}.${mibPart}.${objectPart}.override.json`;
-};
-
-const buildLegacyOverrideFileNames = (vendor: string, method?: string | null) => {
-  const vendorPart = normalizeOverrideSegment(vendor) || 'vendor';
-  const methodPart = method ? normalizeOverrideSegment(method) : '';
-  const names = [`${vendorPart}.override.json`];
-  if (methodPart) {
-    names.unshift(`${vendorPart}.${methodPart}.override.json`);
-  }
-  return Array.from(new Set(names));
-};
-
-const extractRuleText = (data: any) => {
-  const ruleText =
-    data?.content?.data?.[0]?.RuleText ?? data?.data?.[0]?.RuleText ?? data?.RuleText ?? data;
-  return typeof ruleText === 'string' ? ruleText : JSON.stringify(ruleText ?? []);
-};
-
-const buildRuleTextDiagnostics = (data: any) => {
-  const ruleText =
-    data?.content?.data?.[0]?.RuleText ?? data?.data?.[0]?.RuleText ?? data?.RuleText;
-  const responseKeys = data && typeof data === 'object' ? Object.keys(data) : [];
-  return {
-    responseKeys,
-    hasRuleText: typeof ruleText === 'string',
-    ruleTextType: typeof ruleText,
-  };
-};
-
-const isOverrideEntry = (entry: any) =>
-  entry && typeof entry === 'object' && String(entry._type || '').toLowerCase() === 'override';
-
-const isLikelyListResponse = (data: any) => {
-  if (!data || typeof data !== 'object') {
-    return false;
-  }
-  if (!Array.isArray(data?.data)) {
-    return false;
-  }
-  const hasMessage = typeof data?.message === 'string' || typeof data?.Message === 'string';
-  const hasSuccess = typeof data?.success === 'boolean' || typeof data?.Success === 'boolean';
-  return hasMessage || hasSuccess;
-};
-
-const isValidOverridePayload = (payload: any) => {
-  if (Array.isArray(payload)) {
-    return payload.every(isOverrideEntry);
-  }
-  return isOverrideEntry(payload);
-};
-
-const parseOverridePayload = (ruleText: string) => {
-  const trimmed = ruleText.trim();
-  if (!trimmed) {
-    return { overrides: [], format: 'object' as const };
-  }
-  const parsed = JSON.parse(trimmed);
-  if (Array.isArray(parsed)) {
-    return { overrides: parsed, format: 'array' as const };
-  }
-  if (parsed && typeof parsed === 'object') {
-    if (Object.keys(parsed).length === 0) {
-      return { overrides: [], format: 'object' as const };
-    }
-    return { overrides: [parsed], format: 'object' as const };
-  }
-  throw new Error('Override file must be a JSON array or object at the root');
-};
-
-const extractRuleObjects = (ruleText: string) => {
-  const trimmed = ruleText.trim();
-  if (!trimmed) {
-    return [] as any[];
-  }
-  const parsed = JSON.parse(trimmed);
-  if (Array.isArray(parsed?.objects)) {
-    return parsed.objects;
-  }
-  if (Array.isArray(parsed)) {
-    return parsed;
-  }
-  if (parsed && typeof parsed === 'object') {
-    return [parsed];
-  }
-  return [] as any[];
-};
-
-const listRulesAll = async (uaClient: UAClient, node: string, limit: number = 500) => {
-  const entries: any[] = [];
+const listRulesAll = async (uaClient: UAClient, node: string, pageLimit: number) => {
+  const all: any[] = [];
   let start = 0;
   while (true) {
-    const response = await uaClient.listRules('/', limit, node, true, start);
+    const response = await uaClient.listRules('/', pageLimit, node, false, start);
+    if (isLikelyListResponse(response) && response?.success === false) {
+      throw new Error(response?.message || 'listRules failed');
+    }
     const data = Array.isArray(response?.data) ? response.data : [];
     if (data.length === 0) {
       break;
     }
-    entries.push(...data);
-    if (data.length < limit) {
+    all.push(...data);
+    if (data.length < pageLimit) {
       break;
     }
     start += data.length;
   }
-  return entries;
+  return all;
 };
 
-const isPatchOperation = (processor: any) => {
-  const op = processor?.op;
-  const path = processor?.path;
-  if (!op || !path) {
-    return false;
-  }
-  const allowed = new Set(['add', 'replace', 'test', 'remove', 'move', 'copy']);
-  return typeof op === 'string' && allowed.has(op) && typeof path === 'string';
-};
+
 
 type OverrideSaveProgress = {
   fileName: string;
@@ -274,16 +132,17 @@ const performOverrideSave = async (params: {
 }) => {
   const { fileId, overrides, commitMessage, uaClient, serverId, onProgress } = params;
   const resolved = resolveOverrideLocation(String(fileId));
+  const resolvedMethod = resolved.method || 'trap';
 
   const ensureOverrideFolder = async () => {
     try {
-      const listing = await uaClient.listRules('/', 1, resolved.overrideRootId, true);
+      const listing = await uaClient.listRules('/', 1, resolved.overrideRoot, true);
       if (listing?.success === false) {
         throw new Error(listing?.message || 'Override folder missing');
       }
       return;
     } catch {
-      const parentNode = resolved.overrideRootId.replace(/\/?overrides$/, '');
+      const parentNode = resolved.overrideRoot.replace(/\/?overrides$/, '');
       const createResp = await uaClient.createFolderInNode(parentNode, 'overrides', commitMessage);
       if (createResp?.success === false) {
         const message = String(createResp?.message || '').toLowerCase();
@@ -344,7 +203,7 @@ const performOverrideSave = async (params: {
     overridesByObject.set(objectName, entry);
   }
 
-  const listing = await listRulesAll(uaClient, resolved.overrideRootId, 500);
+  const listing = await listRulesAll(uaClient, resolved.overrideRoot, 500);
   const legacyFileNames = buildLegacyOverrideFileNames(resolved.vendor, resolved.method);
   const legacyListingEntry = listing.find((item: any) =>
     legacyFileNames.includes(String(item?.PathName || '')),
@@ -392,7 +251,7 @@ const performOverrideSave = async (params: {
 
   for (const objectName of objectNames) {
     const fileName = buildOverrideFileName(resolved.vendor, objectName);
-    const overridePathId = `${resolved.overrideRootId}/${fileName}`;
+    const overridePathId = `${resolved.overrideRoot}/${fileName}`;
     const listingEntry = listing.find(
       (item: any) =>
         item?.PathName === fileName ||
@@ -429,12 +288,12 @@ const performOverrideSave = async (params: {
 
     let desiredEntry: any = null;
     if (desiredEntryRaw) {
-      desiredEntry = normalizeOverrideEntry(desiredEntryRaw, objectName, resolved.method);
+      desiredEntry = normalizeOverrideEntry(desiredEntryRaw, objectName, resolvedMethod);
     } else if (exists || legacyEntryForObject) {
       const normalizedExisting = normalizeOverrideEntry(
         existingEntry || legacyEntryForObject || {},
         objectName,
-        resolved.method,
+        resolvedMethod,
       );
       normalizedExisting.processors = [];
       desiredEntry = normalizedExisting;
@@ -541,9 +400,9 @@ const performOverrideSave = async (params: {
             uaClient.createRule(
               write.fileName,
               write.payload,
-              resolved.overrideRootId,
+              resolved.overrideRoot,
               commitMessage,
-              resolved.overrideRootId,
+              resolved.overrideRoot,
             ),
           3,
         );
@@ -596,9 +455,9 @@ const performOverrideSave = async (params: {
           await uaClient.createRule(
             applied.fileName,
             applied.previous || '',
-            resolved.overrideRootId,
+            resolved.overrideRoot,
             rollbackMessage,
-            resolved.overrideRootId,
+            resolved.overrideRoot,
           );
         } else {
           await uaClient.updateRule(applied.pathId, applied.previous || '', rollbackMessage);
@@ -629,7 +488,7 @@ const performOverrideSave = async (params: {
     }
   }
   try {
-    await refreshFolderOverviewForNode(uaClient, serverId, resolved.overrideRootId, 25);
+    await refreshFolderOverviewForNode(uaClient, serverId, resolved.overrideRoot, 25);
   } catch (err: any) {
     logger.warn(`Override folder cache refresh failed: ${err?.message || 'unknown error'}`);
   }
@@ -646,98 +505,7 @@ const performOverrideSave = async (params: {
   };
 };
 
-const normalizeOverrideEntry = (entry: any, objectName: string, method: string) => ({
-  name: entry?.name || `${objectName} Override`,
-  description: entry?.description || `Overrides for ${objectName}`,
-  domain: entry?.domain || 'fault',
-  method: entry?.method || method || 'trap',
-  scope: entry?.scope || 'post',
-  '@objectName': objectName,
-  _type: 'override',
-  processors: Array.isArray(entry?.processors) ? entry.processors : [],
-});
 
-const parseRevisionName = (revisionName: string) => {
-  const revisionMatch = revisionName.match(/r(\d+)/i);
-  const bracketMatches = revisionName.match(/\[([^\]]+)\]/g) || [];
-  const bracketValues = bracketMatches.map((entry) => entry.replace(/[\[\]]/g, '').trim());
-  return {
-    revision: revisionMatch ? revisionMatch[1] : undefined,
-    date: bracketValues.length > 0 ? bracketValues[0] : undefined,
-    user: bracketValues.length > 1 ? bracketValues[1] : undefined,
-  };
-};
-
-const isMissingRule = (error: any) => {
-  const status = error?.response?.status;
-  if (status === 404) {
-    return true;
-  }
-  const message = String(error?.message || '').toLowerCase();
-  return message.includes('not found');
-};
-
-const extractHistoryEntries = (history: any) => {
-  if (Array.isArray(history?.data)) {
-    return history.data;
-  }
-  if (Array.isArray(history?.history)) {
-    return history.history;
-  }
-  if (Array.isArray(history?.entries)) {
-    return history.entries;
-  }
-  if (Array.isArray(history)) {
-    return history;
-  }
-  return [];
-};
-
-const buildOverrideMetaFromHistory = (history: any, resolved: any) => {
-  const entries = extractHistoryEntries(history);
-  const latest = entries[0];
-  if (!latest) {
-    return null;
-  }
-  return {
-    pathId: resolved.overridePath,
-    pathName: resolved.overrideFileName,
-    revision:
-      latest.LastRevision ?? latest.Revision ?? latest.Rev ?? latest.revision ?? latest.commit_id,
-    modified:
-      latest.ModificationTime ??
-      latest.LastModified ??
-      latest.Modified ??
-      latest.Date ??
-      latest.date ??
-      latest.timestamp,
-    modifiedBy:
-      latest.ModifiedBy ??
-      latest.LastModifiedBy ??
-      latest.Modifier ??
-      latest.User ??
-      latest.Author ??
-      latest.author ??
-      latest.username ??
-      latest.user,
-  };
-};
-
-const mergeOverrideMeta = (base: any, next: any) => {
-  if (!next) {
-    return base;
-  }
-  if (!base) {
-    return next;
-  }
-  return {
-    ...next,
-    ...base,
-    revision: base.revision ?? next.revision,
-    modified: base.modified ?? next.modified,
-    modifiedBy: base.modifiedBy ?? next.modifiedBy,
-  };
-};
 
 router.get('/', async (req: Request, res: Response) => {
   try {
@@ -751,6 +519,7 @@ router.get('/', async (req: Request, res: Response) => {
       logger.info(`Overrides timing ${label} for ${file_id}: ${Date.now() - since}ms`);
 
     const resolved = resolveOverrideLocation(String(file_id));
+    const resolvedMethod = resolved.method || 'trap';
     const uaClient = await getUaClientFromSession(req);
     const readStart = Date.now();
     const ruleData = await uaClient.readRule(String(file_id), 'HEAD');
@@ -778,10 +547,10 @@ router.get('/', async (req: Request, res: Response) => {
     );
 
     const listStart = Date.now();
-    const overrideListing = await listRulesAll(uaClient, resolved.overrideRootId, 500);
+    const overrideListing = await listRulesAll(uaClient, resolved.overrideRoot, 500);
     logTiming('listRulesAll', listStart);
     logger.info(
-      `Overrides listing for ${file_id}: entries=${overrideListing.length} root=${resolved.overrideRootId}`,
+      `Overrides listing for ${file_id}: entries=${overrideListing.length} root=${resolved.overrideRoot}`,
     );
     const legacyFileNames = buildLegacyOverrideFileNames(resolved.vendor, resolved.method);
     const legacyListingEntry = overrideListing.find((item: any) =>
@@ -825,7 +594,7 @@ router.get('/', async (req: Request, res: Response) => {
     const slowOverrides: Array<{ file: string; ms: number }> = [];
     for (const objectName of objectNames) {
       const fileName = buildOverrideFileName(resolved.vendor, objectName);
-      const overridePathId = `${resolved.overrideRootId}/${fileName}`;
+      const overridePathId = `${resolved.overrideRoot}/${fileName}`;
       const entry = overrideListing.find(
         (item: any) =>
           item?.PathName === fileName ||
@@ -874,11 +643,11 @@ router.get('/', async (req: Request, res: Response) => {
             (item: any) => item?.['@objectName'] === objectName,
           );
           normalized = overrideEntry
-            ? normalizeOverrideEntry(overrideEntry, objectName, resolved.method)
+            ? normalizeOverrideEntry(overrideEntry, objectName, resolvedMethod)
             : null;
           metaEntry = entry;
         } else if (legacyEntry) {
-          normalized = normalizeOverrideEntry(legacyEntry, objectName, resolved.method);
+          normalized = normalizeOverrideEntry(legacyEntry, objectName, resolvedMethod);
           metaEntry = legacyListingEntry;
         }
 
@@ -976,7 +745,7 @@ router.get('/', async (req: Request, res: Response) => {
 
     const etagPayload = JSON.stringify(overrides);
     const etag = crypto.createHash('md5').update(etagPayload).digest('hex');
-    const overrideRootRulePath = `/rules/${resolved.overrideRootId.replace(/^id-core\//, '')}`;
+    const overrideRootRulePath = `/rules/${resolved.overrideRoot.replace(/^id-core\//, '')}`;
 
     return res.json({
       ...resolved,
