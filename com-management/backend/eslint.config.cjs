@@ -16,7 +16,17 @@ module.exports = [
     plugins: {
       '@typescript-eslint': require('@typescript-eslint/eslint-plugin'),
     },
-    rules: {},
+    rules: {
+      'no-duplicate-imports': 'error',
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+        },
+      ],
+    },
   },
   prettier,
 ];
