@@ -40,7 +40,10 @@ export default function FavoritesPanel({
       <div className="favorites-section">
         <div className="favorites-scroll">
           <details open={!isCompact && favoritesFolders.length > 0}>
-            <summary>Favorite Folders</summary>
+            <summary>
+              <span>Favorite Folders</span>
+              <span className="favorites-subcount">{favoritesFolders.length}</span>
+            </summary>
             {favoritesLoading && <InlineMessage tone="muted">Loading…</InlineMessage>}
             {favoritesError && <InlineMessage tone="error">{favoritesError}</InlineMessage>}
             {favoritesFolders.length === 0 ? (
@@ -48,12 +51,13 @@ export default function FavoritesPanel({
             ) : (
               <ul className="favorites-list">
                 {favoritesFolders.map((fav) => (
-                  <li key={`${fav.type}-${fav.pathId}`}>
+                  <li key={`${fav.type}-${fav.pathId}`} className="favorite-row">
                     <button
                       type="button"
                       className="favorite-link"
                       onClick={() => onOpenFolder(fav)}
                     >
+                      <span className="favorite-mark favorite-mark-folder" aria-hidden="true" />
                       <span className="favorite-label">{fav.label}</span>
                     </button>
                   </li>
@@ -62,18 +66,22 @@ export default function FavoritesPanel({
             )}
           </details>
           <details open={!isCompact && favoritesFiles.length > 0}>
-            <summary>Favorite Files</summary>
+            <summary>
+              <span>Favorite Files</span>
+              <span className="favorites-subcount">{favoritesFiles.length}</span>
+            </summary>
             {favoritesFiles.length === 0 ? (
               <EmptyState>No favorites yet.</EmptyState>
             ) : (
               <ul className="favorites-list">
                 {favoritesFiles.map((fav) => (
-                  <li key={`${fav.type}-${fav.pathId}`}>
+                  <li key={`${fav.type}-${fav.pathId}`} className="favorite-row">
                     <button
                       type="button"
                       className="favorite-link"
                       onClick={() => onOpenFile(fav)}
                     >
+                      <span className="favorite-mark favorite-mark-file" aria-hidden="true" />
                       <span className="favorite-label">{fav.label}</span>
                     </button>
                   </li>

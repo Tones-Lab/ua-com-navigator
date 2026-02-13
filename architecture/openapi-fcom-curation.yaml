@@ -37,6 +37,8 @@ tags:
     description: Device catalog and selection
   - name: SNMP Access
     description: SNMP access profiles for device discovery
+  - name: Legacy Conversion
+    description: Legacy rules upload and conversion reporting
   - name: Favorites
     description: User favorites by section (FCOM/PCOM/MIB)
 
@@ -1516,6 +1518,494 @@ paths:
                     format: date-time
         '409':
           description: Promotion conflict or target file has been modified
+
+  /legacy/uploads:
+    get:
+      tags:
+        - Legacy Conversion
+      summary: List legacy uploads
+      description: |
+        Returns the legacy upload root and a flattened list of files and folders.
+      security:
+        - sessionCookie: []
+      responses:
+        '200':
+          description: Legacy upload listing
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  root:
+                    type: string
+                  entries:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        path:
+                          type: string
+                        type:
+                          type: string
+                          enum: [file, folder]
+                        size:
+                          type: integer
+                        modifiedAt:
+                          type: string
+                          format: date-time
+        '500':
+          description: Failed to list uploads
+    post:
+      tags:
+        - Legacy Conversion
+      summary: Upload legacy rules
+      description: |
+        Uploads `.rules`, `.pl`, `.includes`, `.load`, `.txt`, or `.zip` legacy files.
+      security:
+        - sessionCookie: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                subdir:
+                  type: string
+                files:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        '200':
+          description: Upload result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  uploaded:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        size:
+                          type: integer
+                        path:
+                          type: string
+                  extracted:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        source:
+                          type: string
+                        target:
+                          type: string
+                        count:
+                          type: integer
+        '400':
+          description: Invalid upload request
+
+  /legacy/uploads/file:
+    get:
+      tags:
+        - Legacy Conversion
+      summary: Read uploaded legacy file
+      security:
+        - sessionCookie: []
+      parameters:
+        - in: query
+          name: path
+          required: true
+          schema:
+            type: string
+          description: Relative upload path to read.
+      responses:
+        '200':
+          description: File contents
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  path:
+                    type: string
+                  content:
+                    type: string
+        '400':
+          description: Invalid path or file not found
+
+  /legacy/convert:
+    post:
+      tags:
+        - Legacy Conversion
+      summary: Convert legacy rules
+      description: |
+        Runs legacy conversion and returns a structured report plus a text summary.
+      security:
+        - sessionCookie: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                paths:
+                  type: array
+                  items:
+                    type: string
+                vendor:
+                  type: string
+                useMibs:
+                  type: boolean
+                useLlm:
+                  type: boolean
+      responses:
+        '200':
+          description: Conversion report
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  report:
+                    type: object
+                    properties:
+                      runId:
+                        type: string
+                      startedAt:
+                        type: string
+                        format: date-time
+                      inputs:
+                        type: array
+                        items:
+                          type: string
+                      vendor:
+                        type: string
+                      options:
+                        type: object
+                        properties:
+                          useMibs:
+                            type: boolean
+                          useLlm:
+                            type: boolean
+                      traversal:
+                        type: object
+                        properties:
+                          orderedFiles:
+                            type: array
+                            items:
+                              type: string
+                          entries:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                kind:
+                                  type: string
+                                  enum: [dispatch, include, standalone, fallback]
+                                root:
+                                  type: string
+                                filePath:
+                                  type: string
+                                functionName:
+                                  type: string
+                                  nullable: true
+                                condition:
+                                  type: string
+                                  nullable: true
+                          missingFunctions:
+                            type: array
+                            items:
+                              type: string
+                          includeEntries:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                name:
+                                  type: string
+                                path:
+                                  type: string
+                                resolvedPath:
+                                  type: string
+                                  nullable: true
+                                exists:
+                                  type: boolean
+                          loadCalls:
+                            type: array
+                            items:
+                              type: string
+                          missingLoadCalls:
+                            type: array
+                            items:
+                              type: string
+                          missingIncludePaths:
+                            type: array
+                            items:
+                              type: string
+                          missingLookupFiles:
+                            type: array
+                            items:
+                              type: string
+                      files:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            filePath:
+                              type: string
+                            fileType:
+                              type: string
+                              enum: [rules, pl, other]
+                            size:
+                              type: integer
+                            oids:
+                              type: array
+                              items:
+                                type: string
+                            eventFields:
+                              type: array
+                              items:
+                                type: string
+                            summaryPatterns:
+                              type: array
+                              items:
+                                type: string
+                            helpKeys:
+                              type: array
+                              items:
+                                type: string
+                            nodeValues:
+                              type: array
+                              items:
+                                type: string
+                            subNodeValues:
+                              type: array
+                              items:
+                                type: string
+                      classifications:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            filePath:
+                              type: string
+                            ruleType:
+                              type: string
+                              enum: [fault, performance, unknown]
+                            confidence:
+                              type: number
+                            evidence:
+                              type: object
+                              properties:
+                                eventFields:
+                                  type: array
+                                  items:
+                                    type: string
+                                oidCount:
+                                  type: integer
+                                snmpHints:
+                                  type: array
+                                  items:
+                                    type: string
+                                performanceHints:
+                                  type: array
+                                  items:
+                                    type: string
+                      legacyObjects:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                            sourceFile:
+                              type: string
+                            ruleFunction:
+                              type: string
+                            ruleType:
+                              type: string
+                              enum: [fault, performance, unknown]
+                            oids:
+                              type: array
+                              items:
+                                type: string
+                            eventFields:
+                              type: array
+                              items:
+                                type: string
+                            summaryPatterns:
+                              type: array
+                              items:
+                                type: string
+                            helpKeys:
+                              type: array
+                              items:
+                                type: string
+                            nodeValues:
+                              type: array
+                              items:
+                                type: string
+                            subNodeValues:
+                              type: array
+                              items:
+                                type: string
+                            performanceHints:
+                              type: array
+                              items:
+                                type: string
+                            classificationHints:
+                              type: array
+                              items:
+                                type: string
+                            traversal:
+                              type: object
+                              properties:
+                                kind:
+                                  type: string
+                                  enum: [dispatch, include, standalone, fallback]
+                                root:
+                                  type: string
+                                condition:
+                                  type: string
+                                  nullable: true
+                                functionName:
+                                  type: string
+                                  nullable: true
+                      overrideProposals:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            objectName:
+                              type: string
+                            sourceFile:
+                              type: string
+                            ruleFunction:
+                              type: string
+                            fields:
+                              type: object
+                            reason:
+                              type: string
+                      bundle:
+                        type: object
+                        properties:
+                          manifest:
+                            type: object
+                            properties:
+                              runId:
+                                type: string
+                              createdAt:
+                                type: string
+                                format: date-time
+                              totalOverrides:
+                                type: integer
+                              inputs:
+                                type: array
+                                items:
+                                  type: string
+                              vendor:
+                                type: string
+                          overrides:
+                            type: array
+                            items:
+                              type: object
+                      matchDiffs:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            legacyObjectId:
+                              type: string
+                            legacyObjectName:
+                              type: string
+                            sourceFile:
+                              type: string
+                            matchedObject:
+                              type: object
+                              properties:
+                                name:
+                                  type: string
+                                source:
+                                  type: string
+                                  enum: [fcom, pcom, mib]
+                                path:
+                                  type: string
+                            diffs:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  field:
+                                    type: string
+                                  legacyValue:
+                                    type: string
+                                    nullable: true
+                                  existingValue:
+                                    type: string
+                                    nullable: true
+                      summaries:
+                        type: object
+                        properties:
+                          byFolder:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                folder:
+                                  type: string
+                                totalObjects:
+                                  type: integer
+                                faultObjects:
+                                  type: integer
+                                performanceObjects:
+                                  type: integer
+                                unknownObjects:
+                                  type: integer
+                          byFile:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                filePath:
+                                  type: string
+                                totalObjects:
+                                  type: integer
+                                faultObjects:
+                                  type: integer
+                                performanceObjects:
+                                  type: integer
+                                unknownObjects:
+                                  type: integer
+                      summary:
+                        type: object
+                        properties:
+                          totalFiles:
+                            type: integer
+                          totalLegacyObjects:
+                            type: integer
+                          faultFiles:
+                            type: integer
+                          performanceFiles:
+                            type: integer
+                          unknownFiles:
+                            type: integer
+                          totalOids:
+                            type: integer
+                          totalOverrides:
+                            type: integer
+                  textReport:
+                    type: string
+        '400':
+          description: No legacy files available for conversion
+        '500':
+          description: Conversion failed
 
   /schema:
     get:

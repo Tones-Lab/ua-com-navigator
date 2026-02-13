@@ -94,6 +94,7 @@ Hard rule: do not use one‑line commit messages for non‑trivial changes.
 - Do not commit `/coms` (large vendor data/config). It is ignored by `.gitignore`.
 - Do not commit `agent.md` (local server notes). It is ignored by `.gitignore`.
 - Do not commit `.env` files (use `.env.example` for documentation).
+- Temporary files must be written under `/root/navigator/tmp` only. Do not write to `/tmp` or any other external temp directory.
 
 ## Testing discipline
 

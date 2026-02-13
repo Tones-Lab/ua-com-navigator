@@ -197,6 +197,39 @@ class ApiClient {
     return this.client.post('/mibs/poll', payload);
   }
 
+  // Legacy Conversion uploads
+  async listLegacyUploads() {
+    return this.client.get('/legacy/uploads');
+  }
+
+  async readLegacyUpload(pathId: string) {
+    return this.client.get('/legacy/uploads/file', { params: { path: pathId } });
+  }
+
+  async readLegacyMatchFile(pathId: string) {
+    return this.client.get('/legacy/match/file', { params: { path: pathId } });
+  }
+
+  async uploadLegacyFiles(files: File[], subdir?: string) {
+    const formData = new FormData();
+    files.forEach((file) => formData.append('files', file));
+    if (subdir) {
+      formData.append('subdir', subdir);
+    }
+    return this.client.post('/legacy/uploads', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  }
+
+  async runLegacyConversion(payload?: {
+    paths?: string[];
+    vendor?: string;
+    useMibs?: boolean;
+    useLlm?: boolean;
+  }) {
+    return this.client.post('/legacy/convert', payload || {});
+  }
+
   async getDevices(params?: { limit?: number; start?: number }) {
     return this.client.get('/devices', { params });
   }

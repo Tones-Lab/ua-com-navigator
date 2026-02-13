@@ -31,6 +31,7 @@ type MibWorkspaceProps = {
   filteredMibDefinitions: any[];
   mibSupportByPath: Record<string, any>;
   pcomAdvancedActive: boolean;
+  pcomAdvancedSummary: string;
   pcomSnmpProfileLoading: boolean;
   pcomSnmpProfileError: string | null;
   pcomSnmpProfile: any | null;
@@ -111,6 +112,7 @@ export default function MibWorkspace({
   filteredMibDefinitions,
   mibSupportByPath,
   pcomAdvancedActive,
+  pcomAdvancedSummary,
   pcomSnmpProfileLoading,
   pcomSnmpProfileError,
   pcomSnmpProfile,
@@ -156,6 +158,19 @@ export default function MibWorkspace({
   setMibSearch,
   setMibSearchScope,
 }: MibWorkspaceProps) {
+  const filteredCounts = filteredMibDefinitions.reduce(
+    (acc, definition) => {
+      const kind = String(definition?.kind || '').toUpperCase();
+      if (kind === 'NOTIFICATION-TYPE' || kind === 'TRAP-TYPE') {
+        acc.fcom += 1;
+      } else if (kind === 'OBJECT-TYPE') {
+        acc.pcom += 1;
+      }
+      return acc;
+    },
+    { fcom: 0, pcom: 0 },
+  );
+  const totalCount = filteredMibDefinitions.length;
   return (
     <div className="split-layout">
       <div className="panel">
@@ -235,60 +250,80 @@ export default function MibWorkspace({
               )}
             </div>
           ) : (
-            <div className="browse-results">
+            <div className="browse-results mib-browse-results">
               {mibEntries.length === 0 ? (
-                <div className="empty-state">No MIB files found.</div>
+                <div className="empty-state guided-empty">
+                  <div className="guided-empty-title">No MIBs in this folder.</div>
+                  <div className="guided-empty-text">
+                    Try a different folder, switch scope to All, or clear the search.
+                  </div>
+                </div>
               ) : (
-                <ul className="browse-list">
+                <ul className="browse-list mib-browse-list">
                   {mibEntries.map((entry) => {
                     const entrySupport = entry?.path ? mibSupportByPath[entry.path] : null;
                     const fcomStatus = getMibSupportStatus(entrySupport?.fcom ?? null);
                     const pcomStatus = getMibSupportStatus(entrySupport?.pcom ?? null);
                     return (
-                      <li key={entry.path || entry.name}>
-                        <button
-                          type="button"
-                          className={entry.isDir ? 'browse-link' : 'browse-link file-link'}
-                          onClick={() => handleOpenMibEntry(entry)}
-                        >
-                          <span className="browse-icon" aria-hidden="true">
-                            {entry.isDir ? '📁' : '📄'}
-                          </span>
-                          {entry.name}
-                        </button>
-                        {!entry.isDir && (
-                          <div className="mib-entry-meta">
-                            <span className="mib-support-badge mib-support-badge-fcom">FCOM</span>
-                            <span
-                              className={`mib-support-status mib-support-status-${fcomStatus.status}`}
-                              title={
-                                fcomStatus.status === 'ok'
-                                  ? 'FCOM support found'
-                                  : fcomStatus.status === 'warn'
-                                    ? 'FCOM support not found'
-                                    : 'FCOM support unknown'
-                              }
-                            >
-                              {fcomStatus.label}
+                      <li
+                        key={entry.path || entry.name}
+                        className={
+                          entry.isDir
+                            ? 'mib-browse-item'
+                            : 'mib-browse-item mib-browse-item-file'
+                        }
+                      >
+                        <div className="mib-browse-row">
+                          <button
+                            type="button"
+                            className={entry.isDir ? 'browse-link' : 'browse-link file-link'}
+                            onClick={() => handleOpenMibEntry(entry)}
+                          >
+                            <span className="browse-icon" aria-hidden="true">
+                              {entry.isDir ? '📁' : '📄'}
                             </span>
-                            <span className="mib-support-badge mib-support-badge-pcom">PCOM</span>
-                            <span
-                              className={`mib-support-status mib-support-status-${pcomStatus.status}`}
-                              title={
-                                pcomStatus.status === 'ok'
-                                  ? 'PCOM support found'
-                                  : pcomStatus.status === 'warn'
-                                    ? 'PCOM support not found'
-                                    : 'PCOM support unknown'
-                              }
-                            >
-                              {pcomStatus.label}
-                            </span>
-                            <span className="browse-meta">
-                              {entry.size ? `${Math.round(entry.size / 1024)} KB` : ''}
-                            </span>
-                          </div>
-                        )}
+                            <span className="mib-entry-name">{entry.name}</span>
+                            {!entry.isDir && entry.size ? (
+                              <span className="mib-entry-size-inline">
+                                ({Math.round(entry.size / 1024)} KB)
+                              </span>
+                            ) : null}
+                          </button>
+                          {!entry.isDir && (
+                            <div className="mib-entry-meta">
+                              <span className="mib-support-badge mib-support-badge-fcom">
+                                FCOM
+                              </span>
+                              <span
+                                className={`mib-support-status mib-support-status-${fcomStatus.status}`}
+                                title={
+                                  fcomStatus.status === 'ok'
+                                    ? 'FCOM support found'
+                                    : fcomStatus.status === 'warn'
+                                      ? 'FCOM support not found'
+                                      : 'FCOM support unknown'
+                                }
+                              >
+                                {fcomStatus.label}
+                              </span>
+                              <span className="mib-support-badge mib-support-badge-pcom">
+                                PCOM
+                              </span>
+                              <span
+                                className={`mib-support-status mib-support-status-${pcomStatus.status}`}
+                                title={
+                                  pcomStatus.status === 'ok'
+                                    ? 'PCOM support found'
+                                    : pcomStatus.status === 'warn'
+                                      ? 'PCOM support not found'
+                                      : 'PCOM support unknown'
+                                }
+                              >
+                                {pcomStatus.label}
+                              </span>
+                            </div>
+                          )}
+                        </div>
                       </li>
                     );
                   })}
@@ -328,7 +363,14 @@ export default function MibWorkspace({
             <h2>MIB Details</h2>
           </div>
           {!mibSelectedFile ? (
-            <div className="empty-state">Select a MIB file to inspect.</div>
+            <div className="empty-state guided-empty">
+              <div className="guided-empty-title">Start with a MIB file.</div>
+              <ol className="guided-empty-steps">
+                <li>Select a file on the left to load its objects.</li>
+                <li>Use search and filters to narrow the object list.</li>
+                <li>Run MIB2FCOM or test poll when ready.</li>
+              </ol>
+            </div>
           ) : (
             <div className="mib-details">
               <FileTitleRow
@@ -440,34 +482,37 @@ export default function MibWorkspace({
                         type="button"
                         className={
                           mibObjectFilter === 'all'
-                            ? 'mib-filter-pill active'
-                            : 'mib-filter-pill'
+                            ? 'mib-facet-chip active'
+                            : 'mib-facet-chip'
                         }
                         onClick={() => setMibObjectFilter('all')}
                       >
-                        All
+                        <span className="mib-facet-label">All</span>
+                        <span className="mib-facet-count">{totalCount}</span>
                       </button>
                       <button
                         type="button"
                         className={
                           mibObjectFilter === 'fcom'
-                            ? 'mib-filter-pill active'
-                            : 'mib-filter-pill'
+                            ? 'mib-facet-chip mib-facet-fcom active'
+                            : 'mib-facet-chip mib-facet-fcom'
                         }
                         onClick={() => setMibObjectFilter('fcom')}
                       >
-                        FCOM
+                        <span className="mib-facet-label">FCOM</span>
+                        <span className="mib-facet-count">{filteredCounts.fcom}</span>
                       </button>
                       <button
                         type="button"
                         className={
                           mibObjectFilter === 'pcom'
-                            ? 'mib-filter-pill active'
-                            : 'mib-filter-pill'
+                            ? 'mib-facet-chip mib-facet-pcom active'
+                            : 'mib-facet-chip mib-facet-pcom'
                         }
                         onClick={() => setMibObjectFilter('pcom')}
                       >
-                        PCOM
+                        <span className="mib-facet-label">PCOM</span>
+                        <span className="mib-facet-count">{filteredCounts.pcom}</span>
                       </button>
                     </div>
                   </div>
@@ -478,7 +523,12 @@ export default function MibWorkspace({
                         <span>Loading definitions…</span>
                       </div>
                     ) : filteredMibDefinitions.length === 0 ? (
-                      <div className="empty-state">No definitions found.</div>
+                      <div className="empty-state guided-empty">
+                        <div className="guided-empty-title">No objects match.</div>
+                        <div className="guided-empty-text">
+                          Try clearing the search or switching the filter.
+                        </div>
+                      </div>
                     ) : (
                       filteredMibDefinitions.map((definition) => (
                         <button
@@ -547,7 +597,12 @@ export default function MibWorkspace({
                 </div>
                 <div className="mib-main-right">
                   {!mibSelectedDefinition ? (
-                    <div className="empty-state">Select an object to view details.</div>
+                    <div className="empty-state guided-empty">
+                      <div className="guided-empty-title">Pick an object.</div>
+                      <div className="guided-empty-text">
+                        Select an object to see details, actions, and test output.
+                      </div>
+                    </div>
                   ) : (
                     (() => {
                       const kind = String(mibSelectedDefinition.kind || '').toUpperCase();
@@ -652,6 +707,14 @@ export default function MibWorkspace({
                                   </span>
                                 )}
                               </div>
+                              {pcomAdvancedActive && pcomAdvancedSummary && (
+                                <div className="mib-advanced-summary">
+                                  <span className="mib-advanced-label">Advanced active:</span>
+                                  <span className="mib-advanced-text">
+                                    {pcomAdvancedSummary}
+                                  </span>
+                                </div>
+                              )}
                               <div className="mib-action-results">
                                 <div className="mib-trap-grid mib-trap-grid-compact">
                                   <label className="mib-field">
@@ -686,7 +749,7 @@ export default function MibWorkspace({
                                         className="mib-action-button-secondary"
                                         onClick={openPcomAdvancedModal}
                                       >
-                                        Advanced
+                                        {pcomAdvancedActive ? 'Edit advanced' : 'Advanced settings'}
                                       </button>
                                       {pcomAdvancedActive && (
                                         <button

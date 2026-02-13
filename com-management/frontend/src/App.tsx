@@ -19,6 +19,7 @@ import Modal from './components/Modal';
 import PanelHeader from './components/PanelHeader';
 import { FileTitleRow, ViewToggle } from './components/FileHeaderCommon';
 import MibWorkspace from './features/mib/MibWorkspace';
+import LegacyWorkspace from './features/legacy/LegacyWorkspace';
 import useMibWorkspace from './features/mib/useMibWorkspace';
 import './App.css';
 
@@ -343,6 +344,40 @@ export default function App() {
     runMib2Fcom,
     resetMibState,
   } = useMibWorkspace({ api, triggerToast });
+
+  const pcomAdvancedSummary = useMemo(() => {
+    if (!pcomAdvancedActive) {
+      return '';
+    }
+    const targetLabel =
+      pcomAdvancedTargetMode === 'manual'
+        ? `Manual IP ${pcomAdvancedManualIp || 'unset'}`
+        : pcomAdvancedDeviceIp
+          ? `Device ${pcomAdvancedDeviceIp}`
+          : 'Device unset';
+    const snmpLabel = `SNMP v${pcomAdvancedSnmpVersion}`;
+    const communityLabel =
+      pcomAdvancedSnmpVersion === '3'
+        ? ''
+        : pcomAdvancedCommunity
+          ? 'Community set'
+          : 'Community unset';
+    const oidLabel = pcomAdvancedOidEnabled
+      ? pcomAdvancedOidValue
+        ? 'OID override set'
+        : 'OID override enabled'
+      : '';
+    return [targetLabel, snmpLabel, communityLabel, oidLabel].filter(Boolean).join(' | ');
+  }, [
+    pcomAdvancedActive,
+    pcomAdvancedCommunity,
+    pcomAdvancedDeviceIp,
+    pcomAdvancedManualIp,
+    pcomAdvancedOidEnabled,
+    pcomAdvancedOidValue,
+    pcomAdvancedSnmpVersion,
+    pcomAdvancedTargetMode,
+  ]);
 
   useEffect(() => {
     const savedQuery =
@@ -13853,30 +13888,7 @@ export default function App() {
                   </div>
                 </div>
               ) : activeApp === 'legacy' ? (
-                <div className="panel">
-                  <div className="panel-scroll">
-                    <PanelHeader title="Legacy Conversion">
-                      <div className="panel-section">
-                        <div className="panel-section-title">Purpose</div>
-                        <div className="muted">
-                          Upload legacy rules, analyze them, and convert to PCOM or FCOM as much as
-                          possible.
-                        </div>
-                      </div>
-                      <div className="panel-section">
-                        <div className="panel-section-title">Integration</div>
-                        <ul>
-                          <li>UA assistant/chatbot-assisted conversion workflow.</li>
-                          <li>Standalone script option for batch conversion.</li>
-                        </ul>
-                      </div>
-                      <div className="panel-section">
-                        <div className="panel-section-title">Status</div>
-                        <div className="empty-state">Stub only (upload + conversion coming soon).</div>
-                      </div>
-                    </PanelHeader>
-                  </div>
-                </div>
+                <LegacyWorkspace />
               ) : (
                 <MibWorkspace
                   isCompactPanel={isCompactPanel}
@@ -13907,6 +13919,7 @@ export default function App() {
                   filteredMibDefinitions={filteredMibDefinitions}
                   mibSupportByPath={mibSupportByPath}
                   pcomAdvancedActive={pcomAdvancedActive}
+                  pcomAdvancedSummary={pcomAdvancedSummary}
                   pcomSnmpProfileLoading={pcomSnmpProfileLoading}
                   pcomSnmpProfileError={pcomSnmpProfileError}
                   pcomSnmpProfile={pcomSnmpProfile}
