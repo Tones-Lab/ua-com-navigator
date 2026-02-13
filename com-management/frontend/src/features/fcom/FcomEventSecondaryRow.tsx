@@ -170,7 +170,6 @@ export default function FcomEventSecondaryRow({
           </div>
           {panelEditState[eventPanelKey] ? (
             (() => {
-              const stagedRemoved = isFieldStagedRemoved(obj, 'EventType');
               const isProcessorField = processorTargets.has('$.event.EventType');
               const processorSummary = getProcessorFieldSummary(obj, 'EventType');
               const processorTitle = processorSummary
@@ -328,7 +327,6 @@ export default function FcomEventSecondaryRow({
           </div>
           {panelEditState[eventPanelKey] ? (
             (() => {
-              const stagedRemoved = isFieldStagedRemoved(obj, 'ExpireTime');
               const isProcessorField = processorTargets.has('$.event.ExpireTime');
               const processorSummary = getProcessorFieldSummary(obj, 'ExpireTime');
               const processorTitle = processorSummary
@@ -487,7 +485,6 @@ export default function FcomEventSecondaryRow({
           </div>
           {panelEditState[eventPanelKey] ? (
             (() => {
-              const stagedRemoved = isFieldStagedRemoved(obj, 'EventCategory');
               const isProcessorField = processorTargets.has('$.event.EventCategory');
               const processorSummary = getProcessorFieldSummary(obj, 'EventCategory');
               const processorTitle = processorSummary

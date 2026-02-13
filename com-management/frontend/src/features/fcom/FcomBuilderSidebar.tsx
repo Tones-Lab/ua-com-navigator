@@ -146,7 +146,7 @@ export default function FcomBuilderSidebar({
   handleBuilderRedo,
   setShowBuilderHelpModal,
   requestCancelBuilder,
-  setBuilderOpen,
+  setBuilderOpen: _setBuilderOpen,
   builderFocus,
   builderPatchMode,
   builderPatchPreview,

@@ -57,8 +57,8 @@ export default function FcomEventAdditionalFields({
   processorTargets,
   getProcessorFieldSummary,
   overrideValueMap,
-  isOverrideEditLocked,
-  overrideEditLockReason,
+  isOverrideEditLocked: _isOverrideEditLocked,
+  overrideEditLockReason: _overrideEditLockReason,
   panelEditState,
   hasEditPermission,
   isFieldHighlighted,
@@ -78,7 +78,7 @@ export default function FcomEventAdditionalFields({
   renderValue,
   getEventFieldDescription,
   formatEventFieldLabel,
-  getBaseEventDisplay,
+  getBaseEventDisplay: _getBaseEventDisplay,
 }: FcomEventAdditionalFieldsProps) {
   if (additionalFields.length === 0) {
     return null;

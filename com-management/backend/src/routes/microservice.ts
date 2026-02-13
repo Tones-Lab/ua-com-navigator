@@ -239,7 +239,7 @@ const isWorkloadRunning = (entry: Record<string, any> | undefined): boolean => {
   return ready > 0 && (total === 0 || ready >= total) && available > 0;
 };
 
-const buildServiceStatus = (
+const _buildServiceStatus = (
   installed: Array<Record<string, any>>,
   catalogs: Array<Record<string, any>>,
   workloads: Map<string, Map<string, Record<string, any>>>,
@@ -436,7 +436,7 @@ const buildDeployId = (target: { name: string; namespace: string; cluster: strin
   return `id-${target.name}-=-${target.namespace}-=-${target.cluster}`;
 };
 
-const buildWorkloadMap = async (
+const _buildWorkloadMap = async (
   uaClient: UAClient,
   entries: Array<Record<string, any>>,
 ): Promise<Map<string, Map<string, Record<string, any>>>> => {

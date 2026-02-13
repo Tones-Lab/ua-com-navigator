@@ -344,7 +344,7 @@ const getProcessorTargetField = (processor: any) => {
   return null;
 };
 
-const collectOverrideTargets = (
+const _collectOverrideTargets = (
   processors: any[],
   objectName: string,
   targetKeys: Set<string>,
@@ -359,19 +359,19 @@ const collectOverrideTargets = (
     }
     if (processor.if) {
       const payload = processor.if;
-      collectOverrideTargets(
+      _collectOverrideTargets(
         Array.isArray(payload.processors) ? payload.processors : [],
         objectName,
         targetKeys,
       );
-      collectOverrideTargets(
+      _collectOverrideTargets(
         Array.isArray(payload.else) ? payload.else : [],
         objectName,
         targetKeys,
       );
     }
     if (processor.foreach?.processors) {
-      collectOverrideTargets(
+      _collectOverrideTargets(
         Array.isArray(processor.foreach.processors) ? processor.foreach.processors : [],
         objectName,
         targetKeys,
@@ -379,7 +379,7 @@ const collectOverrideTargets = (
     }
     if (Array.isArray(processor.switch?.case)) {
       processor.switch.case.forEach((entry: any) => {
-        collectOverrideTargets(
+        _collectOverrideTargets(
           Array.isArray(entry?.then)
             ? entry.then
             : Array.isArray(entry?.processors)
@@ -391,7 +391,7 @@ const collectOverrideTargets = (
       });
     }
     if (Array.isArray(processor.switch?.default)) {
-      collectOverrideTargets(processor.switch.default, objectName, targetKeys);
+      _collectOverrideTargets(processor.switch.default, objectName, targetKeys);
     }
     const target = getProcessorTargetField(processor);
     if (target && typeof target === 'string' && target.startsWith('$.event.')) {
@@ -400,7 +400,7 @@ const collectOverrideTargets = (
   });
 };
 
-const collectEventOverrideTargets = (entry: any, objectName: string, targetKeys: Set<string>) => {
+const _collectEventOverrideTargets = (entry: any, objectName: string, targetKeys: Set<string>) => {
   if (!entry || typeof entry !== 'object') {
     return;
   }

@@ -331,7 +331,6 @@ export default function FcomEventPrimaryRow({
           </div>
           {panelEditState[eventPanelKey] ? (
             (() => {
-              const stagedRemoved = isFieldStagedRemoved(obj, 'Severity');
               const isProcessorField = processorTargets.has('$.event.Severity');
               const processorSummary = getProcessorFieldSummary(obj, 'Severity');
               const processorTitle = processorSummary

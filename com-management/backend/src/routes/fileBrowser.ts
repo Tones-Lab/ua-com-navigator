@@ -11,7 +11,7 @@ const router = Router();
  */
 router.get('/browse', async (req: Request, res: Response) => {
   try {
-    const { path = '/', node, vendor, protocol_type, search, limit = 100 } = req.query;
+    const { path = '/', node, vendor, protocol_type, limit = 100 } = req.query;
 
     const sessionId = req.cookies.FCOM_SESSION_ID;
     if (!sessionId) {

@@ -116,7 +116,7 @@ app.get('/health', (req: Request, res: Response) => {
 });
 
 // Error handling middleware
-app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
   logger.error(`[${(req as any).id}] Error: ${err.message}`, { stack: err.stack });
   res.status(err.status || 500).json({
     error: err.message,

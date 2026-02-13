@@ -13,13 +13,11 @@ import {
   buildRuleTextDiagnostics,
   isOverrideEntry,
   isLikelyListResponse,
-  isValidOverridePayload,
   parseOverridePayload,
   extractRuleObjects,
   isPatchOperation,
   normalizeOverrideEntry,
   parseRevisionName,
-  isMissingRule,
   extractHistoryEntries,
   buildOverrideMetaFromHistory,
   mergeOverrideMeta,
@@ -541,7 +539,6 @@ router.get('/', async (req: Request, res: Response) => {
     const objectNames = objects
       .map((obj: any) => obj?.['@objectName'])
       .filter((name: any) => typeof name === 'string' && name.length > 0) as string[];
-    const objectNameSet = new Set(objectNames);
     logger.info(
       `Overrides lookup start for ${file_id}: vendor=${resolved.vendor} method=${resolved.method} objects=${objectNames.length}`,
     );

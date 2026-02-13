@@ -169,7 +169,6 @@ const FcomAdvancedFlowModal = ({
                 return null;
               }
               const isV2 = mode === 'v2';
-              const isV3 = mode === 'v3';
               const isMixed = mode === 'mixed';
               const statusText = isMixed
                 ? 'Mixed processors (v2 + v3). See inline badges.'

@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
-import { UAServer, Session, FcomFile, FcomObject } from '../types';
+import { UAServer, Session, FcomFile } from '../types';
 
 const API_BASE_URL = '/api/v1';
 

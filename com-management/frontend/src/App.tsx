@@ -16,7 +16,6 @@ import ComFilePreview from './components/ComFilePreview';
 import ActionRow from './components/ActionRow';
 import useCompactPanel from './components/useCompactPanel';
 import Modal from './components/Modal';
-import PanelHeader from './components/PanelHeader';
 import { FileTitleRow, ViewToggle } from './components/FileHeaderCommon';
 import MibWorkspace from './features/mib/MibWorkspace';
 import LegacyWorkspace from './features/legacy/LegacyWorkspace';
@@ -324,12 +323,12 @@ export default function App() {
     setMibPath,
     setMibSearch,
     setMibSearchScope,
-    setMibSelectedFile,
+    setMibSelectedFile: _setMibSelectedFile,
     setMibDefinitionSearch,
     setMibObjectFilter,
     setMibSelectedDefinition,
     setMibOutput,
-    setMibOutputName,
+    setMibOutputName: _setMibOutputName,
     setMibUseParent,
     loadMibPath,
     loadMibSearch,
@@ -601,7 +600,7 @@ export default function App() {
     return formatDisplayPath(rawPath);
   };
 
-  const getParentLabel = (node?: string) => {
+  const _getParentLabel = (node?: string) => {
     if (!node) {
       return '';
     }
@@ -614,7 +613,7 @@ export default function App() {
     return last.startsWith('id-') ? last.replace(/^id-/, '') : last;
   };
 
-  const getParentPath = (node?: string) => {
+  const _getParentPath = (node?: string) => {
     if (!node) {
       return '';
     }
@@ -925,8 +924,8 @@ export default function App() {
   const overrideSaveDisplayRef = useRef(overrideSaveDisplayStatus);
   const overrideSaveStatusTimersRef = useRef<number[]>([]);
   const [viewMode, setViewMode] = useState<'friendly' | 'preview'>('friendly');
-  const [originalText, setOriginalText] = useState('');
-  const [showCommitModal, setShowCommitModal] = useState(false);
+  const [, setOriginalText] = useState('');
+  const [, setShowCommitModal] = useState(false);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [reviewStep, setReviewStep] = useState<'review' | 'commit'>('review');
   const [suppressVarTooltip, setSuppressVarTooltip] = useState(false);
@@ -964,7 +963,7 @@ export default function App() {
   const [microserviceLastRefreshed, setMicroserviceLastRefreshed] = useState<string | null>(null);
   const [eventsSchemaFields, setEventsSchemaFields] = useState<string[]>([]);
   const [overrideInfo, setOverrideInfo] = useState<any | null>(null);
-  const [overrideLoading, setOverrideLoading] = useState(false);
+  const [, setOverrideLoading] = useState(false);
   const [overrideError, setOverrideError] = useState<string | null>(null);
   const [pendingOverrideSave, setPendingOverrideSave] = useState<any[] | null>(null);
   const [pendingOverrideConversions, setPendingOverrideConversions] = useState<
@@ -1022,7 +1021,7 @@ export default function App() {
   );
   const [builderFocus, setBuilderFocus] = useState<'eval' | 'processor' | 'literal' | null>(null);
   const [builderPatchMode, setBuilderPatchMode] = useState(false);
-  const [builderPatchOp, setBuilderPatchOp] = useState<any | null>(null);
+  const [, setBuilderPatchOp] = useState<any | null>(null);
   const [builderTypeLocked, setBuilderTypeLocked] = useState<
     'eval' | 'processor' | 'literal' | null
   >(null);
@@ -2108,7 +2107,7 @@ export default function App() {
   const isPreGlobalFlow = flowEditor?.scope === 'global' && flowEditor?.lane === 'pre';
   const isPreScopeEventPath = (value: string | undefined | null) =>
     isPreGlobalFlow && typeof value === 'string' && value.includes('$.event');
-  const hasPreScopeEventUsage = (draft: FlowNode | null) => {
+  const _hasPreScopeEventUsage = (draft: FlowNode | null) => {
     if (!draft || !isPreGlobalFlow) {
       return false;
     }
@@ -2368,7 +2367,7 @@ export default function App() {
     ],
   };
 
-  const getFlowEditorJsonErrors = (draft: FlowNode | null) => {
+  const _getFlowEditorJsonErrors = (draft: FlowNode | null) => {
     if (!draft || draft.kind !== 'processor') {
       return [] as Array<{ field: string; message: string }>;
     }
@@ -2655,7 +2654,6 @@ export default function App() {
     if (fileLoadStageHideTimeoutRef.current) {
       return;
     }
-    const holdStart = nowMs();
     fileLoadStageHideTimeoutRef.current = window.setTimeout(() => {
       setFileLoadStageTarget(null);
       fileLoadStageHideTimeoutRef.current = null;
@@ -2738,7 +2736,7 @@ export default function App() {
   }, [selectedFile?.PathID]);
   const isAnyPanelEditing = Object.values(panelEditState).some(Boolean);
 
-  const togglePanelEdit = (key: string) => {
+  const _togglePanelEdit = (key: string) => {
     setPanelEditState((prev) => ({
       ...prev,
       [key]: !prev[key],
@@ -3767,7 +3765,7 @@ export default function App() {
     }
   };
 
-  const handleRefreshAllCaches = async () => {
+  const _handleRefreshAllCaches = async () => {
     setCacheActionMessage('Refreshing all caches…');
     const results = await Promise.allSettled([
       handleRefreshOverviewCache(),
@@ -3997,7 +3995,7 @@ export default function App() {
     void refreshFolderOverviewStatus();
   }, [isAuthenticated, showPathModal]);
 
-  const handleRebuildIndex = async () => {
+  const _handleRebuildIndex = async () => {
     setSearchError(null);
     setSearchLoading(true);
     try {
@@ -5324,7 +5322,7 @@ export default function App() {
     }
   };
 
-  const handleSaveFile = async (message: string) => {
+  const _handleSaveFile = async (message: string) => {
     const content =
       editorText.trim().startsWith('{') || editorText.trim().startsWith('[')
         ? JSON.parse(editorText)
@@ -5994,7 +5992,7 @@ export default function App() {
   const decodeJsonPointerSegment = (segment: string) =>
     segment.replace(/~1/g, '/').replace(/~0/g, '~');
 
-  const encodeJsonPointerSegment = (segment: string) =>
+  const _encodeJsonPointerSegment = (segment: string) =>
     segment.replace(/~/g, '~0').replace(/\//g, '~1');
 
   const getJsonPointerEventPath = (value?: string | null) => {
@@ -8067,7 +8065,7 @@ export default function App() {
     }
   };
 
-  const getEvalText = (value: any) => {
+  const _getEvalText = (value: any) => {
     if (value && typeof value === 'object' && typeof value.eval === 'string') {
       return value.eval;
     }
@@ -9044,7 +9042,7 @@ export default function App() {
     return null;
   };
 
-  const getObjectByName = (objectName?: string | null) => {
+  const _getObjectByName = (objectName?: string | null) => {
     if (!objectName) {
       return null;
     }
@@ -11026,7 +11024,7 @@ export default function App() {
     setBuilderRegularText('');
   };
 
-  const enableEvalForTarget = () => {
+  const _enableEvalForTarget = () => {
     if (!builderTarget || !panelEditState[builderTarget.panelKey]) {
       return;
     }
@@ -11750,7 +11748,7 @@ export default function App() {
   };
 
   const friendlyPreview = buildFriendlyEval();
-  const literalMeta = getLiteralEligibility();
+  const _literalMeta = getLiteralEligibility();
   const literalDirty = builderTarget
     ? (() => {
         const obj = getObjectByPanelKey(builderTarget.panelKey);
