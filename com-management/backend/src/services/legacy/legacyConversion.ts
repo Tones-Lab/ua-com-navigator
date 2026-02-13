@@ -339,7 +339,7 @@ const extractComObjects = (filePath: string): ComMatchEntry[] => {
 
 const comIndexCache = new Map<
   string,
-  { index: ComIndex; builtAt: number; fileCount: number },
+  { index: ComIndex; builtAt: number; fileCount: number }
 >();
 
 const buildComIndex = (comsRoot: string, vendor?: string) => {

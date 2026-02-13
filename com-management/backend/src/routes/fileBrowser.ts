@@ -69,27 +69,10 @@ router.get('/:file_id/preview', (req: Request, res: Response) => {
 
     logger.info(`Previewing file: ${file_id}`);
 
-    // TODO: Call UA server REST API and return preview
-    const mockPreview = {
-      file_id: file_id,
-      path: `/trap/cisco/${file_id}`,
-      size: 2048,
-      last_modified: new Date().toISOString(),
-      last_author: 'api',
-      object_count: 3,
-      objects_preview: [
-        {
-          '@objectName': 'CISCO-ENVMON-FAN-FAILURE',
-          description: 'Fan failure detected',
-        },
-        {
-          '@objectName': 'CISCO-ENVMON-TEMP-CRITICAL',
-          description: 'Temperature critical',
-        },
-      ],
-    };
-
-    res.json(mockPreview);
+    res.status(501).json({
+      error: 'File preview endpoint is not implemented yet',
+      file_id,
+    });
   } catch (error: any) {
     logger.error(`Error previewing file: ${error.message}`);
     res.status(500).json({ error: 'Failed to preview file' });

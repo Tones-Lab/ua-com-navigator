@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import fs from 'fs';
 import path from 'path';
 import { convertLegacyRules, renderLegacyTextReport } from '../src/services/legacy/legacyConversion';

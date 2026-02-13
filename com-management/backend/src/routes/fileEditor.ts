@@ -323,13 +323,10 @@ router.post('/:file_id/test', (req: Request, res: Response) => {
 
     logger.info(`Testing object ${object_name} in file ${file_id}`);
 
-    // TODO: Call FCOM2Test utility
-    res.json({
-      test_id: 'test-001',
-      object_name: object_name,
-      status: 'success',
-      output: 'Trap sent successfully',
-      timestamp: new Date().toISOString(),
+    res.status(501).json({
+      error: 'Single-object test endpoint is not implemented yet',
+      file_id,
+      object_name,
     });
   } catch (error: any) {
     logger.error(`Error testing object: ${error.message}`);
@@ -347,18 +344,9 @@ router.post('/:file_id/test-all', (req: Request, res: Response) => {
 
     logger.info(`Running batch test for file ${file_id}`);
 
-    // TODO: Iterate through all objects and test
-    res.json({
-      file_id: file_id,
-      test_id: 'batch-test-001',
-      total_objects: 3,
-      passed: 3,
-      failed: 0,
-      results: [
-        { object_name: 'OBJ1', status: 'success', message: 'OK' },
-        { object_name: 'OBJ2', status: 'success', message: 'OK' },
-        { object_name: 'OBJ3', status: 'success', message: 'OK' },
-      ],
+    res.status(501).json({
+      error: 'Batch test endpoint is not implemented yet',
+      file_id,
     });
   } catch (error: any) {
     logger.error(`Error running batch test: ${error.message}`);

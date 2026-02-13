@@ -9,7 +9,6 @@ type FcomBuilderSidebarProps = {
     label: string;
     detail: string;
   } | null;
-    builderOverrideVersion,
   builderDirty: boolean;
   canUndoBuilder: boolean;
   canRedoBuilder: boolean;

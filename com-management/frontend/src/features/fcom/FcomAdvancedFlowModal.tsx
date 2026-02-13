@@ -24,6 +24,11 @@ type PaletteSection = {
   items: PaletteItem[];
 };
 
+type FocusMatch = {
+  lane: 'object' | 'pre' | 'post';
+  processor: any;
+};
+
 type FcomAdvancedFlowModalProps = {
   showAdvancedProcessorModal: boolean;
   pendingAdvancedFlowClose: boolean;
@@ -80,7 +85,7 @@ type FcomAdvancedFlowModalProps = {
   advancedFlowFocusIndex: number;
   advancedFlowFocusOnly: boolean;
   focusedFlowMatch: boolean;
-  focusedFlowMatches: FlowNode[];
+  focusedFlowMatches: FocusMatch[];
   focusedLaneLabel: string;
   setAdvancedFlowFocusTarget: (value: string | null) => void;
   setAdvancedFlowFocusIndex: React.Dispatch<React.SetStateAction<number>>;
