@@ -1,5 +1,20 @@
 import axios, { AxiosInstance } from 'axios';
 import { UAServer, Session, FcomFile } from '../types';
+import type {
+  AuthCredentials,
+  AuthMethod,
+  BrowseFilters,
+  FavoriteDeleteRequest,
+  FavoriteRequest,
+  FavoriteScope,
+  FavoritesResponse,
+  LegacyConversionRequest,
+  LegacyConversionResponse,
+  LegacyFileReadResponse,
+  LegacyUploadsResponse,
+  SaveFilePayload,
+  SaveFileResult,
+} from '../types/api';
 
 const API_BASE_URL = '/api/v1';
 
@@ -17,7 +32,7 @@ class ApiClient {
   }
 
   // Authentication
-  async login(serverId: string, authType: 'basic' | 'certificate', credentials: any) {
+  async login(serverId: string, authType: AuthMethod, credentials: AuthCredentials) {
     return this.client.post('/auth/login', {
       server_id: serverId,
       auth_type: authType,
@@ -38,7 +53,7 @@ class ApiClient {
     return this.client.get<UAServer[]>('/servers');
   }
 
-  async switchServer(serverId: string, authType: 'basic' | 'certificate', credentials: any) {
+  async switchServer(serverId: string, authType: AuthMethod, credentials: AuthCredentials) {
     return this.client.post(`/servers/${serverId}/switch`, {
       auth_type: authType,
       ...credentials,
@@ -48,7 +63,7 @@ class ApiClient {
   // File Browser
   async browsePath(
     path?: string,
-    filters?: { node?: string; vendor?: string; protocol_type?: string; search?: string },
+    filters?: BrowseFilters,
   ) {
     return this.client.get('/files/browse', {
       params: {
@@ -69,13 +84,13 @@ class ApiClient {
     });
   }
 
-  async saveFile(fileId: string, content: any, etag: string, commitMessage: string) {
-    return this.client.post(`/files/save`, {
+  async saveFile(fileId: string, content: unknown, etag: string, commitMessage: string) {
+    return this.client.post<SaveFileResult>(`/files/save`, {
       file_id: fileId,
       content,
       etag,
       commit_message: commitMessage,
-    });
+    } satisfies SaveFilePayload);
   }
 
   async getDiff(fileId: string, revisionA?: string, revisionB?: string) {
@@ -95,11 +110,11 @@ class ApiClient {
 
   // Overrides
   async getOverrides(fileId: string) {
-    return this.client.get('/overrides', { params: { file_id: fileId } });
+    return this.client.get<unknown>('/overrides', { params: { file_id: fileId } });
   }
 
-  async saveOverrides(fileId: string, overrides: any[], commitMessage: string) {
-    return this.client.post('/overrides/save', {
+  async saveOverrides(fileId: string, overrides: unknown[], commitMessage: string) {
+    return this.client.post<unknown>('/overrides/save', {
       file_id: fileId,
       overrides,
       commit_message: commitMessage,
@@ -199,15 +214,19 @@ class ApiClient {
 
   // Legacy Conversion uploads
   async listLegacyUploads() {
-    return this.client.get('/legacy/uploads');
+    return this.client.get<LegacyUploadsResponse>('/legacy/uploads');
   }
 
   async readLegacyUpload(pathId: string) {
-    return this.client.get('/legacy/uploads/file', { params: { path: pathId } });
+    return this.client.get<LegacyFileReadResponse>('/legacy/uploads/file', {
+      params: { path: pathId },
+    });
   }
 
   async readLegacyMatchFile(pathId: string) {
-    return this.client.get('/legacy/match/file', { params: { path: pathId } });
+    return this.client.get<LegacyFileReadResponse>('/legacy/match/file', {
+      params: { path: pathId },
+    });
   }
 
   async uploadLegacyFiles(files: File[], subdir?: string) {
@@ -221,13 +240,8 @@ class ApiClient {
     });
   }
 
-  async runLegacyConversion(payload?: {
-    paths?: string[];
-    vendor?: string;
-    useMibs?: boolean;
-    useLlm?: boolean;
-  }) {
-    return this.client.post('/legacy/convert', payload || {});
+  async runLegacyConversion(payload?: LegacyConversionRequest) {
+    return this.client.post<LegacyConversionResponse>('/legacy/convert', payload || {});
   }
 
   async getDevices(params?: { limit?: number; start?: number }) {
@@ -274,25 +288,15 @@ class ApiClient {
   }
 
   // Favorites
-  async getFavorites(scope: 'fcom' | 'pcom' | 'mib') {
-    return this.client.get('/favorites', { params: { scope } });
+  async getFavorites(scope: FavoriteScope) {
+    return this.client.get<FavoritesResponse>('/favorites', { params: { scope } });
   }
 
-  async addFavorite(favorite: {
-    type: 'file' | 'folder';
-    pathId: string;
-    label: string;
-    node?: string;
-    scope: 'fcom' | 'pcom' | 'mib';
-  }) {
+  async addFavorite(favorite: FavoriteRequest) {
     return this.client.post('/favorites', favorite, { params: { scope: favorite.scope } });
   }
 
-  async removeFavorite(favorite: {
-    type: 'file' | 'folder';
-    pathId: string;
-    scope: 'fcom' | 'pcom' | 'mib';
-  }) {
+  async removeFavorite(favorite: FavoriteDeleteRequest) {
     return this.client.delete('/favorites', {
       data: favorite,
       params: { scope: favorite.scope },

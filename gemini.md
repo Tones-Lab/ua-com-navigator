@@ -322,3 +322,59 @@ We will create a first-class **"Test Harness"** mode for the entire application 
 *   **CI/CD Integration:** Enables a true "shift-left" approach where full-stack integration tests are run on every commit.
 *   **Confidence:** Provides high confidence that core user workflows are always functional, dramatically reducing the risk of regressions.
 *   **Developer Experience:** Developers can run the entire E2E suite on their local machines with a single command, speeding up the development and debugging cycle.
+
+---
+
+## 7. Deep Dive Analysis: FcomBuilderSidebar and Future Enhancements
+
+**Date:** 2026-02-13
+
+This section provides a detailed analysis based on a deep dive into the frontend codebase, starting with the `FcomBuilderSidebar.tsx` component. It identifies immediate opportunities for code improvement and proposes several new features to enhance the user experience and functionality of the FCOM builder.
+
+### 7.1. Code Cleanliness & Refactoring Opportunities
+
+The `FcomBuilderSidebar.tsx` component is a prime candidate for refactoring. Its large size, extensive prop list, and complex conditional rendering logic are indicators of potential maintainability issues.
+
+**1. Address Massive Prop Drilling:**
+*   **Problem:** The component currently accepts over 100 props. This pattern, known as "prop drilling," makes the component difficult to understand, test, and reuse. Tracing the origin of state or callbacks becomes a significant challenge.
+*   **Proposed Solution:** Co-locate state and actions using a dedicated state management solution. While Zustand is already in use for global state, a more focused approach for the "builder" feature is recommended. Create a dedicated Zustand store (`createBuilderStore`) or use React's Context API (`BuilderContext`) to encapsulate the builder's state and dispatch functions. This will allow child components to access the data they need directly, without intermediate components having to pass down props they don't use.
+
+**2. Decompose the "God Component":**
+*   **Problem:** `FcomBuilderSidebar` is a "god component" responsible for rendering and managing the logic for multiple, distinct UI sections (Literal, Eval, Processor). This violates the Single Responsibility Principle and makes the file exceedingly long and complex.
+*   **Proposed Solution:** Break the component down into smaller, more focused child components. This will improve readability, testability, and reusability. A possible decomposition could be:
+    *   `BuilderHeader`: Manages the main header, target info, and undo/redo actions.
+    *   `BuilderTypeSelector`: Renders the 'Literal', 'Eval', and 'Processor' selection cards.
+    *   `LiteralEditor`: A self-contained component for editing literal values.
+    *   `EvalBuilder`: Contains the logic for the 'Friendly' and 'Regular' eval modes. This itself could be broken down further into `FriendlyEvalBuilder` and `RegularEvalBuilder`.
+    *   `ProcessorBuilder`: Manages the multi-step workflow for selecting, configuring, and reviewing processors. This could have sub-components for each step (`ProcessorSelector`, `ProcessorConfigurer`, `ProcessorReview`).
+
+**3. Manage State with a Reducer:**
+*   **Problem:** The component's behavior is managed by several interdependent state variables (`builderFocus`, `processorStep`, `builderMode`). The logic for transitioning between these states is scattered across multiple `onClick` handlers, making it hard to follow and prone to errors.
+*   **Proposed Solution:** Consolidate the state management for the builder's UI into a single `useReducer` hook. This is a perfect use case for a state machine. A reducer would define all possible state transitions explicitly (e.g., `SELECT_BUILDER_TYPE`, `CHANGE_EVAL_MODE`, `NEXT_PROCESSOR_STEP`), making the component's behavior more predictable and easier to debug.
+
+### 7.2. Feature & Functionality Ideas
+
+The FCOM builder is a powerful tool with the potential for even greater utility and an improved user experience.
+
+**1. Interactive Builder Tutorial & Onboarding:**
+*   **Concept:** For a feature as complex as the builder, a guided, interactive tutorial would be invaluable for new users.
+*   **Implementation:** Use a library like 'React Joyride' or a custom solution to create a step-by-step walkthrough. The tutorial could guide a user to select a field, choose the 'Eval' builder, create a simple condition in "Friendly" mode, and apply it. This would dramatically lower the barrier to entry.
+
+**2. Real-time Syntax Highlighting and Validation:**
+*   **Concept:** The 'Regular Eval' `textarea` is a black box for users. Providing immediate feedback would prevent errors and speed up development.
+*   **Implementation:** Integrate a lightweight code editor component (like 'CodeMirror' or 'Monaco Editor') in place of the plain `textarea`. A simple language definition could be created to provide syntax highlighting for variables (`$v1`), operators, and functions. For validation, a debounced API call to a new backend endpoint (`POST /validate-expression`) could provide real-time linting and error checking.
+
+**3. User-Defined Templates & Snippets:**
+*   **Concept:** The hardcoded templates are useful, but power users will often reuse their own complex expressions.
+*   **Implementation:** Add a feature allowing users to save the content of the 'Regular Eval' input as a named snippet. These snippets could be stored in the browser's `localStorage` for individual use or saved to the backend via a new API to be shared across the team. A "My Snippets" section could be added alongside the existing "Templates".
+
+**4. Visual Flow Builder for Processors:**
+*   **Concept:** While the current list-based UI for nested processors works, a graphical, node-based interface would be far more intuitive for visualizing and managing complex processor chains, especially for `foreach` and `switch` processors.
+*   **Implementation:** Integrate a library like 'React Flow'. Each processor would be a draggable node, and connections would represent the flow of data. This provides a clear, high-level view of the logic, making it easier to understand, reorder, and debug complex configurations.
+
+**5. AI-Powered Builder Assistant:**
+*   **Concept:** Leverage the planned LLM/AI service to provide intelligent assistance directly within the builder UI.
+*   **Implementation:**
+    *   **Natural Language to Expression:** Add a text input where a user can describe their goal in plain English (e.g., "if the severity is critical, set the priority to 1"). The AI service would translate this into a valid 'Eval' expression or a suggested 'Processor' configuration.
+    *   **Expression Debugging/Explanation:** Add a button to "Explain this expression." The AI would analyze the current 'Eval' or 'Processor' chain and provide a human-readable summary of what it does, helping to debug complex logic.
+    *   **Smart Suggestions:** The AI could proactively suggest processors or transformations based on the data type or name of the field being edited.

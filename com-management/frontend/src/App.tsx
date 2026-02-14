@@ -12,6 +12,7 @@ import FcomBuilderSidebar from './features/fcom/FcomBuilderSidebar';
 import FcomRawPreview from './features/fcom/FcomRawPreview';
 import FcomAdvancedFlowModal from './features/fcom/FcomAdvancedFlowModal';
 import FcomFlowEditorModal from './features/fcom/FcomFlowEditorModal';
+import useFcomBuilderContextValue from './features/fcom/builder/useFcomBuilderContextValue';
 import ComFilePreview from './components/ComFilePreview';
 import ActionRow from './components/ActionRow';
 import useCompactPanel from './components/useCompactPanel';
@@ -20,13 +21,27 @@ import { FileTitleRow, ViewToggle } from './components/FileHeaderCommon';
 import MibWorkspace from './features/mib/MibWorkspace';
 import LegacyWorkspace from './features/legacy/LegacyWorkspace';
 import useMibWorkspace from './features/mib/useMibWorkspace';
+import useCacheStatus from './hooks/useCacheStatus';
+import useFavorites from './hooks/useFavorites';
+import useOverviewState from './hooks/useOverviewState';
+import useSearchState from './hooks/useSearchState';
+import {
+  buildBreadcrumbsFromNode,
+  buildBreadcrumbsFromPath,
+  ensureCorePrefix,
+  formatDisplayPath,
+  formatRelativeAge,
+  getVendorFromPath,
+  normalizeRulesPath,
+} from './utils/pathUtils';
+import {
+  getDefaultBrowseNode,
+  inferAppFromPath,
+  resolveDeepLinkFileId,
+} from './utils/navigationUtils';
 import './App.css';
 
 const COMS_PATH_PREFIX = 'id-core/default/processing/event/fcom/_objects';
-const DEFAULT_FCOM_NODE = 'id-core/default/processing/event/fcom';
-const DEFAULT_PCOM_NODE = 'id-core/default/collection/metric/snmp/_objects/pcom';
-const COM_SEARCH_QUERY_KEY = 'com.search.query';
-const COM_SEARCH_SCOPE_KEY = 'com.search.scope';
 const FILE_LOAD_STAGE_ORDER = ['original', 'overrides', 'compare', 'render'] as const;
 const FILE_LOAD_STAGE_TIMING = {
   showDelayMs: 120,
@@ -77,7 +92,6 @@ class ErrorBoundary extends React.Component<
 }
 
 type AppTab = 'overview' | 'fcom' | 'pcom' | 'mib' | 'legacy';
-type FavoriteScope = 'fcom' | 'pcom' | 'mib';
 
 export default function App() {
   const { session, servers, isAuthenticated, setSession, clearSession, setServers } =
@@ -90,18 +104,9 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [browseLoading, setBrowseLoading] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [searchScope, setSearchScope] = useState<'all' | 'name' | 'content'>('all');
-  const [searchResults, setSearchResults] = useState<any[]>([]);
-  const [searchLoading, setSearchLoading] = useState(false);
-  const [searchError, setSearchError] = useState<string | null>(null);
-  const [searchStatus, setSearchStatus] = useState<any>(null);
-  const [searchRebuildPending, setSearchRebuildPending] = useState(false);
-  const searchRebuildStartRef = useRef<number | null>(null);
-  const searchStatusPollRef = useRef<number | null>(null);
-  const [folderRebuildPending, setFolderRebuildPending] = useState(false);
-  const folderRebuildStartRef = useRef<number | null>(null);
-  const folderStatusPollRef = useRef<number | null>(null);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const [cacheActionMessage, setCacheActionMessage] = useState<string | null>(null);
+  const [showPathModal, setShowPathModal] = useState(false);
   const [searchHighlightActive, setSearchHighlightActive] = useState(false);
   const [highlightQuery, setHighlightQuery] = useState<string | null>(null);
   const [highlightPathId, setHighlightPathId] = useState<string | null>(null);
@@ -137,22 +142,60 @@ export default function App() {
   const friendlyMainRef = useRef<HTMLDivElement | null>(null);
   const activeOverrideTooltipRef = useRef<HTMLElement | null>(null);
   const [browsePath] = useState('/');
-  const [overviewStatus, setOverviewStatus] = useState<any | null>(null);
-  const [overviewData, setOverviewData] = useState<any | null>(null);
-  const [overviewLoading, setOverviewLoading] = useState(false);
-  const [overviewError, setOverviewError] = useState<string | null>(null);
-  const [overviewRebuildPending, setOverviewRebuildPending] = useState(false);
-  const overviewRebuildStartRef = useRef<number | null>(null);
-  const overviewStatusPollRef = useRef<number | null>(null);
-  const [overviewTopN, setOverviewTopN] = useState(10);
-  const [overviewVendorFilter, setOverviewVendorFilter] = useState('');
-  const [overviewVendorSort, setOverviewVendorSort] = useState<{
-    key: 'vendor' | 'files' | 'overrides' | 'objects';
-    direction: 'asc' | 'desc';
-  }>({ key: 'files', direction: 'desc' });
-  const [showUserMenu, setShowUserMenu] = useState(false);
-  const [cacheActionMessage, setCacheActionMessage] = useState<string | null>(null);
-  const [showPathModal, setShowPathModal] = useState(false);
+  const {
+    overviewStatus,
+    overviewData,
+    overviewLoading,
+    overviewError,
+    overviewRebuildPending,
+    overviewTopN,
+    setOverviewTopN,
+    overviewVendorFilter,
+    setOverviewVendorFilter,
+    overviewVendorSort,
+    overviewProtocols,
+    loadOverview,
+    toggleOverviewSort,
+    refreshOverviewStatus,
+    startOverviewStatusPolling,
+    stopOverviewStatusPolling,
+  } = useOverviewState({ isAuthenticated, activeApp });
+  const {
+    searchStatus,
+    setSearchStatus,
+    searchRebuildPending,
+    rebuildSearchIndexAndTrack,
+    folderOverviewStatus,
+    folderRebuildPending,
+    rebuildFolderOverviewCacheAndTrack,
+    mibTranslateStatus,
+    refreshMibTranslateStatus,
+  } = useCacheStatus({
+    isAuthenticated,
+    showUserMenu,
+    showPathModal,
+    refreshOverviewStatus,
+    startOverviewStatusPolling,
+    stopOverviewStatusPolling,
+  });
+  const {
+    searchQuery,
+    setSearchQuery,
+    searchScope,
+    setSearchScope,
+    searchResults,
+    searchLoading,
+    setSearchLoading,
+    searchError,
+    setSearchError,
+    runSearch,
+    handleSearchSubmit,
+    clearSearch,
+    resetSearchState,
+  } = useSearchState({
+    isAuthenticated,
+    onStatusUpdate: setSearchStatus,
+  });
   const [mibTrapDefaults, setMibTrapDefaults] = useState<null | {
     objectName: string;
     module?: string;
@@ -237,8 +280,6 @@ export default function App() {
   const [trapError, setTrapError] = useState<string | null>(null);
   const [redeployPulse, setRedeployPulse] = useState(false);
   const [recentTargets, setRecentTargets] = useState<string[]>([]);
-  const [folderOverviewStatus, setFolderOverviewStatus] = useState<any | null>(null);
-  const [mibTranslateStatus, setMibTranslateStatus] = useState<any | null>(null);
   const [fileTestLoading, setFileTestLoading] = useState<Record<string, boolean>>({});
   const [vendorTestLoading, setVendorTestLoading] = useState(false);
   const [bulkTrapContext, setBulkTrapContext] = useState<null | {
@@ -379,32 +420,6 @@ export default function App() {
   ]);
 
   useEffect(() => {
-    const savedQuery =
-      sessionStorage.getItem(COM_SEARCH_QUERY_KEY) ||
-      sessionStorage.getItem('fcom.search.query');
-    const savedScope =
-      sessionStorage.getItem(COM_SEARCH_SCOPE_KEY) ||
-      sessionStorage.getItem('fcom.search.scope');
-    if (savedQuery && !searchQuery) {
-      setSearchQuery(savedQuery);
-    }
-    if (savedScope === 'all' || savedScope === 'name' || savedScope === 'content') {
-      setSearchScope(savedScope);
-    }
-    if (savedQuery && !sessionStorage.getItem(COM_SEARCH_QUERY_KEY)) {
-      sessionStorage.setItem(COM_SEARCH_QUERY_KEY, savedQuery);
-    }
-    if (savedScope && !sessionStorage.getItem(COM_SEARCH_SCOPE_KEY)) {
-      sessionStorage.setItem(COM_SEARCH_SCOPE_KEY, savedScope);
-    }
-  }, []);
-
-  useEffect(() => {
-    sessionStorage.setItem(COM_SEARCH_QUERY_KEY, searchQuery);
-    sessionStorage.setItem(COM_SEARCH_SCOPE_KEY, searchScope);
-  }, [searchQuery, searchScope]);
-
-  useEffect(() => {
     try {
       const raw = localStorage.getItem('mib.recentTargets');
       if (raw) {
@@ -483,71 +498,6 @@ export default function App() {
     return sizeLabel || countLabel;
   };
 
-  const loadOverview = async (options?: { forceRebuild?: boolean }) => {
-    if (!isAuthenticated) {
-      return;
-    }
-    setOverviewLoading(true);
-    setOverviewError(null);
-    try {
-      if (options?.forceRebuild) {
-        setOverviewRebuildPending(true);
-        overviewRebuildStartRef.current = Date.now();
-        startOverviewStatusPolling();
-        await api.rebuildOverviewIndex();
-      }
-      const [statusRes, dataRes] = await Promise.all([api.getOverviewStatus(), api.getOverview()]);
-      setOverviewStatus(statusRes.data);
-      setOverviewData(dataRes.data?.data ?? null);
-    } catch (err: any) {
-      const message = err?.response?.data?.error || err?.message || 'Failed to load overview';
-      setOverviewError(message);
-    } finally {
-      setOverviewLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (!isAuthenticated || activeApp !== 'overview') {
-      return;
-    }
-    void loadOverview();
-  }, [isAuthenticated, activeApp]);
-
-  const overviewProtocols = useMemo(() => {
-    if (!overviewData?.protocols) {
-      return [] as Array<{ name: string; counts: any; vendors: any[] }>;
-    }
-    const filterText = overviewVendorFilter.trim().toLowerCase();
-    return overviewData.protocols.map((protocol: any) => {
-      const vendors = Array.isArray(protocol.vendors) ? protocol.vendors : [];
-      const filteredVendors = filterText
-        ? vendors.filter((vendor: any) =>
-            String(vendor?.name || '')
-              .toLowerCase()
-              .includes(filterText),
-          )
-        : vendors;
-      const sortedVendors = [...filteredVendors].sort((a: any, b: any) => {
-        if (overviewVendorSort.key === 'vendor') {
-          const aName = String(a?.name || '');
-          const bName = String(b?.name || '');
-          return overviewVendorSort.direction === 'asc'
-            ? aName.localeCompare(bName)
-            : bName.localeCompare(aName);
-        }
-        const aValue = Number(a?.counts?.[overviewVendorSort.key] ?? 0);
-        const bValue = Number(b?.counts?.[overviewVendorSort.key] ?? 0);
-        return overviewVendorSort.direction === 'asc' ? aValue - bValue : bValue - aValue;
-      });
-      const limit = overviewTopN === 0 ? sortedVendors.length : overviewTopN;
-      return {
-        ...protocol,
-        vendors: sortedVendors.slice(0, limit),
-      };
-    });
-  }, [overviewData, overviewTopN, overviewVendorFilter, overviewVendorSort]);
-
   const overviewProgress = overviewStatus?.progress;
   const searchProgress = searchStatus?.progress;
   const folderProgress = folderOverviewStatus?.progress;
@@ -564,14 +514,6 @@ export default function App() {
   const folderProgressPercent = folderProgress?.total
     ? Math.min(100, Math.round((folderProgress.processed / folderProgress.total) * 100))
     : 0;
-
-  const toggleOverviewSort = (key: 'vendor' | 'files' | 'overrides' | 'objects') => {
-    setOverviewVendorSort((prev) =>
-      prev.key === key
-        ? { key, direction: prev.direction === 'asc' ? 'desc' : 'asc' }
-        : { key, direction: 'desc' },
-    );
-  };
 
   const handleOverviewFolderClick = (protocol: string, vendor?: string) => {
     const path = [COMS_PATH_PREFIX, protocol, vendor].filter(Boolean).join('/');
@@ -600,125 +542,6 @@ export default function App() {
     return formatDisplayPath(rawPath);
   };
 
-  const _getParentLabel = (node?: string) => {
-    if (!node) {
-      return '';
-    }
-    const cleaned = node.replace(/^\/+/, '');
-    const parts = cleaned.split('/').filter(Boolean);
-    if (parts.length === 0) {
-      return '';
-    }
-    const last = parts[parts.length - 1];
-    return last.startsWith('id-') ? last.replace(/^id-/, '') : last;
-  };
-
-  const _getParentPath = (node?: string) => {
-    if (!node) {
-      return '';
-    }
-    const cleaned = node.replace(/^\/+/, '');
-    const parts = cleaned.split('/').filter(Boolean);
-    if (parts.length <= 1) {
-      return '';
-    }
-    return parts.slice(0, -1).join('/');
-  };
-
-  const formatRelativeAge = (timestamp?: string | null) => {
-    if (!timestamp) {
-      return '—';
-    }
-    const ms = Date.now() - new Date(timestamp).getTime();
-    if (!Number.isFinite(ms) || ms < 0) {
-      return '—';
-    }
-    const seconds = Math.floor(ms / 1000);
-    if (seconds < 60) {
-      return `${seconds}s`;
-    }
-    const minutes = Math.floor(seconds / 60);
-    if (minutes < 60) {
-      return `${minutes}m`;
-    }
-    const hours = Math.floor(minutes / 60);
-    if (hours < 24) {
-      return `${hours}h`;
-    }
-    const days = Math.floor(hours / 24);
-    return `${days}d`;
-  };
-
-  const formatDisplayPath = (pathId?: string | null) => {
-    if (!pathId) {
-      return '/';
-    }
-    const cleaned = pathId.replace(/^\/+/, '');
-    if (!cleaned) {
-      return '/';
-    }
-    const segments = cleaned.split('/');
-    if (segments[0]?.startsWith('id-')) {
-      segments[0] = segments[0].replace(/^id-/, '');
-    }
-    return `/${segments.join('/')}`;
-  };
-
-  const inferAppFromPath = (pathId?: string | null) => {
-    if (!pathId) {
-      return null;
-    }
-    const normalized = `/${pathId}`.toLowerCase();
-    if (normalized.includes('/fcom/')) {
-      return 'fcom' as AppTab;
-    }
-    if (normalized.includes('/pcom/')) {
-      return 'pcom' as AppTab;
-    }
-    if (normalized.includes('/mib/')) {
-      return 'mib' as AppTab;
-    }
-    return null;
-  };
-
-  const getDefaultBrowseNode = (app: AppTab) => {
-    if (app === 'fcom') {
-      return DEFAULT_FCOM_NODE;
-    }
-    if (app === 'pcom') {
-      return DEFAULT_PCOM_NODE;
-    }
-    return null;
-  };
-
-  const normalizePathId = (pathId?: string | null) =>
-    pathId ? pathId.replace(/^\/+/, '') : '';
-
-  const normalizeRulesPath = (pathId?: string | null) => {
-    const cleaned = normalizePathId(pathId);
-    if (!cleaned) {
-      return '';
-    }
-    if (cleaned.startsWith('id-core/rules/')) {
-      return `id-core/${cleaned.slice('id-core/rules/'.length)}`;
-    }
-    if (cleaned.startsWith('rules/')) {
-      return `id-core/${cleaned.slice('rules/'.length)}`;
-    }
-    return cleaned;
-  };
-
-  const ensureCorePrefix = (pathId?: string | null) => {
-    const normalized = normalizeRulesPath(pathId);
-    if (!normalized) {
-      return '';
-    }
-    if (normalized.startsWith('id-')) {
-      return normalized;
-    }
-    return normalized;
-  };
-
   const isFileReadPayload = (payload: any) => {
     if (!payload || typeof payload !== 'object') {
       return false;
@@ -731,91 +554,6 @@ export default function App() {
       return true;
     }
     return Object.keys(content).length > 0;
-  };
-
-  const resolveDeepLinkFileId = async (fileId: string, nodeParam?: string | null) => {
-    const cleanedFile = normalizeRulesPath(fileId);
-    if (!cleanedFile) {
-      return null;
-    }
-    const fileName = cleanedFile.split('/').pop() || cleanedFile;
-    const parentFromFile = cleanedFile.split('/').slice(0, -1).join('/');
-    const nodeCandidates = new Set<string>();
-    if (nodeParam) {
-      nodeCandidates.add(normalizeRulesPath(nodeParam));
-    }
-    if (parentFromFile) {
-      nodeCandidates.add(parentFromFile);
-    }
-    Array.from(nodeCandidates).forEach((node) => {
-      const normalized = ensureCorePrefix(node);
-      if (normalized) {
-        nodeCandidates.add(normalized);
-      }
-    });
-
-    const fileNameLower = fileName.toLowerCase();
-    const fileCandidates = new Set<string>();
-    fileCandidates.add(cleanedFile);
-    const prefixed = ensureCorePrefix(cleanedFile);
-    if (prefixed) {
-      fileCandidates.add(prefixed);
-    }
-    if (cleanedFile.startsWith('id-core/')) {
-      fileCandidates.add(cleanedFile.replace(/^id-core\//, ''));
-    }
-
-    for (const candidate of fileCandidates) {
-      try {
-        const resp = await api.readFile(candidate);
-        if (isFileReadPayload(resp.data)) {
-          return candidate;
-        }
-      } catch {
-        // ignore read failures, try next candidate
-      }
-    }
-    for (const node of nodeCandidates) {
-      const normalizedNode = ensureCorePrefix(node);
-      if (!normalizedNode) {
-        continue;
-      }
-      try {
-        const resp = await api.browsePath(browsePath, { node: normalizedNode });
-        const items = Array.isArray(resp.data?.data) ? resp.data.data : [];
-        const match = items.find((entry: any) => {
-          if (!entry || isFolder(entry)) {
-            return false;
-          }
-          const pathName = String(entry?.PathName || '').toLowerCase();
-          const pathId = String(entry?.PathID || '').toLowerCase();
-          return pathName === fileNameLower || pathId.endsWith(`/${fileNameLower}`);
-        });
-        if (match?.PathID) {
-          return String(match.PathID);
-        }
-      } catch {
-        // ignore browse resolution errors
-      }
-    }
-
-    return ensureCorePrefix(cleanedFile) || cleanedFile;
-  };
-
-  const getVendorFromPath = (pathId?: string | null) => {
-    if (!pathId) {
-      return '';
-    }
-    const parts = pathId.replace(/^\/+/, '').split('/').filter(Boolean);
-    const fcomIndex = parts.lastIndexOf('fcom');
-    if (fcomIndex === -1) {
-      return '';
-    }
-    const methodIndex = parts.findIndex(
-      (segment, idx) => idx > fcomIndex && (segment === 'trap' || segment === 'syslog'),
-    );
-    const vendorIndex = methodIndex !== -1 ? methodIndex + 1 : fcomIndex + 1;
-    return parts[vendorIndex] || '';
   };
 
   const getSortIndicator = (activeKey: string, key: string, direction: 'asc' | 'desc') => {
@@ -835,13 +573,14 @@ export default function App() {
     entries: any[];
     breadcrumbs: Array<{ label: string; node: string | null }>;
   } | null>(null);
-  const [favorites, setFavorites] = useState<
-    Array<{ type: 'file' | 'folder'; pathId: string; label: string; node?: string }>
-  >([]);
-    const getFavoriteScope = (app: AppTab): FavoriteScope =>
-      app === 'pcom' || app === 'mib' ? app : 'fcom';
-  const [favoritesLoading, setFavoritesLoading] = useState(false);
-  const [favoritesError, setFavoritesError] = useState<string | null>(null);
+  const {
+    favoritesFiles,
+    favoritesFolders,
+    favoritesLoading,
+    favoritesError,
+    isFavorite,
+    toggleFavorite,
+  } = useFavorites({ isAuthenticated, activeApp });
   const [selectedFolder, setSelectedFolder] = useState<any>(null);
   const [folderOverview, setFolderOverview] = useState<any>(null);
   const [folderLoading, setFolderLoading] = useState(false);
@@ -3276,30 +3015,6 @@ export default function App() {
   }, [isAuthenticated, entries.length, browseLoading, activeApp]);
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      return;
-    }
-    if (activeApp !== 'fcom' && activeApp !== 'pcom' && activeApp !== 'mib') {
-      setFavorites([]);
-      return;
-    }
-    const scope = getFavoriteScope(activeApp);
-    const loadFavorites = async () => {
-      setFavoritesError(null);
-      setFavoritesLoading(true);
-      try {
-        const resp = await api.getFavorites(scope);
-        setFavorites(resp.data?.favorites || []);
-      } catch (err: any) {
-        setFavoritesError(err?.response?.data?.error || 'Failed to load favorites');
-      } finally {
-        setFavoritesLoading(false);
-      }
-    };
-    loadFavorites();
-  }, [isAuthenticated, activeApp]);
-
-  useEffect(() => {
     if (!isAuthenticated || urlHydrated.current) {
       return;
     }
@@ -3443,10 +3158,6 @@ export default function App() {
       clearSession();
       urlHydrated.current = false;
       sessionStorage.removeItem('com.activeApp');
-      sessionStorage.removeItem(COM_SEARCH_QUERY_KEY);
-      sessionStorage.removeItem(COM_SEARCH_SCOPE_KEY);
-      sessionStorage.removeItem('fcom.search.query');
-      sessionStorage.removeItem('fcom.search.scope');
       sessionStorage.removeItem(redeployStorageKey);
       localStorage.removeItem('mib.recentTargets');
       setActiveApp('overview');
@@ -3462,11 +3173,7 @@ export default function App() {
       setRedeployModalOpen(false);
       setRedeployLoading(false);
       setRedeployError(null);
-      setSearchQuery('');
-      setSearchScope('all');
-      setSearchResults([]);
-      setSearchError(null);
-      setSearchLoading(false);
+      resetSearchState();
       matchStateByFileRef.current = {};
       scrollStateByFileRef.current = {};
       setSelectedFolder(null);
@@ -3643,83 +3350,14 @@ export default function App() {
     return true;
   };
 
-  const isFavorite = (type: 'file' | 'folder', pathId: string) =>
-    favorites.some((fav) => fav.pathId === pathId && fav.type === type);
-
-  const toggleFavorite = async (favorite: {
-    type: 'file' | 'folder';
-    pathId: string;
-    label: string;
-    node?: string;
-  }) => {
-    try {
-      const scope = getFavoriteScope(activeApp);
-      if (isFavorite(favorite.type, favorite.pathId)) {
-        const resp = await api.removeFavorite({
-          type: favorite.type,
-          pathId: favorite.pathId,
-          scope,
-        });
-        setFavorites(resp.data?.favorites || []);
-      } else {
-        const resp = await api.addFavorite({ ...favorite, scope });
-        setFavorites(resp.data?.favorites || []);
-      }
-    } catch (err: any) {
-      setFavoritesError(err?.response?.data?.error || 'Failed to update favorites');
-    }
-  };
-
-  const refreshSearchStatus = async () => {
-    try {
-      const resp = await api.getSearchStatus();
-      setSearchStatus(resp.data);
-    } catch {
-      // ignore
-    }
-  };
-
-  const refreshOverviewStatus = async () => {
-    try {
-      const resp = await api.getOverviewStatus();
-      setOverviewStatus(resp.data);
-    } catch {
-      // ignore
-    }
-  };
-
-  const refreshFolderOverviewStatus = async () => {
-    try {
-      const resp = await api.getFolderOverviewStatus();
-      setFolderOverviewStatus(resp.data);
-    } catch {
-      // ignore
-    }
-  };
-
-  const refreshMibTranslateStatus = async () => {
-    try {
-      const resp = await api.getMibTranslateStatus();
-      setMibTranslateStatus(resp.data);
-    } catch {
-      // ignore
-    }
-  };
-
   const handleRefreshOverviewCache = async (): Promise<boolean> => {
     setCacheActionMessage('Refreshing overview cache…');
-    setOverviewRebuildPending(true);
-    overviewRebuildStartRef.current = Date.now();
-    startOverviewStatusPolling();
     try {
-      await api.rebuildOverviewIndex();
-      await loadOverview();
+      await loadOverview({ forceRebuild: true });
       setCacheActionMessage('Overview cache refresh triggered.');
       return true;
     } catch (err: any) {
       setCacheActionMessage(err?.response?.data?.error || 'Failed to refresh overview cache');
-      setOverviewRebuildPending(false);
-      stopOverviewStatusPolling();
       return false;
     }
   };
@@ -3727,8 +3365,7 @@ export default function App() {
   const handleRefreshSearchCache = async (): Promise<boolean> => {
     setCacheActionMessage('Refreshing search cache…');
     try {
-      await api.rebuildSearchIndex();
-      startSearchStatusPolling();
+      await rebuildSearchIndexAndTrack();
       setCacheActionMessage('Search cache rebuild started.');
       return true;
     } catch (err: any) {
@@ -3739,28 +3376,27 @@ export default function App() {
 
   const handleRefreshFolderCache = async (): Promise<boolean> => {
     setCacheActionMessage('Refreshing folder cache…');
-    setFolderRebuildPending(true);
-    folderRebuildStartRef.current = Date.now();
-    startFolderStatusPolling();
     try {
-      await api.rebuildFolderOverviewCache(undefined, 25);
-      await refreshFolderOverviewStatus();
-      if (selectedFolder?.PathID) {
-        try {
-          const resp = await api.getFolderOverview(selectedFolder.PathID, 25);
-          setFolderOverview(resp.data);
-        } catch {
-          // ignore folder reload errors
-        }
-      }
+      await rebuildFolderOverviewCacheAndTrack({
+        selectedFolderPathId: selectedFolder?.PathID,
+        onFolderOverviewReload: async () => {
+          if (!selectedFolder?.PathID) {
+            return;
+          }
+          try {
+            const resp = await api.getFolderOverview(selectedFolder.PathID, 25);
+            setFolderOverview(resp.data);
+          } catch {
+            // ignore folder reload errors
+          }
+        },
+      });
       setCacheActionMessage('Folder overview cache refreshed.');
       return true;
     } catch (err: any) {
       setCacheActionMessage(
         err?.response?.data?.error || 'Failed to refresh folder overview cache',
       );
-      setFolderRebuildPending(false);
-      stopFolderStatusPolling();
       return false;
     }
   };
@@ -3780,124 +3416,11 @@ export default function App() {
     );
   };
 
-  const stopSearchStatusPolling = () => {
-    if (searchStatusPollRef.current !== null) {
-      window.clearInterval(searchStatusPollRef.current);
-      searchStatusPollRef.current = null;
-    }
-  };
-
-  const stopOverviewStatusPolling = () => {
-    if (overviewStatusPollRef.current !== null) {
-      window.clearInterval(overviewStatusPollRef.current);
-      overviewStatusPollRef.current = null;
-    }
-  };
-
-  const stopFolderStatusPolling = () => {
-    if (folderStatusPollRef.current !== null) {
-      window.clearInterval(folderStatusPollRef.current);
-      folderStatusPollRef.current = null;
-    }
-  };
-
-  const startSearchStatusPolling = () => {
-    stopSearchStatusPolling();
-    searchStatusPollRef.current = window.setInterval(async () => {
-      try {
-        const resp = await api.getSearchStatus();
-        setSearchStatus(resp.data);
-        const lastBuilt = resp.data?.lastBuiltAt ? new Date(resp.data.lastBuiltAt).getTime() : null;
-        const startedAt = searchRebuildStartRef.current;
-        if (!resp.data?.isBuilding && lastBuilt && startedAt && lastBuilt >= startedAt - 1000) {
-          setSearchRebuildPending(false);
-          searchRebuildStartRef.current = null;
-          stopSearchStatusPolling();
-        }
-      } catch {
-        // ignore polling errors
-      }
-    }, 2000);
-  };
-
-  const startOverviewStatusPolling = () => {
-    stopOverviewStatusPolling();
-    overviewStatusPollRef.current = window.setInterval(async () => {
-      try {
-        const resp = await api.getOverviewStatus();
-        setOverviewStatus(resp.data);
-        const lastBuilt = resp.data?.lastBuiltAt ? new Date(resp.data.lastBuiltAt).getTime() : null;
-        const startedAt = overviewRebuildStartRef.current;
-        if (!resp.data?.isBuilding && lastBuilt && startedAt && lastBuilt >= startedAt - 1000) {
-          setOverviewRebuildPending(false);
-          overviewRebuildStartRef.current = null;
-          stopOverviewStatusPolling();
-        }
-      } catch {
-        // ignore polling errors
-      }
-    }, 2000);
-  };
-
-  const startFolderStatusPolling = () => {
-    stopFolderStatusPolling();
-    folderStatusPollRef.current = window.setInterval(async () => {
-      try {
-        const resp = await api.getFolderOverviewStatus();
-        setFolderOverviewStatus(resp.data);
-        const lastBuilt = resp.data?.lastBuiltAt ? new Date(resp.data.lastBuiltAt).getTime() : null;
-        const startedAt = folderRebuildStartRef.current;
-        if (!resp.data?.isBuilding && lastBuilt && startedAt && lastBuilt >= startedAt - 1000) {
-          setFolderRebuildPending(false);
-          folderRebuildStartRef.current = null;
-          stopFolderStatusPolling();
-        }
-      } catch {
-        // ignore polling errors
-      }
-    }, 2000);
-  };
-
-  const runSearch = async (query: string) => {
-    setSearchLoading(true);
-    setSearchError(null);
-    try {
-      const resp = await api.searchComs(query, searchScope, 200);
-      setSearchResults(resp.data?.results || []);
-      if (resp.data?.status) {
-        setSearchStatus(resp.data.status);
-      }
-    } catch (err: any) {
-      const message = err?.response?.data?.error || 'Search failed';
-      setSearchError(message);
-    } finally {
-      setSearchLoading(false);
-    }
-  };
-
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const query = searchQuery.trim();
-    if (!query) {
-      setSearchResults([]);
-      return;
-    }
-    void runSearch(query);
-  };
-
-  const handleClearSearch = () => {
-    setSearchQuery('');
-    setSearchResults([]);
-    setSearchError(null);
-    sessionStorage.removeItem(COM_SEARCH_QUERY_KEY);
-    sessionStorage.removeItem('fcom.search.query');
-  };
-
   const handleResetNavigationInternal = async (appOverride?: AppTab) => {
     const targetApp = appOverride || activeApp;
-    handleClearSearch();
+    clearSearch();
     setSearchScope('all');
-    sessionStorage.removeItem(COM_SEARCH_SCOPE_KEY);
+    sessionStorage.removeItem('com.search.scope');
     sessionStorage.removeItem('fcom.search.scope');
     matchStateByFileRef.current = {};
     scrollStateByFileRef.current = {};
@@ -3937,73 +3460,11 @@ export default function App() {
     });
   };
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      return;
-    }
-    const query = searchQuery.trim();
-    if (!query) {
-      setSearchResults([]);
-      setSearchError(null);
-      return;
-    }
-    const handle = window.setTimeout(() => {
-      void runSearch(query);
-    }, 350);
-    return () => window.clearTimeout(handle);
-  }, [searchQuery, searchScope, isAuthenticated]);
-
-  useEffect(() => {
-    if (!isAuthenticated) {
-      return;
-    }
-    void refreshSearchStatus();
-    return () => {
-      stopSearchStatusPolling();
-      stopFolderStatusPolling();
-      stopOverviewStatusPolling();
-    };
-  }, [isAuthenticated]);
-
-  useEffect(() => {
-    if (!isAuthenticated || !showUserMenu) {
-      return;
-    }
-    startOverviewStatusPolling();
-    startSearchStatusPolling();
-    startFolderStatusPolling();
-    void refreshOverviewStatus();
-    void refreshSearchStatus();
-    void refreshFolderOverviewStatus();
-    void refreshMibTranslateStatus();
-  }, [isAuthenticated, showUserMenu]);
-
-  useEffect(() => {
-    if (showUserMenu) {
-      return;
-    }
-    stopOverviewStatusPolling();
-    stopSearchStatusPolling();
-    stopFolderStatusPolling();
-  }, [showUserMenu]);
-
-  useEffect(() => {
-    if (!isAuthenticated || !showPathModal) {
-      return;
-    }
-    void refreshSearchStatus();
-    void refreshFolderOverviewStatus();
-  }, [isAuthenticated, showPathModal]);
-
   const _handleRebuildIndex = async () => {
     setSearchError(null);
     setSearchLoading(true);
     try {
-      searchRebuildStartRef.current = Date.now();
-      setSearchRebuildPending(true);
-      const resp = await api.rebuildSearchIndex();
-      setSearchStatus(resp.data);
-      startSearchStatusPolling();
+      await rebuildSearchIndexAndTrack();
       const query = searchQuery.trim();
       if (query) {
         await runSearch(query);
@@ -4071,38 +3532,6 @@ export default function App() {
     if (!confirmDiscardIfDirty(() => loadNodeInternal(node, label))) {
       return;
     }
-  };
-
-  const buildBreadcrumbsFromNode = (node: string | null) => {
-    if (!node) {
-      return [{ label: '/', node: null }];
-    }
-    const segments = node.split('/').filter(Boolean);
-    const crumbs: Array<{ label: string; node: string | null }> = [{ label: '/', node: null }];
-    let acc = '';
-    segments.forEach((segment, index) => {
-      acc = acc ? `${acc}/${segment}` : segment;
-      const label =
-        index === 0 && segment.startsWith('id-') ? segment.replace(/^id-/, '') : segment;
-      crumbs.push({ label, node: acc });
-    });
-    return crumbs;
-  };
-
-  const buildBreadcrumbsFromPath = (pathId: string) => {
-    if (!pathId) {
-      return [{ label: '/', node: null }];
-    }
-    const segments = pathId.split('/').filter(Boolean);
-    const crumbs: Array<{ label: string; node: string | null }> = [{ label: '/', node: null }];
-    let acc = '';
-    segments.forEach((segment, index) => {
-      acc = acc ? `${acc}/${segment}` : segment;
-      const label =
-        index === 0 && segment.startsWith('id-') ? segment.replace(/^id-/, '') : segment;
-      crumbs.push({ label, node: acc });
-    });
-    return crumbs;
   };
 
   const loadDefaultBrowseNode = async (app: AppTab) => {
@@ -4312,7 +3741,16 @@ export default function App() {
   };
 
   const openFileFromUrlInternal = async (fileId: string, nodeParam?: string | null) => {
-    const resolvedFileId = (await resolveDeepLinkFileId(fileId, nodeParam)) || fileId;
+    const resolvedFileId =
+      (await resolveDeepLinkFileId({
+        fileId,
+        nodeParam,
+        browsePath,
+        readFile: api.readFile,
+        browsePathFn: api.browsePath,
+        isFileReadPayload,
+        isFolder,
+      })) || fileId;
     const fileName = resolvedFileId.split('/').pop() || resolvedFileId;
     const derivedParent = resolvedFileId.split('/').slice(0, -1).join('/');
     const parentNode = ensureCorePrefix(nodeParam) || derivedParent;
@@ -5276,13 +4714,6 @@ export default function App() {
     await sendBulkTraps();
   };
 
-  const favoritesFiles = favorites.filter(
-    (fav): fav is { type: 'file'; pathId: string; label: string; node?: string } =>
-      fav.type === 'file',
-  );
-  const favoritesFolders = favorites.filter(
-    (fav): fav is { type: 'folder'; pathId: string; label: string } => fav.type === 'folder',
-  );
   const saveWithContent = async (content: any, message: string) => {
     if (!selectedFile) {
       return null;
@@ -11952,87 +11383,87 @@ export default function App() {
     return `${label} removed`;
   };
 
+  const builderContextValue = useFcomBuilderContextValue({
+    builderOpen,
+    builderTarget,
+    builderDirty,
+    canUndoBuilder,
+    canRedoBuilder,
+    handleBuilderUndo,
+    handleBuilderRedo,
+    setShowBuilderHelpModal,
+    requestCancelBuilder,
+    builderFocus,
+    builderPatchMode,
+    builderPatchPreview,
+    isBuilderTargetReady,
+    builderTypeLocked,
+    setBuilderSwitchModal,
+    applyBuilderTypeSwitch,
+    builderLiteralText,
+    handleLiteralInputChange,
+    literalDirty,
+    applyLiteralValue,
+    builderMode,
+    setBuilderMode,
+    hasEditPermission,
+    setAdvancedProcessorScope,
+    setShowAdvancedProcessorModal,
+    builderConditions,
+    setBuilderConditions,
+    updateBuilderCondition,
+    handleFriendlyConditionInputChange,
+    handleFriendlyResultInputChange,
+    handleFriendlyElseResultInputChange,
+    removeBuilderRow,
+    addBuilderRow,
+    createConditionNode,
+    createGroupNode,
+    nextBuilderId,
+    renderConditionNode,
+    builderElseResult,
+    friendlyPreview,
+    applyFriendlyEval,
+    formatEvalReadableList,
+    builderRegularText,
+    handleRegularEvalInputChange,
+    clearRegularEval,
+    applyRegularEval,
+    applyBuilderTemplate,
+    openAdvancedFlowModal,
+    processorStep,
+    setProcessorStep,
+    processorType,
+    processorPayload,
+    processorCatalog,
+    handleBuilderSelect,
+    builderProcessorConfig,
+    setBuilderProcessorConfig,
+    builderNestedAddType,
+    setBuilderNestedAddType,
+    builderPaletteItems,
+    builderSwitchCaseAddType,
+    setBuilderSwitchCaseAddType,
+    builderSwitchDefaultAddType,
+    setBuilderSwitchDefaultAddType,
+    createFlowNodeFromPaletteValue,
+    renderProcessorHelp,
+    renderProcessorConfigFields,
+    renderFlowList,
+    getProcessorCatalogLabel,
+    getProcessorSummaryLines,
+    showProcessorJson,
+    setShowProcessorJson,
+    applyProcessor,
+    nextSwitchCaseId,
+    getOverrideVersionInfo,
+    getObjectByPanelKey,
+  });
+
   const builderSidebar = (
     <FcomBuilderSidebar
       isAnyPanelEditing={isAnyPanelEditing}
-      builderOpen={builderOpen}
-      builderTarget={builderTarget}
-      builderOverrideVersion={
-        builderTarget
-          ? getOverrideVersionInfo(getObjectByPanelKey(builderTarget.panelKey)?.['@objectName'])
-          : null
-      }
-      builderDirty={builderDirty}
-      canUndoBuilder={canUndoBuilder}
-      canRedoBuilder={canRedoBuilder}
-      handleBuilderUndo={handleBuilderUndo}
-      handleBuilderRedo={handleBuilderRedo}
-      setShowBuilderHelpModal={setShowBuilderHelpModal}
-      requestCancelBuilder={requestCancelBuilder}
-      setBuilderOpen={setBuilderOpen}
-      builderFocus={builderFocus}
-      builderPatchMode={builderPatchMode}
-      builderPatchPreview={builderPatchPreview}
-      isBuilderTargetReady={isBuilderTargetReady}
-      builderTypeLocked={builderTypeLocked}
-      setBuilderSwitchModal={setBuilderSwitchModal}
-      applyBuilderTypeSwitch={applyBuilderTypeSwitch}
-      builderLiteralText={builderLiteralText}
-      handleLiteralInputChange={handleLiteralInputChange}
-      literalDirty={literalDirty}
-      applyLiteralValue={applyLiteralValue}
-      builderMode={builderMode}
-      setBuilderMode={setBuilderMode}
-      hasEditPermission={hasEditPermission}
-      setAdvancedProcessorScope={setAdvancedProcessorScope}
-      setShowAdvancedProcessorModal={setShowAdvancedProcessorModal}
-      builderConditions={builderConditions}
-      setBuilderConditions={setBuilderConditions}
-      updateBuilderCondition={updateBuilderCondition}
-      handleFriendlyConditionInputChange={handleFriendlyConditionInputChange}
-      handleFriendlyResultInputChange={handleFriendlyResultInputChange}
-      handleFriendlyElseResultInputChange={handleFriendlyElseResultInputChange}
-      removeBuilderRow={removeBuilderRow}
-      addBuilderRow={addBuilderRow}
-      createConditionNode={createConditionNode}
-      createGroupNode={createGroupNode}
-      nextBuilderId={nextBuilderId}
-      renderConditionNode={renderConditionNode}
-      builderElseResult={builderElseResult}
-      friendlyPreview={friendlyPreview}
-      applyFriendlyEval={applyFriendlyEval}
-      formatEvalReadableList={formatEvalReadableList}
-      builderRegularText={builderRegularText}
-      handleRegularEvalInputChange={handleRegularEvalInputChange}
-      clearRegularEval={clearRegularEval}
-      applyRegularEval={applyRegularEval}
-      applyBuilderTemplate={applyBuilderTemplate}
-      openAdvancedFlowModal={openAdvancedFlowModal}
-      processorStep={processorStep}
-      setProcessorStep={setProcessorStep}
-      processorType={processorType}
-      processorPayload={processorPayload}
-      processorCatalog={processorCatalog}
-      handleBuilderSelect={handleBuilderSelect}
-      builderProcessorConfig={builderProcessorConfig}
-      setBuilderProcessorConfig={setBuilderProcessorConfig}
-      builderNestedAddType={builderNestedAddType}
-      setBuilderNestedAddType={setBuilderNestedAddType}
-      builderPaletteItems={builderPaletteItems}
-      builderSwitchCaseAddType={builderSwitchCaseAddType}
-      setBuilderSwitchCaseAddType={setBuilderSwitchCaseAddType}
-      builderSwitchDefaultAddType={builderSwitchDefaultAddType}
-      setBuilderSwitchDefaultAddType={setBuilderSwitchDefaultAddType}
-      createFlowNodeFromPaletteValue={createFlowNodeFromPaletteValue}
-      renderProcessorHelp={renderProcessorHelp}
-      renderProcessorConfigFields={renderProcessorConfigFields}
-      renderFlowList={renderFlowList}
-      getProcessorCatalogLabel={getProcessorCatalogLabel}
-      getProcessorSummaryLines={getProcessorSummaryLines}
-      showProcessorJson={showProcessorJson}
-      setShowProcessorJson={setShowProcessorJson}
-      applyProcessor={applyProcessor}
-      nextSwitchCaseId={nextSwitchCaseId}
+      contextValue={builderContextValue}
     />
   );
 
@@ -12202,7 +11633,7 @@ export default function App() {
     setSearchScope,
     handleSearchSubmit,
     searchLoading,
-    handleClearSearch,
+    handleClearSearch: clearSearch,
     handleResetNavigation,
     favoritesFolders,
     favoritesFiles,

@@ -1,12 +1,6 @@
 import EmptyState from './EmptyState';
 import InlineMessage from './InlineMessage';
-
-export type FavoriteEntry = {
-  type: 'file' | 'folder';
-  pathId: string;
-  label: string;
-  node?: string;
-};
+import type { FavoriteEntry } from '../types/api';
 
 type FavoritesPanelProps = {
   favoritesFolders: FavoriteEntry[];
@@ -57,7 +51,6 @@ export default function FavoritesPanel({
                       className="favorite-link"
                       onClick={() => onOpenFolder(fav)}
                     >
-                      <span className="favorite-mark favorite-mark-folder" aria-hidden="true" />
                       <span className="favorite-label">{fav.label}</span>
                     </button>
                   </li>
@@ -81,7 +74,6 @@ export default function FavoritesPanel({
                       className="favorite-link"
                       onClick={() => onOpenFile(fav)}
                     >
-                      <span className="favorite-mark favorite-mark-file" aria-hidden="true" />
                       <span className="favorite-label">{fav.label}</span>
                     </button>
                   </li>

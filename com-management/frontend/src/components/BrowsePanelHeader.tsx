@@ -1,5 +1,6 @@
 import type { FormEvent, ReactNode } from 'react';
-import FavoritesPanel, { type FavoriteEntry } from './FavoritesPanel';
+import FavoritesPanel from './FavoritesPanel';
+import type { FavoriteEntry } from '../types/api';
 import PanelHeader from './PanelHeader';
 import PathBreadcrumbs from './PathBreadcrumbs';
 import SearchPanel from './SearchPanel';
