@@ -51,3 +51,36 @@ export type RenderFlowList = (
   lane: 'object' | 'pre' | 'post',
   nodeErrorsMap?: Record<string, string[]>,
 ) => ReactNode;
+
+export type ProcessorFlowNode = Record<string, unknown>;
+
+export type ProcessorCatalogItem = {
+  id: string;
+  label: string;
+  nodeKind: 'processor' | 'if';
+  status: 'working' | 'testing' | 'planned';
+  paletteLabel?: string;
+  builderEnabled: boolean;
+  helpKey: string;
+};
+
+export type FlowPaletteItem = {
+  label: string;
+  nodeKind: 'processor' | 'if';
+  processorType?: string;
+  status: ProcessorCatalogItem['status'];
+};
+
+export type ProcessorSwitchCase = {
+  id: string;
+  match?: string;
+  operator?: string;
+  processors?: ProcessorFlowNode[];
+};
+
+export type ProcessorBuilderConfig = {
+  processors?: ProcessorFlowNode[];
+  defaultProcessors?: ProcessorFlowNode[];
+  cases?: ProcessorSwitchCase[];
+  [key: string]: unknown;
+};

@@ -13,6 +13,11 @@ import FcomRawPreview from './features/fcom/FcomRawPreview';
 import FcomAdvancedFlowModal from './features/fcom/FcomAdvancedFlowModal';
 import FcomFlowEditorModal from './features/fcom/FcomFlowEditorModal';
 import useFcomBuilderContextValue from './features/fcom/builder/useFcomBuilderContextValue';
+import type {
+  FlowPaletteItem,
+  ProcessorBuilderConfig,
+  ProcessorCatalogItem,
+} from './features/fcom/builder/types';
 import ComFilePreview from './components/ComFilePreview';
 import ActionRow from './components/ActionRow';
 import useCompactPanel from './components/useCompactPanel';
@@ -26,6 +31,7 @@ import useFavorites from './hooks/useFavorites';
 import useOverviewState from './hooks/useOverviewState';
 import useSearchState from './hooks/useSearchState';
 import {
+  buildCurrentDisplayPath,
   buildBreadcrumbsFromNode,
   buildBreadcrumbsFromPath,
   ensureCorePrefix,
@@ -524,23 +530,7 @@ export default function App() {
     });
   };
 
-  const getRawPath = () => {
-    if (selectedFile?.PathID) {
-      return `/${selectedFile.PathID}`;
-    }
-    if (browseNode) {
-      return `/${browseNode}`;
-    }
-    return '/';
-  };
-
-  const getCurrentPath = () => {
-    const rawPath = getRawPath();
-    if (rawPath === '/') {
-      return '/';
-    }
-    return formatDisplayPath(rawPath);
-  };
+  const getCurrentPath = () => buildCurrentDisplayPath(selectedFile?.PathID, browseNode);
 
   const isFileReadPayload = (payload: any) => {
     if (!payload || typeof payload !== 'object') {
@@ -846,7 +836,7 @@ export default function App() {
     builderRegularText: string;
     builderConditions: BuilderConditionRow[];
     builderElseResult: string;
-    builderProcessorConfig: Record<string, any>;
+    builderProcessorConfig: ProcessorBuilderConfig;
     builderNestedAddType: string;
     builderSwitchCaseAddType: Record<string, string>;
     builderSwitchDefaultAddType: string;
@@ -877,7 +867,7 @@ export default function App() {
     | { kind: 'if'; id: string; branch: 'then' | 'else' }
     | { kind: 'foreach'; id: string; branch: 'processors' }
     | { kind: 'switch'; id: string; branch: 'case' | 'default'; caseId?: string };
-  const [builderProcessorConfig, setBuilderProcessorConfig] = useState<Record<string, any>>({
+  const [builderProcessorConfig, setBuilderProcessorConfig] = useState<ProcessorBuilderConfig>({
     sourceType: 'literal',
     source: '',
     pattern: '',
@@ -8620,16 +8610,6 @@ export default function App() {
     );
   };
 
-  type ProcessorCatalogItem = {
-    id: string;
-    label: string;
-    nodeKind: 'processor' | 'if';
-    status: 'working' | 'testing' | 'planned';
-    paletteLabel?: string;
-    builderEnabled: boolean;
-    helpKey: keyof typeof processorHelp;
-  };
-
   const processorCatalog: ProcessorCatalogItem[] = [
     {
       id: 'set',
@@ -8842,12 +8822,7 @@ export default function App() {
     },
   ];
 
-  const flowPalette: Array<{
-    label: string;
-    nodeKind: 'processor' | 'if';
-    processorType?: string;
-    status: 'working' | 'testing' | 'planned';
-  }> = processorCatalog.map((item) => ({
+  const flowPalette: FlowPaletteItem[] = processorCatalog.map((item) => ({
     label: item.paletteLabel || item.label,
     nodeKind: item.nodeKind,
     processorType: item.nodeKind === 'processor' ? item.id : undefined,

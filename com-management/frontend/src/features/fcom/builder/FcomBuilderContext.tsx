@@ -10,6 +10,10 @@ import type {
   BuilderMode,
   BuilderOverrideVersion,
   BuilderSwitchModalState,
+  FlowPaletteItem,
+  ProcessorCatalogItem,
+  ProcessorBuilderConfig,
+  ProcessorFlowNode,
   BuilderTarget,
   BuilderType,
   OpenAdvancedFlowModal,
@@ -93,18 +97,18 @@ export type FcomBuilderContextValue = {
   setProcessorStep: (step: ProcessorStep) => void;
   processorType: string | null;
   processorPayload: any;
-  processorCatalog: any[];
-  handleBuilderSelect: (item: any, isEnabled: boolean) => void;
-  builderProcessorConfig: any;
-  setBuilderProcessorConfig: Dispatch<SetStateAction<any>>;
+  processorCatalog: ProcessorCatalogItem[];
+  handleBuilderSelect: (item: ProcessorCatalogItem, isEnabled: boolean) => void;
+  builderProcessorConfig: ProcessorBuilderConfig;
+  setBuilderProcessorConfig: Dispatch<SetStateAction<ProcessorBuilderConfig>>;
   builderNestedAddType: string;
   setBuilderNestedAddType: (value: string) => void;
-  builderPaletteItems: any[];
+  builderPaletteItems: FlowPaletteItem[];
   builderSwitchCaseAddType: Record<string, string>;
   setBuilderSwitchCaseAddType: Dispatch<SetStateAction<Record<string, string>>>;
   builderSwitchDefaultAddType: string;
   setBuilderSwitchDefaultAddType: (value: string) => void;
-  createFlowNodeFromPaletteValue: (value: string) => any;
+  createFlowNodeFromPaletteValue: (value: string) => ProcessorFlowNode;
   renderProcessorHelp: (helpKey: string) => ReactNode;
   renderProcessorConfigFields: RenderProcessorConfigFields;
   renderFlowList: RenderFlowList;

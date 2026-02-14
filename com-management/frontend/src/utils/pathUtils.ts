@@ -67,6 +67,21 @@ export const formatDisplayPath = (pathId?: string | null) => {
   return `/${segments.join('/')}`;
 };
 
+export const buildCurrentDisplayPath = (
+  selectedFilePathId?: string | null,
+  browseNode?: string | null,
+) => {
+  const rawPath = selectedFilePathId
+    ? `/${selectedFilePathId}`
+    : browseNode
+      ? `/${browseNode}`
+      : '/';
+  if (rawPath === '/') {
+    return '/';
+  }
+  return formatDisplayPath(rawPath);
+};
+
 export const getVendorFromPath = (pathId?: string | null) => {
   if (!pathId) {
     return '';
