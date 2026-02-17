@@ -224,6 +224,11 @@ Validation:
   - Updated `App.tsx` to delegate those side effects to the extracted hook while preserving existing callbacks/state and URL parameter behavior for FCOM/PCOM/MIB/Legacy.
   - Result: reduced `App.tsx` side-effect surface for navigation/deeplink flows without behavior changes to browse/file restoration.
   - Test Delta: High risk (navigation/deep-link behavior contract); Add now; Coverage type: E2E (URL hydrate with app/node/file/mibPath/mibFile and URL sync on tab/node/file/view changes).
+- 2026-02-16: Item 1 continued (staged review view-model extraction).
+  - Added `features/fcom/stagedReviewModel.ts` and moved staged override diff computation, staged field-change map generation, and review inline line-diff helpers out of `App.tsx`.
+  - Updated `App.tsx` to use `buildStagedReviewDiff`, `buildStagedFieldChangeMap`, `diffLines`, and `formatDiffValue` from the feature module.
+  - Result: staged review modal model logic is now feature-scoped and App keeps composition/orchestration responsibilities.
+  - Test Delta: High risk (staged review diff visibility and inline change rendering); Add now; Coverage type: E2E (review modal sections + added/updated/removed field rendering across object/global overrides).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.
