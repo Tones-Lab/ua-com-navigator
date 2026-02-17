@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import PanelHeader from '../../components/PanelHeader';
+import useRequest from '../../hooks/useRequest';
 import api from '../../services/api';
+import { getApiErrorMessage } from '../../utils/errorUtils';
 
 type LegacyUploadEntry = {
   path: string;
@@ -13,10 +15,16 @@ export default function LegacyWorkspace() {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [uploadRoot, setUploadRoot] = useState('');
   const [uploadEntries, setUploadEntries] = useState<LegacyUploadEntry[]>([]);
-  const [uploadsLoading, setUploadsLoading] = useState(false);
-  const [uploadsError, setUploadsError] = useState<string | null>(null);
-  const [uploading, setUploading] = useState(false);
-  const [uploadError, setUploadError] = useState<string | null>(null);
+  const {
+    loading: uploadsLoading,
+    error: uploadsError,
+    run: runUploadsRequest,
+  } = useRequest();
+  const {
+    loading: uploading,
+    error: uploadError,
+    run: runUploadRequest,
+  } = useRequest();
   const [selectedEntry, setSelectedEntry] = useState<LegacyUploadEntry | null>(null);
   const [selectedContent, setSelectedContent] = useState('');
   const [conversionStatus, setConversionStatus] = useState<'idle' | 'ready' | 'running'>('idle');
@@ -118,23 +126,22 @@ export default function LegacyWorkspace() {
     .join(' · ');
 
   const loadUploads = async () => {
-    setUploadsLoading(true);
-    setUploadsError(null);
-    try {
-      const resp = await api.listLegacyUploads();
-      setUploadRoot(String(resp.data?.root || ''));
-      const entries = Array.isArray(resp.data?.entries) ? resp.data.entries : [];
-      setUploadEntries(entries);
-      const filePaths = entries.filter((entry: LegacyUploadEntry) => entry.type === 'file').map((entry: LegacyUploadEntry) => entry.path);
-      setSelectedPaths((prev) => {
-        const preserved = prev.filter((value) => filePaths.includes(value));
-        return preserved.length > 0 ? preserved : filePaths;
-      });
-    } catch (error: any) {
-      setUploadsError(error?.response?.data?.error || 'Failed to load uploads');
-    } finally {
-      setUploadsLoading(false);
+    const resp = await runUploadsRequest(() => api.listLegacyUploads(), {
+      getErrorMessage: (err) => getApiErrorMessage(err, 'Failed to load uploads'),
+    });
+    if (!resp) {
+      return;
     }
+    setUploadRoot(String(resp.data?.root || ''));
+    const entries = Array.isArray(resp.data?.entries) ? resp.data.entries : [];
+    setUploadEntries(entries);
+    const filePaths = entries
+      .filter((entry: LegacyUploadEntry) => entry.type === 'file')
+      .map((entry: LegacyUploadEntry) => entry.path);
+    setSelectedPaths((prev) => {
+      const preserved = prev.filter((value) => filePaths.includes(value));
+      return preserved.length > 0 ? preserved : filePaths;
+    });
   };
 
   useEffect(() => {
@@ -178,19 +185,16 @@ export default function LegacyWorkspace() {
     if (!files || files.length === 0) {
       return;
     }
-    setUploading(true);
-    setUploadError(null);
-    try {
-      await api.uploadLegacyFiles(Array.from(files));
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
-      await loadUploads();
-    } catch (error: any) {
-      setUploadError(error?.response?.data?.error || 'Upload failed');
-    } finally {
-      setUploading(false);
+    const resp = await runUploadRequest(() => api.uploadLegacyFiles(Array.from(files)), {
+      getErrorMessage: (err) => getApiErrorMessage(err, 'Upload failed'),
+    });
+    if (!resp) {
+      return;
     }
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+    await loadUploads();
   };
 
   const openEntry = async (entry: LegacyUploadEntry) => {
@@ -202,8 +206,8 @@ export default function LegacyWorkspace() {
     try {
       const resp = await api.readLegacyUpload(entry.path);
       setSelectedContent(String(resp.data?.content || ''));
-    } catch (error: any) {
-      setSelectedContent(error?.response?.data?.error || 'Failed to read file.');
+    } catch (error: unknown) {
+      setSelectedContent(getApiErrorMessage(error, 'Failed to read file.'));
     }
   };
 
@@ -331,8 +335,8 @@ export default function LegacyWorkspace() {
       }
       win.document.title = title;
       win.document.body.innerHTML = `<pre style="white-space:pre-wrap;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;">${escapeHtml(content)}</pre>`;
-    } catch (error: any) {
-      setMatchOpenError(error?.response?.data?.error || 'Failed to open match file.');
+    } catch (error: unknown) {
+      setMatchOpenError(getApiErrorMessage(error, 'Failed to open match file.'));
     }
   };
 
@@ -361,8 +365,8 @@ export default function LegacyWorkspace() {
       }
       setLastRunLabel(mode === 'preview' ? 'Preview report generated' : 'Conversion completed');
       setConversionStatus(mode === 'preview' ? 'ready' : 'idle');
-    } catch (error: any) {
-      setReportError(error?.response?.data?.error || 'Conversion failed');
+    } catch (error: unknown) {
+      setReportError(getApiErrorMessage(error, 'Conversion failed'));
       setLastRunLabel('Conversion failed');
       setConversionStatus('idle');
     }

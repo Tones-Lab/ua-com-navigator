@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
+import useRequest from '../../hooks/useRequest';
+import { getApiErrorMessage } from '../../utils/errorUtils';
 
 type UseMibWorkspaceOptions = {
   api: any;
@@ -21,10 +23,15 @@ export default function useMibWorkspace({ api, triggerToast }: UseMibWorkspaceOp
   const mibUrlHydratingRef = useRef(false);
   const [mibPath, setMibPath] = useState('/');
   const [mibEntries, setMibEntries] = useState<any[]>([]);
-  const [mibLoading, setMibLoading] = useState(false);
+  const {
+    loading: mibLoading,
+    error: mibError,
+    setLoading: setMibLoading,
+    setError: setMibError,
+    run: runMibRequest,
+  } = useRequest();
   const [mibLoadingElapsed, setMibLoadingElapsed] = useState(0);
   const [mibShowLoadingTimer, setMibShowLoadingTimer] = useState(false);
-  const [mibError, setMibError] = useState<string | null>(null);
   const [mibSearch, setMibSearch] = useState('');
   const [mibSearchScope, setMibSearchScope] = useState<'folder' | 'all'>('folder');
   const [mibSearchMode, setMibSearchMode] = useState<'browse' | 'search'>('browse');
@@ -42,8 +49,13 @@ export default function useMibWorkspace({ api, triggerToast }: UseMibWorkspaceOp
   const [mibSupportByPath, setMibSupportByPath] = useState<MibSupportMap>({});
   const [mibOutput, setMibOutput] = useState('');
   const [mibOutputName, setMibOutputName] = useState('');
-  const [mib2FcomLoading, setMib2FcomLoading] = useState(false);
-  const [mib2FcomError, setMib2FcomError] = useState<string | null>(null);
+  const {
+    loading: mib2FcomLoading,
+    error: mib2FcomError,
+    setError: setMib2FcomError,
+    setLoading: setMib2FcomLoading,
+    run: runMib2FcomRequest,
+  } = useRequest();
   const [mibUseParent, setMibUseParent] = useState(true);
 
   useEffect(() => {
@@ -138,32 +150,34 @@ export default function useMibWorkspace({ api, triggerToast }: UseMibWorkspaceOp
     const append = options?.append ?? false;
     const offset = append ? mibOffset : 0;
     const searchParam = options?.searchOverride ?? '';
-    setMibLoading(true);
-    setMibError(null);
     try {
-      const targetPath = path || '/';
-      const resp = await api.browseMibs(targetPath !== '/' ? targetPath : undefined, {
-        search: searchParam,
-        limit: mibLimit,
-        offset,
-      });
-      const entries = Array.isArray(resp.data?.entries) ? resp.data.entries : [];
-      setMibEntries((prev) => (append ? [...prev, ...entries] : entries));
-      setMibOffset(offset + entries.length);
-      setMibHasMore(Boolean(resp.data?.hasMore));
-      setMibTotal(typeof resp.data?.total === 'number' ? resp.data.total : null);
-      setMibFilteredTotal(
-        typeof resp.data?.filtered_total === 'number' ? resp.data.filtered_total : null,
+      await runMibRequest(
+        async () => {
+          const targetPath = path || '/';
+          const resp = await api.browseMibs(targetPath !== '/' ? targetPath : undefined, {
+            search: searchParam,
+            limit: mibLimit,
+            offset,
+          });
+          const entries = Array.isArray(resp.data?.entries) ? resp.data.entries : [];
+          setMibEntries((prev) => (append ? [...prev, ...entries] : entries));
+          setMibOffset(offset + entries.length);
+          setMibHasMore(Boolean(resp.data?.hasMore));
+          setMibTotal(typeof resp.data?.total === 'number' ? resp.data.total : null);
+          setMibFilteredTotal(
+            typeof resp.data?.filtered_total === 'number' ? resp.data.filtered_total : null,
+          );
+          setMibPath(resp.data?.path || '/');
+          setMibSearchMode('browse');
+        },
+        {
+          getErrorMessage: (err) => getApiErrorMessage(err, 'Failed to load MIB folder'),
+        },
       );
-      setMibPath(resp.data?.path || '/');
-      setMibSearchMode('browse');
-    } catch (err: any) {
-      setMibError(err?.response?.data?.error || 'Failed to load MIB folder');
     } finally {
       if (mibUrlHydratingRef.current) {
         mibUrlHydratingRef.current = false;
       }
-      setMibLoading(false);
     }
   };
 
@@ -178,23 +192,22 @@ export default function useMibWorkspace({ api, triggerToast }: UseMibWorkspaceOp
     }
     const append = options?.append ?? false;
     const offset = append ? mibOffset : 0;
-    setMibLoading(true);
-    setMibError(null);
-    try {
-      const resp = await api.searchMibs(query, { limit: mibLimit, offset });
-      const entries = Array.isArray(resp.data?.entries) ? resp.data.entries : [];
-      setMibEntries((prev) => (append ? [...prev, ...entries] : entries));
-      setMibOffset(offset + entries.length);
-      setMibHasMore(Boolean(resp.data?.hasMore));
-      setMibTotal(typeof resp.data?.matches === 'number' ? resp.data.matches : null);
-      setMibFilteredTotal(null);
-      setMibPath('/');
-      setMibSearchMode('search');
-    } catch (err: any) {
-      setMibError(err?.response?.data?.error || 'Failed to search MIBs');
-    } finally {
-      setMibLoading(false);
-    }
+    await runMibRequest(
+      async () => {
+        const resp = await api.searchMibs(query, { limit: mibLimit, offset });
+        const entries = Array.isArray(resp.data?.entries) ? resp.data.entries : [];
+        setMibEntries((prev) => (append ? [...prev, ...entries] : entries));
+        setMibOffset(offset + entries.length);
+        setMibHasMore(Boolean(resp.data?.hasMore));
+        setMibTotal(typeof resp.data?.matches === 'number' ? resp.data.matches : null);
+        setMibFilteredTotal(null);
+        setMibPath('/');
+        setMibSearchMode('search');
+      },
+      {
+        getErrorMessage: (err) => getApiErrorMessage(err, 'Failed to search MIBs'),
+      },
+    );
   };
 
   const handleMibSearchSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -305,8 +318,8 @@ export default function useMibWorkspace({ api, triggerToast }: UseMibWorkspaceOp
         }
         return normalized[0] || null;
       });
-    } catch (err: any) {
-      setMibError(err?.response?.data?.error || 'Failed to parse MIB file');
+    } catch (err: unknown) {
+      setMibError(getApiErrorMessage(err, 'Failed to parse MIB file'));
       setMibDefinitions([]);
       setMibSelectedDefinition(null);
     } finally {
@@ -377,22 +390,22 @@ export default function useMibWorkspace({ api, triggerToast }: UseMibWorkspaceOp
       setMib2FcomError('Select a MIB file first.');
       return;
     }
-    setMib2FcomLoading(true);
-    setMib2FcomError(null);
-    try {
-      const outputName = mibOutputName.trim() || undefined;
-      const resp = await api.runMib2Fcom(mibSelectedFile, outputName, mibUseParent);
-      const output = resp.data?.output ?? '';
-      const name = resp.data?.output_name ?? resp.data?.outputName ?? outputName ?? '';
-      setMibOutput(typeof output === 'string' ? output : JSON.stringify(output, null, 2));
-      setMibOutputName(String(name || outputName || ''));
-      if (resp.data?.error) {
-        setMib2FcomError(String(resp.data.error));
-      }
-    } catch (err: any) {
-      setMib2FcomError(err?.response?.data?.error || 'Failed to run MIB2FCOM');
-    } finally {
-      setMib2FcomLoading(false);
+    const outputName = mibOutputName.trim() || undefined;
+    const resp = await runMib2FcomRequest<any>(
+      () => api.runMib2Fcom(mibSelectedFile, outputName, mibUseParent),
+      {
+        getErrorMessage: (err) => getApiErrorMessage(err, 'Failed to run MIB2FCOM'),
+      },
+    );
+    if (!resp) {
+      return;
+    }
+    const output = resp.data?.output ?? '';
+    const name = resp.data?.output_name ?? resp.data?.outputName ?? outputName ?? '';
+    setMibOutput(typeof output === 'string' ? output : JSON.stringify(output, null, 2));
+    setMibOutputName(String(name || outputName || ''));
+    if (resp.data?.error) {
+      setMib2FcomError(String(resp.data.error));
     }
   };
 

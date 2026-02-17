@@ -79,7 +79,7 @@ Validation:
 - Validate error highlighting and focus behavior.
 
 ### 5) Request state hook + error handling standardization
-Status: In Progress
+Status: Done
 Scope: Replace repeated loading/error patterns with a `useRequest` hook and shared error formatter.
 Validation:
 - Trigger errors in MIB search and browse and confirm messages still show.
@@ -214,12 +214,17 @@ Validation:
   - Added mounted-guarded error handling for MIB device-load effect while keeping loading/error behavior unchanged.
   - Result: more App request paths now use unified request/error primitives with safer effect behavior.
   - Test Delta: Medium risk (SNMP profile/poll + trap server error/loading parity); Add now; Coverage type: E2E (PCOM poll success/failure, trap composer server-load fallback/manual mode).
+- 2026-02-16: Item 5 completed (MIB + Legacy request/error standardization).
+  - Migrated MIB workspace browse/search/conversion request flows to shared request-state handling and shared API error formatting.
+  - Migrated Legacy workspace upload/listing request flows and standardized remaining API error extraction paths.
+  - Result: Item 5 scope completed; repeated loading/error request patterns now use shared `hooks/useRequest.ts` and `utils/errorUtils.ts` across App/hooks/workspaces.
+  - Test Delta: Medium risk (MIB/Legacy loading+error parity); Add now; Coverage type: E2E (MIB browse/search/parse/MIB2FCOM failures and Legacy upload/list/convert failure paths).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.
 - Current detour status: test rubric established; builder regression tests added (`tests/e2e/test-g.spec.ts`, `tests/e2e/test-h.spec.ts`).
 - Environment note: local Playwright run is currently blocked by fixture/data availability for FCOM file/object builder flows.
-- Next refactor item to resume: tighten/split builder context surface (view-state vs actions) after test fixture alignment.
+- Next refactor item to resume: Item 1 App monolith split (browse/deeplink orchestration and staged review view-model extraction).
 
 ## Further improvements identified during cleanup
 - `App.tsx` is still very large and remains the main long-term risk area.
