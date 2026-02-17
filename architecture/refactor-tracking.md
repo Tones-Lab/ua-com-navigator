@@ -493,6 +493,11 @@ Validation:
   - Updated `App.tsx` to render `AuthenticatedMainContent` with existing hook-derived props and branch-selection behavior unchanged.
   - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
   - Test Delta: Low risk (code-movement extraction for branch composition); Add now; Coverage type: UI sanity (tab switching across apps, auth/sign-in view switch, and shared modal host wiring parity).
+- 2026-02-17: Post-item cleanup (main-content shell extraction from App).
+  - Added `app/MainContentShell.tsx` to own `<main className="app-main">` composition of authenticated content + user preferences modal.
+  - Updated `App.tsx` to pass grouped `authenticatedMainContentProps` and `userPreferencesModalProps` into `MainContentShell` while preserving existing content/modals wiring.
+  - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (removed one transient unused-import lint warning during extraction; existing non-blocking Vite chunk-size warning unchanged).
+  - Test Delta: Low risk (code-movement extraction for shell composition); Add now; Coverage type: UI sanity (main content renders by tab/auth state and user preferences modal open/close + refresh actions).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.

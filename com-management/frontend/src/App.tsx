@@ -2,10 +2,9 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { useSessionStore } from './stores';
 import api from './services/api';
-import AuthenticatedMainContent from './app/AuthenticatedMainContent';
 import AppHeader from './app/AppHeader';
+import MainContentShell from './app/MainContentShell';
 import MicroserviceModalHost from './app/MicroserviceModalHost';
-import UserPreferencesModal from './app/UserPreferencesModal';
 import useFcomBuilderContextValue from './features/fcom/builder/useFcomBuilderContextValue';
 import type {
   FlowPaletteItem,
@@ -10730,31 +10729,33 @@ export default function App() {
     onLogout: handleLogout,
   });
 
+  const authenticatedMainContentProps = {
+    isAuthenticated,
+    activeApp,
+    overviewPageProps,
+    comBrowserPanelProps,
+    selectedFile,
+    fcomFolderOverviewProps,
+    fcomFileHeaderProps,
+    fcomFilePreviewProps,
+    fcomReviewCommitModalProps,
+    fcomFlowModalStackProps,
+    fcomAuxOverlaysProps,
+    pcomWorkspaceViewProps,
+    mibWorkspaceProps,
+    trapComposerModalProps,
+    pcomAdvancedSettingsModalProps,
+    signInScreenProps,
+  };
+
   return (
     <ErrorBoundary>
       <div className="app">
         <AppHeader {...appHeaderProps} />
-        <main className="app-main">
-          <AuthenticatedMainContent
-            isAuthenticated={isAuthenticated}
-            activeApp={activeApp}
-            overviewPageProps={overviewPageProps}
-            comBrowserPanelProps={comBrowserPanelProps}
-            selectedFile={selectedFile}
-            fcomFolderOverviewProps={fcomFolderOverviewProps}
-            fcomFileHeaderProps={fcomFileHeaderProps}
-            fcomFilePreviewProps={fcomFilePreviewProps}
-            fcomReviewCommitModalProps={fcomReviewCommitModalProps}
-            fcomFlowModalStackProps={fcomFlowModalStackProps}
-            fcomAuxOverlaysProps={fcomAuxOverlaysProps}
-            pcomWorkspaceViewProps={pcomWorkspaceViewProps}
-            mibWorkspaceProps={mibWorkspaceProps}
-            trapComposerModalProps={trapComposerModalProps}
-            pcomAdvancedSettingsModalProps={pcomAdvancedSettingsModalProps}
-            signInScreenProps={signInScreenProps}
-          />
-          <UserPreferencesModal {...userPreferencesModalProps} />
-        </main>
+        <MainContentShell
+          authenticatedMainContentProps={authenticatedMainContentProps}
+          userPreferencesModalProps={userPreferencesModalProps}
+        />
         <MicroserviceModalHost {...microserviceModalHostProps} />
       </div>
     </ErrorBoundary>
