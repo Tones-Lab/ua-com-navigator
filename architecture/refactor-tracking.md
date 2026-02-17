@@ -508,6 +508,11 @@ Validation:
   - Updated `App.tsx` to consume `useAppHeaderHandlers` and feed `useAppHeaderProps` with named callback handlers.
   - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
   - Test Delta: Low risk (code-movement extraction for handler assembly); Add now; Coverage type: UI sanity (header tab change, microservice indicator action, user-menu open, logout action).
+- 2026-02-17: Post-item cleanup (microservice modal host args hook extraction from App).
+  - Added `hooks/useMicroserviceModalHostArgs.ts` and moved `useMicroserviceModalHostProps(...)` argument assembly out of `App.tsx`.
+  - Updated `App.tsx` to call `useMicroserviceModalHostArgs` and pass the returned object into `useMicroserviceModalHostProps`.
+  - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
+  - Test Delta: Low risk (code-movement extraction for args assembly); Add now; Coverage type: UI sanity (microservice modal data rendering and deploy/redeploy/refresh handler wiring parity).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.

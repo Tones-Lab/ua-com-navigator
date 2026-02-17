@@ -29,6 +29,7 @@ import useFcomFilePreviewProps from './hooks/useFcomFilePreviewProps';
 import useFcomFlowModalStackProps from './hooks/useFcomFlowModalStackProps';
 import useFcomFolderOverviewProps from './hooks/useFcomFolderOverviewProps';
 import useFcomReviewCommitModalProps from './hooks/useFcomReviewCommitModalProps';
+import useMicroserviceModalHostArgs from './hooks/useMicroserviceModalHostArgs';
 import useMicroserviceModalHostProps from './hooks/useMicroserviceModalHostProps';
 import useMibWorkspaceProps from './hooks/useMibWorkspaceProps';
 import useOverviewState from './hooks/useOverviewState';
@@ -10531,7 +10532,7 @@ export default function App() {
     onClose: () => setShowUserMenu(false),
   });
 
-  const microserviceModalHostProps = useMicroserviceModalHostProps({
+  const microserviceModalHostArgs = useMicroserviceModalHostArgs({
     redeployModalOpen,
     redeployReady,
     showMicroserviceWarning,
@@ -10557,6 +10558,8 @@ export default function App() {
     refreshMicroserviceStatus,
     handleRedeployFcomProcessor,
   });
+
+  const microserviceModalHostProps = useMicroserviceModalHostProps(microserviceModalHostArgs);
 
   const mibWorkspaceProps = useMibWorkspaceProps({
     isCompactPanel,
