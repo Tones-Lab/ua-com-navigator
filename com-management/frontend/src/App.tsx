@@ -16,6 +16,7 @@ import FcomAdvancedFlowModal from './features/fcom/FcomAdvancedFlowModal';
 import FcomFlowEditorModal from './features/fcom/FcomFlowEditorModal';
 import FcomBuilderHelpModal from './features/fcom/FcomBuilderHelpModal';
 import FcomFieldReferenceModal from './features/fcom/FcomFieldReferenceModal';
+import FcomConfirmModals from './features/fcom/FcomConfirmModals';
 import FcomFieldSelectionModals from './features/fcom/FcomFieldSelectionModals';
 import FcomOverrideRemovalModals from './features/fcom/FcomOverrideRemovalModals';
 import FcomTrapVariablesModal from './features/fcom/FcomTrapVariablesModal';
@@ -28,7 +29,6 @@ import type {
   ProcessorBuilderConfig,
   ProcessorCatalogItem,
 } from './features/fcom/builder/types';
-import ConfirmModal from './components/ConfirmModal';
 import BuilderLink from './components/BuilderLink';
 import Pill from './components/Pill';
 import useCompactPanel from './components/useCompactPanel';
@@ -10527,23 +10527,52 @@ export default function App() {
                           getModalOverlayStyle={getModalOverlayStyle}
                           onClose={() => setShowFieldReferenceModal(false)}
                         />
-                        <ConfirmModal
-                          open={builderSwitchModal.open}
-                          title="Switch builder type"
-                          message={
-                            <>
-                              Switch from {builderSwitchModal.from} to {builderSwitchModal.to}? This
-                              will replace the current configuration.
-                            </>
-                          }
-                          onCancel={() => setBuilderSwitchModal({ open: false })}
-                          onConfirm={() => {
+                        <FcomConfirmModals
+                          builderSwitchModal={builderSwitchModal}
+                          onCancelBuilderSwitch={() => setBuilderSwitchModal({ open: false })}
+                          onConfirmBuilderSwitch={() => {
                             if (builderSwitchModal.to) {
                               applyBuilderTypeSwitch(builderSwitchModal.to);
                             }
                             setBuilderSwitchModal({ open: false });
                           }}
-                          confirmLabel="Switch"
+                          panelNavWarningOpen={panelNavWarning.open}
+                          onConfirmPanelNavWarning={() =>
+                            setPanelNavWarning((prev) => ({ ...prev, open: false }))
+                          }
+                          pendingNavOpen={Boolean(pendingNav)}
+                          onCancelPendingNav={() => setPendingNav(null)}
+                          onConfirmPendingNav={() => {
+                            const action = pendingNav;
+                            setPendingNav(null);
+                            discardAllEdits();
+                            if (action) {
+                              action();
+                            }
+                          }}
+                          pendingCancelOpen={Boolean(pendingCancel)}
+                          onCancelPendingCancel={() => setPendingCancel(null)}
+                          onConfirmPendingCancel={() => {
+                            const next = pendingCancel;
+                            setPendingCancel(null);
+                            if (!next) {
+                              return;
+                            }
+                            if (next.type === 'builder') {
+                              closeBuilder();
+                              return;
+                            }
+                            if (next.type === 'panel' && next.panelKey) {
+                              discardEventEdit(next.panelKey);
+                            }
+                          }}
+                          pendingReviewDiscard={pendingReviewDiscard}
+                          onCancelPendingReviewDiscard={() => setPendingReviewDiscard(false)}
+                          onConfirmPendingReviewDiscard={() => {
+                            setPendingReviewDiscard(false);
+                            discardAllEdits();
+                            setShowReviewModal(false);
+                          }}
                         />
                         <FcomOverrideRemovalModals
                           removeOverrideModal={removeOverrideModal}
@@ -10567,63 +10596,6 @@ export default function App() {
                             <div className="floating-help-code">{processorTooltip.example}</div>
                           </div>
                         )}
-                        <ConfirmModal
-                          open={panelNavWarning.open}
-                          title="Unsaved panel edits"
-                          message="Please save or cancel the panel edits before navigating away."
-                          onConfirm={() =>
-                            setPanelNavWarning((prev) => ({ ...prev, open: false }))
-                          }
-                          confirmLabel="OK"
-                        />
-                        <ConfirmModal
-                          open={Boolean(pendingNav)}
-                          title="Unsaved changes"
-                          message="You have unsaved changes. Discard and navigate away?"
-                          onCancel={() => setPendingNav(null)}
-                          onConfirm={() => {
-                            const action = pendingNav;
-                            setPendingNav(null);
-                            discardAllEdits();
-                            if (action) {
-                              action();
-                            }
-                          }}
-                          confirmLabel="Discard"
-                        />
-                        <ConfirmModal
-                          open={Boolean(pendingCancel)}
-                          title="Discard changes?"
-                          message="You have unsaved changes. Discard them?"
-                          onCancel={() => setPendingCancel(null)}
-                          onConfirm={() => {
-                            const next = pendingCancel;
-                            setPendingCancel(null);
-                            if (!next) {
-                              return;
-                            }
-                            if (next.type === 'builder') {
-                              closeBuilder();
-                              return;
-                            }
-                            if (next.type === 'panel' && next.panelKey) {
-                              discardEventEdit(next.panelKey);
-                            }
-                          }}
-                          confirmLabel="Discard"
-                        />
-                        <ConfirmModal
-                          open={pendingReviewDiscard}
-                          title="Discard changes?"
-                          message="Discard all staged changes?"
-                          onCancel={() => setPendingReviewDiscard(false)}
-                          onConfirm={() => {
-                            setPendingReviewDiscard(false);
-                            discardAllEdits();
-                            setShowReviewModal(false);
-                          }}
-                          confirmLabel="Discard"
-                        />
                         <FcomSaveOverlays
                           saveLoading={saveLoading}
                           saveElapsed={saveElapsed}

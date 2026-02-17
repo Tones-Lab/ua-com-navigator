@@ -363,6 +363,11 @@ Validation:
   - Updated `App.tsx` to compose `PcomWorkspaceView` and pass existing browser, preview, and selection props unchanged.
   - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
   - Test Delta: Low risk (code-movement extraction for PCOM tab composition); Add now; Coverage type: UI sanity (PCOM tab browser navigation, title/favorite row behavior, preview friendly/raw toggles).
+- 2026-02-17: Post-item cleanup (FCOM confirm modal group extraction from App).
+  - Added `features/fcom/FcomConfirmModals.tsx` to centralize builder-switch and unsaved/discard confirm dialogs.
+  - Updated `App.tsx` to replace five inline `ConfirmModal` blocks with one `FcomConfirmModals` composition call while preserving all existing handlers and guard flows.
+  - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
+  - Test Delta: Low risk (code-movement extraction for confirm-dialog composition); Add now; Coverage type: UI sanity (builder-switch confirm, panel-nav warning, pending-nav discard, pending-cancel discard, review-discard confirm).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.
