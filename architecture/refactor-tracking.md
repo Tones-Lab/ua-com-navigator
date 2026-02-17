@@ -528,6 +528,11 @@ Validation:
   - Updated `App.tsx` to call `useOverviewPageArgs` and pass the returned object into `useOverviewPageProps`.
   - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
   - Test Delta: Low risk (code-movement extraction for args assembly); Add now; Coverage type: UI sanity (overview table/filter/sort and folder drilldown wiring parity).
+- 2026-02-17: Post-item cleanup (FCOM folder overview args hook extraction from App).
+  - Added `hooks/useFcomFolderOverviewArgs.ts` and moved `useFcomFolderOverviewProps(...)` argument assembly out of `App.tsx`.
+  - Updated `App.tsx` to call `useFcomFolderOverviewArgs` and pass the returned object into `useFcomFolderOverviewProps`.
+  - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
+  - Test Delta: Low risk (code-movement extraction for args assembly); Add now; Coverage type: UI sanity (FCOM folder overview table/filter/sort and vendor/file test action wiring parity).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.

@@ -27,6 +27,7 @@ import useFcomAuxOverlaysProps from './hooks/useFcomAuxOverlaysProps';
 import useFcomFileHeaderProps from './hooks/useFcomFileHeaderProps';
 import useFcomFilePreviewProps from './hooks/useFcomFilePreviewProps';
 import useFcomFlowModalStackProps from './hooks/useFcomFlowModalStackProps';
+import useFcomFolderOverviewArgs from './hooks/useFcomFolderOverviewArgs';
 import useFcomFolderOverviewProps from './hooks/useFcomFolderOverviewProps';
 import useFcomReviewCommitModalProps from './hooks/useFcomReviewCommitModalProps';
 import useMicroserviceModalHostArgs from './hooks/useMicroserviceModalHostArgs';
@@ -10701,7 +10702,7 @@ export default function App() {
 
   const overviewPageProps = useOverviewPageProps(overviewPageArgs);
 
-  const fcomFolderOverviewProps = useFcomFolderOverviewProps({
+  const fcomFolderOverviewArgs = useFcomFolderOverviewArgs({
     selectedFolder,
     folderLoading,
     folderOverview,
@@ -10719,6 +10720,8 @@ export default function App() {
     isVendorTesting: vendorTestLoading,
     isFileTesting: isFileTestLoading,
   });
+
+  const fcomFolderOverviewProps = useFcomFolderOverviewProps(fcomFolderOverviewArgs);
 
   const appHeaderHandlers = useAppHeaderHandlers({
     setRedeployError,
