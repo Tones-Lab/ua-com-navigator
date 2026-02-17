@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from 'react';
+import type { CSSProperties, ReactNode, Ref } from 'react';
 
 type ModalProps = {
   children: ReactNode;
@@ -6,6 +6,7 @@ type ModalProps = {
   overlayClassName?: string;
   ariaLabel?: string;
   style?: CSSProperties;
+  containerRef?: Ref<HTMLDivElement>;
 };
 
 export default function Modal({
@@ -14,13 +15,16 @@ export default function Modal({
   overlayClassName,
   ariaLabel,
   style,
+  containerRef,
 }: ModalProps) {
   const overlay = overlayClassName ? `modal-overlay ${overlayClassName}` : 'modal-overlay';
   const container = className ? `modal ${className}` : 'modal';
 
   return (
     <div className={overlay} style={style} role="dialog" aria-modal="true" aria-label={ariaLabel}>
-      <div className={container}>{children}</div>
+      <div className={container} ref={containerRef}>
+        {children}
+      </div>
     </div>
   );
 }

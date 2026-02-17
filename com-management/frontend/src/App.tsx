@@ -3,6 +3,7 @@ import { flushSync } from 'react-dom';
 import { useSessionStore } from './stores';
 import api from './services/api';
 import AppTabs from './app/AppTabs';
+import UserPreferencesModal from './app/UserPreferencesModal';
 import OverviewPage from './features/overview/OverviewPage';
 import FcomBrowserPanel from './features/fcom/FcomBrowserPanel';
 import FcomFileHeader from './features/fcom/FcomFileHeader';
@@ -17,6 +18,7 @@ import FcomFieldReferenceModal from './features/fcom/FcomFieldReferenceModal';
 import FcomFieldSelectionModals from './features/fcom/FcomFieldSelectionModals';
 import FcomOverrideRemovalModals from './features/fcom/FcomOverrideRemovalModals';
 import FcomTrapVariablesModal from './features/fcom/FcomTrapVariablesModal';
+import TrapComposerModal from './features/fcom/TrapComposerModal';
 import useFcomBuilderContextValue from './features/fcom/builder/useFcomBuilderContextValue';
 import type {
   FlowPaletteItem,
@@ -32,6 +34,7 @@ import { FileTitleRow, ViewToggle } from './components/FileHeaderCommon';
 import MibWorkspace from './features/mib/MibWorkspace';
 import LegacyWorkspace from './features/legacy/LegacyWorkspace';
 import useMibWorkspace from './features/mib/useMibWorkspace';
+import PcomAdvancedSettingsModal from './features/mib/PcomAdvancedSettingsModal';
 import useCacheStatus from './hooks/useCacheStatus';
 import useFavorites from './hooks/useFavorites';
 import useBrowseDeepLink from './hooks/useBrowseDeepLink';
@@ -11657,570 +11660,88 @@ export default function App() {
                   setMibSearchScope={setMibSearchScope}
                 />
               )}
-              {trapModalOpen && (
-                <div className="modal-overlay" role="dialog" aria-modal="true">
-                  <div className="modal modal-wide" ref={trapModalRef}>
-                    <h3>
-                      {bulkTrapContext
-                        ? `Sending ${bulkTrapContext.total} SNMP traps — ${bulkTrapContext.label}`
-                        : 'Send SNMP Trap'}
-                    </h3>
-                    {bulkTrapContext ? (
-                      <div className="muted">Using test commands from FCOM objects.</div>
-                    ) : (
-                      trapSource === 'fcom' && (
-                        <div className="muted">Prefilled from FCOM test command.</div>
-                      )
-                    )}
-                    {bulkTrapContext && (
-                      <div className="panel-section">
-                        <div className="panel-section-title">Progress</div>
-                        {!trapSending && !bulkTrapSummary ? (
-                          <div className="trap-progress-meta">
-                            <span>Ready to send {bulkTrapContext.total} SNMP traps.</span>
-                            {!trapHost && (
-                              <span className="trap-progress-failed">
-                                Select a destination to continue.
-                              </span>
-                            )}
-                          </div>
-                        ) : bulkTrapSummary ? (
-                          <div className="trap-progress-meta">
-                            <span>
-                              Completed: {bulkTrapSummary.passed}/{bulkTrapSummary.total} sent,{' '}
-                              {bulkTrapSummary.failed} failed.
-                            </span>
-                          </div>
-                        ) : (
-                          <>
-                            <div className="trap-progress">
-                              <div
-                                className="trap-progress-bar"
-                                style={{
-                                  width:
-                                    bulkTrapProgress.total > 0
-                                      ? `${Math.round((bulkTrapProgress.current / bulkTrapProgress.total) * 100)}%`
-                                      : '0%',
-                                }}
-                              />
-                            </div>
-                            <div className="trap-progress-meta">
-                              <span>
-                                Sending {bulkTrapProgress.current} / {bulkTrapProgress.total}
-                              </span>
-                              {bulkTrapProgress.currentLabel && (
-                                <span className="trap-progress-current">
-                                  Now: {bulkTrapProgress.currentLabel}
-                                </span>
-                              )}
-                              {bulkTrapProgress.failed > 0 && (
-                                <span className="trap-progress-failed">
-                                  Failed: {bulkTrapProgress.failed}
-                                </span>
-                              )}
-                            </div>
-                          </>
-                        )}
-                        {bulkTrapFailures.length > 0 && (
-                          <div className="trap-progress-failures">
-                            <div className="trap-progress-failure-header">
-                              <span>{bulkTrapFailures.length} failures</span>
-                              {bulkTrapFailures.length > 3 && (
-                                <button
-                                  type="button"
-                                  className="builder-link"
-                                  onClick={() => setBulkTrapShowAllFailures((prev) => !prev)}
-                                >
-                                  {bulkTrapShowAllFailures ? 'Hide failures' : 'View failures'}
-                                </button>
-                              )}
-                              <button
-                                type="button"
-                                className="builder-link"
-                                onClick={retryFailedTraps}
-                                disabled={trapSending}
-                              >
-                                Retry failed
-                              </button>
-                            </div>
-                            {bulkTrapShowAllFailures || bulkTrapFailures.length <= 3 ? (
-                              <div className="trap-progress-failure-list">
-                                {bulkTrapFailures.map((failure) => (
-                                  <details key={`${failure.objectName}-failure`}>
-                                    <summary className="trap-progress-failure-summary">
-                                      {failure.objectName} — failed to send
-                                    </summary>
-                                    <div className="trap-progress-failure-detail">
-                                      {failure.message}
-                                    </div>
-                                  </details>
-                                ))}
-                              </div>
-                            ) : (
-                              <div className="trap-progress-failure-collapsed">
-                                Too many failures to display. Click “View failures” to inspect.
-                              </div>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    )}
-                    <div className="panel-section">
-                      <div className="panel-section-title">Destination</div>
-                      {trapServerError && <div className="error">{trapServerError}</div>}
-                      {trapServerList.length > 0 && (
-                        <label className="mib-field">
-                          Server list
-                          <select
-                            value={trapHost}
-                            onChange={(e) => {
-                              setTrapHost(e.target.value);
-                              if (e.target.value) {
-                                setTrapManualOpen(false);
-                              }
-                            }}
-                            data-error={!trapHost ? 'true' : undefined}
-                            aria-invalid={!trapHost}
-                          >
-                            <option value="">Select a server</option>
-                            {trapServerList.map((server) => (
-                              <option
-                                key={server.ServerID || server.ServerName}
-                                value={server.ServerHostFQDN || server.ServerName}
-                              >
-                                {server.ServerName || server.ServerHostFQDN}
-                              </option>
-                            ))}
-                          </select>
-                        </label>
-                      )}
-                      <button
-                        type="button"
-                        className="ghost-button"
-                        onClick={() => setTrapManualOpen((prev) => !prev)}
-                      >
-                        {trapManualOpen ? 'Hide manual entry' : 'Manual destination'}
-                      </button>
-                      {trapManualOpen && (
-                        <div className="mib-manual-entry">
-                          <label className="mib-field">
-                            Host or IP
-                            <input
-                              type="text"
-                              placeholder="10.0.0.10"
-                              value={trapHost}
-                              onChange={(e) => setTrapHost(e.target.value)}
-                              data-error={!trapHost ? 'true' : undefined}
-                              aria-invalid={!trapHost}
-                            />
-                          </label>
-                          <label className="mib-field">
-                            Port
-                            <input
-                              type="number"
-                              value={trapPort}
-                              onChange={(e) => setTrapPort(Number(e.target.value))}
-                            />
-                          </label>
-                        </div>
-                      )}
-                      {recentTargets.length > 0 && (
-                        <label className="mib-field">
-                          Recent destinations
-                          <select value="" onChange={(e) => setTrapHost(e.target.value)}>
-                            <option value="">Select recent</option>
-                            {recentTargets.map((target) => (
-                              <option key={target} value={target}>
-                                {target}
-                              </option>
-                            ))}
-                          </select>
-                        </label>
-                      )}
-                    </div>
-                    {!bulkTrapContext && (
-                      <div className="panel-section">
-                        <div className="panel-section-title">Trap</div>
-                        <div className="mib-trap-grid">
-                          <label className="mib-field">
-                            Version
-                            <select
-                              value={trapVersion}
-                              onChange={(e) => setTrapVersion(e.target.value)}
-                            >
-                              <option value="2c">v2c</option>
-                            </select>
-                          </label>
-                          <label className="mib-field">
-                            Community
-                            <input
-                              type="text"
-                              value={trapCommunity}
-                              onChange={(e) => setTrapCommunity(e.target.value)}
-                            />
-                          </label>
-                          <label className="mib-field mib-field-wide">
-                            Trap OID
-                            <input
-                              type="text"
-                              value={trapOid}
-                              onChange={(e) => setTrapOid(e.target.value)}
-                              data-error={!trapOid ? 'true' : undefined}
-                              aria-invalid={!trapOid}
-                            />
-                          </label>
-                        </div>
-                        <div className="panel-section-title">Varbinds</div>
-                        <div className="mib-varbinds">
-                          {trapVarbinds.length === 0 && (
-                            <div className="empty-state">No varbinds yet.</div>
-                          )}
-                          {trapVarbinds.map((binding, index) => (
-                            <div key={`${binding.oid}-${index}`} className="mib-varbind-row">
-                              <input
-                                type="text"
-                                placeholder="OID"
-                                value={binding.oid}
-                                onChange={(e) =>
-                                  setTrapVarbinds((prev) =>
-                                    prev.map((item, idx) =>
-                                      idx === index ? { ...item, oid: e.target.value } : item,
-                                    ),
-                                  )
-                                }
-                              />
-                              <select
-                                value={binding.type}
-                                onChange={(e) =>
-                                  setTrapVarbinds((prev) =>
-                                    prev.map((item, idx) =>
-                                      idx === index ? { ...item, type: e.target.value } : item,
-                                    ),
-                                  )
-                                }
-                              >
-                                <option value="s">string</option>
-                                <option value="i">integer</option>
-                                <option value="u">unsigned</option>
-                                <option value="t">timeticks</option>
-                                <option value="o">oid</option>
-                              </select>
-                              <input
-                                type="text"
-                                placeholder="Value"
-                                value={binding.value}
-                                onChange={(e) =>
-                                  setTrapVarbinds((prev) =>
-                                    prev.map((item, idx) =>
-                                      idx === index ? { ...item, value: e.target.value } : item,
-                                    ),
-                                  )
-                                }
-                              />
-                              <button
-                                type="button"
-                                className="builder-link"
-                                onClick={() =>
-                                  setTrapVarbinds((prev) =>
-                                    prev.filter((_item, idx) => idx !== index),
-                                  )
-                                }
-                              >
-                                Remove
-                              </button>
-                            </div>
-                          ))}
-                          <button
-                            type="button"
-                            className="builder-link"
-                            onClick={() =>
-                              setTrapVarbinds((prev) => [
-                                ...prev,
-                                { oid: '', type: 's', value: '' },
-                              ])
-                            }
-                          >
-                            Add varbind
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                    {trapError && <div className="error">{trapError}</div>}
-                    <div className="modal-actions">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setTrapModalOpen(false);
-                          setBulkTrapContext(null);
-                          setBulkTrapProgress({
-                            current: 0,
-                            total: 0,
-                            failed: 0,
-                            currentLabel: '',
-                          });
-                          setBulkTrapFailures([]);
-                          setBulkTrapSummary(null);
-                          setBulkTrapShowAllFailures(false);
-                        }}
-                      >
-                        Close
-                      </button>
-                      <button
-                        type="button"
-                        aria-disabled={
-                          trapSending ||
-                          (bulkTrapContext
-                            ? !trapHost || Boolean(bulkTrapSummary)
-                            : !trapHost || !trapOid)
-                        }
-                        className={`builder-card builder-card-primary${
-                          trapSending ||
-                          (bulkTrapContext
-                            ? !trapHost || Boolean(bulkTrapSummary)
-                            : !trapHost || !trapOid)
-                            ? ' button-disabled'
-                            : ''
-                        }`}
-                        onClick={() => {
-                          const disabled =
-                            trapSending ||
-                            (bulkTrapContext
-                              ? !trapHost || Boolean(bulkTrapSummary)
-                              : !trapHost || !trapOid);
-                          if (disabled) {
-                            triggerValidationPulse(trapModalRef.current);
-                            return;
-                          }
-                          if (bulkTrapContext) {
-                            sendBulkTraps();
-                            return;
-                          }
-                          sendTrap();
-                        }}
-                      >
-                        {trapSending ? 'Sending…' : bulkTrapContext ? 'Send Traps' : 'Send Trap'}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
-              {pcomAdvancedOpen && (
-                <div className="modal-overlay" role="dialog" aria-modal="true">
-                  <div className="modal modal-wide">
-                    <h3>SNMP Advanced Settings</h3>
-                    <div className="panel-section">
-                      <div className="panel-section-title">Target</div>
-                      <div className="mib-trap-grid">
-                        <label className="mib-field">
-                          Target mode
-                          <select
-                            value={pcomAdvancedTargetMode}
-                            onChange={(e) =>
-                              setPcomAdvancedTargetMode(e.target.value as 'device' | 'manual')
-                            }
-                          >
-                            <option value="device">Device list</option>
-                            <option value="manual">Manual IP</option>
-                          </select>
-                        </label>
-                        {pcomAdvancedTargetMode === 'device' ? (
-                          <label className="mib-field">
-                            Device
-                            <select
-                              value={pcomAdvancedDeviceIp}
-                              onChange={(e) => setPcomAdvancedDeviceIp(e.target.value)}
-                              disabled={pcomDevicesLoading}
-                            >
-                              <option value="">Select a device</option>
-                              {pcomDevicesLoading ? (
-                                <option value="" disabled>
-                                  Loading devices...
-                                </option>
-                              ) : pcomDeviceOptions.length === 0 ? (
-                                <option value="" disabled>
-                                  No devices available
-                                </option>
-                              ) : (
-                                pcomDeviceOptions.map((device) => (
-                                  <option key={device.value} value={device.value}>
-                                    {device.label}
-                                  </option>
-                                ))
-                              )}
-                            </select>
-                          </label>
-                        ) : (
-                          <label className="mib-field">
-                            IP address
-                            <input
-                              type="text"
-                              placeholder="10.0.0.10"
-                              value={pcomAdvancedManualIp}
-                              onChange={(e) => setPcomAdvancedManualIp(e.target.value)}
-                            />
-                          </label>
-                        )}
-                      </div>
-                    </div>
-                    <div className="panel-section">
-                      <div className="panel-section-title">SNMP</div>
-                      <div className="mib-trap-grid">
-                        <label className="mib-field">
-                          Version
-                          <select
-                            value={pcomAdvancedSnmpVersion}
-                            onChange={(e) =>
-                              setPcomAdvancedSnmpVersion(e.target.value as '1' | '2c' | '3')
-                            }
-                          >
-                            <option value="1">v1</option>
-                            <option value="2c">v2c</option>
-                            <option value="3">v3</option>
-                          </select>
-                        </label>
-                        {(pcomAdvancedSnmpVersion === '1' || pcomAdvancedSnmpVersion === '2c') && (
-                          <label className="mib-field">
-                            Community string
-                            <input
-                              type="password"
-                              value={pcomAdvancedCommunity}
-                              onChange={(e) => setPcomAdvancedCommunity(e.target.value)}
-                            />
-                          </label>
-                        )}
-                      </div>
-                      <details className="mib-advanced-oid" open={pcomAdvancedOidEnabled}>
-                        <summary
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setPcomAdvancedOidEnabled((prev) => !prev);
-                          }}
-                        >
-                          Customize OID (optional)
-                        </summary>
-                        {pcomAdvancedOidEnabled && (
-                          <div className="mib-advanced-oid-body">
-                            <label className="mib-field">
-                              OID override
-                              <input
-                                type="text"
-                                placeholder="1.3.6.1.4.1.x.y"
-                                value={pcomAdvancedOidValue}
-                                onChange={(e) => setPcomAdvancedOidValue(e.target.value)}
-                              />
-                            </label>
-                            <div className="muted">
-                              Defaults to the selected MIB OID. Append .x.y to target an instance.
-                            </div>
-                          </div>
-                        )}
-                      </details>
-                      {pcomAdvancedSnmpVersion === '3' && (
-                        <div className="mib-trap-grid">
-                          <label className="mib-field">
-                            Security level
-                            <select
-                              value={pcomAdvancedSecurityLevel}
-                              onChange={(e) =>
-                                setPcomAdvancedSecurityLevel(
-                                  e.target.value as 'noAuthNoPriv' | 'authNoPriv' | 'authPriv',
-                                )
-                              }
-                            >
-                              <option value="noAuthNoPriv">noAuthNoPriv</option>
-                              <option value="authNoPriv">authNoPriv</option>
-                              <option value="authPriv">authPriv</option>
-                            </select>
-                          </label>
-                          <label className="mib-field">
-                            Username
-                            <input
-                              type="text"
-                              value={pcomAdvancedUsername}
-                              onChange={(e) => setPcomAdvancedUsername(e.target.value)}
-                            />
-                          </label>
-                          {pcomAdvancedSecurityLevel !== 'noAuthNoPriv' && (
-                            <>
-                              <label className="mib-field">
-                                Authentication protocol
-                                <select
-                                  value={pcomAdvancedAuthProtocol}
-                                  onChange={(e) => setPcomAdvancedAuthProtocol(e.target.value)}
-                                >
-                                  <option value="">Select protocol</option>
-                                  <option value="MD5">MD5</option>
-                                  <option value="SHA">SHA</option>
-                                  <option value="SHA-224">SHA (224)</option>
-                                  <option value="SHA-256">SHA (256)</option>
-                                  <option value="SHA-384">SHA (384)</option>
-                                  <option value="SHA-512">SHA (512)</option>
-                                </select>
-                              </label>
-                              <label className="mib-field">
-                                Authentication password
-                                <input
-                                  type="password"
-                                  value={pcomAdvancedAuthPassword}
-                                  onChange={(e) => setPcomAdvancedAuthPassword(e.target.value)}
-                                />
-                              </label>
-                            </>
-                          )}
-                          {pcomAdvancedSecurityLevel === 'authPriv' && (
-                            <>
-                              <label className="mib-field">
-                                Privacy protocol
-                                <select
-                                  value={pcomAdvancedPrivProtocol}
-                                  onChange={(e) => setPcomAdvancedPrivProtocol(e.target.value)}
-                                >
-                                  <option value="">Select protocol</option>
-                                  <option value="DES">DES</option>
-                                  <option value="3DES">3DES</option>
-                                  <option value="AES-128">AES (128)</option>
-                                  <option value="AES-192">AES (192)</option>
-                                  <option value="AES-192-Cisco">AES (192) Cisco</option>
-                                  <option value="AES-256">AES (256)</option>
-                                  <option value="AES-256-Cisco">AES (256) Cisco</option>
-                                </select>
-                              </label>
-                              <label className="mib-field">
-                                Privacy password
-                                <input
-                                  type="password"
-                                  value={pcomAdvancedPrivPassword}
-                                  onChange={(e) => setPcomAdvancedPrivPassword(e.target.value)}
-                                />
-                              </label>
-                            </>
-                          )}
-                          <label className="mib-field">
-                            Engine ID
-                            <input
-                              type="text"
-                              value={pcomAdvancedEngineId}
-                              onChange={(e) => setPcomAdvancedEngineId(e.target.value)}
-                            />
-                          </label>
-                        </div>
-                      )}
-                    </div>
-                    <div className="modal-actions">
-                      <button
-                        type="button"
-                        className="ghost-button"
-                        onClick={() => setPcomAdvancedOpen(false)}
-                      >
-                        Close
-                      </button>
-                      <button type="button" className="modal-primary" onClick={applyPcomAdvanced}>
-                        Apply
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
+              <TrapComposerModal
+                open={trapModalOpen}
+                trapModalRef={trapModalRef}
+                bulkTrapContext={bulkTrapContext}
+                trapSource={trapSource}
+                trapSending={trapSending}
+                bulkTrapSummary={bulkTrapSummary}
+                bulkTrapProgress={bulkTrapProgress}
+                bulkTrapFailures={bulkTrapFailures}
+                bulkTrapShowAllFailures={bulkTrapShowAllFailures}
+                setBulkTrapShowAllFailures={setBulkTrapShowAllFailures}
+                retryFailedTraps={retryFailedTraps}
+                trapServerError={trapServerError}
+                trapServerList={trapServerList}
+                trapHost={trapHost}
+                setTrapHost={setTrapHost}
+                trapManualOpen={trapManualOpen}
+                setTrapManualOpen={setTrapManualOpen}
+                trapPort={trapPort}
+                setTrapPort={setTrapPort}
+                recentTargets={recentTargets}
+                trapVersion={trapVersion}
+                setTrapVersion={setTrapVersion}
+                trapCommunity={trapCommunity}
+                setTrapCommunity={setTrapCommunity}
+                trapOid={trapOid}
+                setTrapOid={setTrapOid}
+                trapVarbinds={trapVarbinds}
+                setTrapVarbinds={setTrapVarbinds}
+                trapError={trapError}
+                triggerValidationPulse={triggerValidationPulse}
+                sendBulkTraps={sendBulkTraps}
+                sendTrap={sendTrap}
+                onClose={() => {
+                  setTrapModalOpen(false);
+                  setBulkTrapContext(null);
+                  setBulkTrapProgress({
+                    current: 0,
+                    total: 0,
+                    failed: 0,
+                    currentLabel: '',
+                  });
+                  setBulkTrapFailures([]);
+                  setBulkTrapSummary(null);
+                  setBulkTrapShowAllFailures(false);
+                }}
+              />
+              <PcomAdvancedSettingsModal
+                open={pcomAdvancedOpen}
+                pcomAdvancedTargetMode={pcomAdvancedTargetMode}
+                setPcomAdvancedTargetMode={setPcomAdvancedTargetMode}
+                pcomAdvancedDeviceIp={pcomAdvancedDeviceIp}
+                setPcomAdvancedDeviceIp={setPcomAdvancedDeviceIp}
+                pcomDevicesLoading={pcomDevicesLoading}
+                pcomDeviceOptions={pcomDeviceOptions}
+                pcomAdvancedManualIp={pcomAdvancedManualIp}
+                setPcomAdvancedManualIp={setPcomAdvancedManualIp}
+                pcomAdvancedSnmpVersion={pcomAdvancedSnmpVersion}
+                setPcomAdvancedSnmpVersion={setPcomAdvancedSnmpVersion}
+                pcomAdvancedCommunity={pcomAdvancedCommunity}
+                setPcomAdvancedCommunity={setPcomAdvancedCommunity}
+                pcomAdvancedOidEnabled={pcomAdvancedOidEnabled}
+                setPcomAdvancedOidEnabled={setPcomAdvancedOidEnabled}
+                pcomAdvancedOidValue={pcomAdvancedOidValue}
+                setPcomAdvancedOidValue={setPcomAdvancedOidValue}
+                pcomAdvancedSecurityLevel={pcomAdvancedSecurityLevel}
+                setPcomAdvancedSecurityLevel={setPcomAdvancedSecurityLevel}
+                pcomAdvancedUsername={pcomAdvancedUsername}
+                setPcomAdvancedUsername={setPcomAdvancedUsername}
+                pcomAdvancedAuthProtocol={pcomAdvancedAuthProtocol}
+                setPcomAdvancedAuthProtocol={setPcomAdvancedAuthProtocol}
+                pcomAdvancedAuthPassword={pcomAdvancedAuthPassword}
+                setPcomAdvancedAuthPassword={setPcomAdvancedAuthPassword}
+                pcomAdvancedPrivProtocol={pcomAdvancedPrivProtocol}
+                setPcomAdvancedPrivProtocol={setPcomAdvancedPrivProtocol}
+                pcomAdvancedPrivPassword={pcomAdvancedPrivPassword}
+                setPcomAdvancedPrivPassword={setPcomAdvancedPrivPassword}
+                pcomAdvancedEngineId={pcomAdvancedEngineId}
+                setPcomAdvancedEngineId={setPcomAdvancedEngineId}
+                onClose={() => setPcomAdvancedOpen(false)}
+                onApply={applyPcomAdvanced}
+              />
             </>
           ) : (
             <div className="auth-screen">
@@ -12268,190 +11789,32 @@ export default function App() {
               </div>
             </div>
           )}
-          {showUserMenu && (
-            <div className="modal-overlay" role="dialog" aria-modal="true">
-              <div className="modal">
-                <h3>User Preferences & Configuration</h3>
-                <div className="cache-section">
-                  <div className="cache-section-header">Overview Cache</div>
-                  {overviewRebuildPending || overviewStatus?.isBuilding ? (
-                    <>
-                      <span className="muted">
-                        {overviewProgress?.phase || 'Cache refreshing…'}
-                        {overviewStatus?.buildId ? ` · Build ${overviewStatus.buildId}` : ''}
-                        {overviewProgress?.total
-                          ? ` · ${overviewProgress.processed} / ${overviewProgress.total} ${overviewProgress.unit || 'items'}`
-                          : ''}
-                      </span>
-                      <div className="trap-progress" aria-hidden="true">
-                        <div
-                          className={`trap-progress-bar${
-                            overviewProgress?.total ? '' : ' indeterminate'
-                          }`}
-                          style={{
-                            width: overviewProgress?.total
-                              ? `${overviewProgressPercent}%`
-                              : '35%',
-                          }}
-                        />
-                      </div>
-                    </>
-                  ) : overviewStatus?.lastBuiltAt ? (
-                    <span className="muted">
-                      {overviewStatus.isStale ? 'Stale · ' : ''}
-                      Last refresh {formatTime(overviewStatus.lastBuiltAt)}
-                      {overviewCacheLabel ? ` · Cache ${overviewCacheLabel}` : ''}
-                      {overviewStatus.nextRefreshAt
-                        ? ` · Next refresh ${formatTime(overviewStatus.nextRefreshAt)}`
-                        : ''}
-                    </span>
-                  ) : (
-                    <span className="muted">Cache not loaded yet.</span>
-                  )}
-                  <div className="cache-action-row">
-                    <button
-                      type="button"
-                      className="link-button"
-                      onClick={handleRefreshOverviewCache}
-                    >
-                      Refresh Cache
-                    </button>
-                  </div>
-                </div>
-                <div className="cache-section">
-                  <div className="cache-section-header">Search Index Cache</div>
-                  {searchRebuildPending || searchStatus?.isBuilding ? (
-                    <>
-                      <span className="muted">
-                        {searchProgress?.phase || 'Cache refreshing…'}
-                        {searchStatus?.buildId ? ` · Build ${searchStatus.buildId}` : ''}
-                        {searchProgress?.total
-                          ? ` · ${searchProgress.processed} / ${searchProgress.total} ${searchProgress.unit || 'items'}`
-                          : ''}
-                      </span>
-                      <div className="trap-progress" aria-hidden="true">
-                        <div
-                          className={`trap-progress-bar${
-                            searchProgress?.total ? '' : ' indeterminate'
-                          }`}
-                          style={{
-                            width: searchProgress?.total
-                              ? `${searchProgressPercent}%`
-                              : '35%',
-                          }}
-                        />
-                      </div>
-                    </>
-                  ) : searchStatus?.lastBuiltAt ? (
-                    <span className="muted">
-                      {searchStatus.isStale ? 'Stale · ' : ''}
-                      Indexed {searchStatus.counts?.files || 0} files · Last refresh{' '}
-                      {formatTime(searchStatus.lastBuiltAt)}
-                      {searchCacheLabel ? ` · Cache ${searchCacheLabel}` : ''}
-                      {searchStatus.nextRefreshAt
-                        ? ` · Next refresh ${formatTime(searchStatus.nextRefreshAt)}`
-                        : ''}
-                    </span>
-                  ) : (
-                    <span className="muted">Cache not loaded yet.</span>
-                  )}
-                  <div className="cache-action-row">
-                    <button
-                      type="button"
-                      className="link-button"
-                      onClick={handleRefreshSearchCache}
-                    >
-                      Refresh Cache
-                    </button>
-                  </div>
-                </div>
-                <div className="cache-section">
-                  <div className="cache-section-header">Folder Cache</div>
-                  {folderRebuildPending || folderOverviewStatus?.isBuilding ? (
-                    <>
-                      <span className="muted">
-                        {folderProgress?.phase || 'Cache refreshing…'}
-                        {folderOverviewStatus?.buildId
-                          ? ` · Build ${folderOverviewStatus.buildId}`
-                          : ''}
-                        {folderProgress?.total
-                          ? ` · ${folderProgress.processed} / ${folderProgress.total} ${folderProgress.unit || 'items'}`
-                          : ''}
-                      </span>
-                      <div className="trap-progress" aria-hidden="true">
-                        <div
-                          className={`trap-progress-bar${
-                            folderProgress?.total ? '' : ' indeterminate'
-                          }`}
-                          style={{
-                            width: folderProgress?.total
-                              ? `${folderProgressPercent}%`
-                              : '35%',
-                          }}
-                        />
-                      </div>
-                    </>
-                  ) : folderOverviewStatus?.lastBuiltAt ? (
-                    <span className="muted">
-                      {folderOverviewStatus.isStale ? 'Stale · ' : ''}
-                      {folderCacheLabel
-                        ? `Cache ${folderCacheLabel} · `
-                        : `${folderOverviewStatus.entryCount || 0} entries · `}
-                      Last refresh {formatTime(folderOverviewStatus.lastBuiltAt)}
-                      {folderOverviewStatus.nextRefreshAt
-                        ? ` · Next refresh ${formatTime(folderOverviewStatus.nextRefreshAt)}`
-                        : ''}
-                    </span>
-                  ) : folderOverviewStatus?.lastClearedAt ? (
-                    <span className="muted">
-                      Cleared · Last refresh {formatTime(folderOverviewStatus.lastClearedAt)}
-                    </span>
-                  ) : (
-                    <span className="muted">Cache not loaded yet.</span>
-                  )}
-                  <div className="cache-action-row">
-                    <button
-                      type="button"
-                      className="link-button"
-                      onClick={handleRefreshFolderCache}
-                    >
-                      Refresh Cache
-                    </button>
-                  </div>
-                </div>
-                <div className="cache-section">
-                  <div className="cache-section-header">MIB Translate Cache</div>
-                  {mibTranslateCacheLabel ? (
-                    <span className="muted">Cache {mibTranslateCacheLabel}</span>
-                  ) : (
-                    <span className="muted">Cache not loaded yet.</span>
-                  )}
-                  <div className="cache-action-row">
-                    <button
-                      type="button"
-                      className="link-button"
-                      onClick={refreshMibTranslateStatus}
-                    >
-                      Refresh Stats
-                    </button>
-                  </div>
-                </div>
-                {cacheActionMessage && (
-                  <div className="success" style={{ marginTop: '1rem' }}>
-                    {cacheActionMessage}
-                  </div>
-                )}
-                <p className="muted" style={{ fontSize: '0.85rem', marginTop: '1rem' }}>
-                  Rebuilds run on the server and can take a few minutes.
-                </p>
-                <div className="modal-actions">
-                  <button type="button" onClick={() => setShowUserMenu(false)}>
-                    Close
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
+          <UserPreferencesModal
+            open={showUserMenu}
+            overviewRebuildPending={overviewRebuildPending}
+            overviewStatus={overviewStatus}
+            overviewProgress={overviewProgress}
+            overviewProgressPercent={overviewProgressPercent}
+            overviewCacheLabel={overviewCacheLabel}
+            handleRefreshOverviewCache={handleRefreshOverviewCache}
+            searchRebuildPending={searchRebuildPending}
+            searchStatus={searchStatus}
+            searchProgress={searchProgress}
+            searchProgressPercent={searchProgressPercent}
+            searchCacheLabel={searchCacheLabel}
+            handleRefreshSearchCache={handleRefreshSearchCache}
+            folderRebuildPending={folderRebuildPending}
+            folderOverviewStatus={folderOverviewStatus}
+            folderProgress={folderProgress}
+            folderProgressPercent={folderProgressPercent}
+            folderCacheLabel={folderCacheLabel}
+            handleRefreshFolderCache={handleRefreshFolderCache}
+            mibTranslateCacheLabel={mibTranslateCacheLabel}
+            refreshMibTranslateStatus={refreshMibTranslateStatus}
+            cacheActionMessage={cacheActionMessage}
+            formatTime={formatTime}
+            onClose={() => setShowUserMenu(false)}
+          />
         </main>
         {microserviceModal}
       </div>

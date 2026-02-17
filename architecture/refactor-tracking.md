@@ -45,7 +45,7 @@ Validation:
 - Re-run lint and build.
 
 ### 2) Modal system standardization
-Status: In Progress
+Status: Done
 Scope: Create shared modal shells + stack manager; move each modal body into its own component.
 Validation:
 - Open each modal and confirm layout and close behavior:
@@ -266,6 +266,12 @@ Validation:
   - Updated `App.tsx` to compose the new modal component while preserving insert-mode keyboard/click behavior and stacked overlay z-index.
   - Result: reduced another large inline modal block in App and kept trap-variable rendering behavior feature-scoped.
   - Test Delta: Medium risk (trap-variable selection/insert interactions + modal close reset behavior); Add now; Coverage type: E2E (open trap-variable modal in view/insert mode, select variable token, close modal and verify state reset).
+- 2026-02-16: Item 2 completed (final modal body extraction pass).
+  - Added `features/fcom/TrapComposerModal.tsx`, `features/mib/PcomAdvancedSettingsModal.tsx`, and `app/UserPreferencesModal.tsx` to own the last large modal bodies that were still inline in `App.tsx`.
+  - Updated shared `components/Modal.tsx` to accept `containerRef` so extracted modal components can preserve existing validation pulse/focus-target behavior.
+  - Updated `App.tsx` to compose those extracted components and removed the remaining inline `modal-overlay` blocks.
+  - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
+  - Test Delta: Medium risk (trap send flow, PCOM advanced apply path, and cache-refresh UI wiring); Add now; Coverage type: E2E (open/close Trap Composer + send/validation states, open/apply PCOM advanced settings, open User Preferences and trigger all cache refresh actions).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.
