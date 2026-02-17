@@ -333,6 +333,11 @@ Validation:
   - Updated `App.tsx` to compose the new path-help modal component while preserving copy-path and close behavior.
   - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
   - Test Delta: Low risk (code-movement extraction for helper modal rendering); Add now; Coverage type: UI sanity (open/close path-help modal and copy current path).
+- 2026-02-17: Post-item cleanup (save/redeploy overlay extraction from App).
+  - Added `features/fcom/FcomSaveOverlays.tsx` and moved save-progress and microservice-action busy overlays out of `App.tsx`.
+  - Updated `App.tsx` to compose `FcomSaveOverlays` with existing status/timing state and unchanged visual/status behavior.
+  - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
+  - Test Delta: Low risk (code-movement extraction for busy overlays with unchanged timing/status semantics); Add now; Coverage type: UI sanity (save overlay progress list and redeploy busy overlay text/timer).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.
