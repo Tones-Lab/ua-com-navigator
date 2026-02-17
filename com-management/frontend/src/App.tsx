@@ -28,6 +28,7 @@ import LegacyWorkspace from './features/legacy/LegacyWorkspace';
 import useMibWorkspace from './features/mib/useMibWorkspace';
 import useCacheStatus from './hooks/useCacheStatus';
 import useFavorites from './hooks/useFavorites';
+import useBrowseDeepLink from './hooks/useBrowseDeepLink';
 import useOverviewState from './hooks/useOverviewState';
 import useRequest from './hooks/useRequest';
 import useSearchState from './hooks/useSearchState';
@@ -2350,127 +2351,8 @@ export default function App() {
   }, [isAuthenticated, activeApp]);
 
   useEffect(() => {
-    if (isAuthenticated && entries.length === 0 && !browseLoading && !urlHydrated.current) {
-      if (activeApp === 'fcom' || activeApp === 'pcom') {
-        loadDefaultBrowseNode(activeApp);
-      } else {
-        loadNode(null, '/');
-      }
-    }
-  }, [isAuthenticated, entries.length, browseLoading, activeApp]);
-
-  useEffect(() => {
-    if (!isAuthenticated || urlHydrated.current) {
-      return;
-    }
-    urlHydrated.current = true;
-    const params = new URLSearchParams(window.location.search);
-    const nodeParam = params.get('node');
-    const fileParam = params.get('file');
-    const viewParam = params.get('view');
-    const appParam = params.get('app');
-    const mibPathParam = params.get('mibPath');
-    const mibFileParam = params.get('mibFile');
-    let initialApp: AppTab | null = null;
-
-    if (viewParam === 'friendly') {
-      setViewMode('friendly');
-    }
-
-    if (
-      appParam === 'overview' ||
-      appParam === 'fcom' ||
-      appParam === 'pcom' ||
-      appParam === 'mib' ||
-      appParam === 'legacy'
-    ) {
-      setActiveApp(appParam as AppTab);
-      initialApp = appParam as AppTab;
-      if (appParam === 'mib') {
-        const fallbackPath = mibFileParam
-          ? mibFileParam.split('/').slice(0, -1).join('/')
-          : null;
-        const nextPath = mibPathParam || fallbackPath || '/';
-        mibUrlHydratingRef.current = true;
-        setMibPath(nextPath);
-        void loadMibPath(nextPath, { append: false });
-        if (mibFileParam) {
-          void openMibFileFromUrl(mibFileParam);
-        }
-        return;
-      }
-    } else {
-      const inferred = inferAppFromPath(fileParam || nodeParam);
-      if (inferred) {
-        setActiveApp(inferred);
-        initialApp = inferred;
-      }
-    }
-
-    if (fileParam) {
-      void openFileFromUrl(fileParam, nodeParam);
-      return;
-    }
-
-    if (nodeParam) {
-      setBreadcrumbs(buildBreadcrumbsFromNode(nodeParam));
-      void loadNodeInternal(nodeParam);
-      return;
-    }
-
-    if (initialApp === 'fcom' || initialApp === 'pcom') {
-      void loadDefaultBrowseNode(initialApp);
-      return;
-    }
-    void loadNodeInternal(null, '/');
-  }, [isAuthenticated]);
-
-  useEffect(() => {
     breadcrumbsRef.current = breadcrumbs;
   }, [breadcrumbs]);
-
-  useEffect(() => {
-    if (!isAuthenticated) {
-      return;
-    }
-    const params = new URLSearchParams(window.location.search);
-    if (activeApp === 'mib') {
-      params.delete('node');
-      params.delete('file');
-      params.set('mibPath', mibPath || '/');
-      if (mibSelectedFile) {
-        params.set('mibFile', mibSelectedFile);
-      } else {
-        params.delete('mibFile');
-      }
-    } else if (activeApp === 'legacy') {
-      params.delete('node');
-      params.delete('file');
-      params.delete('mibPath');
-      params.delete('mibFile');
-    } else {
-      params.delete('mibPath');
-      params.delete('mibFile');
-      if (browseNode) {
-        params.set('node', browseNode);
-      } else {
-        params.delete('node');
-      }
-      if (selectedFile?.PathID) {
-        params.set('file', selectedFile.PathID);
-      } else {
-        params.delete('file');
-      }
-    }
-    params.set('app', activeApp);
-    params.set('view', viewMode);
-    if (session?.server_id) {
-      params.set('server', session.server_id);
-    }
-    const query = params.toString();
-    const nextUrl = query ? `${window.location.pathname}?${query}` : window.location.pathname;
-    window.history.replaceState({}, '', nextUrl);
-  }, [activeApp, browseNode, selectedFile, viewMode, mibPath, mibSelectedFile, isAuthenticated, session?.server_id]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -3147,6 +3029,33 @@ export default function App() {
     confirmDiscardIfDirty(() => {
       void openFileFromUrlInternal(fileId, nodeParam);
     });
+
+  useBrowseDeepLink({
+    isAuthenticated,
+    urlHydrated,
+    entriesLength: entries.length,
+    browseLoading,
+    activeApp,
+    browseNode,
+    selectedFilePathId: selectedFile?.PathID ?? null,
+    viewMode,
+    serverId: session?.server_id,
+    mibPath,
+    mibSelectedFile,
+    mibUrlHydratingRef,
+    setActiveApp,
+    setViewMode,
+    setMibPath,
+    setBreadcrumbs,
+    buildBreadcrumbsFromNode,
+    inferAppFromPath,
+    loadNode,
+    loadNodeInternal,
+    loadDefaultBrowseNode,
+    openFileFromUrl,
+    loadMibPath,
+    openMibFileFromUrl,
+  });
 
   const handleOpenSearchResult = async (result: SearchResultItem) => {
     const pathId = result?.pathId || result?.path || '';

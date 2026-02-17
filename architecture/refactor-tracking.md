@@ -219,6 +219,11 @@ Validation:
   - Migrated Legacy workspace upload/listing request flows and standardized remaining API error extraction paths.
   - Result: Item 5 scope completed; repeated loading/error request patterns now use shared `hooks/useRequest.ts` and `utils/errorUtils.ts` across App/hooks/workspaces.
   - Test Delta: Medium risk (MIB/Legacy loading+error parity); Add now; Coverage type: E2E (MIB browse/search/parse/MIB2FCOM failures and Legacy upload/list/convert failure paths).
+- 2026-02-16: Item 1 resumed (browse/deeplink orchestration extraction).
+  - Added `hooks/useBrowseDeepLink.ts` to own browse default-load, URL hydration/deeplink restore, and URL query sync side effects previously in `App.tsx`.
+  - Updated `App.tsx` to delegate those side effects to the extracted hook while preserving existing callbacks/state and URL parameter behavior for FCOM/PCOM/MIB/Legacy.
+  - Result: reduced `App.tsx` side-effect surface for navigation/deeplink flows without behavior changes to browse/file restoration.
+  - Test Delta: High risk (navigation/deep-link behavior contract); Add now; Coverage type: E2E (URL hydrate with app/node/file/mibPath/mibFile and URL sync on tab/node/file/view changes).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.
