@@ -208,6 +208,12 @@ Validation:
   - Removed duplicate App-local error-formatter implementation and fully consolidated on `utils/errorUtils.ts` for API error extraction.
   - Result: additional repeated loading/error request blocks in `App.tsx` now follow shared hook/formatter pattern.
   - Test Delta: Medium risk (microservice status + MIB device-loading indicators/messages); Add now; Coverage type: E2E (microservice modal refresh, MIB tab device load success/failure states).
+- 2026-02-16: Item 5 continued (SNMP + trap request flow standardization).
+  - Extended `hooks/useRequest.ts` with optional `captureError` to support effect-mounted guards without stale error writes.
+  - Migrated App SNMP profile fetch, SNMP poll execution, and broker-server lookup flows to shared request-state handling.
+  - Added mounted-guarded error handling for MIB device-load effect while keeping loading/error behavior unchanged.
+  - Result: more App request paths now use unified request/error primitives with safer effect behavior.
+  - Test Delta: Medium risk (SNMP profile/poll + trap server error/loading parity); Add now; Coverage type: E2E (PCOM poll success/failure, trap composer server-load fallback/manual mode).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.

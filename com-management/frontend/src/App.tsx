@@ -282,10 +282,20 @@ export default function App() {
     description: string;
     zoneName: string;
   }>(null);
-  const [pcomSnmpProfileLoading, setPcomSnmpProfileLoading] = useState(false);
-  const [pcomSnmpProfileError, setPcomSnmpProfileError] = useState<string | null>(null);
-  const [pcomPollLoading, setPcomPollLoading] = useState(false);
-  const [pcomPollError, setPcomPollError] = useState<string | null>(null);
+  const {
+    loading: pcomSnmpProfileLoading,
+    error: pcomSnmpProfileError,
+    setLoading: setPcomSnmpProfileLoading,
+    setError: setPcomSnmpProfileError,
+    run: runPcomSnmpProfileRequest,
+  } = useRequest();
+  const {
+    loading: pcomPollLoading,
+    error: pcomPollError,
+    setLoading: setPcomPollLoading,
+    setError: setPcomPollError,
+    run: runPcomPollRequest,
+  } = useRequest();
   const [pcomPollOutput, setPcomPollOutput] = useState('');
   const [pcomSelectedObjectKey, setPcomSelectedObjectKey] = useState<string | null>(null);
   const [pcomDevices, setPcomDevices] = useState<
@@ -310,7 +320,11 @@ export default function App() {
     Array<{ oid: string; type: string; value: string }>
   >([]);
   const [trapServerList, setTrapServerList] = useState<any[]>([]);
-  const [trapServerError, setTrapServerError] = useState<string | null>(null);
+  const {
+    error: trapServerError,
+    setError: setTrapServerError,
+    run: runTrapServerRequest,
+  } = useRequest();
   const [trapManualOpen, setTrapManualOpen] = useState(false);
   const [trapSending, setTrapSending] = useState(false);
   const [trapError, setTrapError] = useState<string | null>(null);
@@ -2312,17 +2326,21 @@ export default function App() {
     }
     let isMounted = true;
     const loadDevices = async () => {
-      const resp = await runPcomDevicesRequest(() => api.getDevices({ limit: 500, start: 0 }), {
-        getErrorMessage: (err) => getApiErrorMessage(err, 'Failed to load devices'),
-      });
-      if (!isMounted) {
-        return;
-      }
-      if (resp) {
+      try {
+        const resp = await runPcomDevicesRequest(() => api.getDevices({ limit: 500, start: 0 }), {
+          captureError: false,
+          rethrow: true,
+        });
+        if (!isMounted || !resp) {
+          return;
+        }
         const devices = Array.isArray(resp.data?.devices) ? resp.data.devices : [];
         setPcomDevices(devices);
-      } else {
-        setPcomDevices([]);
+      } catch (err: unknown) {
+        if (isMounted) {
+          setPcomDevicesError(getApiErrorMessage(err, 'Failed to load devices'));
+          setPcomDevices([]);
+        }
       }
     };
     loadDevices();
@@ -3524,44 +3542,44 @@ export default function App() {
     currentHost?: string | null;
     forceDefault?: boolean;
   }) => {
-    setTrapServerError(null);
-    try {
-      const resp = await api.getBrokerServers();
-      type BrokerServer = Record<string, unknown>;
-      const data: BrokerServer[] = Array.isArray(resp.data?.data)
-        ? (resp.data.data as BrokerServer[])
-        : [];
-      setTrapServerList(data);
-      const currentHost = options?.currentHost ?? trapHost;
-      const allowDefault = options?.forceDefault ? !currentHost : !trapHost;
-      if (allowDefault && data.length > 0) {
-        const activeServerId = String(session?.server_id || serverId || '').trim();
-        const getServerId = (entry: BrokerServer) =>
-          String(
-            entry?.ServerID ?? entry?.server_id ?? entry?.id ?? entry?.ID ?? entry?.ServerName ?? '',
-          ).trim();
-        const getServerHost = (entry: BrokerServer) =>
-          String(
-            entry?.ServerHostFQDN ??
-              entry?.ServerName ??
-              entry?.server_host_fqdn ??
-              entry?.server_name ??
-              entry?.hostname ??
-              entry?.host ??
-              '',
-          ).trim();
-        const matchedServer = activeServerId ? data.find((entry) => getServerId(entry) === activeServerId) : null;
-        const fallbackServer = matchedServer || (data.length === 1 ? data[0] : null);
-        const hostValue = fallbackServer ? getServerHost(fallbackServer) : '';
-        if (hostValue) {
-          setTrapHost(hostValue);
-        }
+    const resp = await runTrapServerRequest(() => api.getBrokerServers(), {
+      getErrorMessage: (err) => getApiErrorMessage(err, 'Failed to load servers'),
+    });
+    if (!resp) {
+      setTrapManualOpen(true);
+      return;
+    }
+    type BrokerServer = Record<string, unknown>;
+    const data: BrokerServer[] = Array.isArray(resp.data?.data)
+      ? (resp.data.data as BrokerServer[])
+      : [];
+    setTrapServerList(data);
+    const currentHost = options?.currentHost ?? trapHost;
+    const allowDefault = options?.forceDefault ? !currentHost : !trapHost;
+    if (allowDefault && data.length > 0) {
+      const activeServerId = String(session?.server_id || serverId || '').trim();
+      const getServerId = (entry: BrokerServer) =>
+        String(
+          entry?.ServerID ?? entry?.server_id ?? entry?.id ?? entry?.ID ?? entry?.ServerName ?? '',
+        ).trim();
+      const getServerHost = (entry: BrokerServer) =>
+        String(
+          entry?.ServerHostFQDN ??
+            entry?.ServerName ??
+            entry?.server_host_fqdn ??
+            entry?.server_name ??
+            entry?.hostname ??
+            entry?.host ??
+            '',
+        ).trim();
+      const matchedServer = activeServerId ? data.find((entry) => getServerId(entry) === activeServerId) : null;
+      const fallbackServer = matchedServer || (data.length === 1 ? data[0] : null);
+      const hostValue = fallbackServer ? getServerHost(fallbackServer) : '';
+      if (hostValue) {
+        setTrapHost(hostValue);
       }
-      if (data.length === 0) {
-        setTrapManualOpen(true);
-      }
-    } catch (err: unknown) {
-      setTrapServerError(getApiErrorMessage(err, 'Failed to load servers'));
+    }
+    if (data.length === 0) {
       setTrapManualOpen(true);
     }
   };
@@ -3761,10 +3779,14 @@ export default function App() {
 
     let isMounted = true;
     const loadProfile = async () => {
-      setPcomSnmpProfileLoading(true);
-      setPcomSnmpProfileError(null);
       try {
-        const resp = await api.getSnmpAccessProfile(accessId);
+        const resp = await runPcomSnmpProfileRequest(() => api.getSnmpAccessProfile(accessId), {
+          captureError: false,
+          rethrow: true,
+        });
+        if (!resp) {
+          return;
+        }
         const entry = Array.isArray(resp.data?.data) ? resp.data.data[0] : null;
         if (!entry) {
           if (isMounted) {
@@ -3795,10 +3817,6 @@ export default function App() {
         if (isMounted) {
           setPcomSnmpProfile(null);
           setPcomSnmpProfileError(getApiErrorMessage(err, 'Failed to load SNMP access profile'));
-        }
-      } finally {
-        if (isMounted) {
-          setPcomSnmpProfileLoading(false);
         }
       }
     };
@@ -3852,24 +3870,26 @@ export default function App() {
     }
     setPcomPollError(null);
     setPcomPollOutput('');
-    setPcomPollLoading(true);
-    try {
-      const resp = await api.snmpWalk({
-        host: targetHost,
-        version: pcomActiveSnmpVersion,
-        community: pcomActiveCommunity,
-        oid: trimmedOid,
-        mibModule: mibSelectedDefinition?.module || undefined,
-      });
-      const stdout = String(resp.data?.stdout || '').trim();
-      const stderr = String(resp.data?.stderr || '').trim();
-      const combined = stdout && stderr ? `${stdout}\n\n${stderr}` : stdout || stderr;
-      setPcomPollOutput(combined || 'No output received.');
-    } catch (err: unknown) {
-      setPcomPollError(getApiErrorMessage(err, 'Failed to run snmpwalk'));
-    } finally {
-      setPcomPollLoading(false);
+    const resp = await runPcomPollRequest(
+      () =>
+        api.snmpWalk({
+          host: targetHost,
+          version: pcomActiveSnmpVersion,
+          community: pcomActiveCommunity,
+          oid: trimmedOid,
+          mibModule: mibSelectedDefinition?.module || undefined,
+        }),
+      {
+        getErrorMessage: (err) => getApiErrorMessage(err, 'Failed to run snmpwalk'),
+      },
+    );
+    if (!resp) {
+      return;
     }
+    const stdout = String(resp.data?.stdout || '').trim();
+    const stderr = String(resp.data?.stderr || '').trim();
+    const combined = stdout && stderr ? `${stdout}\n\n${stderr}` : stdout || stderr;
+    setPcomPollOutput(combined || 'No output received.');
   };
 
   const openTrapComposer = async (definition: unknown, sourcePath?: string | null) => {

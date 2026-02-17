@@ -6,6 +6,7 @@ type RunRequestOptions = {
   fallbackError?: string;
   getErrorMessage?: (error: unknown) => string;
   rethrow?: boolean;
+  captureError?: boolean;
 };
 
 export default function useRequest() {
@@ -21,10 +22,12 @@ export default function useRequest() {
       try {
         return await request();
       } catch (err: unknown) {
-        const message = options?.getErrorMessage
-          ? options.getErrorMessage(err)
-          : getApiErrorMessage(err, options?.fallbackError || 'Request failed');
-        setError(message);
+        if (options?.captureError !== false) {
+          const message = options?.getErrorMessage
+            ? options.getErrorMessage(err)
+            : getApiErrorMessage(err, options?.fallbackError || 'Request failed');
+          setError(message);
+        }
         if (options?.rethrow) {
           throw err;
         }
