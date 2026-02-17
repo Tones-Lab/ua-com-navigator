@@ -286,6 +286,12 @@ Validation:
   - Migrated `features/fcom/FcomFlowEditorModal.tsx` builder-link buttons (field reference, apply example, switch case add/remove) to shared `BuilderLink`.
   - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
   - Test Delta: Medium risk (flow editor switch-case actions and field-reference quick access); Add now; Coverage type: E2E (open flow editor, open field reference, apply example, add/remove switch cases).
+- 2026-02-16: Item 6 continued (App + FCOM shared pill/link migration).
+  - Migrated remaining `App.tsx` builder-link/pill surfaces to shared `BuilderLink`/`Pill` (staged review actions, override summary action link, advanced-flow JSON toggle, trap variable chips, and PCOM object chips).
+  - Migrated `features/fcom/TrapComposerModal.tsx` builder-link actions (failure controls and varbind add/remove) to `BuilderLink`.
+  - Migrated `features/fcom/FcomTrapVariablesModal.tsx` and `features/fcom/FcomObjectCard.tsx` pill chips to shared `Pill`.
+  - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
+  - Test Delta: Medium risk (review modal expand/collapse actions, trap varbind controls, object-card status chips); Add now; Coverage type: E2E (review modal section controls, trap composer failure/varbind actions, object-card chip visibility in override/match/unsaved scenarios).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.

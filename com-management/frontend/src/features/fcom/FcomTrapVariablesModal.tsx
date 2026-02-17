@@ -1,5 +1,6 @@
 import type { MutableRefObject, ReactNode } from 'react';
 import Modal from '../../components/Modal';
+import Pill from '../../components/Pill';
 
 type FcomTrapVariablesModalProps = {
   open: boolean;
@@ -75,8 +76,8 @@ export default function FcomTrapVariablesModal({
               >
                 <div className="trap-var-title">
                   <span className="trap-var-name">{renderValue(variable?.name)}</span>
-                  <span className={`pill${isSelected ? ' pill-selected' : ''}`}>{token}</span>
-                  {variable?.valueType && <span className="pill">{variable.valueType}</span>}
+                  <Pill className={isSelected ? 'pill-selected' : ''}>{token}</Pill>
+                  {variable?.valueType && <Pill>{variable.valueType}</Pill>}
                 </div>
                 <div className="trap-var-grid">
                   <div className="trap-var-col">

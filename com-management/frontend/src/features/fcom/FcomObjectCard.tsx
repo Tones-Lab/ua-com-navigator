@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import Pill from '../../components/Pill';
 import FcomEventAdditionalFields from './FcomEventAdditionalFields';
 
 type FcomObjectCardProps = {
@@ -540,10 +541,10 @@ export default function FcomObjectCard({
         <div className="object-header-main">
           <div className="object-title">
             <span className="object-name">{obj?.['@objectName'] || `Object ${idx + 1}`}</span>
-            {obj?.certification && <span className="pill">{obj.certification}</span>}
+            {obj?.certification && <Pill>{obj.certification}</Pill>}
             {overrideFlags.any && (
               <span className="override-summary" tabIndex={0} {...overrideTooltipHoverProps}>
-                <span className="pill override-pill">Override</span>
+                <Pill className="override-pill">Override</Pill>
                 {(overrideMeta || overrideFileInfo) && (
                   <div className="override-summary-card" role="tooltip">
                     <div className="override-summary-title">Override File</div>
@@ -590,12 +591,12 @@ export default function FcomObjectCard({
               </span>
             )}
             {overrideFlags.advancedFlow && (
-              <span className="pill" title="Advanced Flow configured for this object">
+              <Pill title="Advanced Flow configured for this object">
                 Advanced Flow
-              </span>
+              </Pill>
             )}
             {highlightObjectKeys.includes(objectKey) && (
-              <span className="pill match-pill">Match</span>
+              <Pill className="match-pill">Match</Pill>
             )}
           </div>
           {objectDescription && <div className="object-description">{objectDescription}</div>}
@@ -625,10 +626,10 @@ export default function FcomObjectCard({
           <div className="panel-title-group">
             <span className="object-panel-title">Event</span>
             {eventOverrideFields.length > 0 && (
-              <span className="pill override-pill">Overrides ({eventOverrideFields.length})</span>
+              <Pill className="override-pill">Overrides ({eventOverrideFields.length})</Pill>
             )}
             {unsavedCount > 0 && (
-              <span className="pill unsaved-pill">Unsaved ({unsavedCount})</span>
+              <Pill className="unsaved-pill">Unsaved ({unsavedCount})</Pill>
             )}
           </div>
           {hasEditPermission && !panelEditState[eventPanelKey] && (

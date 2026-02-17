@@ -1,4 +1,5 @@
 import type { RefObject } from 'react';
+import BuilderLink from '../../components/BuilderLink';
 import Modal from '../../components/Modal';
 
 type TrapComposerModalProps = {
@@ -142,17 +143,13 @@ export default function TrapComposerModal({
               <div className="trap-progress-failure-header">
                 <span>{bulkTrapFailures.length} failures</span>
                 {bulkTrapFailures.length > 3 && (
-                  <button
-                    type="button"
-                    className="builder-link"
-                    onClick={() => setBulkTrapShowAllFailures((prev) => !prev)}
-                  >
+                  <BuilderLink onClick={() => setBulkTrapShowAllFailures((prev) => !prev)}>
                     {bulkTrapShowAllFailures ? 'Hide failures' : 'View failures'}
-                  </button>
+                  </BuilderLink>
                 )}
-                <button type="button" className="builder-link" onClick={retryFailedTraps} disabled={trapSending}>
+                <BuilderLink onClick={retryFailedTraps} disabled={trapSending}>
                   Retry failed
-                </button>
+                </BuilderLink>
               </div>
               {bulkTrapShowAllFailures || bulkTrapFailures.length <= 3 ? (
                 <div className="trap-progress-failure-list">
@@ -300,22 +297,18 @@ export default function TrapComposerModal({
                     )
                   }
                 />
-                <button
-                  type="button"
-                  className="builder-link"
+                <BuilderLink
                   onClick={() => setTrapVarbinds((prev) => prev.filter((_item, idx) => idx !== index))}
                 >
                   Remove
-                </button>
+                </BuilderLink>
               </div>
             ))}
-            <button
-              type="button"
-              className="builder-link"
+            <BuilderLink
               onClick={() => setTrapVarbinds((prev) => [...prev, { oid: '', type: 's', value: '' }])}
             >
               Add varbind
-            </button>
+            </BuilderLink>
           </div>
         </div>
       )}

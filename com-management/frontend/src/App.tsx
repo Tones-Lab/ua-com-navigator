@@ -27,6 +27,8 @@ import type {
 } from './features/fcom/builder/types';
 import ComFilePreview from './components/ComFilePreview';
 import ConfirmModal from './components/ConfirmModal';
+import BuilderLink from './components/BuilderLink';
+import Pill from './components/Pill';
 import ActionRow from './components/ActionRow';
 import useCompactPanel from './components/useCompactPanel';
 import Modal from './components/Modal';
@@ -5287,10 +5289,10 @@ export default function App() {
     };
     return (
       <span className="field-badges">
-        {evalFlag && <span className="pill status-pill status-pill-eval">Eval</span>}
+        {evalFlag && <Pill className="status-pill status-pill-eval">Eval</Pill>}
         {processorFlag && (
           <span className="override-summary" tabIndex={0} {...overrideHoverProps}>
-            <span className="pill status-pill status-pill-processor">Processor</span>
+            <Pill className="status-pill status-pill-processor">Processor</Pill>
             {processorSummary.length > 0 && (
               <div className="override-summary-card" role="tooltip">
                 <div className="override-summary-title">Processor Summary</div>
@@ -5302,13 +5304,11 @@ export default function App() {
                   ))}
                 </ul>
                 {objectName && hasEditPermission && (
-                  <button
-                    type="button"
-                    className="builder-link"
+                  <BuilderLink
                     onClick={() => openAdvancedFlowModal('object', objectName, `$.event.${field}`)}
                   >
                     View in Advanced Flow
-                  </button>
+                  </BuilderLink>
                 )}
               </div>
             )}
@@ -7013,9 +7013,8 @@ export default function App() {
           )}
           {context === 'builder' && field.key === 'source' && builderTarget && (
             <div className="builder-inline-actions">
-              <button
-                type="button"
-                className="builder-link builder-var-button"
+              <BuilderLink
+                className="builder-var-button"
                 title={`Insert variable (${builderTrapVars.length})`}
                 onClick={() => {
                   openVarInsertModal(
@@ -7028,7 +7027,7 @@ export default function App() {
                 disabled={builderTrapVars.length === 0}
               >
                 Variables ({builderTrapVars.length})
-              </button>
+              </BuilderLink>
             </div>
           )}
           {errors.length > 0 && (
@@ -9092,22 +9091,18 @@ export default function App() {
           ))}
         </div>
         <div className="builder-group-actions">
-          <button
-            type="button"
-            className="builder-link"
+          <BuilderLink
             onClick={() => addConditionChild(rowId, node.id, 'condition')}
             disabled={!isBuilderTargetReady}
           >
             Add condition
-          </button>
-          <button
-            type="button"
-            className="builder-link"
+          </BuilderLink>
+          <BuilderLink
             onClick={() => addConditionChild(rowId, node.id, 'group')}
             disabled={!isBuilderTargetReady}
           >
             Add group
-          </button>
+          </BuilderLink>
         </div>
       </div>
     );
@@ -9636,8 +9631,8 @@ export default function App() {
               <div className="trap-var" key={variable?.name || variable?.oid || index}>
                 <div className="trap-var-title">
                   <span className="trap-var-name">{renderValue(variable?.name)}</span>
-                  <span className="pill">{token}</span>
-                  {variable?.valueType && <span className="pill">{variable.valueType}</span>}
+                  <Pill>{token}</Pill>
+                  {variable?.valueType && <Pill>{variable.valueType}</Pill>}
                 </div>
                 <div className="trap-var-grid">
                   <div className="trap-var-col">
@@ -10046,13 +10041,9 @@ export default function App() {
     >
       <div className="flow-preview-title-row">
         <div className="flow-preview-title">JSON Preview</div>
-        <button
-          type="button"
-          className="builder-link"
-          onClick={() => setShowAdvancedFlowJsonPreview((prev) => !prev)}
-        >
+        <BuilderLink onClick={() => setShowAdvancedFlowJsonPreview((prev) => !prev)}>
           {showAdvancedFlowJsonPreview ? 'Hide JSON' : 'Show JSON'}
-        </button>
+        </BuilderLink>
       </div>
       {showAdvancedFlowJsonPreview &&
         (advancedFlowFocusOnly && focusedFlowMatch
@@ -10596,9 +10587,7 @@ export default function App() {
                                   <div className="staged-review-header">
                                     <h3>Review staged changes</h3>
                                     <div className="staged-review-actions">
-                                      <button
-                                        type="button"
-                                        className="builder-link"
+                                      <BuilderLink
                                         onClick={() => {
                                           const shouldExpand =
                                             Object.values(expandedOriginals).some(Boolean) ===
@@ -10621,7 +10610,7 @@ export default function App() {
                                         {Object.values(expandedOriginals).some(Boolean)
                                           ? 'Collapse all originals'
                                           : 'Expand all originals'}
-                                      </button>
+                                      </BuilderLink>
                                     </div>
                                   </div>
                                   {stagedDiff.totalChanges === 0 ? (
@@ -10651,9 +10640,7 @@ export default function App() {
                                                       {processorCount === 1 ? '' : 's'}
                                                     </span>
                                                   </div>
-                                                  <button
-                                                    type="button"
-                                                    className="builder-link"
+                                                  <BuilderLink
                                                     onClick={() =>
                                                       setStagedSectionOpen((prev) => ({
                                                         ...prev,
@@ -10662,7 +10649,7 @@ export default function App() {
                                                     }
                                                   >
                                                     {isOpen ? 'Collapse' : 'Expand'}
-                                                  </button>
+                                                  </BuilderLink>
                                                 </div>
                                                 {!isOpen && (
                                                   <div className="staged-section-summary">
@@ -10674,11 +10661,11 @@ export default function App() {
                                                             key={`${sectionKey}-${change.target}-${change.action}`}
                                                             className="staged-summary-item"
                                                           >
-                                                            <span
-                                                              className={`pill change-pill change-pill-${change.action}`}
+                                                            <Pill
+                                                              className={`change-pill change-pill-${change.action}`}
                                                             >
                                                               {getFieldChangeLabel(change)}
-                                                            </span>
+                                                            </Pill>
                                                             <span className="staged-summary-label">
                                                               {change.target}
                                                             </span>
@@ -10691,11 +10678,11 @@ export default function App() {
                                                             key={`${sectionKey}-proc-${idx}-${change.action}`}
                                                             className="staged-summary-item"
                                                           >
-                                                            <span
-                                                              className={`pill change-pill change-pill-${change.action}`}
+                                                            <Pill
+                                                              className={`change-pill change-pill-${change.action}`}
                                                             >
                                                               {change.action}
-                                                            </span>
+                                                            </Pill>
                                                             <span className="staged-summary-label">
                                                               {getProcessorType(change.processor) ||
                                                                 'processor'}
@@ -10746,11 +10733,11 @@ export default function App() {
                                                                 <span className="staged-change-label">
                                                                   {change.target}
                                                                 </span>
-                                                                <span
-                                                                  className={`pill change-pill change-pill-${change.action}`}
+                                                                <Pill
+                                                                  className={`change-pill change-pill-${change.action}`}
                                                                 >
                                                                   {getFieldChangeLabel(change)}
-                                                                </span>
+                                                                </Pill>
                                                               </div>
                                                               <div className="staged-change-body">
                                                                 {change.after !== undefined && (
@@ -10832,11 +10819,11 @@ export default function App() {
                                                                     change.processor,
                                                                   ) || 'processor'}
                                                                 </span>
-                                                                <span
-                                                                  className={`pill change-pill change-pill-${change.action}`}
+                                                                <Pill
+                                                                  className={`change-pill change-pill-${change.action}`}
                                                                 >
                                                                   {change.action}
-                                                                </span>
+                                                                </Pill>
                                                               </div>
                                                               <div className="staged-change-body">
                                                                 <div className="staged-change-column">
@@ -11424,15 +11411,15 @@ export default function App() {
                                                 </div>
                                                 <div className="pcom-object-row-meta">
                                                   {entry.obj?.class && (
-                                                    <span className="pill">{entry.obj.class}</span>
+                                                    <Pill>{entry.obj.class}</Pill>
                                                   )}
                                                   {entry.obj?.subClass && (
-                                                    <span className="pill">{entry.obj.subClass}</span>
+                                                    <Pill>{entry.obj.subClass}</Pill>
                                                   )}
                                                   {entry.obj?.certification && (
-                                                    <span className="pill">
+                                                    <Pill>
                                                       {entry.obj.certification}
-                                                    </span>
+                                                    </Pill>
                                                   )}
                                                 </div>
                                               </button>
