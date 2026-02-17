@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import api from '../services/api';
 import useRequest from './useRequest';
+import useSortableTable from './useSortableTable';
 import { getApiErrorMessage } from '../utils/errorUtils';
 
 type AppTab = 'overview' | 'fcom' | 'pcom' | 'mib' | 'legacy';
@@ -34,10 +35,10 @@ export default function useOverviewState({ isAuthenticated, activeApp }: UseOver
 
   const [overviewTopN, setOverviewTopN] = useState(10);
   const [overviewVendorFilter, setOverviewVendorFilter] = useState('');
-  const [overviewVendorSort, setOverviewVendorSort] = useState<{
-    key: OverviewSortKey;
-    direction: 'asc' | 'desc';
-  }>({ key: 'files', direction: 'desc' });
+  const {
+    sort: overviewVendorSort,
+    toggleSort: toggleOverviewSort,
+  } = useSortableTable<OverviewSortKey>({ key: 'files', direction: 'desc' });
 
   const stopOverviewStatusPolling = () => {
     if (overviewStatusPollRef.current !== null) {
@@ -102,14 +103,6 @@ export default function useOverviewState({ isAuthenticated, activeApp }: UseOver
         stopOverviewStatusPolling();
       }
     }
-  };
-
-  const toggleOverviewSort = (key: OverviewSortKey) => {
-    setOverviewVendorSort((prev) =>
-      prev.key === key
-        ? { key, direction: prev.direction === 'asc' ? 'desc' : 'asc' }
-        : { key, direction: 'desc' },
-    );
   };
 
   const overviewProtocols = useMemo(() => {

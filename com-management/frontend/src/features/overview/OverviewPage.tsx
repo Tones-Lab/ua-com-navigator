@@ -1,4 +1,5 @@
 import React from 'react';
+import TableSortButton from '../../components/TableSortButton';
 
 type OverviewPageProps = {
   overviewStatus: any;
@@ -15,7 +16,6 @@ type OverviewPageProps = {
   formatOverviewNumber: (value: number) => string;
   handleOverviewFolderClick: (protocol: string, vendor?: string) => void;
   toggleOverviewSort: (key: any) => void;
-  getSortIndicator: (activeKey: any, key: any, direction: any) => React.ReactNode;
   overviewVendorSort: { key: string; direction: 'asc' | 'desc' };
 };
 
@@ -34,7 +34,6 @@ export default function OverviewPage({
   formatOverviewNumber,
   handleOverviewFolderClick,
   toggleOverviewSort,
-  getSortIndicator,
   overviewVendorSort,
 }: OverviewPageProps) {
   return (
@@ -172,116 +171,76 @@ export default function OverviewPage({
                           <thead>
                             <tr>
                               <th>
-                                <button
-                                  type="button"
-                                  className="table-sort-button"
-                                  onClick={() => toggleOverviewSort('vendor')}
-                                >
-                                  Vendor{' '}
-                                  {getSortIndicator(
-                                    overviewVendorSort.key,
-                                    'vendor',
-                                    overviewVendorSort.direction,
-                                  )}
-                                </button>
+                                <TableSortButton
+                                  label="Vendor"
+                                  sortKey="vendor"
+                                  activeKey={overviewVendorSort.key}
+                                  direction={overviewVendorSort.direction}
+                                  onToggle={toggleOverviewSort}
+                                />
                               </th>
                               <th>
-                                <button
-                                  type="button"
-                                  className="table-sort-button"
-                                  onClick={() => toggleOverviewSort('files')}
-                                >
-                                  Files{' '}
-                                  {getSortIndicator(
-                                    overviewVendorSort.key,
-                                    'files',
-                                    overviewVendorSort.direction,
-                                  )}
-                                </button>
+                                <TableSortButton
+                                  label="Files"
+                                  sortKey="files"
+                                  activeKey={overviewVendorSort.key}
+                                  direction={overviewVendorSort.direction}
+                                  onToggle={toggleOverviewSort}
+                                />
                               </th>
                               <th>
-                                <button
-                                  type="button"
-                                  className="table-sort-button"
-                                  onClick={() => toggleOverviewSort('overrides')}
-                                >
-                                  Overrides{' '}
-                                  {getSortIndicator(
-                                    overviewVendorSort.key,
-                                    'overrides',
-                                    overviewVendorSort.direction,
-                                  )}
-                                </button>
+                                <TableSortButton
+                                  label="Overrides"
+                                  sortKey="overrides"
+                                  activeKey={overviewVendorSort.key}
+                                  direction={overviewVendorSort.direction}
+                                  onToggle={toggleOverviewSort}
+                                />
                               </th>
                               <th>
-                                <button
-                                  type="button"
-                                  className="table-sort-button"
-                                  onClick={() => toggleOverviewSort('objects')}
-                                >
-                                  Objects{' '}
-                                  {getSortIndicator(
-                                    overviewVendorSort.key,
-                                    'objects',
-                                    overviewVendorSort.direction,
-                                  )}
-                                </button>
+                                <TableSortButton
+                                  label="Objects"
+                                  sortKey="objects"
+                                  activeKey={overviewVendorSort.key}
+                                  direction={overviewVendorSort.direction}
+                                  onToggle={toggleOverviewSort}
+                                />
                               </th>
                               <th>
-                                <button
-                                  type="button"
-                                  className="table-sort-button"
-                                  onClick={() => toggleOverviewSort('variables')}
-                                >
-                                  Variables{' '}
-                                  {getSortIndicator(
-                                    overviewVendorSort.key,
-                                    'variables',
-                                    overviewVendorSort.direction,
-                                  )}
-                                </button>
+                                <TableSortButton
+                                  label="Variables"
+                                  sortKey="variables"
+                                  activeKey={overviewVendorSort.key}
+                                  direction={overviewVendorSort.direction}
+                                  onToggle={toggleOverviewSort}
+                                />
                               </th>
                               <th>
-                                <button
-                                  type="button"
-                                  className="table-sort-button"
-                                  onClick={() => toggleOverviewSort('evalObjects')}
-                                >
-                                  Eval{' '}
-                                  {getSortIndicator(
-                                    overviewVendorSort.key,
-                                    'evalObjects',
-                                    overviewVendorSort.direction,
-                                  )}
-                                </button>
+                                <TableSortButton
+                                  label="Eval"
+                                  sortKey="evalObjects"
+                                  activeKey={overviewVendorSort.key}
+                                  direction={overviewVendorSort.direction}
+                                  onToggle={toggleOverviewSort}
+                                />
                               </th>
                               <th>
-                                <button
-                                  type="button"
-                                  className="table-sort-button"
-                                  onClick={() => toggleOverviewSort('processorObjects')}
-                                >
-                                  Processor{' '}
-                                  {getSortIndicator(
-                                    overviewVendorSort.key,
-                                    'processorObjects',
-                                    overviewVendorSort.direction,
-                                  )}
-                                </button>
+                                <TableSortButton
+                                  label="Processor"
+                                  sortKey="processorObjects"
+                                  activeKey={overviewVendorSort.key}
+                                  direction={overviewVendorSort.direction}
+                                  onToggle={toggleOverviewSort}
+                                />
                               </th>
                               <th>
-                                <button
-                                  type="button"
-                                  className="table-sort-button"
-                                  onClick={() => toggleOverviewSort('literalObjects')}
-                                >
-                                  Literal{' '}
-                                  {getSortIndicator(
-                                    overviewVendorSort.key,
-                                    'literalObjects',
-                                    overviewVendorSort.direction,
-                                  )}
-                                </button>
+                                <TableSortButton
+                                  label="Literal"
+                                  sortKey="literalObjects"
+                                  activeKey={overviewVendorSort.key}
+                                  direction={overviewVendorSort.direction}
+                                  onToggle={toggleOverviewSort}
+                                />
                               </th>
                             </tr>
                           </thead>

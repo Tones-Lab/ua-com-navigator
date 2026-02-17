@@ -43,6 +43,7 @@ import useBrowseDeepLink from './hooks/useBrowseDeepLink';
 import useOverviewState from './hooks/useOverviewState';
 import useRequest from './hooks/useRequest';
 import useSearchState from './hooks/useSearchState';
+import useSortableTable from './hooks/useSortableTable';
 import useModalStack from './hooks/useModalStack';
 import useStagedReviewUiState from './hooks/useStagedReviewUiState';
 import {
@@ -613,13 +614,6 @@ export default function App() {
     return Object.keys(content).length > 0;
   };
 
-  const getSortIndicator = (activeKey: string, key: string, direction: 'asc' | 'desc') => {
-    if (activeKey !== key) {
-      return null;
-    }
-    return direction === 'asc' ? '↑' : '↓';
-  };
-
   const [browseError, setBrowseError] = useState<string | null>(null);
   const [browseData, setBrowseData] = useState<unknown>(null);
   const [browseNode, setBrowseNode] = useState<string | null>(null);
@@ -642,10 +636,13 @@ export default function App() {
   const [folderOverview, setFolderOverview] = useState<unknown>(null);
   const [folderLoading, setFolderLoading] = useState(false);
   const [folderTableFilter, setFolderTableFilter] = useState('');
-  const [folderTableSort, setFolderTableSort] = useState<{
-    key: 'file' | 'objects' | 'schemaErrors' | 'unknownFields';
-    direction: 'asc' | 'desc';
-  }>({ key: 'schemaErrors', direction: 'desc' });
+  const {
+    sort: folderTableSort,
+    toggleSort: toggleFolderSort,
+  } = useSortableTable<'file' | 'objects' | 'schemaErrors' | 'unknownFields'>({
+    key: 'schemaErrors',
+    direction: 'desc',
+  });
   const folderTableRows = useMemo(() => {
     const toRecord = (value: unknown): Record<string, unknown> | null =>
       typeof value === 'object' && value !== null && !Array.isArray(value)
@@ -680,13 +677,6 @@ export default function App() {
     return sortedRows;
   }, [folderOverview, folderTableFilter, folderTableSort]);
 
-  const toggleFolderSort = (key: 'file' | 'objects' | 'schemaErrors' | 'unknownFields') => {
-    setFolderTableSort((prev) =>
-      prev.key === key
-        ? { key, direction: prev.direction === 'asc' ? 'desc' : 'asc' }
-        : { key, direction: 'desc' },
-    );
-  };
   const [breadcrumbs, setBreadcrumbs] = useState<Array<{ label: string; node: string | null }>>([
     { label: '/', node: null },
   ]);
@@ -10422,7 +10412,6 @@ export default function App() {
                   formatOverviewNumber={formatOverviewNumber}
                   handleOverviewFolderClick={handleOverviewFolderClick}
                   toggleOverviewSort={toggleOverviewSort}
-                  getSortIndicator={getSortIndicator}
                   overviewVendorSort={overviewVendorSort}
                 />
               ) : activeApp === 'fcom' ? (
@@ -10443,7 +10432,6 @@ export default function App() {
                             folderTableRows={folderTableRows}
                             formatOverviewNumber={formatOverviewNumber}
                             formatDisplayPath={formatDisplayPath}
-                            getSortIndicator={getSortIndicator}
                             hasEditPermission={hasEditPermission}
                             showTestControls={isTrapFolderContext}
                             onTestVendor={handleTestVendorFiles}

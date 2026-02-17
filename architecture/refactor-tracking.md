@@ -94,7 +94,7 @@ Validation:
 - Verify pills render correctly across object cards and summaries.
 
 ### 7) Table sorting + filtering abstraction
-Status: Not Started
+Status: Done
 Scope: Introduce `useSortableTable` and shared sort header component; migrate folder overview + overview page.
 Validation:
 - Sort columns in folder overview and overview page; confirm order + indicator.
@@ -298,6 +298,12 @@ Validation:
   - Migrated `features/fcom/FcomFileHeader.tsx` and `features/pcom/PcomWorkspace.tsx` remaining plain pill chips to shared `Pill`.
   - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
   - Test Delta: Medium risk (builder entry links in event rows, advanced flow focus controls, and status chip rendering consistency); Add now; Coverage type: E2E (open builder from primary/secondary/additional rows, advanced flow focus controls + convert CTA, global/file and PCOM chip rendering).
+- 2026-02-16: Item 7 completed (table sorting abstraction + shared sort header).
+  - Added `hooks/useSortableTable.ts` to centralize sort state, direction toggling, and sort indicator behavior.
+  - Added `components/TableSortButton.tsx` and migrated table headers in `features/overview/OverviewPage.tsx` and `features/fcom/FcomFolderOverview.tsx`.
+  - Updated `hooks/useOverviewState.ts` and `App.tsx` to use `useSortableTable` instead of duplicated inline sort toggles.
+  - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
+  - Test Delta: Medium risk (column sort direction/state propagation in overview and folder tables); Add now; Coverage type: E2E (toggle each sortable column in both tables and verify order + indicator, confirm filter inputs still narrow rows).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.

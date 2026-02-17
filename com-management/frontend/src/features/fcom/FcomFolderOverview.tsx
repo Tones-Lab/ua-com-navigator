@@ -1,6 +1,6 @@
-import type { ReactNode } from 'react';
 import ActionRow from '../../components/ActionRow';
 import PanelSection from '../../components/PanelSection';
+import TableSortButton from '../../components/TableSortButton';
 
 type FcomFolderOverviewProps = {
   selectedFolder: any | null;
@@ -16,7 +16,6 @@ type FcomFolderOverviewProps = {
   folderTableRows: any[];
   formatOverviewNumber: (value: number) => string;
   formatDisplayPath: (pathId?: string | null) => string;
-  getSortIndicator: (activeKey: string, key: string, direction: 'asc' | 'desc') => ReactNode;
   hasEditPermission: boolean;
   showTestControls: boolean;
   onTestVendor: () => void;
@@ -36,7 +35,6 @@ export default function FcomFolderOverview({
   folderTableRows,
   formatOverviewNumber,
   formatDisplayPath,
-  getSortIndicator,
   hasEditPermission,
   showTestControls,
   onTestVendor,
@@ -120,56 +118,40 @@ export default function FcomFolderOverview({
                 <thead>
                   <tr>
                     <th>
-                      <button
-                        type="button"
-                        className="table-sort-button"
-                        onClick={() => toggleFolderSort('file')}
-                      >
-                        File{' '}
-                        {getSortIndicator(folderTableSort.key, 'file', folderTableSort.direction)}
-                      </button>
+                      <TableSortButton
+                        label="File"
+                        sortKey="file"
+                        activeKey={folderTableSort.key}
+                        direction={folderTableSort.direction}
+                        onToggle={toggleFolderSort}
+                      />
                     </th>
                     <th>
-                      <button
-                        type="button"
-                        className="table-sort-button"
-                        onClick={() => toggleFolderSort('objects')}
-                      >
-                        Objects{' '}
-                        {getSortIndicator(
-                          folderTableSort.key,
-                          'objects',
-                          folderTableSort.direction,
-                        )}
-                      </button>
+                      <TableSortButton
+                        label="Objects"
+                        sortKey="objects"
+                        activeKey={folderTableSort.key}
+                        direction={folderTableSort.direction}
+                        onToggle={toggleFolderSort}
+                      />
                     </th>
                     <th>
-                      <button
-                        type="button"
-                        className="table-sort-button"
-                        onClick={() => toggleFolderSort('schemaErrors')}
-                      >
-                        Schema{' '}
-                        {getSortIndicator(
-                          folderTableSort.key,
-                          'schemaErrors',
-                          folderTableSort.direction,
-                        )}
-                      </button>
+                      <TableSortButton
+                        label="Schema"
+                        sortKey="schemaErrors"
+                        activeKey={folderTableSort.key}
+                        direction={folderTableSort.direction}
+                        onToggle={toggleFolderSort}
+                      />
                     </th>
                     <th>
-                      <button
-                        type="button"
-                        className="table-sort-button"
-                        onClick={() => toggleFolderSort('unknownFields')}
-                      >
-                        Unknown{' '}
-                        {getSortIndicator(
-                          folderTableSort.key,
-                          'unknownFields',
-                          folderTableSort.direction,
-                        )}
-                      </button>
+                      <TableSortButton
+                        label="Unknown"
+                        sortKey="unknownFields"
+                        activeKey={folderTableSort.key}
+                        direction={folderTableSort.direction}
+                        onToggle={toggleFolderSort}
+                      />
                     </th>
                     {showTestControls && <th>Test</th>}
                   </tr>
