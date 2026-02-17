@@ -35,6 +35,7 @@ import useFavorites from './hooks/useFavorites';
 import useBrowseDeepLink from './hooks/useBrowseDeepLink';
 import useBuilderSidebar from './hooks/useBuilderSidebar';
 import useComBrowserPanelProps from './hooks/useComBrowserPanelProps';
+import useFcomFilePreviewProps from './hooks/useFcomFilePreviewProps';
 import useOverviewState from './hooks/useOverviewState';
 import useRequest from './hooks/useRequest';
 import useSearchState from './hooks/useSearchState';
@@ -10116,6 +10117,96 @@ export default function App() {
     handleOpenFile,
   });
 
+  const fcomFilePreviewProps = useFcomFilePreviewProps({
+    selectedFile,
+    fileLoading,
+    fileLoadStage: fileLoadStageDisplay,
+    viewMode,
+    isAnyPanelEditing,
+    friendlyViewRef,
+    friendlyMainRef,
+    handleFileScroll,
+    searchHighlightActive,
+    highlightObjectKeys,
+    currentMatchIndex,
+    matchObjectOptions,
+    handleJumpToMatch,
+    handlePrevMatch,
+    handleNextMatch,
+    overrideObjectKeys,
+    overrideMatchIndex,
+    overrideObjectOptions,
+    handlePrevOverride,
+    handleNextOverride,
+    handleJumpToOverride,
+    matchPingKey,
+    getFriendlyObjects,
+    fileData,
+    getOverrideFlags,
+    getOverrideTargets,
+    getProcessorTargets,
+    getProcessorFieldSummary,
+    getOverrideValueMap,
+    getOverrideVersionInfo,
+    canConvertOverrideToV3,
+    convertOverrideToV3,
+    hasPendingOverrideConversion,
+    openAdvancedFlowForObject,
+    getOverrideFileInfoForObject,
+    getOverrideMetaForObject,
+    getOverrideRuleLinkForObject,
+    getObjectKey,
+    registerObjectRowRef,
+    getEventOverrideFields,
+    panelEditState,
+    getPanelDirtyFields,
+    getBaseEventFields,
+    hasEditPermission,
+    showTestControls: isTrapFileContext,
+    isTrapFileContext,
+    openTrapComposerFromTest,
+    getObjectDescription,
+    isTestableObject,
+    startEventEdit,
+    openRemoveAllOverridesModal,
+    openAddFieldModal,
+    builderTarget,
+    saveEventEdit,
+    requestCancelEventEdit,
+    isFieldHighlighted,
+    renderFieldBadges,
+    overrideTooltipHoverProps,
+    openRemoveOverrideModal,
+    renderOverrideSummaryCard,
+    isFieldDirty,
+    isFieldPendingRemoval,
+    isFieldNew,
+    getStagedDirtyFields,
+    isFieldStagedDirty,
+    isFieldStagedRemoved,
+    openBuilderForField,
+    isFieldLockedByBuilder,
+    getEffectiveEventValue,
+    getEditableValue,
+    panelDrafts,
+    handleEventInputChange,
+    renderSummary,
+    renderValue,
+    getAdditionalEventFields,
+    getEventFieldDescription,
+    formatEventFieldLabel,
+    getBaseEventDisplay,
+    renderTrapVariables,
+    builderSidebar,
+    rawMatchPositions,
+    rawMatchIndex,
+    handlePrevRawMatch,
+    handleNextRawMatch,
+    rawPreviewText,
+    highlightQuery,
+    renderRawHighlightedText,
+  });
+
   return (
     <ErrorBoundary>
       <div className="app">
@@ -10226,95 +10317,7 @@ export default function App() {
                           highlightFileName={highlightFileName}
                           fileNamePingActive={fileNamePingActive}
                         />
-                        <FcomFilePreview
-                          selectedFile={selectedFile}
-                          fileLoading={fileLoading}
-                          fileLoadStage={fileLoadStageDisplay}
-                          viewMode={viewMode}
-                          isAnyPanelEditing={isAnyPanelEditing}
-                          friendlyViewRef={friendlyViewRef}
-                          friendlyMainRef={friendlyMainRef}
-                          handleFileScroll={handleFileScroll}
-                          searchHighlightActive={searchHighlightActive}
-                          highlightObjectKeys={highlightObjectKeys}
-                          currentMatchIndex={currentMatchIndex}
-                          matchObjectOptions={matchObjectOptions}
-                          handleJumpToMatch={handleJumpToMatch}
-                          handlePrevMatch={handlePrevMatch}
-                          handleNextMatch={handleNextMatch}
-                          overrideObjectKeys={overrideObjectKeys}
-                          overrideMatchIndex={overrideMatchIndex}
-                          overrideObjectOptions={overrideObjectOptions}
-                          handlePrevOverride={handlePrevOverride}
-                          handleNextOverride={handleNextOverride}
-                          handleJumpToOverride={handleJumpToOverride}
-                          matchPingKey={matchPingKey}
-                          getFriendlyObjects={getFriendlyObjects}
-                          fileData={fileData}
-                          getOverrideFlags={getOverrideFlags}
-                          getOverrideTargets={getOverrideTargets}
-                          getProcessorTargets={getProcessorTargets}
-                          getProcessorFieldSummary={getProcessorFieldSummary}
-                          getOverrideValueMap={getOverrideValueMap}
-                          getOverrideVersionInfo={getOverrideVersionInfo}
-                          canConvertOverrideToV3={canConvertOverrideToV3}
-                          convertOverrideToV3={convertOverrideToV3}
-                          hasPendingOverrideConversion={hasPendingOverrideConversion}
-                          openAdvancedFlowForObject={openAdvancedFlowForObject}
-                          getOverrideFileInfoForObject={getOverrideFileInfoForObject}
-                          getOverrideMetaForObject={getOverrideMetaForObject}
-                          getOverrideRuleLinkForObject={getOverrideRuleLinkForObject}
-                          getObjectKey={getObjectKey}
-                          registerObjectRowRef={registerObjectRowRef}
-                          getEventOverrideFields={getEventOverrideFields}
-                          panelEditState={panelEditState}
-                          getPanelDirtyFields={getPanelDirtyFields}
-                          getBaseEventFields={getBaseEventFields}
-                          hasEditPermission={hasEditPermission}
-                          showTestControls={isTrapFileContext}
-                          isTrapFileContext={isTrapFileContext}
-                          openTrapComposerFromTest={openTrapComposerFromTest}
-                          getObjectDescription={getObjectDescription}
-                          isTestableObject={isTestableObject}
-                          startEventEdit={startEventEdit}
-                          openRemoveAllOverridesModal={openRemoveAllOverridesModal}
-                          openAddFieldModal={openAddFieldModal}
-                          builderTarget={builderTarget}
-                          saveEventEdit={saveEventEdit}
-                          requestCancelEventEdit={requestCancelEventEdit}
-                          isFieldHighlighted={isFieldHighlighted}
-                          renderFieldBadges={renderFieldBadges}
-                          overrideTooltipHoverProps={overrideTooltipHoverProps}
-                          openRemoveOverrideModal={openRemoveOverrideModal}
-                          renderOverrideSummaryCard={renderOverrideSummaryCard}
-                          isFieldDirty={isFieldDirty}
-                          isFieldPendingRemoval={isFieldPendingRemoval}
-                          isFieldNew={isFieldNew}
-                          getStagedDirtyFields={getStagedDirtyFields}
-                          isFieldStagedDirty={isFieldStagedDirty}
-                          isFieldStagedRemoved={isFieldStagedRemoved}
-                          openBuilderForField={openBuilderForField}
-                          isFieldLockedByBuilder={isFieldLockedByBuilder}
-                          getEffectiveEventValue={getEffectiveEventValue}
-                          getEditableValue={getEditableValue}
-                          panelDrafts={panelDrafts}
-                          handleEventInputChange={handleEventInputChange}
-                          renderSummary={renderSummary}
-                          renderValue={renderValue}
-                          getAdditionalEventFields={getAdditionalEventFields}
-                          getEventFieldDescription={getEventFieldDescription}
-                          formatEventFieldLabel={formatEventFieldLabel}
-                          getBaseEventDisplay={getBaseEventDisplay}
-                          renderTrapVariables={renderTrapVariables}
-                          builderSidebar={builderSidebar}
-                          rawMatchPositions={rawMatchPositions}
-                          rawMatchIndex={rawMatchIndex}
-                          handlePrevRawMatch={handlePrevRawMatch}
-                          handleNextRawMatch={handleNextRawMatch}
-                          rawPreviewText={rawPreviewText}
-                          highlightQuery={highlightQuery}
-                          renderRawHighlightedText={renderRawHighlightedText}
-                        />
+                        <FcomFilePreview {...fcomFilePreviewProps} />
                         <FcomReviewCommitModal
                           open={showReviewModal}
                           reviewStep={reviewStep}
