@@ -1,3 +1,5 @@
+import InlineMessage from '../../components/InlineMessage';
+
 type MibActionsPanelProps = {
   hasEditPermission: boolean;
   mib2FcomLoading: boolean;
@@ -43,7 +45,7 @@ export default function MibActionsPanel({
           Use parent MIBs
         </label>
       </div>
-      {mib2FcomError && <div className="error">{mib2FcomError}</div>}
+      {mib2FcomError && <InlineMessage tone="error">{mib2FcomError}</InlineMessage>}
       {mibOutput && (
         <div className="panel-section">
           <div className="panel-section-title">

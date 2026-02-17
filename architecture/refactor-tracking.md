@@ -108,7 +108,7 @@ Validation:
 - Refresh status and confirm cards stay visible.
 
 ### 9) Finish empty/error state migrations
-Status: In Progress
+Status: Done
 Scope: Replace remaining raw empty/error blocks with shared components.
 Validation:
 - Check overview page empty/error states.
@@ -319,6 +319,10 @@ Validation:
   - Migrated `features/microservices/MicroserviceStatusModal.tsx` redeploy error block to shared `InlineMessage`.
   - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
   - Test Delta: Low risk (presentation-only swap in modal states); Add now; Coverage type: UI sanity (trap composer error/empty states, trap variable empty state, field picker empty state, microservice redeploy error visibility).
+- 2026-02-16: Item 9 completed (legacy/MIB/FCOM residual empty-error migration slice).
+  - Migrated remaining feature-level raw empty/error blocks in `features/legacy/LegacyWorkspace.tsx`, `features/mib/MibWorkspace.tsx`, `MibActionsPanel.tsx`, `MibObjectsPanel.tsx`, and `features/fcom/FcomFileHeader.tsx` to shared `EmptyState` / `InlineMessage`.
+  - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
+  - Test Delta: Low risk (presentation-only swap for residual status/error placeholders); Add now; Coverage type: UI sanity (legacy upload/report/status placeholders, MIB browse/object/action error states, FCOM file-header error banners).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.

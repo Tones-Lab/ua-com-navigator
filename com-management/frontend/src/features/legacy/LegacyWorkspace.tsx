@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
+import EmptyState from '../../components/EmptyState';
+import InlineMessage from '../../components/InlineMessage';
 import PanelHeader from '../../components/PanelHeader';
 import useRequest from '../../hooks/useRequest';
 import api from '../../services/api';
@@ -524,12 +526,12 @@ export default function LegacyWorkspace() {
                 Refresh
               </button>
             </div>
-            {uploadError && <div className="error">{uploadError}</div>}
-            {uploadsError && <div className="error">{uploadsError}</div>}
+            {uploadError && <InlineMessage tone="error">{uploadError}</InlineMessage>}
+            {uploadsError && <InlineMessage tone="error">{uploadsError}</InlineMessage>}
             {uploadsLoading ? (
               <div className="muted">Loading uploads…</div>
             ) : fileEntries.length === 0 ? (
-              <div className="empty-state">No legacy files uploaded yet.</div>
+              <EmptyState>No legacy files uploaded yet.</EmptyState>
             ) : (
               <div className="legacy-upload-layout">
                 <ul className="browse-list legacy-upload-list">
@@ -603,7 +605,7 @@ export default function LegacyWorkspace() {
           <div className="panel-section">
             <div className="panel-section-title">Report Preview (Text-Only)</div>
             <div className="legacy-report-preview">
-              {reportError && <div className="error">{reportError}</div>}
+              {reportError && <InlineMessage tone="error">{reportError}</InlineMessage>}
               {lastRunLabel && !reportError && (
                 <div className="legacy-report-banner">{lastRunLabel}</div>
               )}
@@ -1329,7 +1331,7 @@ export default function LegacyWorkspace() {
           </div>
           <div className="panel-section">
             <div className="panel-section-title">Status</div>
-            <div className="empty-state">Stub only (upload + conversion coming soon).</div>
+            <EmptyState>Stub only (upload + conversion coming soon).</EmptyState>
           </div>
         </PanelHeader>
       </div>

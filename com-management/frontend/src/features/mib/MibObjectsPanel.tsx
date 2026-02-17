@@ -1,3 +1,6 @@
+import EmptyState from '../../components/EmptyState';
+import InlineMessage from '../../components/InlineMessage';
+
 type SupportStatus = { status: 'ok' | 'warn' | 'unknown'; label: string };
 
 type DefinitionFilter = 'all' | 'fcom' | 'pcom';
@@ -128,10 +131,10 @@ export default function MibObjectsPanel({
               <span>Loading definitions…</span>
             </div>
           ) : filteredMibDefinitions.length === 0 ? (
-            <div className="empty-state guided-empty">
+            <EmptyState className="guided-empty">
               <div className="guided-empty-title">No objects match.</div>
               <div className="guided-empty-text">Try clearing the search or switching the filter.</div>
-            </div>
+            </EmptyState>
           ) : (
             filteredMibDefinitions.map((definition) => (
               <button
@@ -191,12 +194,12 @@ export default function MibObjectsPanel({
       </div>
       <div className="mib-main-right">
         {!mibSelectedDefinition ? (
-          <div className="empty-state guided-empty">
+          <EmptyState className="guided-empty">
             <div className="guided-empty-title">Pick an object.</div>
             <div className="guided-empty-text">
               Select an object to see details, actions, and test output.
             </div>
-          </div>
+          </EmptyState>
         ) : (
           (() => {
             const kind = String(mibSelectedDefinition.kind || '').toUpperCase();
@@ -247,7 +250,7 @@ export default function MibObjectsPanel({
                       ) : pcomSnmpProfileLoading ? (
                         <span className="muted">Loading SNMP profile...</span>
                       ) : pcomSnmpProfileError ? (
-                        <span className="error">{pcomSnmpProfileError}</span>
+                        <InlineMessage tone="error">{pcomSnmpProfileError}</InlineMessage>
                       ) : pcomSnmpProfile ? (
                         <>
                           <span className="muted">
@@ -335,7 +338,9 @@ export default function MibObjectsPanel({
                           </button>
                         </div>
                       </div>
-                      {pcomDevicesError && <div className="error">{pcomDevicesError}</div>}
+                      {pcomDevicesError && (
+                        <InlineMessage tone="error">{pcomDevicesError}</InlineMessage>
+                      )}
                     </div>
                   </div>
                 )}
@@ -359,10 +364,12 @@ export default function MibObjectsPanel({
                           {pcomPollOutput && <pre className="mib-poll-output-body">{pcomPollOutput}</pre>}
                         </div>
                       ) : (
-                        <div className="mib-action-results-empty">Run Test Poll to see output here.</div>
+                        <EmptyState className="mib-action-results-empty">
+                          Run Test Poll to see output here.
+                        </EmptyState>
                       )
                     ) : (
-                      <div className="mib-action-results-empty">No actions configured yet.</div>
+                      <EmptyState className="mib-action-results-empty">No actions configured yet.</EmptyState>
                     )}
                   </div>
                 </div>

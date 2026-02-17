@@ -1,5 +1,7 @@
 import type { FormEvent } from 'react';
 import BrowsePanelHeader from '../../components/BrowsePanelHeader';
+import EmptyState from '../../components/EmptyState';
+import InlineMessage from '../../components/InlineMessage';
 import MibActionsPanel from './MibActionsPanel';
 import MibDetailsHeader from './MibDetailsHeader';
 import MibObjectsPanel from './MibObjectsPanel';
@@ -243,7 +245,7 @@ export default function MibWorkspace({
             }}
             isCompact={isCompactPanel}
           />
-          {mibError && <div className="error">{mibError}</div>}
+          {mibError && <InlineMessage tone="error">{mibError}</InlineMessage>}
           {mibLoading ? (
             <div className="mib-list-loading" aria-busy="true">
               <span className="mib-loading-spinner" aria-hidden="true" />
@@ -255,12 +257,12 @@ export default function MibWorkspace({
           ) : (
             <div className="browse-results mib-browse-results">
               {mibEntries.length === 0 ? (
-                <div className="empty-state guided-empty">
+                <EmptyState className="guided-empty">
                   <div className="guided-empty-title">No MIBs in this folder.</div>
                   <div className="guided-empty-text">
                     Try a different folder, switch scope to All, or clear the search.
                   </div>
-                </div>
+                </EmptyState>
               ) : (
                 <ul className="browse-list mib-browse-list">
                   {mibEntries.map((entry) => {

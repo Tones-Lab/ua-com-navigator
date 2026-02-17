@@ -1,5 +1,6 @@
 import ActionRow from '../../components/ActionRow';
 import { FileTitleRow, ViewToggle } from '../../components/FileHeaderCommon';
+import InlineMessage from '../../components/InlineMessage';
 import Pill from '../../components/Pill';
 type FcomFileHeaderProps = {
   selectedFile: any | null;
@@ -149,7 +150,7 @@ export default function FcomFileHeader({
           {fileSubMethod && <span>SubMethod: {fileSubMethod}</span>}
         </div>
       )}
-      {overrideError && <div className="error">{overrideError}</div>}
+      {overrideError && <InlineMessage tone="error">{overrideError}</InlineMessage>}
       <ActionRow>
         {selectedFile ? (
           <>
@@ -216,8 +217,8 @@ export default function FcomFileHeader({
           <span className="muted">Select a file on the left to view and edit.</span>
         )}
       </ActionRow>
-      {fileError && <div className="error">{fileError}</div>}
-      {saveError && <div className="error">{saveError}</div>}
+      {fileError && <InlineMessage tone="error">{fileError}</InlineMessage>}
+      {saveError && <InlineMessage tone="error">{saveError}</InlineMessage>}
       {saveSuccess && <div className="success">{saveSuccess}</div>}
       {!saveLoading && overrideSaveStatus.length > 0 && (
         <div className="override-save-status">
