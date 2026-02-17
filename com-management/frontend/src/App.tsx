@@ -36,6 +36,7 @@ import useMibWorkspaceProps from './hooks/useMibWorkspaceProps';
 import useOverviewState from './hooks/useOverviewState';
 import useOverviewPageProps from './hooks/useOverviewPageProps';
 import usePcomAdvancedSettingsModalProps from './hooks/usePcomAdvancedSettingsModalProps';
+import usePcomWorkspaceViewArgs from './hooks/usePcomWorkspaceViewArgs';
 import usePcomWorkspaceViewProps from './hooks/usePcomWorkspaceViewProps';
 import useRequest from './hooks/useRequest';
 import useSearchState from './hooks/useSearchState';
@@ -10653,7 +10654,7 @@ export default function App() {
     onSubmit: handleLogin,
   });
 
-  const pcomWorkspaceViewProps = usePcomWorkspaceViewProps({
+  const pcomWorkspaceViewArgs = usePcomWorkspaceViewArgs({
     comBrowserPanelProps,
     selectedFile,
     formatDisplayPath,
@@ -10676,6 +10677,8 @@ export default function App() {
     editorText,
     renderRawHighlightedText,
   });
+
+  const pcomWorkspaceViewProps = usePcomWorkspaceViewProps(pcomWorkspaceViewArgs);
 
   const overviewPageProps = useOverviewPageProps({
     overviewStatus,

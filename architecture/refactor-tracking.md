@@ -518,6 +518,11 @@ Validation:
   - Updated `App.tsx` to call `useMibWorkspaceArgs` and pass the returned object into `useMibWorkspaceProps`.
   - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
   - Test Delta: Low risk (code-movement extraction for args assembly); Add now; Coverage type: UI sanity (MIB workspace data/handler wiring parity for browse/search/details and PCOM poll controls).
+- 2026-02-17: Post-item cleanup (PCOM workspace args hook extraction from App).
+  - Added `hooks/usePcomWorkspaceViewArgs.ts` and moved `usePcomWorkspaceViewProps(...)` argument assembly out of `App.tsx`.
+  - Updated `App.tsx` to call `usePcomWorkspaceViewArgs` and pass the returned object into `usePcomWorkspaceViewProps`.
+  - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
+  - Test Delta: Low risk (code-movement extraction for args assembly); Add now; Coverage type: UI sanity (PCOM workspace browser/preview/object-selection wiring parity).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.
