@@ -358,6 +358,11 @@ Validation:
   - Updated `App.tsx` to consume `usePcomViewState` while preserving the same PCOM tab behavior and state transitions.
   - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
   - Test Delta: Low risk (code-movement extraction for derived/stateful PCOM view logic); Add now; Coverage type: UI sanity (PCOM parse fallback, default object selection, object reselect on dataset change).
+- 2026-02-17: Post-item cleanup (PCOM workspace shell extraction from App).
+  - Added `features/pcom/PcomWorkspaceView.tsx` and moved the remaining inline PCOM branch shell (browser split-layout, title/actions row, preview wiring) out of `App.tsx`.
+  - Updated `App.tsx` to compose `PcomWorkspaceView` and pass existing browser, preview, and selection props unchanged.
+  - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
+  - Test Delta: Low risk (code-movement extraction for PCOM tab composition); Add now; Coverage type: UI sanity (PCOM tab browser navigation, title/favorite row behavior, preview friendly/raw toggles).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.

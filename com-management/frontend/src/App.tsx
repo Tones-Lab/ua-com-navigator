@@ -11,7 +11,6 @@ import FcomFileHeader from './features/fcom/FcomFileHeader';
 import FcomFolderOverview from './features/fcom/FcomFolderOverview';
 import FcomFilePreview from './features/fcom/FcomFilePreview';
 import FcomBuilderSidebar from './features/fcom/FcomBuilderSidebar';
-import FcomRawPreview from './features/fcom/FcomRawPreview';
 import FcomReviewCommitModal from './features/fcom/FcomReviewCommitModal';
 import FcomAdvancedFlowModal from './features/fcom/FcomAdvancedFlowModal';
 import FcomFlowEditorModal from './features/fcom/FcomFlowEditorModal';
@@ -29,18 +28,15 @@ import type {
   ProcessorBuilderConfig,
   ProcessorCatalogItem,
 } from './features/fcom/builder/types';
-import ComFilePreview from './components/ComFilePreview';
 import ConfirmModal from './components/ConfirmModal';
 import BuilderLink from './components/BuilderLink';
 import Pill from './components/Pill';
-import ActionRow from './components/ActionRow';
 import useCompactPanel from './components/useCompactPanel';
-import { FileTitleRow, ViewToggle } from './components/FileHeaderCommon';
 import MibWorkspace from './features/mib/MibWorkspace';
 import LegacyWorkspace from './features/legacy/LegacyWorkspace';
 import MicroserviceStatusModal from './features/microservices/MicroserviceStatusModal';
-import PcomFriendlyView from './features/pcom/PcomFriendlyView';
 import usePcomViewState from './features/pcom/usePcomViewState';
+import PcomWorkspaceView from './features/pcom/PcomWorkspaceView';
 import useMibWorkspace from './features/mib/useMibWorkspace';
 import PcomAdvancedSettingsModal from './features/mib/PcomAdvancedSettingsModal';
 import useCacheStatus from './hooks/useCacheStatus';
@@ -10684,72 +10680,29 @@ export default function App() {
                   </div>
                 </div>
               ) : activeApp === 'pcom' ? (
-                <div className="split-layout">
-                  <FcomBrowserPanel {...comBrowserPanelProps} />
-                  <div className="panel">
-                    <div className="panel-scroll">
-                      <div className="file-details">
-                        <FileTitleRow
-                          title={selectedFile?.PathName ? selectedFile.PathName : 'Select a PCOM file'}
-                          path={selectedFile && selectedFile.PathID ? formatDisplayPath(selectedFile.PathID) : null}
-                          favorite={
-                            selectedFile
-                              ? {
-                                  active: isFavorite('file', String(selectedFile.PathID || '')),
-                                  onToggle: () =>
-                                    toggleFavorite({
-                                      type: 'file',
-                                      pathId: String(selectedFile.PathID || ''),
-                                      label: String(selectedFile.PathName || selectedFile.PathID || ''),
-                                      node: browseNode || undefined,
-                                    }),
-                                }
-                              : null
-                          }
-                        />
-                        <ActionRow>
-                          <ViewToggle viewMode={viewMode} onChange={setViewMode} />
-                          <button
-                            type="button"
-                            className="action-link"
-                            disabled
-                            title="Stub only (no file creation yet)"
-                          >
-                            Create PCOM (Stub)
-                          </button>
-                        </ActionRow>
-                        <ComFilePreview
-                          selectedFile={selectedFile}
-                          viewMode={viewMode}
-                          emptyState={
-                            <div className="empty-state">Select a file on the left to view it.</div>
-                          }
-                          friendlyView={
-                            <PcomFriendlyView
-                              pcomParsed={pcomParsed}
-                              pcomObjectEntries={pcomObjectEntries}
-                              pcomSelectedObject={pcomSelectedObject}
-                              setPcomSelectedObjectKey={setPcomSelectedObjectKey}
-                              formatPcomValue={formatPcomValue}
-                            />
-                          }
-                          rawView={
-                            <FcomRawPreview
-                              searchHighlightActive={searchHighlightActive}
-                              highlightQuery={highlightQuery}
-                              rawMatchPositions={rawMatchPositions}
-                              rawMatchIndex={rawMatchIndex}
-                              handlePrevRawMatch={handlePrevRawMatch}
-                              handleNextRawMatch={handleNextRawMatch}
-                              rawPreviewText={editorText}
-                              renderRawHighlightedText={renderRawHighlightedText}
-                            />
-                          }
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <PcomWorkspaceView
+                  comBrowserPanelProps={comBrowserPanelProps}
+                  selectedFile={selectedFile}
+                  formatDisplayPath={formatDisplayPath}
+                  browseNode={browseNode}
+                  isFavorite={isFavorite}
+                  toggleFavorite={toggleFavorite}
+                  viewMode={viewMode}
+                  setViewMode={setViewMode}
+                  pcomParsed={pcomParsed}
+                  pcomObjectEntries={pcomObjectEntries}
+                  pcomSelectedObject={pcomSelectedObject}
+                  setPcomSelectedObjectKey={setPcomSelectedObjectKey}
+                  formatPcomValue={formatPcomValue}
+                  searchHighlightActive={searchHighlightActive}
+                  highlightQuery={highlightQuery}
+                  rawMatchPositions={rawMatchPositions}
+                  rawMatchIndex={rawMatchIndex}
+                  handlePrevRawMatch={handlePrevRawMatch}
+                  handleNextRawMatch={handleNextRawMatch}
+                  editorText={editorText}
+                  renderRawHighlightedText={renderRawHighlightedText}
+                />
               ) : activeApp === 'legacy' ? (
                 <LegacyWorkspace />
               ) : (
