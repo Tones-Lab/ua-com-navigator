@@ -2,6 +2,8 @@ import {
   useFcomBuilderActionsContext,
   useFcomBuilderViewContext,
 } from './FcomBuilderContext';
+import BuilderLink from '../../../components/BuilderLink';
+import Pill from '../../../components/Pill';
 
 export default function FcomBuilderHeader() {
   const { builderTarget, builderOverrideVersion, builderDirty, canUndoBuilder, canRedoBuilder, builderOpen } =
@@ -22,15 +24,15 @@ export default function FcomBuilderHeader() {
               <span className="builder-target-badge">Editing: {builderTarget.field}</span>
               {(builderOverrideVersion?.mode === 'v2' ||
                 builderOverrideVersion?.mode === 'mixed') && (
-                <span
-                  className="pill override-pill"
+                <Pill
+                  className="override-pill"
                   title="We recommend moving to v3. Click Convert from the main edit panel."
                   aria-label="V2 override warning"
                 >
                   !
-                </span>
+                </Pill>
               )}
-              {builderDirty && <span className="pill unsaved-pill">Unsaved</span>}
+              {builderDirty && <Pill className="unsaved-pill">Unsaved</Pill>}
             </div>
           ) : (
             <span className="builder-target-empty">Select a field to begin</span>
@@ -40,24 +42,20 @@ export default function FcomBuilderHeader() {
       <div className="builder-header-actions">
         {(canUndoBuilder || canRedoBuilder) && (
           <div className="builder-history-actions">
-            <button
-              type="button"
-              className="builder-link"
+            <BuilderLink
               onClick={handleBuilderUndo}
               disabled={!canUndoBuilder}
               title="Undo (Ctrl+Z)"
             >
               Undo
-            </button>
-            <button
-              type="button"
-              className="builder-link"
+            </BuilderLink>
+            <BuilderLink
               onClick={handleBuilderRedo}
               disabled={!canRedoBuilder}
               title="Redo (Ctrl+Shift+Z)"
             >
               Redo
-            </button>
+            </BuilderLink>
           </div>
         )}
         {builderOpen && (

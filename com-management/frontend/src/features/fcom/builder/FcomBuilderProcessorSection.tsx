@@ -8,6 +8,7 @@ import FcomProcessorSelectStep from './FcomProcessorSelectStep';
 import FcomProcessorStepNav from './FcomProcessorStepNav';
 import FcomProcessorSwitchEditor from './FcomProcessorSwitchEditor';
 import useProcessorConfigure from './useProcessorConfigure';
+import BuilderLink from '../../../components/BuilderLink';
 
 export default function FcomBuilderProcessorSection() {
   const {
@@ -77,9 +78,7 @@ export default function FcomBuilderProcessorSection() {
         <div className="builder-section-title">
           {builderPatchMode ? 'V3 Patch Builder' : 'Processor Builder'}
         </div>
-        <button
-          type="button"
-          className="builder-link"
+        <BuilderLink
           onClick={() => {
             openAdvancedFlowModal(
               'object',
@@ -89,7 +88,7 @@ export default function FcomBuilderProcessorSection() {
           }}
         >
           Advanced Flow
-        </button>
+        </BuilderLink>
       </div>
       {!isBuilderTargetReady && <div className="builder-hint">Select a field in Edit mode.</div>}
       {isBuilderTargetReady && (

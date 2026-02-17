@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import BuilderLink from '../../../components/BuilderLink';
 import type { ProcessorFlowNode, ProcessorSwitchCase } from './types';
 
 type FcomProcessorSwitchEditorProps = {
@@ -84,15 +85,15 @@ export default function FcomProcessorSwitchEditor({
               {renderCaseFlow(item.id, Array.isArray(item.processors) ? item.processors : [])}
             </div>
             <div className="flow-switch-case-row">
-              <button type="button" className="builder-link" onClick={() => onRemoveCase(item.id)}>
+              <BuilderLink onClick={() => onRemoveCase(item.id)}>
                 Remove case
-              </button>
+              </BuilderLink>
             </div>
           </div>
         ))}
-        <button type="button" className="builder-link" onClick={onAddCase}>
+        <BuilderLink onClick={onAddCase}>
           Add case
-        </button>
+        </BuilderLink>
       </div>
       <div className="builder-hint">Drag processors to reorder cases or nested processors.</div>
       <label className="builder-label">Default processors</label>

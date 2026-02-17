@@ -87,7 +87,7 @@ Validation:
 - Confirm spinners/loading indicators still appear in the same places.
 
 ### 6) Builder links + pill components
-Status: Not Started
+Status: In Progress
 Scope: Replace repeated builder link/pill markup with shared components.
 Validation:
 - Verify builder links (primary/secondary rows) still open builder correctly.
@@ -277,6 +277,11 @@ Validation:
   - Updated `features/mib/MibWorkspace.tsx` to compose the extracted right-side details components (header, support summary, actions/output, objects/details) while preserving existing behavior and callbacks.
   - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
   - Test Delta: Medium risk (MIB object selection/details rendering and MIB2FCOM/PCOM action wiring); Add now; Coverage type: E2E (select MIB file, verify support summary counts, run MIB2FCOM output edits, select OBJECT-TYPE and run Test Poll, select trap type and open Compose Trap).
+- 2026-02-16: Item 6 kickoff (shared builder link/pill components + builder migration slice).
+  - Added `components/BuilderLink.tsx` and `components/Pill.tsx` for standardized builder-link buttons and pill chips.
+  - Migrated initial builder surfaces to shared components: `features/fcom/builder/FcomBuilderHeader.tsx`, `FcomBuilderEvalSection.tsx`, `FcomBuilderProcessorSection.tsx`, `FcomProcessorSwitchEditor.tsx`, and `FcomProcessorReviewStep.tsx`.
+  - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
+  - Test Delta: Medium risk (builder action controls and pill appearance in header/review flows); Add now; Coverage type: E2E (undo/redo links, advanced processor entry links, switch case add/remove actions, review JSON toggle, and header pills in v2/mixed + unsaved states).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.

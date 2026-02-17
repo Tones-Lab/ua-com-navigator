@@ -2,6 +2,7 @@ import {
   useFcomBuilderActionsContext,
   useFcomBuilderViewContext,
 } from './FcomBuilderContext';
+import BuilderLink from '../../../components/BuilderLink';
 
 export default function FcomBuilderEvalSection() {
   const {
@@ -63,9 +64,7 @@ export default function FcomBuilderEvalSection() {
             Regular
           </button>
         </div>
-        <button
-          type="button"
-          className="builder-link"
+        <BuilderLink
           onClick={() => {
             if (!hasEditPermission) {
               return;
@@ -76,7 +75,7 @@ export default function FcomBuilderEvalSection() {
           disabled={!hasEditPermission}
         >
           Advanced Processors
-        </button>
+        </BuilderLink>
       </div>
       {builderMode === 'friendly' ? (
         <div className="builder-friendly">
@@ -162,9 +161,7 @@ export default function FcomBuilderEvalSection() {
                       </button>
                     </div>
                     <div className="builder-group-actions">
-                      <button
-                        type="button"
-                        className="builder-link"
+                      <BuilderLink
                         onClick={() => {
                           const newChild = createConditionNode();
                           setBuilderConditions((prev) =>
@@ -186,10 +183,8 @@ export default function FcomBuilderEvalSection() {
                         disabled={!isBuilderTargetReady}
                       >
                         Add condition
-                      </button>
-                      <button
-                        type="button"
-                        className="builder-link"
+                      </BuilderLink>
+                      <BuilderLink
                         onClick={() => {
                           const newGroup = createGroupNode();
                           setBuilderConditions((prev) =>
@@ -211,7 +206,7 @@ export default function FcomBuilderEvalSection() {
                         disabled={!isBuilderTargetReady}
                       >
                         Add group
-                      </button>
+                      </BuilderLink>
                     </div>
                   </>
                 ) : (
@@ -249,9 +244,9 @@ export default function FcomBuilderEvalSection() {
               </div>
             ))}
           </div>
-          <button type="button" className="builder-link" onClick={addBuilderRow} disabled={!isBuilderTargetReady}>
+          <BuilderLink onClick={addBuilderRow} disabled={!isBuilderTargetReady}>
             Add condition
-          </button>
+          </BuilderLink>
           <div className="builder-friendly-else">
             <span className="builder-friendly-label">Else</span>
             <input

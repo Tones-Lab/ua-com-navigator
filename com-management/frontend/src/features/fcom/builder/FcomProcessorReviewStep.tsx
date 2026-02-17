@@ -1,3 +1,5 @@
+import BuilderLink from '../../../components/BuilderLink';
+
 type FcomProcessorReviewStepProps = {
   builderPatchMode: boolean;
   builderPatchPreview: Record<string, unknown> | null;
@@ -24,13 +26,9 @@ export default function FcomProcessorReviewStep({
       <div className="builder-preview">
         <div className="builder-preview-header">
           <div className="builder-preview-label">{builderPatchMode ? 'Patch Preview' : 'Preview'}</div>
-          <button
-            type="button"
-            className="builder-link"
-            onClick={() => setShowProcessorJson((prev) => !prev)}
-          >
+          <BuilderLink onClick={() => setShowProcessorJson((prev) => !prev)}>
             {showProcessorJson ? 'Hide JSON' : 'Show JSON'}
-          </button>
+          </BuilderLink>
         </div>
         {!builderPatchMode && (
           <div className="builder-preview-lines">
