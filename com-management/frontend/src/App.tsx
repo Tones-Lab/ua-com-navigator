@@ -3,6 +3,7 @@ import { flushSync } from 'react-dom';
 import { useSessionStore } from './stores';
 import api from './services/api';
 import AppTabs from './app/AppTabs';
+import AuthHeaderActions from './app/AuthHeaderActions';
 import MicroserviceModalHost from './app/MicroserviceModalHost';
 import SignInScreen from './app/SignInScreen';
 import UserPreferencesModal from './app/UserPreferencesModal';
@@ -10124,59 +10125,24 @@ export default function App() {
           <h1>COM Curation &amp; Management</h1>
           {isAuthenticated && <AppTabs activeApp={activeApp} onChange={handleAppTabChange} />}
           {isAuthenticated && (
-            <div className="header-actions">
-              <button
-                type="button"
-                className={`microservice-indicator microservice-indicator-${microserviceIndicatorState}${
-                  microserviceNeedsRedeploy ? ' microservice-pulse' : ''
-                }`}
-                title={microserviceIndicatorTitle}
-                aria-label={microserviceIndicatorTitle}
-                onClick={() => {
-                  setRedeployError(null);
-                  setRedeployModalOpen(true);
-                }}
-              >
-                {microserviceIndicatorLabel ?? (
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path
-                      d="M20 12a8 8 0 1 1-2.34-5.66"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                    <path
-                      d="M20 4v6h-6"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                )}
-              </button>
-              <button
-                type="button"
-                className="user-menu-button"
-                onClick={() => {
-                  flushSync(() => {
-                    setCacheActionMessage(null);
-                    setShowUserMenu(true);
-                  });
-                }}
-              >
-                Welcome, {session?.user}
-              </button>
-              <button type="button" className="search-button logout-button" onClick={handleLogout}>
-                <span className="logout-icon" aria-hidden="true">
-                  🚪
-                </span>
-                Logout
-              </button>
-            </div>
+            <AuthHeaderActions
+              microserviceIndicatorState={microserviceIndicatorState}
+              microserviceNeedsRedeploy={microserviceNeedsRedeploy}
+              microserviceIndicatorTitle={microserviceIndicatorTitle}
+              microserviceIndicatorLabel={microserviceIndicatorLabel}
+              onOpenMicroserviceModal={() => {
+                setRedeployError(null);
+                setRedeployModalOpen(true);
+              }}
+              userName={session?.user}
+              onOpenUserMenu={() => {
+                flushSync(() => {
+                  setCacheActionMessage(null);
+                  setShowUserMenu(true);
+                });
+              }}
+              onLogout={handleLogout}
+            />
           )}
         </header>
         <main className="app-main">

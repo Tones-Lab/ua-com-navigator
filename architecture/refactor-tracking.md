@@ -388,6 +388,11 @@ Validation:
   - Updated `App.tsx` to render `MicroserviceModalHost` instead of maintaining a local `microserviceModal` composition block.
   - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
   - Test Delta: Low risk (code-movement extraction for modal host composition); Add now; Coverage type: UI sanity (microservice modal open/close, refresh action label reset, redeploy action wiring).
+- 2026-02-17: Post-item cleanup (authenticated header-actions extraction from App).
+  - Added `app/AuthHeaderActions.tsx` and moved the authenticated header action cluster (microservice indicator, user menu, logout) out of `App.tsx`.
+  - Updated `App.tsx` to compose `AuthHeaderActions` while preserving indicator behavior, user-menu open flow (`flushSync`), and logout wiring.
+  - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
+  - Test Delta: Low risk (code-movement extraction for header action composition); Add now; Coverage type: UI sanity (header indicator opens modal, user menu opens cleanly, logout action still fires).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.
