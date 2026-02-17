@@ -37,6 +37,7 @@ import useBuilderSidebar from './hooks/useBuilderSidebar';
 import useComBrowserPanelProps from './hooks/useComBrowserPanelProps';
 import useFcomFileHeaderProps from './hooks/useFcomFileHeaderProps';
 import useFcomFilePreviewProps from './hooks/useFcomFilePreviewProps';
+import useFcomReviewCommitModalProps from './hooks/useFcomReviewCommitModalProps';
 import useOverviewState from './hooks/useOverviewState';
 import useRequest from './hooks/useRequest';
 import useSearchState from './hooks/useSearchState';
@@ -10244,6 +10245,33 @@ export default function App() {
     fileNamePingActive,
   });
 
+  const fcomReviewCommitModalProps = useFcomReviewCommitModalProps({
+    open: showReviewModal,
+    reviewStep,
+    stagedDiff,
+    expandedOriginals,
+    setExpandedOriginals,
+    stagedSectionOpen,
+    setStagedSectionOpen,
+    getFieldChangeLabel,
+    getBaseObjectValue,
+    renderInlineDiff,
+    getProcessorType,
+    getProcessorSummaryLines,
+    saveLoading,
+    hasEditPermission,
+    onClose: () => setShowReviewModal(false),
+    onDiscardChanges: () => setPendingReviewDiscard(true),
+    setReviewStep,
+    commitMessage,
+    setCommitMessage,
+    onCommit: (message: string) => {
+      handleSaveOverrides(message);
+      setShowReviewModal(false);
+      setReviewStep('review');
+    },
+  });
+
   return (
     <ErrorBoundary>
       <div className="app">
@@ -10317,32 +10345,7 @@ export default function App() {
                         )}
                         <FcomFileHeader {...fcomFileHeaderProps} />
                         <FcomFilePreview {...fcomFilePreviewProps} />
-                        <FcomReviewCommitModal
-                          open={showReviewModal}
-                          reviewStep={reviewStep}
-                          stagedDiff={stagedDiff}
-                          expandedOriginals={expandedOriginals}
-                          setExpandedOriginals={setExpandedOriginals}
-                          stagedSectionOpen={stagedSectionOpen}
-                          setStagedSectionOpen={setStagedSectionOpen}
-                          getFieldChangeLabel={getFieldChangeLabel}
-                          getBaseObjectValue={getBaseObjectValue}
-                          renderInlineDiff={renderInlineDiff}
-                          getProcessorType={getProcessorType}
-                          getProcessorSummaryLines={getProcessorSummaryLines}
-                          saveLoading={saveLoading}
-                          hasEditPermission={hasEditPermission}
-                          onClose={() => setShowReviewModal(false)}
-                          onDiscardChanges={() => setPendingReviewDiscard(true)}
-                          setReviewStep={setReviewStep}
-                          commitMessage={commitMessage}
-                          setCommitMessage={setCommitMessage}
-                          onCommit={(message) => {
-                            handleSaveOverrides(message);
-                            setShowReviewModal(false);
-                            setReviewStep('review');
-                          }}
-                        />
+                        <FcomReviewCommitModal {...fcomReviewCommitModalProps} />
                         <FcomFlowModalStack
                           showBuilderHelpModal={showBuilderHelpModal}
                           onCloseBuilderHelpModal={() => setShowBuilderHelpModal(false)}
