@@ -373,6 +373,11 @@ Validation:
   - Updated `App.tsx` to render `FcomProcessorTooltip` with existing tooltip state while preserving position/content behavior.
   - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
   - Test Delta: Low risk (code-movement extraction for tooltip presentation); Add now; Coverage type: UI sanity (processor help hover/focus tooltip content and positioning).
+- 2026-02-17: Post-item cleanup (flow modal stack extraction from App).
+  - Added `features/fcom/FcomFlowModalStack.tsx` to compose Builder Help, Advanced Flow, Flow Editor, and Field Reference modals together.
+  - Updated `App.tsx` to replace the inline modal quartet with `FcomFlowModalStack` while preserving existing callbacks, state guards, and modal-stack behavior.
+  - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
+  - Test Delta: Low risk (code-movement extraction for FCOM modal composition); Add now; Coverage type: UI sanity (open/close each extracted modal, advanced flow save/cancel, flow editor edit/save, field reference stacking).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.

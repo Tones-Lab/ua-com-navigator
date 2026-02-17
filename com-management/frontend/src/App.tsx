@@ -12,11 +12,8 @@ import FcomFolderOverview from './features/fcom/FcomFolderOverview';
 import FcomFilePreview from './features/fcom/FcomFilePreview';
 import FcomBuilderSidebar from './features/fcom/FcomBuilderSidebar';
 import FcomReviewCommitModal from './features/fcom/FcomReviewCommitModal';
-import FcomAdvancedFlowModal from './features/fcom/FcomAdvancedFlowModal';
-import FcomFlowEditorModal from './features/fcom/FcomFlowEditorModal';
-import FcomBuilderHelpModal from './features/fcom/FcomBuilderHelpModal';
+import FcomFlowModalStack from './features/fcom/FcomFlowModalStack';
 import FcomProcessorTooltip from './features/fcom/FcomProcessorTooltip';
-import FcomFieldReferenceModal from './features/fcom/FcomFieldReferenceModal';
 import FcomConfirmModals from './features/fcom/FcomConfirmModals';
 import FcomFieldSelectionModals from './features/fcom/FcomFieldSelectionModals';
 import FcomOverrideRemovalModals from './features/fcom/FcomOverrideRemovalModals';
@@ -10425,11 +10422,9 @@ export default function App() {
                             setReviewStep('review');
                           }}
                         />
-                        <FcomBuilderHelpModal
-                          open={showBuilderHelpModal}
-                          onClose={() => setShowBuilderHelpModal(false)}
-                        />
-                        <FcomAdvancedFlowModal
+                        <FcomFlowModalStack
+                          showBuilderHelpModal={showBuilderHelpModal}
+                          onCloseBuilderHelpModal={() => setShowBuilderHelpModal(false)}
                           showAdvancedProcessorModal={showAdvancedProcessorModal}
                           pendingAdvancedFlowClose={pendingAdvancedFlowClose}
                           getModalOverlayStyle={getModalOverlayStyle}
@@ -10441,7 +10436,7 @@ export default function App() {
                           advancedFlowRemovedTargets={advancedFlowRemovedTargets}
                           formatFlowTargetLabel={formatFlowTargetLabel}
                           advancedProcessorSearch={advancedProcessorSearch}
-                          onAdvancedProcessorSearchChange={setAdvancedProcessorSearch}
+                          setAdvancedProcessorSearch={setAdvancedProcessorSearch}
                           advancedFlowVersionInfo={
                             advancedFlowTarget?.objectName
                               ? getOverrideVersionInfo(advancedFlowTarget.objectName)
@@ -10483,9 +10478,7 @@ export default function App() {
                           setAdvancedFlow={setAdvancedFlow}
                           flowValidation={flowValidation}
                           renderFlowJsonPreview={renderFlowJsonPreview}
-                          buildFlowProcessors={(nodes, _normalizeSourcePath) =>
-                            buildFlowProcessors(nodes)
-                          }
+                          buildFlowProcessors={buildFlowProcessors}
                           normalizeSourcePath={normalizeSourcePath}
                           hasEditPermission={hasEditPermission}
                           triggerFlowErrorPulse={triggerFlowErrorPulse}
@@ -10498,35 +10491,26 @@ export default function App() {
                             setFlowEditorDraft(null);
                             setAdvancedFlowDefaultTarget(null);
                           }}
-                        />
-                        <FcomFlowEditorModal
                           flowEditor={flowEditor}
                           flowEditorDraft={flowEditorDraft}
                           flowEditorModalRef={flowEditorModalRef}
-                          getModalOverlayStyle={getModalOverlayStyle}
                           getFlowNodeLabel={getFlowNodeLabel}
-                          onShowFieldReference={() => setShowFieldReferenceModal(true)}
+                          setShowFieldReferenceModal={setShowFieldReferenceModal}
                           applyFlowEditorExample={applyFlowEditorExample}
                           renderProcessorConfigFields={renderProcessorConfigFields}
                           flowEditorFieldErrors={flowEditorFieldErrors}
                           handleFlowEditorInputChange={handleFlowEditorInputChange}
                           setFlowEditorDraft={setFlowEditorDraft}
-                          renderFlowList={renderFlowList}
                           validateFlowNodes={validateFlowNodes}
                           nextSwitchCaseId={nextSwitchCaseId}
                           flowEditorNodeErrors={flowEditorNodeErrors}
                           flowEditorHasErrors={flowEditorHasErrors}
                           triggerValidationPulse={triggerValidationPulse}
-                          onCancelFlowEditor={handleCancelFlowEditor}
-                          onSaveFlowEditor={handleSaveFlowEditor}
-                        />
-                        <FcomFieldReferenceModal
-                          open={showFieldReferenceModal}
-                          hasModalOnTop={Boolean(showAdvancedProcessorModal || flowEditor)}
+                          handleCancelFlowEditor={handleCancelFlowEditor}
+                          handleSaveFlowEditor={handleSaveFlowEditor}
+                          showFieldReferenceModal={showFieldReferenceModal}
                           availableEventFields={availableEventFields}
                           getEventFieldDescription={getEventFieldDescription}
-                          getModalOverlayStyle={getModalOverlayStyle}
-                          onClose={() => setShowFieldReferenceModal(false)}
                         />
                         <FcomConfirmModals
                           builderSwitchModal={builderSwitchModal}
