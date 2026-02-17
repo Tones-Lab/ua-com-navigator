@@ -488,6 +488,11 @@ Validation:
   - Updated `App.tsx` to render `FcomWorkspacePanel` with existing hook-derived props and selected-file gating unchanged.
   - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
   - Test Delta: Low risk (code-movement extraction for branch composition); Add now; Coverage type: UI sanity (FCOM browser panel navigation, folder-overview empty state, file preview/edit flows, and modal/overlay behavior parity).
+- 2026-02-17: Post-item cleanup (authenticated main-content branch extraction from App).
+  - Added `app/AuthenticatedMainContent.tsx` and moved overview/fcom/pcom/legacy/mib branch rendering + auth screen + modal hosts out of `App.tsx` main content switch.
+  - Updated `App.tsx` to render `AuthenticatedMainContent` with existing hook-derived props and branch-selection behavior unchanged.
+  - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
+  - Test Delta: Low risk (code-movement extraction for branch composition); Add now; Coverage type: UI sanity (tab switching across apps, auth/sign-in view switch, and shared modal host wiring parity).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.

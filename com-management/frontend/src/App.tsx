@@ -2,13 +2,10 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { useSessionStore } from './stores';
 import api from './services/api';
+import AuthenticatedMainContent from './app/AuthenticatedMainContent';
 import AppHeader from './app/AppHeader';
-import FcomWorkspacePanel from './app/FcomWorkspacePanel';
 import MicroserviceModalHost from './app/MicroserviceModalHost';
-import SignInScreen from './app/SignInScreen';
 import UserPreferencesModal from './app/UserPreferencesModal';
-import OverviewPage from './features/overview/OverviewPage';
-import TrapComposerModal from './features/fcom/TrapComposerModal';
 import useFcomBuilderContextValue from './features/fcom/builder/useFcomBuilderContextValue';
 import type {
   FlowPaletteItem,
@@ -18,12 +15,8 @@ import type {
 import BuilderLink from './components/BuilderLink';
 import Pill from './components/Pill';
 import useCompactPanel from './components/useCompactPanel';
-import MibWorkspace from './features/mib/MibWorkspace';
-import LegacyWorkspace from './features/legacy/LegacyWorkspace';
 import usePcomViewState from './features/pcom/usePcomViewState';
-import PcomWorkspaceView from './features/pcom/PcomWorkspaceView';
 import useMibWorkspace from './features/mib/useMibWorkspace';
-import PcomAdvancedSettingsModal from './features/mib/PcomAdvancedSettingsModal';
 import useCacheStatus from './hooks/useCacheStatus';
 import useFavorites from './hooks/useFavorites';
 import useBrowseDeepLink from './hooks/useBrowseDeepLink';
@@ -10742,34 +10735,24 @@ export default function App() {
       <div className="app">
         <AppHeader {...appHeaderProps} />
         <main className="app-main">
-          {isAuthenticated ? (
-            <>
-              {activeApp === 'overview' ? (
-                <OverviewPage {...overviewPageProps} />
-              ) : activeApp === 'fcom' ? (
-                <FcomWorkspacePanel
-                  comBrowserPanelProps={comBrowserPanelProps}
-                  selectedFile={selectedFile}
-                  fcomFolderOverviewProps={fcomFolderOverviewProps}
-                  fcomFileHeaderProps={fcomFileHeaderProps}
-                  fcomFilePreviewProps={fcomFilePreviewProps}
-                  fcomReviewCommitModalProps={fcomReviewCommitModalProps}
-                  fcomFlowModalStackProps={fcomFlowModalStackProps}
-                  fcomAuxOverlaysProps={fcomAuxOverlaysProps}
-                />
-              ) : activeApp === 'pcom' ? (
-                <PcomWorkspaceView {...pcomWorkspaceViewProps} />
-              ) : activeApp === 'legacy' ? (
-                <LegacyWorkspace />
-              ) : (
-                <MibWorkspace {...mibWorkspaceProps} />
-              )}
-              <TrapComposerModal {...trapComposerModalProps} />
-              <PcomAdvancedSettingsModal {...pcomAdvancedSettingsModalProps} />
-            </>
-          ) : (
-            <SignInScreen {...signInScreenProps} />
-          )}
+          <AuthenticatedMainContent
+            isAuthenticated={isAuthenticated}
+            activeApp={activeApp}
+            overviewPageProps={overviewPageProps}
+            comBrowserPanelProps={comBrowserPanelProps}
+            selectedFile={selectedFile}
+            fcomFolderOverviewProps={fcomFolderOverviewProps}
+            fcomFileHeaderProps={fcomFileHeaderProps}
+            fcomFilePreviewProps={fcomFilePreviewProps}
+            fcomReviewCommitModalProps={fcomReviewCommitModalProps}
+            fcomFlowModalStackProps={fcomFlowModalStackProps}
+            fcomAuxOverlaysProps={fcomAuxOverlaysProps}
+            pcomWorkspaceViewProps={pcomWorkspaceViewProps}
+            mibWorkspaceProps={mibWorkspaceProps}
+            trapComposerModalProps={trapComposerModalProps}
+            pcomAdvancedSettingsModalProps={pcomAdvancedSettingsModalProps}
+            signInScreenProps={signInScreenProps}
+          />
           <UserPreferencesModal {...userPreferencesModalProps} />
         </main>
         <MicroserviceModalHost {...microserviceModalHostProps} />
