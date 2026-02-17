@@ -11,6 +11,7 @@ import FcomFolderOverview from './features/fcom/FcomFolderOverview';
 import FcomFilePreview from './features/fcom/FcomFilePreview';
 import FcomBuilderSidebar from './features/fcom/FcomBuilderSidebar';
 import FcomRawPreview from './features/fcom/FcomRawPreview';
+import FcomReviewCommitModal from './features/fcom/FcomReviewCommitModal';
 import FcomAdvancedFlowModal from './features/fcom/FcomAdvancedFlowModal';
 import FcomFlowEditorModal from './features/fcom/FcomFlowEditorModal';
 import FcomBuilderHelpModal from './features/fcom/FcomBuilderHelpModal';
@@ -10568,357 +10569,32 @@ export default function App() {
                           highlightQuery={highlightQuery}
                           renderRawHighlightedText={renderRawHighlightedText}
                         />
-                        {showReviewModal && (
-                          <Modal className="modal-wide" ariaLabel="Review staged changes">
-                              {reviewStep === 'review' ? (
-                                <>
-                                  <div className="staged-review-header">
-                                    <h3>Review staged changes</h3>
-                                    <div className="staged-review-actions">
-                                      <BuilderLink
-                                        onClick={() => {
-                                          const shouldExpand =
-                                            Object.values(expandedOriginals).some(Boolean) ===
-                                            false;
-                                          if (!shouldExpand) {
-                                            setExpandedOriginals({});
-                                            return;
-                                          }
-                                          const next: Record<string, boolean> = {};
-                                          stagedDiff.sections.forEach((section) => {
-                                            section.fieldChanges.forEach((change) => {
-                                              const changeKey = `${section.title}-${change.target}-${change.action}`;
-                                              next[changeKey] = true;
-                                            });
-                                          });
-                                          setExpandedOriginals(next);
-                                        }}
-                                        disabled={stagedDiff.totalChanges === 0}
-                                      >
-                                        {Object.values(expandedOriginals).some(Boolean)
-                                          ? 'Collapse all originals'
-                                          : 'Expand all originals'}
-                                      </BuilderLink>
-                                    </div>
-                                  </div>
-                                  {stagedDiff.totalChanges === 0 ? (
-                                    <div className="empty-state">No staged changes.</div>
-                                  ) : (
-                                    <div className="staged-changes">
-                                      {stagedDiff.sections.map((section) => (
-                                        <div key={section.title} className="staged-section">
-                                          {(() => {
-                                            const sectionKey = section.title;
-                                            const isOpen = stagedSectionOpen[sectionKey] ?? false;
-                                            const fieldCount = section.fieldChanges.length;
-                                            const processorCount = section.processorChanges.length;
-                                            return (
-                                              <>
-                                                <div className="staged-section-header">
-                                                  <div className="staged-section-title">
-                                                    {section.title}
-                                                  </div>
-                                                  <div className="staged-section-meta">
-                                                    <span>
-                                                      {fieldCount} field change
-                                                      {fieldCount === 1 ? '' : 's'}
-                                                    </span>
-                                                    <span>
-                                                      {processorCount} processor change
-                                                      {processorCount === 1 ? '' : 's'}
-                                                    </span>
-                                                  </div>
-                                                  <BuilderLink
-                                                    onClick={() =>
-                                                      setStagedSectionOpen((prev) => ({
-                                                        ...prev,
-                                                        [sectionKey]: !isOpen,
-                                                      }))
-                                                    }
-                                                  >
-                                                    {isOpen ? 'Collapse' : 'Expand'}
-                                                  </BuilderLink>
-                                                </div>
-                                                {!isOpen && (
-                                                  <div className="staged-section-summary">
-                                                    <div className="staged-summary-list">
-                                                      {section.fieldChanges
-                                                        .slice(0, 4)
-                                                        .map((change) => (
-                                                          <div
-                                                            key={`${sectionKey}-${change.target}-${change.action}`}
-                                                            className="staged-summary-item"
-                                                          >
-                                                            <Pill
-                                                              className={`change-pill change-pill-${change.action}`}
-                                                            >
-                                                              {getFieldChangeLabel(change)}
-                                                            </Pill>
-                                                            <span className="staged-summary-label">
-                                                              {change.target}
-                                                            </span>
-                                                          </div>
-                                                        ))}
-                                                      {section.processorChanges
-                                                        .slice(0, 2)
-                                                        .map((change, idx) => (
-                                                          <div
-                                                            key={`${sectionKey}-proc-${idx}-${change.action}`}
-                                                            className="staged-summary-item"
-                                                          >
-                                                            <Pill
-                                                              className={`change-pill change-pill-${change.action}`}
-                                                            >
-                                                              {change.action}
-                                                            </Pill>
-                                                            <span className="staged-summary-label">
-                                                              {getProcessorType(change.processor) ||
-                                                                'processor'}
-                                                            </span>
-                                                          </div>
-                                                        ))}
-                                                      {fieldCount + processorCount > 6 && (
-                                                        <div className="staged-summary-more">
-                                                          +{fieldCount + processorCount - 6} more
-                                                        </div>
-                                                      )}
-                                                    </div>
-                                                  </div>
-                                                )}
-                                                {isOpen && (
-                                                  <>
-                                                    {section.fieldChanges.length > 0 && (
-                                                      <div className="staged-group">
-                                                        <div className="staged-group-title">
-                                                          Field changes
-                                                        </div>
-                                                        {section.fieldChanges.map((change) => {
-                                                          const changeKey = `${section.title}-${change.target}-${change.action}`;
-                                                          const hasOverrideOriginal =
-                                                            change.before !== undefined;
-                                                          const baseOriginal = getBaseObjectValue(
-                                                            section.objectName,
-                                                            change.target,
-                                                          );
-                                                          const originalValue = hasOverrideOriginal
-                                                            ? change.before
-                                                            : baseOriginal;
-                                                          const hasOriginal =
-                                                            hasOverrideOriginal ||
-                                                            baseOriginal !== undefined;
-                                                          const isExpanded = Boolean(
-                                                            expandedOriginals[changeKey],
-                                                          );
-                                                          const originalLabel = hasOverrideOriginal
-                                                            ? 'Original (override)'
-                                                            : 'Original (base value)';
-                                                          return (
-                                                            <div
-                                                              key={`${section.title}-${change.target}-${change.action}`}
-                                                              className="staged-change"
-                                                            >
-                                                              <div className="staged-change-header">
-                                                                <span className="staged-change-label">
-                                                                  {change.target}
-                                                                </span>
-                                                                <Pill
-                                                                  className={`change-pill change-pill-${change.action}`}
-                                                                >
-                                                                  {getFieldChangeLabel(change)}
-                                                                </Pill>
-                                                              </div>
-                                                              <div className="staged-change-body">
-                                                                {change.after !== undefined && (
-                                                                  <div className="staged-change-column">
-                                                                    <div className="staged-change-subtitle">
-                                                                      After
-                                                                    </div>
-                                                                    <pre className="code-block diff-block">
-                                                                      {renderInlineDiff(
-                                                                        originalValue,
-                                                                        change.after,
-                                                                        'after',
-                                                                      )}
-                                                                    </pre>
-                                                                  </div>
-                                                                )}
-                                                                {hasOriginal && (
-                                                                  <div className="staged-change-column">
-                                                                    <button
-                                                                      type="button"
-                                                                      className="staged-change-toggle"
-                                                                      onClick={() => {
-                                                                        setExpandedOriginals(
-                                                                          (prev) => ({
-                                                                            ...prev,
-                                                                            [changeKey]:
-                                                                              !prev[changeKey],
-                                                                          }),
-                                                                        );
-                                                                      }}
-                                                                    >
-                                                                      {isExpanded
-                                                                        ? 'Hide original'
-                                                                        : 'Show original'}
-                                                                    </button>
-                                                                    {isExpanded && (
-                                                                      <>
-                                                                        <div className="staged-change-subtitle">
-                                                                          {originalLabel}
-                                                                        </div>
-                                                                        {originalValue ===
-                                                                        undefined ? (
-                                                                          <div className="staged-change-empty">
-                                                                            Not set
-                                                                          </div>
-                                                                        ) : (
-                                                                          <pre className="code-block diff-block">
-                                                                            {renderInlineDiff(
-                                                                              originalValue,
-                                                                              change.after,
-                                                                              'original',
-                                                                            )}
-                                                                          </pre>
-                                                                        )}
-                                                                      </>
-                                                                    )}
-                                                                  </div>
-                                                                )}
-                                                              </div>
-                                                            </div>
-                                                          );
-                                                        })}
-                                                      </div>
-                                                    )}
-                                                    {section.processorChanges.length > 0 && (
-                                                      <div className="staged-group">
-                                                        <div className="staged-group-title">
-                                                          Processor flow changes
-                                                        </div>
-                                                        {section.processorChanges.map(
-                                                          (change, idx) => (
-                                                            <div
-                                                              key={`${section.title}-proc-${idx}-${change.action}`}
-                                                              className="staged-change"
-                                                            >
-                                                              <div className="staged-change-header">
-                                                                <span className="staged-change-label">
-                                                                  {getProcessorType(
-                                                                    change.processor,
-                                                                  ) || 'processor'}
-                                                                </span>
-                                                                <Pill
-                                                                  className={`change-pill change-pill-${change.action}`}
-                                                                >
-                                                                  {change.action}
-                                                                </Pill>
-                                                              </div>
-                                                              <div className="staged-change-body">
-                                                                <div className="staged-change-column">
-                                                                  <div className="staged-change-subtitle">
-                                                                    Summary
-                                                                  </div>
-                                                                  <div className="builder-preview-lines">
-                                                                    {getProcessorSummaryLines(
-                                                                      change.processor,
-                                                                    ).map((line, lineIdx) => (
-                                                                      <span
-                                                                        key={`${line}-${lineIdx}`}
-                                                                      >
-                                                                        {line}
-                                                                      </span>
-                                                                    ))}
-                                                                  </div>
-                                                                  <pre className="code-block">
-                                                                    {JSON.stringify(
-                                                                      change.processor,
-                                                                      null,
-                                                                      2,
-                                                                    )}
-                                                                  </pre>
-                                                                </div>
-                                                              </div>
-                                                            </div>
-                                                          ),
-                                                        )}
-                                                      </div>
-                                                    )}
-                                                  </>
-                                                )}
-                                              </>
-                                            );
-                                          })()}
-                                        </div>
-                                      ))}
-                                    </div>
-                                  )}
-                                  <div className="modal-actions">
-                                    <button type="button" onClick={() => setShowReviewModal(false)}>
-                                      Close
-                                    </button>
-                                    <button
-                                      type="button"
-                                      className="ghost-button"
-                                      onClick={() => {
-                                        setPendingReviewDiscard(true);
-                                      }}
-                                      disabled={saveLoading}
-                                    >
-                                      Discard changes
-                                    </button>
-                                    <button
-                                      type="button"
-                                      className="builder-card builder-card-primary"
-                                      onClick={() => setReviewStep('commit')}
-                                      disabled={stagedDiff.totalChanges === 0 || !hasEditPermission}
-                                    >
-                                      Continue to Commit
-                                    </button>
-                                  </div>
-                                </>
-                              ) : (
-                                <>
-                                  <h3>Commit message</h3>
-                                  <input
-                                    type="text"
-                                    placeholder="Enter commit message here"
-                                    value={commitMessage}
-                                    onChange={(e) => setCommitMessage(e.target.value)}
-                                    onKeyDown={(e) => {
-                                      if (e.key !== 'Enter') {
-                                        return;
-                                      }
-                                      e.preventDefault();
-                                      if (saveLoading || !hasEditPermission) {
-                                        return;
-                                      }
-                                      handleSaveOverrides(commitMessage);
-                                      setShowReviewModal(false);
-                                      setReviewStep('review');
-                                    }}
-                                    disabled={!hasEditPermission}
-                                  />
-                                  <div className="modal-actions">
-                                    <button type="button" onClick={() => setReviewStep('review')}>
-                                      Back to Review
-                                    </button>
-                                    <button
-                                      type="button"
-                                      className="builder-card builder-card-primary"
-                                      onClick={() => {
-                                        handleSaveOverrides(commitMessage);
-                                        setShowReviewModal(false);
-                                        setReviewStep('review');
-                                      }}
-                                      disabled={saveLoading || !hasEditPermission}
-                                    >
-                                      {saveLoading ? 'Saving…' : 'Commit Changes'}
-                                    </button>
-                                  </div>
-                                </>
-                              )}
-                          </Modal>
-                        )}
+                        <FcomReviewCommitModal
+                          open={showReviewModal}
+                          reviewStep={reviewStep}
+                          stagedDiff={stagedDiff}
+                          expandedOriginals={expandedOriginals}
+                          setExpandedOriginals={setExpandedOriginals}
+                          stagedSectionOpen={stagedSectionOpen}
+                          setStagedSectionOpen={setStagedSectionOpen}
+                          getFieldChangeLabel={getFieldChangeLabel}
+                          getBaseObjectValue={getBaseObjectValue}
+                          renderInlineDiff={renderInlineDiff}
+                          getProcessorType={getProcessorType}
+                          getProcessorSummaryLines={getProcessorSummaryLines}
+                          saveLoading={saveLoading}
+                          hasEditPermission={hasEditPermission}
+                          onClose={() => setShowReviewModal(false)}
+                          onDiscardChanges={() => setPendingReviewDiscard(true)}
+                          setReviewStep={setReviewStep}
+                          commitMessage={commitMessage}
+                          setCommitMessage={setCommitMessage}
+                          onCommit={(message) => {
+                            handleSaveOverrides(message);
+                            setShowReviewModal(false);
+                            setReviewStep('review');
+                          }}
+                        />
                         <FcomBuilderHelpModal
                           open={showBuilderHelpModal}
                           onClose={() => setShowBuilderHelpModal(false)}

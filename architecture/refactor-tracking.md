@@ -323,6 +323,11 @@ Validation:
   - Migrated remaining feature-level raw empty/error blocks in `features/legacy/LegacyWorkspace.tsx`, `features/mib/MibWorkspace.tsx`, `MibActionsPanel.tsx`, `MibObjectsPanel.tsx`, and `features/fcom/FcomFileHeader.tsx` to shared `EmptyState` / `InlineMessage`.
   - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
   - Test Delta: Low risk (presentation-only swap for residual status/error placeholders); Add now; Coverage type: UI sanity (legacy upload/report/status placeholders, MIB browse/object/action error states, FCOM file-header error banners).
+- 2026-02-17: Post-item cleanup (review/commit modal extraction from App).
+  - Added `features/fcom/FcomReviewCommitModal.tsx` and moved the large inline staged review + commit message modal body out of `App.tsx`.
+  - Updated `App.tsx` to compose the new modal component and keep orchestration callbacks/state in the parent.
+  - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
+  - Test Delta: Low risk (code-movement extraction for modal rendering with unchanged interaction contracts); Add now; Coverage type: UI sanity (review modal expand/collapse, original diff toggle, commit/discard actions).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.
