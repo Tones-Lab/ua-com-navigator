@@ -46,6 +46,7 @@ import useOverviewState from './hooks/useOverviewState';
 import usePcomAdvancedSettingsModalProps from './hooks/usePcomAdvancedSettingsModalProps';
 import useRequest from './hooks/useRequest';
 import useSearchState from './hooks/useSearchState';
+import useSignInScreenProps from './hooks/useSignInScreenProps';
 import useTrapComposerModalProps from './hooks/useTrapComposerModalProps';
 import useUserPreferencesModalProps from './hooks/useUserPreferencesModalProps';
 import useSortableTable from './hooks/useSortableTable';
@@ -10642,6 +10643,19 @@ export default function App() {
     setMibSearchScope,
   });
 
+  const signInScreenProps = useSignInScreenProps({
+    serverId,
+    setServerId,
+    serverOptions,
+    username,
+    setUsername,
+    password,
+    setPassword,
+    error,
+    loading,
+    onSubmit: handleLogin,
+  });
+
   return (
     <ErrorBoundary>
       <div className="app">
@@ -10755,18 +10769,7 @@ export default function App() {
               <PcomAdvancedSettingsModal {...pcomAdvancedSettingsModalProps} />
             </>
           ) : (
-            <SignInScreen
-              serverId={serverId}
-              setServerId={setServerId}
-              serverOptions={serverOptions}
-              username={username}
-              setUsername={setUsername}
-              password={password}
-              setPassword={setPassword}
-              error={error}
-              loading={loading}
-              onSubmit={handleLogin}
-            />
+            <SignInScreen {...signInScreenProps} />
           )}
           <UserPreferencesModal {...userPreferencesModalProps} />
         </main>
