@@ -1,3 +1,4 @@
+import EmptyState from '../../components/EmptyState';
 import Modal from '../../components/Modal';
 
 type AddFieldContext = {
@@ -96,7 +97,7 @@ export default function FcomFieldSelectionModals({
                 );
               })}
             {availableEventFields.length === 0 && (
-              <div className="empty-state">No event fields found in this file.</div>
+              <EmptyState>No event fields found in this file.</EmptyState>
             )}
             {addFieldSearch.trim() &&
               !availableEventFields.some(
@@ -143,7 +144,7 @@ export default function FcomFieldSelectionModals({
                 </button>
               ))}
             {availableEventFields.length === 0 && (
-              <div className="empty-state">No event fields found in this file.</div>
+              <EmptyState>No event fields found in this file.</EmptyState>
             )}
             {eventFieldSearch.trim() &&
               !availableEventFields.some(

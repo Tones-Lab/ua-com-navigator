@@ -314,6 +314,11 @@ Validation:
   - Migrated `features/pcom/PcomWorkspace.tsx` and `features/pcom/PcomPage.tsx` empty placeholders to shared `EmptyState`.
   - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
   - Test Delta: Low risk (presentation-only component swap for empty/error rendering); Add now; Coverage type: UI sanity (overview loading/error/empty states and PCOM empty placeholders).
+- 2026-02-16: Item 9 continued (dialog-focused empty/error migration slice).
+  - Migrated `features/fcom/TrapComposerModal.tsx`, `FcomTrapVariablesModal.tsx`, and `FcomFieldSelectionModals.tsx` remaining empty/error blocks to shared `EmptyState` / `InlineMessage`.
+  - Migrated `features/microservices/MicroserviceStatusModal.tsx` redeploy error block to shared `InlineMessage`.
+  - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
+  - Test Delta: Low risk (presentation-only swap in modal states); Add now; Coverage type: UI sanity (trap composer error/empty states, trap variable empty state, field picker empty state, microservice redeploy error visibility).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.

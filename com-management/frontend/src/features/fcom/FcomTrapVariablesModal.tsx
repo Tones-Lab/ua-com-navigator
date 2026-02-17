@@ -1,4 +1,5 @@
 import type { MutableRefObject, ReactNode } from 'react';
+import EmptyState from '../../components/EmptyState';
 import Modal from '../../components/Modal';
 import Pill from '../../components/Pill';
 
@@ -47,7 +48,7 @@ export default function FcomTrapVariablesModal({
       </h3>
       {mode === 'insert' && <p className="muted">Select a variable to insert.</p>}
       {variables.length === 0 ? (
-        <div className="empty-state">No trap variables available.</div>
+        <EmptyState>No trap variables available.</EmptyState>
       ) : (
         <div className="var-list" ref={varListRef}>
           {variables.map((variable: any, index: number) => {

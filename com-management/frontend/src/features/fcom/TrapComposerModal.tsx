@@ -1,5 +1,7 @@
 import type { RefObject } from 'react';
 import BuilderLink from '../../components/BuilderLink';
+import EmptyState from '../../components/EmptyState';
+import InlineMessage from '../../components/InlineMessage';
 import Modal from '../../components/Modal';
 
 type TrapComposerModalProps = {
@@ -173,7 +175,7 @@ export default function TrapComposerModal({
       )}
       <div className="panel-section">
         <div className="panel-section-title">Destination</div>
-        {trapServerError && <div className="error">{trapServerError}</div>}
+        {trapServerError && <InlineMessage tone="error">{trapServerError}</InlineMessage>}
         {trapServerList.length > 0 && (
           <label className="mib-field">
             Server list
@@ -260,7 +262,7 @@ export default function TrapComposerModal({
           </div>
           <div className="panel-section-title">Varbinds</div>
           <div className="mib-varbinds">
-            {trapVarbinds.length === 0 && <div className="empty-state">No varbinds yet.</div>}
+            {trapVarbinds.length === 0 && <EmptyState>No varbinds yet.</EmptyState>}
             {trapVarbinds.map((binding, index) => (
               <div key={`${binding.oid}-${index}`} className="mib-varbind-row">
                 <input
@@ -312,7 +314,7 @@ export default function TrapComposerModal({
           </div>
         </div>
       )}
-      {trapError && <div className="error">{trapError}</div>}
+      {trapError && <InlineMessage tone="error">{trapError}</InlineMessage>}
       <div className="modal-actions">
         <button type="button" onClick={onClose}>
           Close

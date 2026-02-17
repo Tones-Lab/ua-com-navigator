@@ -1,3 +1,4 @@
+import InlineMessage from '../../components/InlineMessage';
 import Modal from '../../components/Modal';
 import MicroserviceChain from './MicroserviceChain';
 
@@ -79,7 +80,11 @@ export default function MicroserviceStatusModal({
           Status may be stale. Last refresh was {formatTime(microserviceLastRefreshed || '')}.
         </div>
       )}
-      {redeployError && <div className="error-message">{redeployError}</div>}
+      {redeployError && (
+        <InlineMessage tone="error" className="error-message">
+          {redeployError}
+        </InlineMessage>
+      )}
       <div className="microservice-action-banner">
         {microserviceStatusLoading
           ? microserviceLastRefreshed
