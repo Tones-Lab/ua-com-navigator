@@ -503,6 +503,11 @@ Validation:
   - Updated `App.tsx` to consume the hook and keep `MainContentShell` wiring unchanged.
   - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
   - Test Delta: Low risk (code-movement extraction for props assembly); Add now; Coverage type: UI sanity (main content branch selection and cross-branch prop wiring parity).
+- 2026-02-17: Post-item cleanup (app header handlers hook extraction from App).
+  - Added `hooks/useAppHeaderHandlers.ts` and moved App-header callback assembly (open microservice modal, open user menu with `flushSync`, tab change/logout passthrough) out of `App.tsx`.
+  - Updated `App.tsx` to consume `useAppHeaderHandlers` and feed `useAppHeaderProps` with named callback handlers.
+  - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
+  - Test Delta: Low risk (code-movement extraction for handler assembly); Add now; Coverage type: UI sanity (header tab change, microservice indicator action, user-menu open, logout action).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.

@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { flushSync } from 'react-dom';
 import { useSessionStore } from './stores';
 import api from './services/api';
 import AppHeader from './app/AppHeader';
@@ -20,6 +19,7 @@ import useCacheStatus from './hooks/useCacheStatus';
 import useFavorites from './hooks/useFavorites';
 import useBrowseDeepLink from './hooks/useBrowseDeepLink';
 import useAppHeaderProps from './hooks/useAppHeaderProps';
+import useAppHeaderHandlers from './hooks/useAppHeaderHandlers';
 import useAuthenticatedMainContentProps from './hooks/useAuthenticatedMainContentProps';
 import useBuilderSidebar from './hooks/useBuilderSidebar';
 import useComBrowserPanelProps from './hooks/useComBrowserPanelProps';
@@ -10708,26 +10708,27 @@ export default function App() {
     isFileTesting: isFileTestLoading,
   });
 
+  const appHeaderHandlers = useAppHeaderHandlers({
+    setRedeployError,
+    setRedeployModalOpen,
+    setCacheActionMessage,
+    setShowUserMenu,
+    handleLogout,
+    handleAppTabChange,
+  });
+
   const appHeaderProps = useAppHeaderProps({
     isAuthenticated,
     activeApp,
-    onTabChange: handleAppTabChange,
+    onTabChange: appHeaderHandlers.onTabChange,
     microserviceIndicatorState,
     microserviceNeedsRedeploy,
     microserviceIndicatorTitle,
     microserviceIndicatorLabel,
-    onOpenMicroserviceModal: () => {
-      setRedeployError(null);
-      setRedeployModalOpen(true);
-    },
+    onOpenMicroserviceModal: appHeaderHandlers.onOpenMicroserviceModal,
     userName: session?.user,
-    onOpenUserMenu: () => {
-      flushSync(() => {
-        setCacheActionMessage(null);
-        setShowUserMenu(true);
-      });
-    },
-    onLogout: handleLogout,
+    onOpenUserMenu: appHeaderHandlers.onOpenUserMenu,
+    onLogout: appHeaderHandlers.onLogout,
   });
 
   const authenticatedMainContentProps = useAuthenticatedMainContentProps({
