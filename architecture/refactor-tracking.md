@@ -438,6 +438,11 @@ Validation:
   - Updated `App.tsx` to pass a single spread object (`trapComposerModalProps`) while preserving trap close/reset behavior and send/retry handlers.
   - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
   - Test Delta: Low risk (code-movement extraction for prop assembly); Add now; Coverage type: UI sanity (trap modal open/close reset, send trap, send bulk traps, retry failures, and server/manual target controls).
+- 2026-02-17: Post-item cleanup (PCOM advanced settings modal props hook extraction from App).
+  - Added `hooks/usePcomAdvancedSettingsModalProps.ts` and moved `PcomAdvancedSettingsModal` prop object assembly out of `App.tsx`.
+  - Updated `App.tsx` to pass a single spread object (`pcomAdvancedSettingsModalProps`) while preserving apply/close behavior and all advanced SNMP field wiring.
+  - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
+  - Test Delta: Low risk (code-movement extraction for prop assembly); Add now; Coverage type: UI sanity (PCOM advanced modal open/close, target mode switch, SNMP v1/v2c/v3 field edits, and apply action wiring).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.

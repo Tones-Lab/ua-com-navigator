@@ -41,6 +41,7 @@ import useFcomFilePreviewProps from './hooks/useFcomFilePreviewProps';
 import useFcomFlowModalStackProps from './hooks/useFcomFlowModalStackProps';
 import useFcomReviewCommitModalProps from './hooks/useFcomReviewCommitModalProps';
 import useOverviewState from './hooks/useOverviewState';
+import usePcomAdvancedSettingsModalProps from './hooks/usePcomAdvancedSettingsModalProps';
 import useRequest from './hooks/useRequest';
 import useSearchState from './hooks/useSearchState';
 import useTrapComposerModalProps from './hooks/useTrapComposerModalProps';
@@ -10472,6 +10473,42 @@ export default function App() {
     },
   });
 
+  const pcomAdvancedSettingsModalProps = usePcomAdvancedSettingsModalProps({
+    open: pcomAdvancedOpen,
+    pcomAdvancedTargetMode,
+    setPcomAdvancedTargetMode,
+    pcomAdvancedDeviceIp,
+    setPcomAdvancedDeviceIp,
+    pcomDevicesLoading,
+    pcomDeviceOptions,
+    pcomAdvancedManualIp,
+    setPcomAdvancedManualIp,
+    pcomAdvancedSnmpVersion,
+    setPcomAdvancedSnmpVersion,
+    pcomAdvancedCommunity,
+    setPcomAdvancedCommunity,
+    pcomAdvancedOidEnabled,
+    setPcomAdvancedOidEnabled,
+    pcomAdvancedOidValue,
+    setPcomAdvancedOidValue,
+    pcomAdvancedSecurityLevel,
+    setPcomAdvancedSecurityLevel,
+    pcomAdvancedUsername,
+    setPcomAdvancedUsername,
+    pcomAdvancedAuthProtocol,
+    setPcomAdvancedAuthProtocol,
+    pcomAdvancedAuthPassword,
+    setPcomAdvancedAuthPassword,
+    pcomAdvancedPrivProtocol,
+    setPcomAdvancedPrivProtocol,
+    pcomAdvancedPrivPassword,
+    setPcomAdvancedPrivPassword,
+    pcomAdvancedEngineId,
+    setPcomAdvancedEngineId,
+    onClose: () => setPcomAdvancedOpen(false),
+    onApply: applyPcomAdvanced,
+  });
+
   return (
     <ErrorBoundary>
       <div className="app">
@@ -10656,41 +10693,7 @@ export default function App() {
                 />
               )}
               <TrapComposerModal {...trapComposerModalProps} />
-              <PcomAdvancedSettingsModal
-                open={pcomAdvancedOpen}
-                pcomAdvancedTargetMode={pcomAdvancedTargetMode}
-                setPcomAdvancedTargetMode={setPcomAdvancedTargetMode}
-                pcomAdvancedDeviceIp={pcomAdvancedDeviceIp}
-                setPcomAdvancedDeviceIp={setPcomAdvancedDeviceIp}
-                pcomDevicesLoading={pcomDevicesLoading}
-                pcomDeviceOptions={pcomDeviceOptions}
-                pcomAdvancedManualIp={pcomAdvancedManualIp}
-                setPcomAdvancedManualIp={setPcomAdvancedManualIp}
-                pcomAdvancedSnmpVersion={pcomAdvancedSnmpVersion}
-                setPcomAdvancedSnmpVersion={setPcomAdvancedSnmpVersion}
-                pcomAdvancedCommunity={pcomAdvancedCommunity}
-                setPcomAdvancedCommunity={setPcomAdvancedCommunity}
-                pcomAdvancedOidEnabled={pcomAdvancedOidEnabled}
-                setPcomAdvancedOidEnabled={setPcomAdvancedOidEnabled}
-                pcomAdvancedOidValue={pcomAdvancedOidValue}
-                setPcomAdvancedOidValue={setPcomAdvancedOidValue}
-                pcomAdvancedSecurityLevel={pcomAdvancedSecurityLevel}
-                setPcomAdvancedSecurityLevel={setPcomAdvancedSecurityLevel}
-                pcomAdvancedUsername={pcomAdvancedUsername}
-                setPcomAdvancedUsername={setPcomAdvancedUsername}
-                pcomAdvancedAuthProtocol={pcomAdvancedAuthProtocol}
-                setPcomAdvancedAuthProtocol={setPcomAdvancedAuthProtocol}
-                pcomAdvancedAuthPassword={pcomAdvancedAuthPassword}
-                setPcomAdvancedAuthPassword={setPcomAdvancedAuthPassword}
-                pcomAdvancedPrivProtocol={pcomAdvancedPrivProtocol}
-                setPcomAdvancedPrivProtocol={setPcomAdvancedPrivProtocol}
-                pcomAdvancedPrivPassword={pcomAdvancedPrivPassword}
-                setPcomAdvancedPrivPassword={setPcomAdvancedPrivPassword}
-                pcomAdvancedEngineId={pcomAdvancedEngineId}
-                setPcomAdvancedEngineId={setPcomAdvancedEngineId}
-                onClose={() => setPcomAdvancedOpen(false)}
-                onApply={applyPcomAdvanced}
-              />
+              <PcomAdvancedSettingsModal {...pcomAdvancedSettingsModalProps} />
             </>
           ) : (
             <SignInScreen
