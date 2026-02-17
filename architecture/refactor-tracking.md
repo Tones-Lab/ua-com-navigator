@@ -478,6 +478,11 @@ Validation:
   - Updated `App.tsx` to pass a single spread object (`fcomFolderOverviewProps`) while preserving folder table/search/sort and test-run wiring.
   - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
   - Test Delta: Low risk (code-movement extraction for prop assembly); Add now; Coverage type: UI sanity (FCOM folder overview load/filter/sort and vendor/file test controls).
+- 2026-02-17: Post-item cleanup (app header props hook extraction from App).
+  - Added `hooks/useAppHeaderProps.ts` and moved `AppHeader` prop object assembly out of `App.tsx`.
+  - Updated `App.tsx` to pass a single spread object (`appHeaderProps`) while preserving tab switching, microservice modal trigger, user-menu `flushSync` flow, and logout wiring.
+  - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
+  - Test Delta: Low risk (code-movement extraction for prop assembly); Add now; Coverage type: UI sanity (app tab navigation, microservice indicator click, user-menu open, logout action).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.

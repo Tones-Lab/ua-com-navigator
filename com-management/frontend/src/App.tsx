@@ -33,6 +33,7 @@ import PcomAdvancedSettingsModal from './features/mib/PcomAdvancedSettingsModal'
 import useCacheStatus from './hooks/useCacheStatus';
 import useFavorites from './hooks/useFavorites';
 import useBrowseDeepLink from './hooks/useBrowseDeepLink';
+import useAppHeaderProps from './hooks/useAppHeaderProps';
 import useBuilderSidebar from './hooks/useBuilderSidebar';
 import useComBrowserPanelProps from './hooks/useComBrowserPanelProps';
 import useFcomAuxOverlaysProps from './hooks/useFcomAuxOverlaysProps';
@@ -10720,30 +10721,32 @@ export default function App() {
     isFileTesting: isFileTestLoading,
   });
 
+  const appHeaderProps = useAppHeaderProps({
+    isAuthenticated,
+    activeApp,
+    onTabChange: handleAppTabChange,
+    microserviceIndicatorState,
+    microserviceNeedsRedeploy,
+    microserviceIndicatorTitle,
+    microserviceIndicatorLabel,
+    onOpenMicroserviceModal: () => {
+      setRedeployError(null);
+      setRedeployModalOpen(true);
+    },
+    userName: session?.user,
+    onOpenUserMenu: () => {
+      flushSync(() => {
+        setCacheActionMessage(null);
+        setShowUserMenu(true);
+      });
+    },
+    onLogout: handleLogout,
+  });
+
   return (
     <ErrorBoundary>
       <div className="app">
-        <AppHeader
-          isAuthenticated={isAuthenticated}
-          activeApp={activeApp}
-          onTabChange={handleAppTabChange}
-          microserviceIndicatorState={microserviceIndicatorState}
-          microserviceNeedsRedeploy={microserviceNeedsRedeploy}
-          microserviceIndicatorTitle={microserviceIndicatorTitle}
-          microserviceIndicatorLabel={microserviceIndicatorLabel}
-          onOpenMicroserviceModal={() => {
-            setRedeployError(null);
-            setRedeployModalOpen(true);
-          }}
-          userName={session?.user}
-          onOpenUserMenu={() => {
-            flushSync(() => {
-              setCacheActionMessage(null);
-              setShowUserMenu(true);
-            });
-          }}
-          onLogout={handleLogout}
-        />
+        <AppHeader {...appHeaderProps} />
         <main className="app-main">
           {isAuthenticated ? (
             <>
