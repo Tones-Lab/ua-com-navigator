@@ -63,7 +63,7 @@ Validation:
 - Confirm stacking order works (advanced flow + flow editor + field reference).
 
 ### 3) MIB Details panel extraction
-Status: Not Started
+Status: Done
 Scope: Split right-side MIB details into header, support summary, actions, and objects panels.
 Validation:
 - Select a MIB file and confirm details render the same.
@@ -272,6 +272,11 @@ Validation:
   - Updated `App.tsx` to compose those extracted components and removed the remaining inline `modal-overlay` blocks.
   - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
   - Test Delta: Medium risk (trap send flow, PCOM advanced apply path, and cache-refresh UI wiring); Add now; Coverage type: E2E (open/close Trap Composer + send/validation states, open/apply PCOM advanced settings, open User Preferences and trigger all cache refresh actions).
+- 2026-02-16: Item 3 completed (MIB details panel extraction).
+  - Added `features/mib/MibDetailsHeader.tsx`, `features/mib/MibSupportSummary.tsx`, `features/mib/MibActionsPanel.tsx`, and `features/mib/MibObjectsPanel.tsx`.
+  - Updated `features/mib/MibWorkspace.tsx` to compose the extracted right-side details components (header, support summary, actions/output, objects/details) while preserving existing behavior and callbacks.
+  - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
+  - Test Delta: Medium risk (MIB object selection/details rendering and MIB2FCOM/PCOM action wiring); Add now; Coverage type: E2E (select MIB file, verify support summary counts, run MIB2FCOM output edits, select OBJECT-TYPE and run Test Poll, select trap type and open Compose Trap).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.
