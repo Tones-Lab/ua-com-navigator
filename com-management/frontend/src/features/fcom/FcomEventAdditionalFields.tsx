@@ -1,4 +1,6 @@
 import type { ReactNode } from 'react';
+import BuilderLink from '../../components/BuilderLink';
+import Pill from '../../components/Pill';
 
 type FcomEventAdditionalFieldsProps = {
   additionalFields: string[];
@@ -113,8 +115,8 @@ export default function FcomEventAdditionalFields({
                           tabIndex={0}
                           {...overrideTooltipHoverProps}
                         >
-                          <span
-                            className={`pill override-pill pill-inline pill-action${
+                          <Pill
+                            className={`override-pill pill-inline pill-action${
                               (panelEditState[eventPanelKey] &&
                                 isFieldPendingRemoval(eventPanelKey, field)) ||
                               stagedRemoved
@@ -135,7 +137,7 @@ export default function FcomEventAdditionalFields({
                                   ×
                                 </button>
                               )}
-                          </span>
+                          </Pill>
                           {renderOverrideSummaryCard(obj, overrideValueMap, [field], 'Override')}
                         </div>
                       )}
@@ -143,7 +145,7 @@ export default function FcomEventAdditionalFields({
                         ((panelEditState[eventPanelKey] &&
                           (isFieldPendingRemoval(eventPanelKey, field) || stagedRemoved)) ||
                           (!panelEditState[eventPanelKey] && stagedRemoved)) && (
-                          <span className="pill removed-pill">Removed</span>
+                          <Pill className="removed-pill">Removed</Pill>
                         )}
                       {!isTrapOidField &&
                         (panelEditState[eventPanelKey]
@@ -158,9 +160,8 @@ export default function FcomEventAdditionalFields({
                 })()}
               </div>
               {panelEditState[eventPanelKey] && !isTrapOidField && (
-                <button
-                  type="button"
-                  className="builder-link builder-link-iconic"
+                <BuilderLink
+                  className="builder-link-iconic"
                   onClick={() => openBuilderForField(obj, eventPanelKey, field)}
                   disabled={isFieldLockedByBuilder(eventPanelKey, field)}
                   title={
@@ -179,7 +180,7 @@ export default function FcomEventAdditionalFields({
                     </svg>
                   </span>
                   <span className="builder-link-text">Builder</span>
-                </button>
+                </BuilderLink>
               )}
             </div>
             {isTrapOidField ? (

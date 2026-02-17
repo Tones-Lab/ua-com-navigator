@@ -1,4 +1,6 @@
 import type { ReactNode } from 'react';
+import BuilderLink from '../../components/BuilderLink';
+import Pill from '../../components/Pill';
 
 type FcomEventPrimaryRowProps = {
   baseFields: string[];
@@ -104,8 +106,8 @@ export default function FcomEventPrimaryRow({
                     {renderFieldBadges(eventPanelKey, 'Summary', obj, overrideTargets)}
                     {overrideTargets.has('$.event.Summary') && (
                       <div className="override-summary" tabIndex={0} {...overrideTooltipHoverProps}>
-                        <span
-                          className={`pill override-pill pill-inline pill-action${
+                        <Pill
+                          className={`override-pill pill-inline pill-action${
                             (panelEditState[eventPanelKey] &&
                               isFieldPendingRemoval(eventPanelKey, 'Summary')) ||
                             stagedRemoved
@@ -135,14 +137,14 @@ export default function FcomEventPrimaryRow({
                                 ×
                               </button>
                             )}
-                        </span>
+                        </Pill>
                         {renderOverrideSummaryCard(obj, overrideValueMap, ['Summary'], 'Override')}
                       </div>
                     )}
                     {((panelEditState[eventPanelKey] &&
                       (isFieldPendingRemoval(eventPanelKey, 'Summary') || stagedRemoved)) ||
                       (!panelEditState[eventPanelKey] && stagedRemoved)) && (
-                      <span className="pill removed-pill">Removed</span>
+                      <Pill className="removed-pill">Removed</Pill>
                     )}
                     {(panelEditState[eventPanelKey]
                       ? isFieldDirty(obj, eventPanelKey, 'Summary') || stagedRemoved
@@ -156,9 +158,8 @@ export default function FcomEventPrimaryRow({
               })()}
             </div>
             {panelEditState[eventPanelKey] && (
-              <button
-                type="button"
-                className="builder-link builder-link-iconic"
+              <BuilderLink
+                className="builder-link-iconic"
                 onClick={() => openBuilderForField(obj, eventPanelKey, 'Summary')}
                 disabled={isFieldLockedByBuilder(eventPanelKey, 'Summary')}
                 aria-label="Open Builder"
@@ -172,7 +173,7 @@ export default function FcomEventPrimaryRow({
                   </svg>
                 </span>
                 <span className="builder-link-text">Builder</span>
-              </button>
+              </BuilderLink>
             )}
           </div>
           {panelEditState[eventPanelKey] ? (
@@ -258,8 +259,8 @@ export default function FcomEventPrimaryRow({
                     {renderFieldBadges(eventPanelKey, 'Severity', obj, overrideTargets)}
                     {overrideTargets.has('$.event.Severity') && (
                       <div className="override-summary" tabIndex={0} {...overrideTooltipHoverProps}>
-                        <span
-                          className={`pill override-pill pill-inline pill-action${
+                        <Pill
+                          className={`override-pill pill-inline pill-action${
                             (panelEditState[eventPanelKey] &&
                               isFieldPendingRemoval(eventPanelKey, 'Severity')) ||
                             stagedRemoved
@@ -289,14 +290,14 @@ export default function FcomEventPrimaryRow({
                                 ×
                               </button>
                             )}
-                        </span>
+                        </Pill>
                         {renderOverrideSummaryCard(obj, overrideValueMap, ['Severity'], 'Override')}
                       </div>
                     )}
                     {((panelEditState[eventPanelKey] &&
                       (isFieldPendingRemoval(eventPanelKey, 'Severity') || stagedRemoved)) ||
                       (!panelEditState[eventPanelKey] && stagedRemoved)) && (
-                      <span className="pill removed-pill">Removed</span>
+                      <Pill className="removed-pill">Removed</Pill>
                     )}
                     {(panelEditState[eventPanelKey]
                       ? isFieldDirty(obj, eventPanelKey, 'Severity') || stagedRemoved
@@ -310,9 +311,8 @@ export default function FcomEventPrimaryRow({
               })()}
             </div>
             {panelEditState[eventPanelKey] && (
-              <button
-                type="button"
-                className="builder-link builder-link-iconic"
+              <BuilderLink
+                className="builder-link-iconic"
                 onClick={() => openBuilderForField(obj, eventPanelKey, 'Severity')}
                 disabled={isFieldLockedByBuilder(eventPanelKey, 'Severity')}
                 aria-label="Open Builder"
@@ -326,7 +326,7 @@ export default function FcomEventPrimaryRow({
                   </svg>
                 </span>
                 <span className="builder-link-text">Builder</span>
-              </button>
+              </BuilderLink>
             )}
           </div>
           {panelEditState[eventPanelKey] ? (

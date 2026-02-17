@@ -1,4 +1,6 @@
 import React from 'react';
+import BuilderLink from '../../components/BuilderLink';
+import Pill from '../../components/Pill';
 import type { FlowBranchPath, FlowNode } from './flowUtils';
 
 type FlowNodeErrorMap = Record<string, string[]>;
@@ -185,25 +187,23 @@ const FcomAdvancedFlowModal = ({
                   }`}
                 >
                   {(isV2 || isMixed) && (
-                    <span
-                      className="pill override-pill"
+                    <Pill
+                      className="override-pill"
                       title="We recommend moving to v3. Click Convert from the main edit panel."
                       aria-label="V2 override warning"
                     >
                       !
-                    </span>
+                    </Pill>
                   )}
                   <span>{statusText}</span>
                   {helperText && <span className="flow-version-helper">{helperText}</span>}
                   {(isV2 || isMixed) && canConvertToV3 && (
-                    <button
-                      type="button"
-                      className="builder-link"
+                    <BuilderLink
                       onClick={onConvertToV3}
                       title="Converts all processors in this object."
                     >
                       Convert entire override to v3
-                    </button>
+                    </BuilderLink>
                   )}
                 </div>
               );
@@ -222,7 +222,7 @@ const FcomAdvancedFlowModal = ({
                 {advancedFlowRemovedTargets.map((target) => (
                   <div key={target} className="flow-removed-item">
                     <span className="flow-removed-label">{formatFlowTargetLabel(target)}</span>
-                    <span className="pill removed-pill">To be deleted</span>
+                    <Pill className="removed-pill">To be deleted</Pill>
                   </div>
                 ))}
               </div>
@@ -296,17 +296,13 @@ const FcomAdvancedFlowModal = ({
                     </div>
                   </div>
                   <div className="flow-focus-actions">
-                    <button
-                      type="button"
-                      className="builder-link"
+                    <BuilderLink
                       onClick={() => setAdvancedFlowFocusOnly((prev) => !prev)}
                       disabled={!focusedFlowMatch}
                     >
                       {advancedFlowFocusOnly ? 'Show full JSON' : 'Focus only'}
-                    </button>
-                    <button
-                      type="button"
-                      className="builder-link"
+                    </BuilderLink>
+                    <BuilderLink
                       onClick={() => {
                         setAdvancedFlowFocusTarget(null);
                         setAdvancedFlowFocusIndex(0);
@@ -314,13 +310,11 @@ const FcomAdvancedFlowModal = ({
                       }}
                     >
                       Clear focus
-                    </button>
+                    </BuilderLink>
                   </div>
                   {focusedFlowMatches.length > 1 && (
                     <div className="flow-focus-controls">
-                      <button
-                        type="button"
-                        className="builder-link"
+                      <BuilderLink
                         onClick={() =>
                           setAdvancedFlowFocusIndex((prev) =>
                             prev <= 0 ? focusedFlowMatches.length - 1 : prev - 1,
@@ -328,10 +322,8 @@ const FcomAdvancedFlowModal = ({
                         }
                       >
                         Previous
-                      </button>
-                      <button
-                        type="button"
-                        className="builder-link"
+                      </BuilderLink>
+                      <BuilderLink
                         onClick={() =>
                           setAdvancedFlowFocusIndex((prev) =>
                             prev >= focusedFlowMatches.length - 1 ? 0 : prev + 1,
@@ -339,7 +331,7 @@ const FcomAdvancedFlowModal = ({
                         }
                       >
                         Next
-                      </button>
+                      </BuilderLink>
                     </div>
                   )}
                 </div>

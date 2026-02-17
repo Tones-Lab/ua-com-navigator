@@ -87,7 +87,7 @@ Validation:
 - Confirm spinners/loading indicators still appear in the same places.
 
 ### 6) Builder links + pill components
-Status: In Progress
+Status: Done
 Scope: Replace repeated builder link/pill markup with shared components.
 Validation:
 - Verify builder links (primary/secondary rows) still open builder correctly.
@@ -292,6 +292,12 @@ Validation:
   - Migrated `features/fcom/FcomTrapVariablesModal.tsx` and `features/fcom/FcomObjectCard.tsx` pill chips to shared `Pill`.
   - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
   - Test Delta: Medium risk (review modal expand/collapse actions, trap varbind controls, object-card status chips); Add now; Coverage type: E2E (review modal section controls, trap composer failure/varbind actions, object-card chip visibility in override/match/unsaved scenarios).
+- 2026-02-16: Item 6 completed (remaining event/header/advanced-flow standardization).
+  - Migrated `features/fcom/FcomEventPrimaryRow.tsx`, `FcomEventSecondaryRow.tsx`, and `FcomEventAdditionalFields.tsx` to shared `BuilderLink`/`Pill` for builder entry actions and override/removed chips.
+  - Migrated `features/fcom/FcomAdvancedFlowModal.tsx` focus/convert links to `BuilderLink` and warning/removal chips to `Pill`.
+  - Migrated `features/fcom/FcomFileHeader.tsx` and `features/pcom/PcomWorkspace.tsx` remaining plain pill chips to shared `Pill`.
+  - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
+  - Test Delta: Medium risk (builder entry links in event rows, advanced flow focus controls, and status chip rendering consistency); Add now; Coverage type: E2E (open builder from primary/secondary/additional rows, advanced flow focus controls + convert CTA, global/file and PCOM chip rendering).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.

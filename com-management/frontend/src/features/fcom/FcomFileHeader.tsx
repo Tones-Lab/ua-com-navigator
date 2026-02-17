@@ -1,5 +1,6 @@
 import ActionRow from '../../components/ActionRow';
 import { FileTitleRow, ViewToggle } from '../../components/FileHeaderCommon';
+import Pill from '../../components/Pill';
 type FcomFileHeaderProps = {
   selectedFile: any | null;
   browseNode: string | null;
@@ -197,19 +198,18 @@ export default function FcomFileHeader({
               Review & Save{hasStagedChanges ? ` (${stagedDiff.totalChanges})` : ''}
             </button>
             {hasGlobalAdvancedFlow && (
-              <span className="pill" title="Global Advanced Flow configured">
+              <Pill title="Global Advanced Flow configured">
                 Advanced Flow
-              </span>
+              </Pill>
             )}
             {stagedDiff.editedObjects.length > 0 && (
-              <span
-                className="pill"
+              <Pill
                 title={`Edited objects: ${stagedDiff.editedObjects.slice(0, 6).join(', ')}${
                   stagedDiff.editedObjects.length > 6 ? '…' : ''
                 }`}
               >
                 Edited objects: {stagedDiff.editedObjects.length}
-              </span>
+              </Pill>
             )}
           </>
         ) : (

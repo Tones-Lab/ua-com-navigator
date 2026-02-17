@@ -2,6 +2,7 @@ import type { ComponentProps } from 'react';
 import ActionRow from '../../components/ActionRow';
 import ComFilePreview from '../../components/ComFilePreview';
 import { FileTitleRow, ViewToggle } from '../../components/FileHeaderCommon';
+import Pill from '../../components/Pill';
 import FcomBrowserPanel from '../fcom/FcomBrowserPanel';
 import FcomRawPreview from '../fcom/FcomRawPreview';
 
@@ -161,13 +162,13 @@ export default function PcomWorkspace({
                                     <div className="pcom-object-row-title">{entry.name}</div>
                                     <div className="pcom-object-row-meta">
                                       {entry.obj?.class && (
-                                        <span className="pill">{entry.obj.class}</span>
+                                        <Pill>{entry.obj.class}</Pill>
                                       )}
                                       {entry.obj?.subClass && (
-                                        <span className="pill">{entry.obj.subClass}</span>
+                                        <Pill>{entry.obj.subClass}</Pill>
                                       )}
                                       {entry.obj?.certification && (
-                                        <span className="pill">{entry.obj.certification}</span>
+                                        <Pill>{entry.obj.certification}</Pill>
                                       )}
                                     </div>
                                   </button>
