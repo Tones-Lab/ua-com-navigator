@@ -35,6 +35,7 @@ import useFavorites from './hooks/useFavorites';
 import useBrowseDeepLink from './hooks/useBrowseDeepLink';
 import useBuilderSidebar from './hooks/useBuilderSidebar';
 import useComBrowserPanelProps from './hooks/useComBrowserPanelProps';
+import useFcomAuxOverlaysProps from './hooks/useFcomAuxOverlaysProps';
 import useFcomFileHeaderProps from './hooks/useFcomFileHeaderProps';
 import useFcomFilePreviewProps from './hooks/useFcomFilePreviewProps';
 import useFcomFlowModalStackProps from './hooks/useFcomFlowModalStackProps';
@@ -10357,6 +10358,71 @@ export default function App() {
     getEventFieldDescription,
   });
 
+  const fcomAuxOverlaysProps = useFcomAuxOverlaysProps({
+    builderSwitchModal,
+    setBuilderSwitchModal,
+    applyBuilderTypeSwitch,
+    panelNavWarning,
+    setPanelNavWarning,
+    pendingNav,
+    setPendingNav,
+    discardAllEdits,
+    pendingCancel,
+    setPendingCancel,
+    closeBuilder,
+    discardEventEdit,
+    pendingReviewDiscard,
+    setPendingReviewDiscard,
+    setShowReviewModal,
+    removeOverrideModal,
+    setRemoveOverrideModal,
+    confirmRemoveOverride,
+    removeAllOverridesModal,
+    setRemoveAllOverridesModal,
+    confirmRemoveAllOverrides,
+    openAdvancedFlowModal,
+    processorTooltip,
+    saveLoading,
+    saveElapsed,
+    overrideSaveDisplayStatus,
+    redeployLoading,
+    microserviceActionLabel,
+    redeployElapsed,
+    showAddFieldModal,
+    addFieldContext,
+    addFieldSearch,
+    setAddFieldSearch,
+    availableEventFields,
+    panelAddedFields,
+    reservedEventFields,
+    getEventFieldDescription,
+    addFieldToPanel,
+    setShowAddFieldModal,
+    eventFieldPickerOpen,
+    eventFieldSearch,
+    setEventFieldSearch,
+    handleEventFieldInsertSelect,
+    setEventFieldPickerOpen,
+    setEventFieldInsertContext,
+    showPathModal,
+    getCurrentPath,
+    setShowPathModal,
+    varModalOpen,
+    varModalMode,
+    varModalVars,
+    varModalToken,
+    varListRef,
+    varRowRefs,
+    renderValue,
+    formatDescription,
+    renderEnums,
+    getModalOverlayStyle,
+    handleVarInsertSelect,
+    setVarModalOpen,
+    setVarModalMode,
+    setVarInsertContext,
+  });
+
   return (
     <ErrorBoundary>
       <div className="app">
@@ -10432,70 +10498,7 @@ export default function App() {
                         <FcomFilePreview {...fcomFilePreviewProps} />
                         <FcomReviewCommitModal {...fcomReviewCommitModalProps} />
                         <FcomFlowModalStack {...fcomFlowModalStackProps} />
-                        <FcomAuxOverlays
-                          builderSwitchModal={builderSwitchModal}
-                          setBuilderSwitchModal={setBuilderSwitchModal}
-                          applyBuilderTypeSwitch={applyBuilderTypeSwitch}
-                          panelNavWarning={panelNavWarning}
-                          setPanelNavWarning={setPanelNavWarning}
-                          pendingNav={pendingNav}
-                          setPendingNav={setPendingNav}
-                          discardAllEdits={discardAllEdits}
-                          pendingCancel={pendingCancel}
-                          setPendingCancel={setPendingCancel}
-                          closeBuilder={closeBuilder}
-                          discardEventEdit={discardEventEdit}
-                          pendingReviewDiscard={pendingReviewDiscard}
-                          setPendingReviewDiscard={setPendingReviewDiscard}
-                          setShowReviewModal={setShowReviewModal}
-                          removeOverrideModal={removeOverrideModal}
-                          setRemoveOverrideModal={setRemoveOverrideModal}
-                          confirmRemoveOverride={confirmRemoveOverride}
-                          removeAllOverridesModal={removeAllOverridesModal}
-                          setRemoveAllOverridesModal={setRemoveAllOverridesModal}
-                          confirmRemoveAllOverrides={confirmRemoveAllOverrides}
-                          openAdvancedFlowModal={openAdvancedFlowModal}
-                          processorTooltip={processorTooltip}
-                          saveLoading={saveLoading}
-                          saveElapsed={saveElapsed}
-                          overrideSaveDisplayStatus={overrideSaveDisplayStatus}
-                          redeployLoading={redeployLoading}
-                          microserviceActionLabel={microserviceActionLabel}
-                          redeployElapsed={redeployElapsed}
-                          showAddFieldModal={showAddFieldModal}
-                          addFieldContext={addFieldContext}
-                          addFieldSearch={addFieldSearch}
-                          setAddFieldSearch={setAddFieldSearch}
-                          availableEventFields={availableEventFields}
-                          panelAddedFields={panelAddedFields}
-                          reservedEventFields={reservedEventFields}
-                          getEventFieldDescription={getEventFieldDescription}
-                          addFieldToPanel={addFieldToPanel}
-                          setShowAddFieldModal={setShowAddFieldModal}
-                          eventFieldPickerOpen={eventFieldPickerOpen}
-                          eventFieldSearch={eventFieldSearch}
-                          setEventFieldSearch={setEventFieldSearch}
-                          handleEventFieldInsertSelect={handleEventFieldInsertSelect}
-                          setEventFieldPickerOpen={setEventFieldPickerOpen}
-                          setEventFieldInsertContext={setEventFieldInsertContext}
-                          showPathModal={showPathModal}
-                          getCurrentPath={getCurrentPath}
-                          setShowPathModal={setShowPathModal}
-                          varModalOpen={varModalOpen}
-                          varModalMode={varModalMode}
-                          varModalVars={varModalVars}
-                          varModalToken={varModalToken}
-                          varListRef={varListRef}
-                          varRowRefs={varRowRefs}
-                          renderValue={renderValue}
-                          formatDescription={formatDescription}
-                          renderEnums={renderEnums}
-                          getModalOverlayStyle={getModalOverlayStyle}
-                          handleVarInsertSelect={handleVarInsertSelect}
-                          setVarModalOpen={setVarModalOpen}
-                          setVarModalMode={setVarModalMode}
-                          setVarInsertContext={setVarInsertContext}
-                        />
+                        <FcomAuxOverlays {...fcomAuxOverlaysProps} />
                       </div>
                     </div>
                   </div>

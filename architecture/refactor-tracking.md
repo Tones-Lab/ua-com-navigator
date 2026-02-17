@@ -428,6 +428,11 @@ Validation:
   - Updated `App.tsx` to pass a single spread object (`fcomFlowModalStackProps`) while preserving advanced-flow/editor modal behaviors and handlers.
   - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
   - Test Delta: Low risk (code-movement extraction for prop assembly); Add now; Coverage type: UI sanity (advanced-flow modal open/save/cancel, flow editor open/save/cancel, field-reference modal toggling, and conversion CTA behavior).
+- 2026-02-17: Post-item cleanup (FCOM auxiliary overlays props hook extraction from App).
+  - Added `hooks/useFcomAuxOverlaysProps.ts` and moved `FcomAuxOverlays` prop object assembly out of `App.tsx`.
+  - Updated `App.tsx` to pass a single spread object (`fcomAuxOverlaysProps`) while preserving existing confirm/modal/overlay and variable-insert handlers.
+  - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
+  - Test Delta: Low risk (code-movement extraction for prop assembly); Add now; Coverage type: UI sanity (confirm dialogs, add-field modal, path help modal, var insert modal, and save/redeploy overlays remain wired).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.
