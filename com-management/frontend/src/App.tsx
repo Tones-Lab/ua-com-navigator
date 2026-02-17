@@ -40,6 +40,7 @@ import MibWorkspace from './features/mib/MibWorkspace';
 import LegacyWorkspace from './features/legacy/LegacyWorkspace';
 import MicroserviceStatusModal from './features/microservices/MicroserviceStatusModal';
 import PcomFriendlyView from './features/pcom/PcomFriendlyView';
+import usePcomViewState from './features/pcom/usePcomViewState';
 import useMibWorkspace from './features/mib/useMibWorkspace';
 import PcomAdvancedSettingsModal from './features/mib/PcomAdvancedSettingsModal';
 import useCacheStatus from './hooks/useCacheStatus';
@@ -9976,60 +9977,12 @@ export default function App() {
     }
     return String(value);
   };
-  const getPcomObjectName = (obj: any) => String(obj?.['@objectName'] || obj?.objectName || '');
-  const pcomParsed = useMemo(() => {
-    if (activeApp !== 'pcom') {
-      return null;
-    }
-    const source = rawPreviewText.trim();
-    if (!source || (!source.startsWith('{') && !source.startsWith('['))) {
-      return null;
-    }
-    try {
-      return JSON.parse(source);
-    } catch {
-      return null;
-    }
-  }, [activeApp, rawPreviewText]);
-  const pcomObjectEntries = useMemo<Array<{ key: string; name: string; obj: any }>>(() => {
-    const objects = Array.isArray(pcomParsed?.objects) ? pcomParsed.objects : [];
-    return objects.map((obj: any, index: number) => {
-      const name = getPcomObjectName(obj);
-      return {
-        key: name || `object-${index}`,
-        name: name || `Object ${index + 1}`,
-        obj,
-      };
-    });
-  }, [pcomParsed]);
-  const pcomSelectedObject = useMemo(() => {
-    if (pcomObjectEntries.length === 0) {
-      return null;
-    }
-    const match = pcomObjectEntries.find(
-      (entry: { key: string }) => entry.key === pcomSelectedObjectKey,
-    );
-    return match || pcomObjectEntries[0];
-  }, [pcomObjectEntries, pcomSelectedObjectKey]);
-  useEffect(() => {
-    if (activeApp !== 'pcom') {
-      return;
-    }
-    if (pcomObjectEntries.length === 0) {
-      if (pcomSelectedObjectKey) {
-        setPcomSelectedObjectKey(null);
-      }
-      return;
-    }
-    if (
-      !pcomSelectedObjectKey ||
-      !pcomObjectEntries.some(
-        (entry: { key: string }) => entry.key === pcomSelectedObjectKey,
-      )
-    ) {
-      setPcomSelectedObjectKey(pcomObjectEntries[0].key);
-    }
-  }, [activeApp, pcomObjectEntries, pcomSelectedObjectKey]);
+  const { pcomParsed, pcomObjectEntries, pcomSelectedObject } = usePcomViewState({
+    activeApp,
+    rawPreviewText,
+    pcomSelectedObjectKey,
+    setPcomSelectedObjectKey,
+  });
   const renderFlowJsonPreview = (fullJson: string) => (
     <div
       className={`flow-preview${showAdvancedFlowJsonPreview ? '' : ' flow-preview-collapsed'}`}

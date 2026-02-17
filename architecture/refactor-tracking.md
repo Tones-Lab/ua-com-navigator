@@ -353,6 +353,11 @@ Validation:
   - Updated `App.tsx` to compose `PcomFriendlyView` with existing parsed data, object selection state, and display formatter callbacks.
   - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
   - Test Delta: Low risk (code-movement extraction for PCOM display UI); Add now; Coverage type: UI sanity (PCOM summary values, object selection highlighting, details/value-list rendering).
+- 2026-02-17: Post-item cleanup (PCOM parse/selection hook extraction from App).
+  - Added `features/pcom/usePcomViewState.ts` and moved PCOM JSON parse, object-list derivation, selected-object derivation, and selected-key guard effect out of `App.tsx`.
+  - Updated `App.tsx` to consume `usePcomViewState` while preserving the same PCOM tab behavior and state transitions.
+  - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
+  - Test Delta: Low risk (code-movement extraction for derived/stateful PCOM view logic); Add now; Coverage type: UI sanity (PCOM parse fallback, default object selection, object reselect on dataset change).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.
