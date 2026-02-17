@@ -39,6 +39,7 @@ import useFcomAuxOverlaysProps from './hooks/useFcomAuxOverlaysProps';
 import useFcomFileHeaderProps from './hooks/useFcomFileHeaderProps';
 import useFcomFilePreviewProps from './hooks/useFcomFilePreviewProps';
 import useFcomFlowModalStackProps from './hooks/useFcomFlowModalStackProps';
+import useFcomFolderOverviewProps from './hooks/useFcomFolderOverviewProps';
 import useFcomReviewCommitModalProps from './hooks/useFcomReviewCommitModalProps';
 import useMicroserviceModalHostProps from './hooks/useMicroserviceModalHostProps';
 import useMibWorkspaceProps from './hooks/useMibWorkspaceProps';
@@ -10700,6 +10701,25 @@ export default function App() {
     overviewVendorSort,
   });
 
+  const fcomFolderOverviewProps = useFcomFolderOverviewProps({
+    selectedFolder,
+    folderLoading,
+    folderOverview,
+    folderTableFilter,
+    setFolderTableFilter,
+    toggleFolderSort,
+    folderTableSort,
+    folderTableRows,
+    formatOverviewNumber,
+    formatDisplayPath,
+    hasEditPermission,
+    showTestControls: isTrapFolderContext,
+    onTestVendor: handleTestVendorFiles,
+    onTestFile: runFileTest,
+    isVendorTesting: vendorTestLoading,
+    isFileTesting: isFileTestLoading,
+  });
+
   return (
     <ErrorBoundary>
       <div className="app">
@@ -10736,24 +10756,7 @@ export default function App() {
                     <div className="panel-scroll">
                       <div className="file-details">
                         {!selectedFile && (
-                          <FcomFolderOverview
-                            selectedFolder={selectedFolder}
-                            folderLoading={folderLoading}
-                            folderOverview={folderOverview}
-                            folderTableFilter={folderTableFilter}
-                            setFolderTableFilter={setFolderTableFilter}
-                            toggleFolderSort={toggleFolderSort}
-                            folderTableSort={folderTableSort}
-                            folderTableRows={folderTableRows}
-                            formatOverviewNumber={formatOverviewNumber}
-                            formatDisplayPath={formatDisplayPath}
-                            hasEditPermission={hasEditPermission}
-                            showTestControls={isTrapFolderContext}
-                            onTestVendor={handleTestVendorFiles}
-                            onTestFile={runFileTest}
-                            isVendorTesting={vendorTestLoading}
-                            isFileTesting={isFileTestLoading}
-                          />
+                          <FcomFolderOverview {...fcomFolderOverviewProps} />
                         )}
                         <FcomFileHeader {...fcomFileHeaderProps} />
                         <FcomFilePreview {...fcomFilePreviewProps} />

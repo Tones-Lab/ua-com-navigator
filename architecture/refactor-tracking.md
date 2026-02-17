@@ -473,6 +473,11 @@ Validation:
   - Updated `App.tsx` to pass a single spread object (`overviewPageProps`) while preserving overview filters, sorting, and folder navigation wiring.
   - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
   - Test Delta: Low risk (code-movement extraction for prop assembly); Add now; Coverage type: UI sanity (overview load/top-N controls, vendor filter/sort, and folder drilldown behavior).
+- 2026-02-17: Post-item cleanup (FCOM folder overview props hook extraction from App).
+  - Added `hooks/useFcomFolderOverviewProps.ts` and moved `FcomFolderOverview` prop object assembly out of `App.tsx`.
+  - Updated `App.tsx` to pass a single spread object (`fcomFolderOverviewProps`) while preserving folder table/search/sort and test-run wiring.
+  - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
+  - Test Delta: Low risk (code-movement extraction for prop assembly); Add now; Coverage type: UI sanity (FCOM folder overview load/filter/sort and vendor/file test controls).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.
