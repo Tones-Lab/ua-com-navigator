@@ -20,6 +20,7 @@ import FcomFieldSelectionModals from './features/fcom/FcomFieldSelectionModals';
 import FcomOverrideRemovalModals from './features/fcom/FcomOverrideRemovalModals';
 import FcomTrapVariablesModal from './features/fcom/FcomTrapVariablesModal';
 import TrapComposerModal from './features/fcom/TrapComposerModal';
+import FcomPathHelpModal from './features/fcom/FcomPathHelpModal';
 import useFcomBuilderContextValue from './features/fcom/builder/useFcomBuilderContextValue';
 import type {
   FlowPaletteItem,
@@ -10889,56 +10890,11 @@ export default function App() {
                             setEventFieldInsertContext(null);
                           }}
                         />
-                        {showPathModal && (
-                          <Modal ariaLabel="Tool Overview">
-                              <h3>Tool Overview</h3>
-                              <div className="help-section">
-                                <h4>Current Path</h4>
-                                <div className="path-row">
-                                  <div className="path-value monospace">{getCurrentPath()}</div>
-                                  <button
-                                    type="button"
-                                    className="copy-button"
-                                    onClick={async () => {
-                                      try {
-                                        await navigator.clipboard.writeText(getCurrentPath());
-                                      } catch {
-                                        // ignore
-                                      }
-                                    }}
-                                  >
-                                    Copy
-                                  </button>
-                                </div>
-                                <p className="path-note">
-                                  UA internal paths use an{' '}
-                                  <span className="code-pill">id-core</span> prefix. The UI displays
-                                  the cleaned path for readability.
-                                </p>
-                              </div>
-                              <div className="help-section">
-                                <h4>Search modes</h4>
-                                <ul>
-                                  <li>
-                                    <strong>Names</strong>: searches file and folder names (and
-                                    paths).
-                                  </li>
-                                  <li>
-                                    <strong>Content</strong>: searches inside file contents only.
-                                  </li>
-                                  <li>
-                                    <strong>All</strong>: searches both names and contents.
-                                  </li>
-                                </ul>
-                              </div>
-
-                              <div className="modal-actions">
-                                <button type="button" onClick={() => setShowPathModal(false)}>
-                                  Close
-                                </button>
-                              </div>
-                          </Modal>
-                        )}
+                        <FcomPathHelpModal
+                          open={showPathModal}
+                          currentPath={getCurrentPath()}
+                          onClose={() => setShowPathModal(false)}
+                        />
                         <FcomTrapVariablesModal
                           open={varModalOpen}
                           mode={varModalMode}

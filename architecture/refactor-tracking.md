@@ -328,6 +328,11 @@ Validation:
   - Updated `App.tsx` to compose the new modal component and keep orchestration callbacks/state in the parent.
   - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
   - Test Delta: Low risk (code-movement extraction for modal rendering with unchanged interaction contracts); Add now; Coverage type: UI sanity (review modal expand/collapse, original diff toggle, commit/discard actions).
+- 2026-02-17: Post-item cleanup (path-help modal extraction from App).
+  - Added `features/fcom/FcomPathHelpModal.tsx` and moved the inline Tool Overview/Path Help modal body out of `App.tsx`.
+  - Updated `App.tsx` to compose the new path-help modal component while preserving copy-path and close behavior.
+  - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
+  - Test Delta: Low risk (code-movement extraction for helper modal rendering); Add now; Coverage type: UI sanity (open/close path-help modal and copy current path).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.
