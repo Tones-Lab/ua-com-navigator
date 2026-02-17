@@ -41,6 +41,7 @@ import useFcomFilePreviewProps from './hooks/useFcomFilePreviewProps';
 import useFcomFlowModalStackProps from './hooks/useFcomFlowModalStackProps';
 import useFcomReviewCommitModalProps from './hooks/useFcomReviewCommitModalProps';
 import useMicroserviceModalHostProps from './hooks/useMicroserviceModalHostProps';
+import useMibWorkspaceProps from './hooks/useMibWorkspaceProps';
 import useOverviewState from './hooks/useOverviewState';
 import usePcomAdvancedSettingsModalProps from './hooks/usePcomAdvancedSettingsModalProps';
 import useRequest from './hooks/useRequest';
@@ -10565,6 +10566,82 @@ export default function App() {
     handleRedeployFcomProcessor,
   });
 
+  const mibWorkspaceProps = useMibWorkspaceProps({
+    isCompactPanel,
+    mibPath,
+    mibSearch,
+    mibSearchScope,
+    mibSearchMode,
+    mibLoading,
+    mibShowLoadingTimer,
+    mibLoadingElapsed,
+    mibError,
+    mibEntries,
+    mibTotal,
+    mibFilteredTotal,
+    mibHasMore,
+    mibSelectedFile,
+    mibSelectedSupport,
+    mibDefinitionCounts,
+    mib2FcomLoading,
+    mibUseParent,
+    mib2FcomError,
+    mibOutput,
+    mibOutputName,
+    mibDefinitionSearch,
+    mibObjectFilter,
+    mibDetailsLoading,
+    mibSelectedDefinition,
+    filteredMibDefinitions,
+    mibSupportByPath,
+    pcomAdvancedActive,
+    pcomAdvancedSummary,
+    pcomSnmpProfileLoading,
+    pcomSnmpProfileError,
+    pcomSnmpProfile,
+    pcomDeviceIp,
+    pcomDevicesLoading,
+    pcomDeviceOptions,
+    pcomDeviceOptionsWithManual,
+    pcomActiveTarget,
+    pcomPollLoading,
+    pcomPollError,
+    pcomPollOutput,
+    pcomDevicesError,
+    favoritesFolders,
+    favoritesFiles,
+    favoritesLoading,
+    favoritesError,
+    hasEditPermission,
+    buildBreadcrumbsFromPath,
+    handleMibSearchSubmit,
+    handleMibClearSearch,
+    loadMibPath,
+    loadMibSearch,
+    handleOpenMibEntry,
+    openMibFavorite,
+    getMibSupportStatus,
+    getSupportedCountLabel,
+    getMibBaseName,
+    runMib2Fcom,
+    setMibUseParent,
+    setMibOutput,
+    setMibDefinitionSearch,
+    setMibObjectFilter,
+    setMibSelectedDefinition,
+    formatSnmpVersionLabel,
+    formatSnmpProfileTooltip,
+    openPcomAdvancedModal,
+    disablePcomAdvanced,
+    runPcomPoll,
+    setPcomDeviceIp,
+    openTrapComposer,
+    isFavorite,
+    toggleFavorite,
+    setMibSearch,
+    setMibSearchScope,
+  });
+
   return (
     <ErrorBoundary>
       <div className="app">
@@ -10672,81 +10749,7 @@ export default function App() {
               ) : activeApp === 'legacy' ? (
                 <LegacyWorkspace />
               ) : (
-                <MibWorkspace
-                  isCompactPanel={isCompactPanel}
-                  mibPath={mibPath}
-                  mibSearch={mibSearch}
-                  mibSearchScope={mibSearchScope}
-                  mibSearchMode={mibSearchMode}
-                  mibLoading={mibLoading}
-                  mibShowLoadingTimer={mibShowLoadingTimer}
-                  mibLoadingElapsed={mibLoadingElapsed}
-                  mibError={mibError}
-                  mibEntries={mibEntries}
-                  mibTotal={mibTotal}
-                  mibFilteredTotal={mibFilteredTotal}
-                  mibHasMore={mibHasMore}
-                  mibSelectedFile={mibSelectedFile}
-                  mibSelectedSupport={mibSelectedSupport}
-                  mibDefinitionCounts={mibDefinitionCounts}
-                  mib2FcomLoading={mib2FcomLoading}
-                  mibUseParent={mibUseParent}
-                  mib2FcomError={mib2FcomError}
-                  mibOutput={mibOutput}
-                  mibOutputName={mibOutputName}
-                  mibDefinitionSearch={mibDefinitionSearch}
-                  mibObjectFilter={mibObjectFilter}
-                  mibDetailsLoading={mibDetailsLoading}
-                  mibSelectedDefinition={mibSelectedDefinition}
-                  filteredMibDefinitions={filteredMibDefinitions}
-                  mibSupportByPath={mibSupportByPath}
-                  pcomAdvancedActive={pcomAdvancedActive}
-                  pcomAdvancedSummary={pcomAdvancedSummary}
-                  pcomSnmpProfileLoading={pcomSnmpProfileLoading}
-                  pcomSnmpProfileError={pcomSnmpProfileError}
-                  pcomSnmpProfile={pcomSnmpProfile}
-                  pcomDeviceIp={pcomDeviceIp}
-                  pcomDevicesLoading={pcomDevicesLoading}
-                  pcomDeviceOptions={pcomDeviceOptions}
-                  pcomDeviceOptionsWithManual={pcomDeviceOptionsWithManual}
-                  pcomActiveTarget={pcomActiveTarget}
-                  pcomPollLoading={pcomPollLoading}
-                  pcomPollError={pcomPollError}
-                  pcomPollOutput={pcomPollOutput}
-                  pcomDevicesError={pcomDevicesError}
-                  favoritesFolders={favoritesFolders}
-                  favoritesFiles={favoritesFiles}
-                  favoritesLoading={favoritesLoading}
-                  favoritesError={favoritesError}
-                  hasEditPermission={hasEditPermission}
-                  buildBreadcrumbsFromPath={buildBreadcrumbsFromPath}
-                  handleMibSearchSubmit={handleMibSearchSubmit}
-                  handleMibClearSearch={handleMibClearSearch}
-                  loadMibPath={loadMibPath}
-                  loadMibSearch={loadMibSearch}
-                  handleOpenMibEntry={handleOpenMibEntry}
-                  openMibFavorite={openMibFavorite}
-                  getMibSupportStatus={getMibSupportStatus}
-                  getSupportedCountLabel={getSupportedCountLabel}
-                  getMibBaseName={getMibBaseName}
-                  runMib2Fcom={runMib2Fcom}
-                  setMibUseParent={setMibUseParent}
-                  setMibOutput={setMibOutput}
-                  setMibDefinitionSearch={setMibDefinitionSearch}
-                  setMibObjectFilter={setMibObjectFilter}
-                  setMibSelectedDefinition={setMibSelectedDefinition}
-                  formatSnmpVersionLabel={formatSnmpVersionLabel}
-                  formatSnmpProfileTooltip={formatSnmpProfileTooltip}
-                  openPcomAdvancedModal={openPcomAdvancedModal}
-                  disablePcomAdvanced={disablePcomAdvanced}
-                  runPcomPoll={runPcomPoll}
-                  setPcomDeviceIp={setPcomDeviceIp}
-                  openTrapComposer={openTrapComposer}
-                  isFavorite={isFavorite}
-                  toggleFavorite={toggleFavorite}
-                  setMibSearch={setMibSearch}
-                  setMibSearchScope={setMibSearchScope}
-                />
+                <MibWorkspace {...mibWorkspaceProps} />
               )}
               <TrapComposerModal {...trapComposerModalProps} />
               <PcomAdvancedSettingsModal {...pcomAdvancedSettingsModalProps} />

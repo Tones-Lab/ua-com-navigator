@@ -453,6 +453,11 @@ Validation:
   - Updated `App.tsx` to pass a single spread object (`microserviceModalHostProps`) while preserving modal open/close, status refresh, and deploy/redeploy handler wiring.
   - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
   - Test Delta: Low risk (code-movement extraction for prop assembly); Add now; Coverage type: UI sanity (microservice modal visibility, status list rendering, refresh action, and deploy/redeploy actions).
+- 2026-02-17: Post-item cleanup (MIB workspace props hook extraction from App).
+  - Added `hooks/useMibWorkspaceProps.ts` and moved `MibWorkspace` prop object assembly out of `App.tsx`.
+  - Updated `App.tsx` to pass a single spread object (`mibWorkspaceProps`) while preserving MIB browse/search/details, MIB2FCOM controls, and PCOM poll integration wiring.
+  - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
+  - Test Delta: Low risk (code-movement extraction for prop assembly); Add now; Coverage type: UI sanity (MIB tab load/search/open flows, details panel behavior, MIB2FCOM controls, and PCOM poll controls).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.
