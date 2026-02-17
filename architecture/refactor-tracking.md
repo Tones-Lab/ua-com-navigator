@@ -108,7 +108,7 @@ Validation:
 - Refresh status and confirm cards stay visible.
 
 ### 9) Finish empty/error state migrations
-Status: Not Started
+Status: In Progress
 Scope: Replace remaining raw empty/error blocks with shared components.
 Validation:
 - Check overview page empty/error states.
@@ -309,6 +309,11 @@ Validation:
   - Updated `features/microservices/MicroserviceStatusModal.tsx` to delegate chain and card rendering to the new components while preserving action-state logic and control callbacks.
   - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
   - Test Delta: Medium risk (microservice modal status/action rendering and deploy/redeploy controls); Add now; Coverage type: E2E (open microservice status modal, refresh status, verify chain arrows/card tones/status text, and run deploy/redeploy action buttons).
+- 2026-02-16: Item 9 kickoff (overview/PCOM empty-error state migration slice).
+  - Migrated `features/overview/OverviewPage.tsx` overview error and empty states to shared `InlineMessage` / `EmptyState`.
+  - Migrated `features/pcom/PcomWorkspace.tsx` and `features/pcom/PcomPage.tsx` empty placeholders to shared `EmptyState`.
+  - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
+  - Test Delta: Low risk (presentation-only component swap for empty/error rendering); Add now; Coverage type: UI sanity (overview loading/error/empty states and PCOM empty placeholders).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.

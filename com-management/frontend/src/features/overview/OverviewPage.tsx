@@ -1,5 +1,7 @@
 import React from 'react';
 import TableSortButton from '../../components/TableSortButton';
+import EmptyState from '../../components/EmptyState';
+import InlineMessage from '../../components/InlineMessage';
 
 type OverviewPageProps = {
   overviewStatus: any;
@@ -90,9 +92,9 @@ export default function OverviewPage({
             />
           </div>
 
-          {overviewError && <p className="error">{overviewError}</p>}
+          {overviewError && <InlineMessage tone="error">{overviewError}</InlineMessage>}
           {overviewLoading && !overviewData && (
-            <div className="overview-empty">Loading overview…</div>
+            <EmptyState className="overview-empty">Loading overview…</EmptyState>
           )}
 
           {overviewData && (
@@ -143,7 +145,7 @@ export default function OverviewPage({
               </div>
 
               {overviewProtocols.length === 0 ? (
-                <div className="overview-empty">No protocol data found.</div>
+                <EmptyState className="overview-empty">No protocol data found.</EmptyState>
               ) : (
                 <div className="overview-protocols">
                   {overviewProtocols.map((protocol: any) => (
@@ -280,7 +282,7 @@ export default function OverviewPage({
           )}
 
           {!overviewLoading && !overviewData && !overviewError && (
-            <div className="overview-empty">Overview data is not available yet.</div>
+            <EmptyState className="overview-empty">Overview data is not available yet.</EmptyState>
           )}
         </section>
 
@@ -291,7 +293,7 @@ export default function OverviewPage({
               <p className="overview-subtitle">Work in progress.</p>
             </div>
           </div>
-          <div className="overview-empty">PCOM reporting is coming soon.</div>
+          <EmptyState className="overview-empty">PCOM reporting is coming soon.</EmptyState>
         </section>
       </div>
     </div>

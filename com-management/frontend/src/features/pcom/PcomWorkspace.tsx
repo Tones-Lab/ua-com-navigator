@@ -1,6 +1,7 @@
 import type { ComponentProps } from 'react';
 import ActionRow from '../../components/ActionRow';
 import ComFilePreview from '../../components/ComFilePreview';
+import EmptyState from '../../components/EmptyState';
 import { FileTitleRow, ViewToggle } from '../../components/FileHeaderCommon';
 import Pill from '../../components/Pill';
 import FcomBrowserPanel from '../fcom/FcomBrowserPanel';
@@ -96,11 +97,11 @@ export default function PcomWorkspace({
             <ComFilePreview
               selectedFile={selectedFile}
               viewMode={viewMode}
-              emptyState={<div className="empty-state">Select a file on the left to view it.</div>}
+              emptyState={<EmptyState>Select a file on the left to view it.</EmptyState>}
               friendlyView={
                 <div className="friendly-view pcom-friendly-view">
                   {!pcomParsed ? (
-                    <div className="empty-state">No PCOM data loaded.</div>
+                    <EmptyState>No PCOM data loaded.</EmptyState>
                   ) : (
                     <>
                       <div className="pcom-card pcom-summary-card">
@@ -146,7 +147,7 @@ export default function PcomWorkspace({
                             </div>
                             <div className="pcom-object-list">
                               {pcomObjectEntries.length === 0 ? (
-                                <div className="empty-state">No objects found.</div>
+                                <EmptyState>No objects found.</EmptyState>
                               ) : (
                                 pcomObjectEntries.map((entry) => (
                                   <button
@@ -181,7 +182,7 @@ export default function PcomWorkspace({
                           <div className="pcom-card pcom-detail-card">
                             <div className="pcom-section-title">Object Details</div>
                             {!pcomSelectedObject ? (
-                              <div className="empty-state">Select an object to view details.</div>
+                              <EmptyState>Select an object to view details.</EmptyState>
                             ) : (
                               (() => {
                                 const obj = pcomSelectedObject.obj || {};
@@ -254,7 +255,7 @@ export default function PcomWorkspace({
                                     <div className="pcom-section-subtitle">Values</div>
                                     <div className="pcom-values-list">
                                       {values.length === 0 ? (
-                                        <div className="empty-state">No values defined.</div>
+                                        <EmptyState>No values defined.</EmptyState>
                                       ) : (
                                         values.map((value: any, index: number) => {
                                           const title =
