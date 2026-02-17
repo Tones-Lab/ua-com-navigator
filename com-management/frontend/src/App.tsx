@@ -44,6 +44,7 @@ import useMicroserviceModalHostProps from './hooks/useMicroserviceModalHostProps
 import useMibWorkspaceProps from './hooks/useMibWorkspaceProps';
 import useOverviewState from './hooks/useOverviewState';
 import usePcomAdvancedSettingsModalProps from './hooks/usePcomAdvancedSettingsModalProps';
+import usePcomWorkspaceViewProps from './hooks/usePcomWorkspaceViewProps';
 import useRequest from './hooks/useRequest';
 import useSearchState from './hooks/useSearchState';
 import useSignInScreenProps from './hooks/useSignInScreenProps';
@@ -10656,6 +10657,30 @@ export default function App() {
     onSubmit: handleLogin,
   });
 
+  const pcomWorkspaceViewProps = usePcomWorkspaceViewProps({
+    comBrowserPanelProps,
+    selectedFile,
+    formatDisplayPath,
+    browseNode,
+    isFavorite,
+    toggleFavorite,
+    viewMode,
+    setViewMode,
+    pcomParsed,
+    pcomObjectEntries,
+    pcomSelectedObject,
+    setPcomSelectedObjectKey,
+    formatPcomValue,
+    searchHighlightActive,
+    highlightQuery,
+    rawMatchPositions,
+    rawMatchIndex,
+    handlePrevRawMatch,
+    handleNextRawMatch,
+    editorText,
+    renderRawHighlightedText,
+  });
+
   return (
     <ErrorBoundary>
       <div className="app">
@@ -10737,29 +10762,7 @@ export default function App() {
                   </div>
                 </div>
               ) : activeApp === 'pcom' ? (
-                <PcomWorkspaceView
-                  comBrowserPanelProps={comBrowserPanelProps}
-                  selectedFile={selectedFile}
-                  formatDisplayPath={formatDisplayPath}
-                  browseNode={browseNode}
-                  isFavorite={isFavorite}
-                  toggleFavorite={toggleFavorite}
-                  viewMode={viewMode}
-                  setViewMode={setViewMode}
-                  pcomParsed={pcomParsed}
-                  pcomObjectEntries={pcomObjectEntries}
-                  pcomSelectedObject={pcomSelectedObject}
-                  setPcomSelectedObjectKey={setPcomSelectedObjectKey}
-                  formatPcomValue={formatPcomValue}
-                  searchHighlightActive={searchHighlightActive}
-                  highlightQuery={highlightQuery}
-                  rawMatchPositions={rawMatchPositions}
-                  rawMatchIndex={rawMatchIndex}
-                  handlePrevRawMatch={handlePrevRawMatch}
-                  handleNextRawMatch={handleNextRawMatch}
-                  editorText={editorText}
-                  renderRawHighlightedText={renderRawHighlightedText}
-                />
+                <PcomWorkspaceView {...pcomWorkspaceViewProps} />
               ) : activeApp === 'legacy' ? (
                 <LegacyWorkspace />
               ) : (

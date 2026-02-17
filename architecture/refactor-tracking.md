@@ -463,6 +463,11 @@ Validation:
   - Updated `App.tsx` to pass a single spread object (`signInScreenProps`) while preserving server selection, credential input wiring, and login submit handler.
   - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
   - Test Delta: Low risk (code-movement extraction for prop assembly); Add now; Coverage type: UI sanity (sign-in form field binding, server dropdown, submit loading state, and login action wiring).
+- 2026-02-17: Post-item cleanup (PCOM workspace props hook extraction from App).
+  - Added `hooks/usePcomWorkspaceViewProps.ts` and moved `PcomWorkspaceView` prop object assembly out of `App.tsx`.
+  - Updated `App.tsx` to pass a single spread object (`pcomWorkspaceViewProps`) while preserving browser/preview wiring and object-selection controls.
+  - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
+  - Test Delta: Low risk (code-movement extraction for prop assembly); Add now; Coverage type: UI sanity (PCOM tab file open, object selection, friendly/raw preview toggles, and raw-match navigation controls).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.
