@@ -14,6 +14,7 @@ import FcomAdvancedFlowModal from './features/fcom/FcomAdvancedFlowModal';
 import FcomFlowEditorModal from './features/fcom/FcomFlowEditorModal';
 import FcomBuilderHelpModal from './features/fcom/FcomBuilderHelpModal';
 import FcomFieldReferenceModal from './features/fcom/FcomFieldReferenceModal';
+import FcomOverrideRemovalModals from './features/fcom/FcomOverrideRemovalModals';
 import useFcomBuilderContextValue from './features/fcom/builder/useFcomBuilderContextValue';
 import type {
   FlowPaletteItem,
@@ -11059,99 +11060,17 @@ export default function App() {
                           }}
                           confirmLabel="Switch"
                         />
-                        {removeOverrideModal.open && (
-                          <div className="modal-overlay" role="dialog" aria-modal="true">
-                            <div className="modal">
-                              <h3>
-                                {removeOverrideModal.isNewField
-                                  ? 'Remove field'
-                                  : 'Remove override'}
-                              </h3>
-                              <p>
-                                {removeOverrideModal.isNewField
-                                  ? 'Removing this field will discard it on save.'
-                                  : 'Removing this override will default to original value:'}
-                              </p>
-                              {!removeOverrideModal.isNewField && (
-                                <pre className="code-block">
-                                  {removeOverrideModal.baseValue ?? '—'}
-                                </pre>
-                              )}
-                              <p>Are you sure?</p>
-                              <div className="modal-actions">
-                                <button
-                                  type="button"
-                                  onClick={() => setRemoveOverrideModal({ open: false })}
-                                >
-                                  No
-                                </button>
-                                <button type="button" onClick={confirmRemoveOverride}>
-                                  Yes
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-                        {removeAllOverridesModal.open && (
-                          <div className="modal-overlay" role="dialog" aria-modal="true">
-                            <div className="modal">
-                              <h3>Remove all overrides</h3>
-                              {(removeAllOverridesModal.fields?.length || 0) > 0 ? (
-                                <>
-                                  <p>The below listed fields will be reset to original values:</p>
-                                  <pre className="code-block">
-                                    {JSON.stringify(
-                                      removeAllOverridesModal.baseValues ?? {},
-                                      null,
-                                      2,
-                                    )}
-                                  </pre>
-                                  <p>Are you sure?</p>
-                                </>
-                              ) : (
-                                <p>No direct overrides can be removed here.</p>
-                              )}
-                              {removeAllOverridesModal.hasAdvancedFlow && (
-                                <>
-                                  <p className="modal-warning">
-                                    Advanced Flow processors won’t be removed here.
-                                  </p>
-                                  <button
-                                    type="button"
-                                    className="link-button"
-                                    onClick={() => {
-                                      const objectName = removeAllOverridesModal.objectName;
-                                      if (objectName) {
-                                        openAdvancedFlowModal(
-                                          'object',
-                                          objectName,
-                                          null,
-                                        );
-                                      }
-                                    }}
-                                  >
-                                    Open Advanced Flow
-                                  </button>
-                                </>
-                              )}
-                              <div className="modal-actions">
-                                <button
-                                  type="button"
-                                  onClick={() => setRemoveAllOverridesModal({ open: false })}
-                                >
-                                  {(removeAllOverridesModal.fields?.length || 0) > 0
-                                    ? 'No'
-                                    : 'Close'}
-                                </button>
-                                {(removeAllOverridesModal.fields?.length || 0) > 0 && (
-                                  <button type="button" onClick={confirmRemoveAllOverrides}>
-                                    Yes
-                                  </button>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        )}
+                        <FcomOverrideRemovalModals
+                          removeOverrideModal={removeOverrideModal}
+                          onCloseRemoveOverride={() => setRemoveOverrideModal({ open: false })}
+                          onConfirmRemoveOverride={confirmRemoveOverride}
+                          removeAllOverridesModal={removeAllOverridesModal}
+                          onCloseRemoveAllOverrides={() => setRemoveAllOverridesModal({ open: false })}
+                          onConfirmRemoveAllOverrides={confirmRemoveAllOverrides}
+                          onOpenAdvancedFlow={(objectName) => {
+                            openAdvancedFlowModal('object', objectName, null);
+                          }}
+                        />
                         {processorTooltip && (
                           <div
                             className="floating-help-tooltip"

@@ -251,6 +251,11 @@ Validation:
   - Replaced repeated App inline confirm modal bodies (builder type switch, panel-nav warning, unsaved navigation, pending cancel, pending review discard) with `ConfirmModal` composition.
   - Result: duplicated confirm-dialog body markup reduced and modal action semantics standardized across common confirm flows.
   - Test Delta: Medium risk (confirm-dialog action wiring and cancel/confirm labels); Add now; Coverage type: E2E (trigger each converted confirm path and verify cancel/confirm side effects).
+- 2026-02-16: Item 2 continued (override-removal modal body extraction).
+  - Added `features/fcom/FcomOverrideRemovalModals.tsx` and moved remove-override and remove-all-overrides modal body markup out of `App.tsx`.
+  - Updated `App.tsx` to delegate those dialogs to the feature component while preserving existing callbacks and advanced-flow handoff behavior.
+  - Result: override-removal dialog ownership is now feature-scoped instead of inline in App composition.
+  - Test Delta: Medium risk (remove override/remove-all confirmation behavior and Advanced Flow handoff link); Add now; Coverage type: E2E (single-field remove, remove-all, and open-advanced-flow from remove-all dialog).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.
