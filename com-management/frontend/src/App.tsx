@@ -3,17 +3,11 @@ import { flushSync } from 'react-dom';
 import { useSessionStore } from './stores';
 import api from './services/api';
 import AppHeader from './app/AppHeader';
+import FcomWorkspacePanel from './app/FcomWorkspacePanel';
 import MicroserviceModalHost from './app/MicroserviceModalHost';
 import SignInScreen from './app/SignInScreen';
 import UserPreferencesModal from './app/UserPreferencesModal';
 import OverviewPage from './features/overview/OverviewPage';
-import FcomBrowserPanel from './features/fcom/FcomBrowserPanel';
-import FcomFileHeader from './features/fcom/FcomFileHeader';
-import FcomFolderOverview from './features/fcom/FcomFolderOverview';
-import FcomFilePreview from './features/fcom/FcomFilePreview';
-import FcomReviewCommitModal from './features/fcom/FcomReviewCommitModal';
-import FcomFlowModalStack from './features/fcom/FcomFlowModalStack';
-import FcomAuxOverlays from './features/fcom/FcomAuxOverlays';
 import TrapComposerModal from './features/fcom/TrapComposerModal';
 import useFcomBuilderContextValue from './features/fcom/builder/useFcomBuilderContextValue';
 import type {
@@ -10753,23 +10747,16 @@ export default function App() {
               {activeApp === 'overview' ? (
                 <OverviewPage {...overviewPageProps} />
               ) : activeApp === 'fcom' ? (
-                <div className="split-layout">
-                  <FcomBrowserPanel {...comBrowserPanelProps} />
-                  <div className="panel">
-                    <div className="panel-scroll">
-                      <div className="file-details">
-                        {!selectedFile && (
-                          <FcomFolderOverview {...fcomFolderOverviewProps} />
-                        )}
-                        <FcomFileHeader {...fcomFileHeaderProps} />
-                        <FcomFilePreview {...fcomFilePreviewProps} />
-                        <FcomReviewCommitModal {...fcomReviewCommitModalProps} />
-                        <FcomFlowModalStack {...fcomFlowModalStackProps} />
-                        <FcomAuxOverlays {...fcomAuxOverlaysProps} />
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <FcomWorkspacePanel
+                  comBrowserPanelProps={comBrowserPanelProps}
+                  selectedFile={selectedFile}
+                  fcomFolderOverviewProps={fcomFolderOverviewProps}
+                  fcomFileHeaderProps={fcomFileHeaderProps}
+                  fcomFilePreviewProps={fcomFilePreviewProps}
+                  fcomReviewCommitModalProps={fcomReviewCommitModalProps}
+                  fcomFlowModalStackProps={fcomFlowModalStackProps}
+                  fcomAuxOverlaysProps={fcomAuxOverlaysProps}
+                />
               ) : activeApp === 'pcom' ? (
                 <PcomWorkspaceView {...pcomWorkspaceViewProps} />
               ) : activeApp === 'legacy' ? (

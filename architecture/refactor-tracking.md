@@ -483,6 +483,11 @@ Validation:
   - Updated `App.tsx` to pass a single spread object (`appHeaderProps`) while preserving tab switching, microservice modal trigger, user-menu `flushSync` flow, and logout wiring.
   - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
   - Test Delta: Low risk (code-movement extraction for prop assembly); Add now; Coverage type: UI sanity (app tab navigation, microservice indicator click, user-menu open, logout action).
+- 2026-02-17: Post-item cleanup (FCOM workspace branch component extraction from App).
+  - Added `app/FcomWorkspacePanel.tsx` and moved the full FCOM branch panel/layout composition out of `App.tsx`.
+  - Updated `App.tsx` to render `FcomWorkspacePanel` with existing hook-derived props and selected-file gating unchanged.
+  - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
+  - Test Delta: Low risk (code-movement extraction for branch composition); Add now; Coverage type: UI sanity (FCOM browser panel navigation, folder-overview empty state, file preview/edit flows, and modal/overlay behavior parity).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.
