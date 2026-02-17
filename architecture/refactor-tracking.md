@@ -423,6 +423,11 @@ Validation:
   - Updated `App.tsx` to pass a single spread object (`fcomReviewCommitModalProps`) while preserving existing review/discard/commit handlers.
   - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
   - Test Delta: Low risk (code-movement extraction for prop assembly); Add now; Coverage type: UI sanity (review modal open/close, discard path, commit message update, and commit action wiring).
+- 2026-02-17: Post-item cleanup (FCOM flow-modal stack props hook extraction from App).
+  - Added `hooks/useFcomFlowModalStackProps.ts` and moved `FcomFlowModalStack` prop object assembly out of `App.tsx`.
+  - Updated `App.tsx` to pass a single spread object (`fcomFlowModalStackProps`) while preserving advanced-flow/editor modal behaviors and handlers.
+  - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
+  - Test Delta: Low risk (code-movement extraction for prop assembly); Add now; Coverage type: UI sanity (advanced-flow modal open/save/cancel, flow editor open/save/cancel, field-reference modal toggling, and conversion CTA behavior).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.

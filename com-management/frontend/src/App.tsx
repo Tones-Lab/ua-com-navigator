@@ -37,6 +37,7 @@ import useBuilderSidebar from './hooks/useBuilderSidebar';
 import useComBrowserPanelProps from './hooks/useComBrowserPanelProps';
 import useFcomFileHeaderProps from './hooks/useFcomFileHeaderProps';
 import useFcomFilePreviewProps from './hooks/useFcomFilePreviewProps';
+import useFcomFlowModalStackProps from './hooks/useFcomFlowModalStackProps';
 import useFcomReviewCommitModalProps from './hooks/useFcomReviewCommitModalProps';
 import useOverviewState from './hooks/useOverviewState';
 import useRequest from './hooks/useRequest';
@@ -10272,6 +10273,90 @@ export default function App() {
     },
   });
 
+  const fcomFlowModalStackProps = useFcomFlowModalStackProps({
+    showBuilderHelpModal,
+    onCloseBuilderHelpModal: () => setShowBuilderHelpModal(false),
+    showAdvancedProcessorModal,
+    pendingAdvancedFlowClose,
+    getModalOverlayStyle,
+    advancedFlowModalRef,
+    advancedProcessorScope,
+    requestCloseAdvancedFlowModal,
+    advancedFlowDirty,
+    flowErrorCount,
+    advancedFlowRemovedTargets,
+    formatFlowTargetLabel,
+    advancedProcessorSearch,
+    setAdvancedProcessorSearch,
+    advancedFlowVersionInfo: advancedFlowTarget?.objectName
+      ? getOverrideVersionInfo(advancedFlowTarget.objectName)
+      : null,
+    advancedFlowNotice,
+    advancedFlowPatchPreview,
+    canConvertToV3: Boolean(
+      advancedFlowTarget?.objectName && canConvertOverrideToV3(advancedFlowTarget.objectName),
+    ),
+    onConvertToV3: () => {
+      if (advancedFlowTarget?.objectName) {
+        convertOverrideToV3(advancedFlowTarget.objectName);
+        setAdvancedFlowNotice('Conversion ready. Save the object to stage the v3 patch.');
+      }
+    },
+    advancedFlowFocusTarget,
+    advancedFlowFocusIndex,
+    advancedFlowFocusOnly,
+    focusedFlowMatch: Boolean(focusedFlowMatch),
+    focusedFlowMatches,
+    focusedLaneLabel,
+    setAdvancedFlowFocusTarget,
+    setAdvancedFlowFocusIndex,
+    setAdvancedFlowFocusOnly,
+    paletteSections,
+    renderProcessorHelp,
+    renderFlowList,
+    globalPreFlow,
+    setGlobalPreFlow,
+    globalPostFlow,
+    setGlobalPostFlow,
+    advancedFlow,
+    setAdvancedFlow,
+    flowValidation,
+    renderFlowJsonPreview,
+    buildFlowProcessors,
+    normalizeSourcePath,
+    hasEditPermission,
+    triggerFlowErrorPulse,
+    saveAdvancedFlow,
+    onCancelAdvancedFlowClose: () => setPendingAdvancedFlowClose(false),
+    onConfirmAdvancedFlowClose: () => {
+      setPendingAdvancedFlowClose(false);
+      setShowAdvancedProcessorModal(false);
+      setFlowEditor(null);
+      setFlowEditorDraft(null);
+      setAdvancedFlowDefaultTarget(null);
+    },
+    flowEditor,
+    flowEditorDraft,
+    flowEditorModalRef,
+    getFlowNodeLabel,
+    setShowFieldReferenceModal,
+    applyFlowEditorExample,
+    renderProcessorConfigFields,
+    flowEditorFieldErrors,
+    handleFlowEditorInputChange,
+    setFlowEditorDraft,
+    validateFlowNodes,
+    nextSwitchCaseId,
+    flowEditorNodeErrors,
+    flowEditorHasErrors,
+    triggerValidationPulse,
+    handleCancelFlowEditor,
+    handleSaveFlowEditor,
+    showFieldReferenceModal,
+    availableEventFields,
+    getEventFieldDescription,
+  });
+
   return (
     <ErrorBoundary>
       <div className="app">
@@ -10346,96 +10431,7 @@ export default function App() {
                         <FcomFileHeader {...fcomFileHeaderProps} />
                         <FcomFilePreview {...fcomFilePreviewProps} />
                         <FcomReviewCommitModal {...fcomReviewCommitModalProps} />
-                        <FcomFlowModalStack
-                          showBuilderHelpModal={showBuilderHelpModal}
-                          onCloseBuilderHelpModal={() => setShowBuilderHelpModal(false)}
-                          showAdvancedProcessorModal={showAdvancedProcessorModal}
-                          pendingAdvancedFlowClose={pendingAdvancedFlowClose}
-                          getModalOverlayStyle={getModalOverlayStyle}
-                          advancedFlowModalRef={advancedFlowModalRef}
-                          advancedProcessorScope={advancedProcessorScope}
-                          requestCloseAdvancedFlowModal={requestCloseAdvancedFlowModal}
-                          advancedFlowDirty={advancedFlowDirty}
-                          flowErrorCount={flowErrorCount}
-                          advancedFlowRemovedTargets={advancedFlowRemovedTargets}
-                          formatFlowTargetLabel={formatFlowTargetLabel}
-                          advancedProcessorSearch={advancedProcessorSearch}
-                          setAdvancedProcessorSearch={setAdvancedProcessorSearch}
-                          advancedFlowVersionInfo={
-                            advancedFlowTarget?.objectName
-                              ? getOverrideVersionInfo(advancedFlowTarget.objectName)
-                              : null
-                          }
-                          advancedFlowNotice={advancedFlowNotice}
-                          advancedFlowPatchPreview={advancedFlowPatchPreview}
-                          canConvertToV3={
-                            Boolean(
-                              advancedFlowTarget?.objectName &&
-                                canConvertOverrideToV3(advancedFlowTarget.objectName),
-                            )
-                          }
-                          onConvertToV3={() => {
-                            if (advancedFlowTarget?.objectName) {
-                              convertOverrideToV3(advancedFlowTarget.objectName);
-                              setAdvancedFlowNotice(
-                                'Conversion ready. Save the object to stage the v3 patch.',
-                              );
-                            }
-                          }}
-                          advancedFlowFocusTarget={advancedFlowFocusTarget}
-                          advancedFlowFocusIndex={advancedFlowFocusIndex}
-                          advancedFlowFocusOnly={advancedFlowFocusOnly}
-                          focusedFlowMatch={Boolean(focusedFlowMatch)}
-                          focusedFlowMatches={focusedFlowMatches}
-                          focusedLaneLabel={focusedLaneLabel}
-                          setAdvancedFlowFocusTarget={setAdvancedFlowFocusTarget}
-                          setAdvancedFlowFocusIndex={setAdvancedFlowFocusIndex}
-                          setAdvancedFlowFocusOnly={setAdvancedFlowFocusOnly}
-                          paletteSections={paletteSections}
-                          renderProcessorHelp={renderProcessorHelp}
-                          renderFlowList={renderFlowList}
-                          globalPreFlow={globalPreFlow}
-                          setGlobalPreFlow={setGlobalPreFlow}
-                          globalPostFlow={globalPostFlow}
-                          setGlobalPostFlow={setGlobalPostFlow}
-                          advancedFlow={advancedFlow}
-                          setAdvancedFlow={setAdvancedFlow}
-                          flowValidation={flowValidation}
-                          renderFlowJsonPreview={renderFlowJsonPreview}
-                          buildFlowProcessors={buildFlowProcessors}
-                          normalizeSourcePath={normalizeSourcePath}
-                          hasEditPermission={hasEditPermission}
-                          triggerFlowErrorPulse={triggerFlowErrorPulse}
-                          saveAdvancedFlow={saveAdvancedFlow}
-                          onCancelAdvancedFlowClose={() => setPendingAdvancedFlowClose(false)}
-                          onConfirmAdvancedFlowClose={() => {
-                            setPendingAdvancedFlowClose(false);
-                            setShowAdvancedProcessorModal(false);
-                            setFlowEditor(null);
-                            setFlowEditorDraft(null);
-                            setAdvancedFlowDefaultTarget(null);
-                          }}
-                          flowEditor={flowEditor}
-                          flowEditorDraft={flowEditorDraft}
-                          flowEditorModalRef={flowEditorModalRef}
-                          getFlowNodeLabel={getFlowNodeLabel}
-                          setShowFieldReferenceModal={setShowFieldReferenceModal}
-                          applyFlowEditorExample={applyFlowEditorExample}
-                          renderProcessorConfigFields={renderProcessorConfigFields}
-                          flowEditorFieldErrors={flowEditorFieldErrors}
-                          handleFlowEditorInputChange={handleFlowEditorInputChange}
-                          setFlowEditorDraft={setFlowEditorDraft}
-                          validateFlowNodes={validateFlowNodes}
-                          nextSwitchCaseId={nextSwitchCaseId}
-                          flowEditorNodeErrors={flowEditorNodeErrors}
-                          flowEditorHasErrors={flowEditorHasErrors}
-                          triggerValidationPulse={triggerValidationPulse}
-                          handleCancelFlowEditor={handleCancelFlowEditor}
-                          handleSaveFlowEditor={handleSaveFlowEditor}
-                          showFieldReferenceModal={showFieldReferenceModal}
-                          availableEventFields={availableEventFields}
-                          getEventFieldDescription={getEventFieldDescription}
-                        />
+                        <FcomFlowModalStack {...fcomFlowModalStackProps} />
                         <FcomAuxOverlays
                           builderSwitchModal={builderSwitchModal}
                           setBuilderSwitchModal={setBuilderSwitchModal}
