@@ -338,6 +338,11 @@ Validation:
   - Updated `App.tsx` to compose `FcomSaveOverlays` with existing status/timing state and unchanged visual/status behavior.
   - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
   - Test Delta: Low risk (code-movement extraction for busy overlays with unchanged timing/status semantics); Add now; Coverage type: UI sanity (save overlay progress list and redeploy busy overlay text/timer).
+- 2026-02-17: Post-item cleanup (sign-in screen extraction from App).
+  - Added `app/SignInScreen.tsx` and moved the inline authentication form/layout out of `App.tsx`.
+  - Updated `App.tsx` to compose `SignInScreen` and pass existing auth state/handlers unchanged.
+  - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
+  - Test Delta: Low risk (code-movement extraction for auth UI block); Add now; Coverage type: UI sanity (sign-in form field updates, error rendering, and submit disabled/loading states).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.

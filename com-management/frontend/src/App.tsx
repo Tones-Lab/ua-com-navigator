@@ -3,6 +3,7 @@ import { flushSync } from 'react-dom';
 import { useSessionStore } from './stores';
 import api from './services/api';
 import AppTabs from './app/AppTabs';
+import SignInScreen from './app/SignInScreen';
 import UserPreferencesModal from './app/UserPreferencesModal';
 import OverviewPage from './features/overview/OverviewPage';
 import FcomBrowserPanel from './features/fcom/FcomBrowserPanel';
@@ -11286,50 +11287,18 @@ export default function App() {
               />
             </>
           ) : (
-            <div className="auth-screen">
-              <div className="login-card">
-                <h2>Sign in</h2>
-                <form onSubmit={handleLogin} className="login-form">
-                  <label>
-                    Server
-                    <select value={serverId} onChange={(e) => setServerId(e.target.value)}>
-                      <option value="" disabled>
-                        Select a server
-                      </option>
-                      {serverOptions.map((opt) => (
-                        <option key={opt.value} value={opt.value}>
-                          {opt.label}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-
-                  <input type="hidden" name="authType" value="basic" />
-
-                  <label>
-                    Username
-                    <input
-                      type="text"
-                      value={username}
-                      onChange={(e) => setUsername(e.target.value)}
-                    />
-                  </label>
-                  <label>
-                    Password
-                    <input
-                      type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                    />
-                  </label>
-
-                  {error && <div className="error">{error}</div>}
-                  <button type="submit" disabled={loading || !serverId}>
-                    {loading ? 'Signing in…' : 'Sign in'}
-                  </button>
-                </form>
-              </div>
-            </div>
+            <SignInScreen
+              serverId={serverId}
+              setServerId={setServerId}
+              serverOptions={serverOptions}
+              username={username}
+              setUsername={setUsername}
+              password={password}
+              setPassword={setPassword}
+              error={error}
+              loading={loading}
+              onSubmit={handleLogin}
+            />
           )}
           <UserPreferencesModal
             open={showUserMenu}
