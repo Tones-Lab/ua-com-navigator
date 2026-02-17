@@ -3,6 +3,7 @@ import { flushSync } from 'react-dom';
 import { useSessionStore } from './stores';
 import api from './services/api';
 import AppTabs from './app/AppTabs';
+import MicroserviceModalHost from './app/MicroserviceModalHost';
 import SignInScreen from './app/SignInScreen';
 import UserPreferencesModal from './app/UserPreferencesModal';
 import OverviewPage from './features/overview/OverviewPage';
@@ -26,7 +27,6 @@ import Pill from './components/Pill';
 import useCompactPanel from './components/useCompactPanel';
 import MibWorkspace from './features/mib/MibWorkspace';
 import LegacyWorkspace from './features/legacy/LegacyWorkspace';
-import MicroserviceStatusModal from './features/microservices/MicroserviceStatusModal';
 import usePcomViewState from './features/pcom/usePcomViewState';
 import PcomWorkspaceView from './features/pcom/PcomWorkspaceView';
 import useMibWorkspace from './features/mib/useMibWorkspace';
@@ -10087,42 +10087,6 @@ export default function App() {
     />
   );
 
-  const microserviceModal = (
-    <MicroserviceStatusModal
-      isOpen={redeployModalOpen}
-      redeployReady={redeployReady}
-      showMicroserviceWarning={showMicroserviceWarning}
-      missingMicroservices={missingMicroservices}
-      unhealthyMicroservices={unhealthyMicroservices}
-      microserviceStatusError={microserviceStatusError}
-      microserviceIsStale={microserviceIsStale}
-      microserviceLastRefreshed={microserviceLastRefreshed}
-      redeployError={redeployError}
-      microserviceStatusLoading={microserviceStatusLoading}
-      requiredMicroservices={requiredMicroservices}
-      microserviceActionLabel={microserviceActionLabel}
-      redeployLoading={redeployLoading}
-      hasEditPermission={hasEditPermission}
-      formatTime={formatTime}
-      getServiceTone={getServiceTone}
-      getServiceStatusText={getServiceStatusText}
-      onDeployMicroservice={handleDeployMicroservice}
-      onRedeployMicroservice={handleRedeployMicroservice}
-      onClose={() => {
-        if (!redeployLoading) {
-          setRedeployModalOpen(false);
-          setRedeployError(null);
-        }
-      }}
-      onRefreshStatus={async () => {
-        setMicroserviceActionLabel('Refreshing status...');
-        await refreshMicroserviceStatus({ refresh: true });
-        setMicroserviceActionLabel(null);
-      }}
-      onRedeployFcomProcessor={handleRedeployFcomProcessor}
-    />
-  );
-
   const comBrowserPanelProps = {
     hasEditPermission,
     setShowPathModal,
@@ -10801,7 +10765,32 @@ export default function App() {
             onClose={() => setShowUserMenu(false)}
           />
         </main>
-        {microserviceModal}
+        <MicroserviceModalHost
+          redeployModalOpen={redeployModalOpen}
+          redeployReady={redeployReady}
+          showMicroserviceWarning={showMicroserviceWarning}
+          missingMicroservices={missingMicroservices}
+          unhealthyMicroservices={unhealthyMicroservices}
+          microserviceStatusError={microserviceStatusError}
+          microserviceIsStale={microserviceIsStale}
+          microserviceLastRefreshed={microserviceLastRefreshed}
+          redeployError={redeployError}
+          microserviceStatusLoading={microserviceStatusLoading}
+          requiredMicroservices={requiredMicroservices}
+          microserviceActionLabel={microserviceActionLabel}
+          redeployLoading={redeployLoading}
+          hasEditPermission={hasEditPermission}
+          formatTime={formatTime}
+          getServiceTone={getServiceTone}
+          getServiceStatusText={getServiceStatusText}
+          handleDeployMicroservice={handleDeployMicroservice}
+          handleRedeployMicroservice={handleRedeployMicroservice}
+          setRedeployModalOpen={setRedeployModalOpen}
+          setRedeployError={setRedeployError}
+          setMicroserviceActionLabel={setMicroserviceActionLabel}
+          refreshMicroserviceStatus={refreshMicroserviceStatus}
+          handleRedeployFcomProcessor={handleRedeployFcomProcessor}
+        />
       </div>
     </ErrorBoundary>
   );

@@ -383,6 +383,11 @@ Validation:
   - Updated `App.tsx` to replace the remaining inline FCOM overlay/modal wrapper cluster with a single `FcomAuxOverlays` composition call.
   - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
   - Test Delta: Low risk (code-movement extraction for overlay/modal composition); Add now; Coverage type: UI sanity (all extracted confirms/modals/overlays open-close behavior and handler wiring parity).
+- 2026-02-17: Post-item cleanup (microservice modal host extraction from App).
+  - Added `app/MicroserviceModalHost.tsx` and moved microservice-status modal composition callbacks (close-guard and refresh-status flow) out of `App.tsx`.
+  - Updated `App.tsx` to render `MicroserviceModalHost` instead of maintaining a local `microserviceModal` composition block.
+  - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
+  - Test Delta: Low risk (code-movement extraction for modal host composition); Add now; Coverage type: UI sanity (microservice modal open/close, refresh action label reset, redeploy action wiring).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.
