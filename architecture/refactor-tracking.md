@@ -403,6 +403,11 @@ Validation:
   - Updated `App.tsx` to consume the hook and preserve the same FCOM/PCOM browser panel prop contract.
   - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
   - Test Delta: Low risk (code-movement extraction for props assembly); Add now; Coverage type: UI sanity (FCOM/PCOM browser breadcrumb/search/favorites/open handlers still route correctly).
+- 2026-02-17: Post-item cleanup (builder sidebar composition hook extraction from App).
+  - Added `hooks/useBuilderSidebar.tsx` and moved the `builderSidebar` JSX composition out of `App.tsx`.
+  - Updated `App.tsx` to consume the hook while preserving `isAnyPanelEditing` gating and builder context wiring.
+  - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
+  - Test Delta: Low risk (code-movement extraction for sidebar composition); Add now; Coverage type: UI sanity (builder sidebar visibility, focus sections, and existing sidebar actions remain unchanged).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.

@@ -11,7 +11,6 @@ import FcomBrowserPanel from './features/fcom/FcomBrowserPanel';
 import FcomFileHeader from './features/fcom/FcomFileHeader';
 import FcomFolderOverview from './features/fcom/FcomFolderOverview';
 import FcomFilePreview from './features/fcom/FcomFilePreview';
-import FcomBuilderSidebar from './features/fcom/FcomBuilderSidebar';
 import FcomReviewCommitModal from './features/fcom/FcomReviewCommitModal';
 import FcomFlowModalStack from './features/fcom/FcomFlowModalStack';
 import FcomAuxOverlays from './features/fcom/FcomAuxOverlays';
@@ -34,6 +33,7 @@ import PcomAdvancedSettingsModal from './features/mib/PcomAdvancedSettingsModal'
 import useCacheStatus from './hooks/useCacheStatus';
 import useFavorites from './hooks/useFavorites';
 import useBrowseDeepLink from './hooks/useBrowseDeepLink';
+import useBuilderSidebar from './hooks/useBuilderSidebar';
 import useComBrowserPanelProps from './hooks/useComBrowserPanelProps';
 import useOverviewState from './hooks/useOverviewState';
 import useRequest from './hooks/useRequest';
@@ -10081,12 +10081,10 @@ export default function App() {
     getObjectByPanelKey,
   });
 
-  const builderSidebar = (
-    <FcomBuilderSidebar
-      isAnyPanelEditing={isAnyPanelEditing}
-      contextValue={builderContextValue}
-    />
-  );
+  const builderSidebar = useBuilderSidebar({
+    isAnyPanelEditing,
+    contextValue: builderContextValue,
+  });
 
   const comBrowserPanelProps = useComBrowserPanelProps({
     hasEditPermission,
