@@ -433,6 +433,11 @@ Validation:
   - Updated `App.tsx` to pass a single spread object (`fcomAuxOverlaysProps`) while preserving existing confirm/modal/overlay and variable-insert handlers.
   - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
   - Test Delta: Low risk (code-movement extraction for prop assembly); Add now; Coverage type: UI sanity (confirm dialogs, add-field modal, path help modal, var insert modal, and save/redeploy overlays remain wired).
+- 2026-02-17: Post-item cleanup (Trap composer modal props hook extraction from App).
+  - Added `hooks/useTrapComposerModalProps.ts` and moved `TrapComposerModal` prop object assembly out of `App.tsx`.
+  - Updated `App.tsx` to pass a single spread object (`trapComposerModalProps`) while preserving trap close/reset behavior and send/retry handlers.
+  - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
+  - Test Delta: Low risk (code-movement extraction for prop assembly); Add now; Coverage type: UI sanity (trap modal open/close reset, send trap, send bulk traps, retry failures, and server/manual target controls).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.

@@ -43,6 +43,7 @@ import useFcomReviewCommitModalProps from './hooks/useFcomReviewCommitModalProps
 import useOverviewState from './hooks/useOverviewState';
 import useRequest from './hooks/useRequest';
 import useSearchState from './hooks/useSearchState';
+import useTrapComposerModalProps from './hooks/useTrapComposerModalProps';
 import useSortableTable from './hooks/useSortableTable';
 import useModalStack from './hooks/useModalStack';
 import useStagedReviewUiState from './hooks/useStagedReviewUiState';
@@ -10423,6 +10424,54 @@ export default function App() {
     setVarInsertContext,
   });
 
+  const trapComposerModalProps = useTrapComposerModalProps({
+    open: trapModalOpen,
+    trapModalRef,
+    bulkTrapContext,
+    trapSource,
+    trapSending,
+    bulkTrapSummary,
+    bulkTrapProgress,
+    bulkTrapFailures,
+    bulkTrapShowAllFailures,
+    setBulkTrapShowAllFailures,
+    retryFailedTraps,
+    trapServerError,
+    trapServerList,
+    trapHost,
+    setTrapHost,
+    trapManualOpen,
+    setTrapManualOpen,
+    trapPort,
+    setTrapPort,
+    recentTargets,
+    trapVersion,
+    setTrapVersion,
+    trapCommunity,
+    setTrapCommunity,
+    trapOid,
+    setTrapOid,
+    trapVarbinds,
+    setTrapVarbinds,
+    trapError,
+    triggerValidationPulse,
+    sendBulkTraps,
+    sendTrap,
+    onClose: () => {
+      setTrapModalOpen(false);
+      setBulkTrapContext(null);
+      setBulkTrapProgress({
+        current: 0,
+        total: 0,
+        failed: 0,
+        currentLabel: '',
+      });
+      setBulkTrapFailures([]);
+      setBulkTrapSummary(null);
+      setBulkTrapShowAllFailures(false);
+    },
+  });
+
   return (
     <ErrorBoundary>
       <div className="app">
@@ -10606,53 +10655,7 @@ export default function App() {
                   setMibSearchScope={setMibSearchScope}
                 />
               )}
-              <TrapComposerModal
-                open={trapModalOpen}
-                trapModalRef={trapModalRef}
-                bulkTrapContext={bulkTrapContext}
-                trapSource={trapSource}
-                trapSending={trapSending}
-                bulkTrapSummary={bulkTrapSummary}
-                bulkTrapProgress={bulkTrapProgress}
-                bulkTrapFailures={bulkTrapFailures}
-                bulkTrapShowAllFailures={bulkTrapShowAllFailures}
-                setBulkTrapShowAllFailures={setBulkTrapShowAllFailures}
-                retryFailedTraps={retryFailedTraps}
-                trapServerError={trapServerError}
-                trapServerList={trapServerList}
-                trapHost={trapHost}
-                setTrapHost={setTrapHost}
-                trapManualOpen={trapManualOpen}
-                setTrapManualOpen={setTrapManualOpen}
-                trapPort={trapPort}
-                setTrapPort={setTrapPort}
-                recentTargets={recentTargets}
-                trapVersion={trapVersion}
-                setTrapVersion={setTrapVersion}
-                trapCommunity={trapCommunity}
-                setTrapCommunity={setTrapCommunity}
-                trapOid={trapOid}
-                setTrapOid={setTrapOid}
-                trapVarbinds={trapVarbinds}
-                setTrapVarbinds={setTrapVarbinds}
-                trapError={trapError}
-                triggerValidationPulse={triggerValidationPulse}
-                sendBulkTraps={sendBulkTraps}
-                sendTrap={sendTrap}
-                onClose={() => {
-                  setTrapModalOpen(false);
-                  setBulkTrapContext(null);
-                  setBulkTrapProgress({
-                    current: 0,
-                    total: 0,
-                    failed: 0,
-                    currentLabel: '',
-                  });
-                  setBulkTrapFailures([]);
-                  setBulkTrapSummary(null);
-                  setBulkTrapShowAllFailures(false);
-                }}
-              />
+              <TrapComposerModal {...trapComposerModalProps} />
               <PcomAdvancedSettingsModal
                 open={pcomAdvancedOpen}
                 pcomAdvancedTargetMode={pcomAdvancedTargetMode}
