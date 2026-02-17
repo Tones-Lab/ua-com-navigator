@@ -348,6 +348,11 @@ Validation:
   - Preserved existing close-guard, refresh-label toggling, redeploy action wiring, and status rendering semantics through props/callbacks.
   - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
   - Test Delta: Low risk (code-movement swap to existing feature component); Add now; Coverage type: UI sanity (open modal, refresh status, deploy/redeploy controls, close behavior while actions are in-flight).
+- 2026-02-17: Post-item cleanup (PCOM friendly view extraction from App).
+  - Added `features/pcom/PcomFriendlyView.tsx` and moved the large inline PCOM friendly-view rendering block (vendor summary, object list, object details) out of `App.tsx`.
+  - Updated `App.tsx` to compose `PcomFriendlyView` with existing parsed data, object selection state, and display formatter callbacks.
+  - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
+  - Test Delta: Low risk (code-movement extraction for PCOM display UI); Add now; Coverage type: UI sanity (PCOM summary values, object selection highlighting, details/value-list rendering).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.
