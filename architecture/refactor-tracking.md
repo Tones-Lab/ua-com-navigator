@@ -523,6 +523,11 @@ Validation:
   - Updated `App.tsx` to call `usePcomWorkspaceViewArgs` and pass the returned object into `usePcomWorkspaceViewProps`.
   - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
   - Test Delta: Low risk (code-movement extraction for args assembly); Add now; Coverage type: UI sanity (PCOM workspace browser/preview/object-selection wiring parity).
+- 2026-02-17: Post-item cleanup (overview page args hook extraction from App).
+  - Added `hooks/useOverviewPageArgs.ts` and moved `useOverviewPageProps(...)` argument assembly out of `App.tsx`.
+  - Updated `App.tsx` to call `useOverviewPageArgs` and pass the returned object into `useOverviewPageProps`.
+  - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
+  - Test Delta: Low risk (code-movement extraction for args assembly); Add now; Coverage type: UI sanity (overview table/filter/sort and folder drilldown wiring parity).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.

@@ -34,6 +34,7 @@ import useMicroserviceModalHostProps from './hooks/useMicroserviceModalHostProps
 import useMibWorkspaceArgs from './hooks/useMibWorkspaceArgs';
 import useMibWorkspaceProps from './hooks/useMibWorkspaceProps';
 import useOverviewState from './hooks/useOverviewState';
+import useOverviewPageArgs from './hooks/useOverviewPageArgs';
 import useOverviewPageProps from './hooks/useOverviewPageProps';
 import usePcomAdvancedSettingsModalProps from './hooks/usePcomAdvancedSettingsModalProps';
 import usePcomWorkspaceViewArgs from './hooks/usePcomWorkspaceViewArgs';
@@ -10680,7 +10681,7 @@ export default function App() {
 
   const pcomWorkspaceViewProps = usePcomWorkspaceViewProps(pcomWorkspaceViewArgs);
 
-  const overviewPageProps = useOverviewPageProps({
+  const overviewPageArgs = useOverviewPageArgs({
     overviewStatus,
     overviewTopN,
     setOverviewTopN,
@@ -10697,6 +10698,8 @@ export default function App() {
     toggleOverviewSort,
     overviewVendorSort,
   });
+
+  const overviewPageProps = useOverviewPageProps(overviewPageArgs);
 
   const fcomFolderOverviewProps = useFcomFolderOverviewProps({
     selectedFolder,
