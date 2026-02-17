@@ -45,6 +45,7 @@ import usePcomAdvancedSettingsModalProps from './hooks/usePcomAdvancedSettingsMo
 import useRequest from './hooks/useRequest';
 import useSearchState from './hooks/useSearchState';
 import useTrapComposerModalProps from './hooks/useTrapComposerModalProps';
+import useUserPreferencesModalProps from './hooks/useUserPreferencesModalProps';
 import useSortableTable from './hooks/useSortableTable';
 import useModalStack from './hooks/useModalStack';
 import useStagedReviewUiState from './hooks/useStagedReviewUiState';
@@ -10509,6 +10510,33 @@ export default function App() {
     onApply: applyPcomAdvanced,
   });
 
+  const userPreferencesModalProps = useUserPreferencesModalProps({
+    open: showUserMenu,
+    overviewRebuildPending,
+    overviewStatus,
+    overviewProgress,
+    overviewProgressPercent,
+    overviewCacheLabel,
+    handleRefreshOverviewCache,
+    searchRebuildPending,
+    searchStatus,
+    searchProgress,
+    searchProgressPercent,
+    searchCacheLabel,
+    handleRefreshSearchCache,
+    folderRebuildPending,
+    folderOverviewStatus,
+    folderProgress,
+    folderProgressPercent,
+    folderCacheLabel,
+    handleRefreshFolderCache,
+    mibTranslateCacheLabel,
+    refreshMibTranslateStatus,
+    cacheActionMessage,
+    formatTime,
+    onClose: () => setShowUserMenu(false),
+  });
+
   return (
     <ErrorBoundary>
       <div className="app">
@@ -10709,32 +10737,7 @@ export default function App() {
               onSubmit={handleLogin}
             />
           )}
-          <UserPreferencesModal
-            open={showUserMenu}
-            overviewRebuildPending={overviewRebuildPending}
-            overviewStatus={overviewStatus}
-            overviewProgress={overviewProgress}
-            overviewProgressPercent={overviewProgressPercent}
-            overviewCacheLabel={overviewCacheLabel}
-            handleRefreshOverviewCache={handleRefreshOverviewCache}
-            searchRebuildPending={searchRebuildPending}
-            searchStatus={searchStatus}
-            searchProgress={searchProgress}
-            searchProgressPercent={searchProgressPercent}
-            searchCacheLabel={searchCacheLabel}
-            handleRefreshSearchCache={handleRefreshSearchCache}
-            folderRebuildPending={folderRebuildPending}
-            folderOverviewStatus={folderOverviewStatus}
-            folderProgress={folderProgress}
-            folderProgressPercent={folderProgressPercent}
-            folderCacheLabel={folderCacheLabel}
-            handleRefreshFolderCache={handleRefreshFolderCache}
-            mibTranslateCacheLabel={mibTranslateCacheLabel}
-            refreshMibTranslateStatus={refreshMibTranslateStatus}
-            cacheActionMessage={cacheActionMessage}
-            formatTime={formatTime}
-            onClose={() => setShowUserMenu(false)}
-          />
+          <UserPreferencesModal {...userPreferencesModalProps} />
         </main>
         <MicroserviceModalHost
           redeployModalOpen={redeployModalOpen}

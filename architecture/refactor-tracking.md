@@ -443,6 +443,11 @@ Validation:
   - Updated `App.tsx` to pass a single spread object (`pcomAdvancedSettingsModalProps`) while preserving apply/close behavior and all advanced SNMP field wiring.
   - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
   - Test Delta: Low risk (code-movement extraction for prop assembly); Add now; Coverage type: UI sanity (PCOM advanced modal open/close, target mode switch, SNMP v1/v2c/v3 field edits, and apply action wiring).
+- 2026-02-17: Post-item cleanup (User preferences modal props hook extraction from App).
+  - Added `hooks/useUserPreferencesModalProps.ts` and moved `UserPreferencesModal` prop object assembly out of `App.tsx`.
+  - Updated `App.tsx` to pass a single spread object (`userPreferencesModalProps`) while preserving cache refresh handlers, progress labels, and close behavior.
+  - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
+  - Test Delta: Low risk (code-movement extraction for prop assembly); Add now; Coverage type: UI sanity (user preferences modal open/close and overview/search/folder/MIB cache refresh actions).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.
