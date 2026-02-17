@@ -35,10 +35,10 @@ import BuilderLink from './components/BuilderLink';
 import Pill from './components/Pill';
 import ActionRow from './components/ActionRow';
 import useCompactPanel from './components/useCompactPanel';
-import Modal from './components/Modal';
 import { FileTitleRow, ViewToggle } from './components/FileHeaderCommon';
 import MibWorkspace from './features/mib/MibWorkspace';
 import LegacyWorkspace from './features/legacy/LegacyWorkspace';
+import MicroserviceStatusModal from './features/microservices/MicroserviceStatusModal';
 import useMibWorkspace from './features/mib/useMibWorkspace';
 import PcomAdvancedSettingsModal from './features/mib/PcomAdvancedSettingsModal';
 import useCacheStatus from './hooks/useCacheStatus';
@@ -10145,165 +10145,41 @@ export default function App() {
     />
   );
 
-  const microserviceModal = redeployModalOpen ? (
-    <Modal className="modal-wide" ariaLabel="Microservice Status">
-        <h3>Microservice Status</h3>
-        <p>
-          Trap processing requires the chain below to be installed and running:
-          trap-collector -&gt; fcom-processor -&gt; event-sink.
-        </p>
-        {redeployReady && (
-          <div className="builder-hint builder-hint-warning">
-            Changes staged. Redeploy FCOM Processor to apply them.
-          </div>
-        )}
-        {showMicroserviceWarning && (
-          <div className="builder-hint builder-hint-warning">
-            Attention: {[...missingMicroservices, ...unhealthyMicroservices].join(', ')}
-          </div>
-        )}
-        {microserviceStatusError && (
-          <div className="builder-hint builder-hint-warning">{microserviceStatusError}</div>
-        )}
-        {microserviceIsStale && (
-          <div className="builder-hint builder-hint-warning">
-            Status may be stale. Last refresh was {formatTime(microserviceLastRefreshed)}.
-          </div>
-        )}
-        {redeployError && <div className="error-message">{redeployError}</div>}
-        <div className="microservice-action-banner">
-          {microserviceStatusLoading
-            ? microserviceLastRefreshed
-              ? `Refreshing... Last refreshed at ${formatTime(microserviceLastRefreshed)}`
-              : 'Refreshing...'
-            : microserviceLastRefreshed
-              ? `Last refreshed at ${formatTime(microserviceLastRefreshed)}`
-              : 'Status not refreshed yet.'}
-        </div>
-        {requiredMicroservices.length === 0 && microserviceStatusLoading ? (
-          <div className="microservice-loading">Loading status...</div>
-        ) : (
-          <div className="microservice-chain">
-            {requiredMicroservices.map((entry: MicroserviceEntry, idx: number) => {
-              const tone = getServiceTone(entry);
-              const label = String(entry?.label || entry?.name || 'Unknown');
-              const canDeploy = !entry?.installed && entry?.available;
-              const serviceName = typeof entry?.name === 'string' ? entry.name : '';
-              const workload = isRecord(entry?.workload) ? entry.workload : null;
-              const workloadReady = workload && typeof workload['ready'] !== 'undefined' ? workload['ready'] : '0';
-              const workloadAvailable =
-                workload && typeof workload['available'] !== 'undefined' ? workload['available'] : '0';
-              const canRedeploy =
-                Boolean(entry?.installed) &&
-                (serviceName === 'fcom-processor' || !entry?.running);
-              const actionLabel = (microserviceActionLabel || '').toLowerCase();
-              const labelKey = String(label).toLowerCase();
-              const isActionFor = labelKey && actionLabel.includes(labelKey);
-              const isDeploying = isActionFor && actionLabel.startsWith('deploying');
-              const isRedeploying = isActionFor && actionLabel.startsWith('redeploying');
-              const isWorking = isDeploying || isRedeploying;
-              return (
-                <div key={serviceName || idx} className="microservice-chain-step">
-                  <div
-                    className={`microservice-card microservice-card-${tone}${
-                      isWorking ? ' microservice-card-working' : ''
-                    }${microserviceStatusLoading ? ' microservice-card-refreshing' : ''}`}
-                  >
-                    {microserviceStatusLoading && (
-                      <div className="microservice-card-overlay">
-                        <span className="microservice-spinner" aria-hidden="true" />
-                        Refreshing...
-                      </div>
-                    )}
-                    <div className="microservice-card-header">
-                      <span
-                        className={`microservice-dot microservice-dot-${tone}`}
-                        aria-hidden="true"
-                      />
-                      <div className="microservice-card-title">{label}</div>
-                    </div>
-                    <div className="microservice-card-status">{getServiceStatusText(entry)}</div>
-                    {workload && (
-                      <div className="microservice-card-meta">
-                        Ready {String(workloadReady)} - Available {String(workloadAvailable)}
-                      </div>
-                    )}
-                    {isWorking && (
-                      <div className="microservice-card-progress">
-                        <span className="microservice-spinner" aria-hidden="true" />
-                        Working...
-                      </div>
-                    )}
-                    <div className="microservice-card-actions">
-                      {canDeploy && (
-                        <button
-                          type="button"
-                          className="builder-card builder-card-primary"
-                          onClick={() => handleDeployMicroservice(serviceName, label)}
-                          disabled={redeployLoading || !hasEditPermission}
-                        >
-                          {isDeploying ? 'Deploying...' : 'Deploy'}
-                        </button>
-                      )}
-                      {canRedeploy && (
-                        <button
-                          type="button"
-                          className="builder-card builder-card-primary"
-                          onClick={() => handleRedeployMicroservice(serviceName, label)}
-                          disabled={redeployLoading || !hasEditPermission}
-                        >
-                          {isRedeploying ? 'Redeploying...' : 'Redeploy'}
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                  {idx < requiredMicroservices.length - 1 && (
-                    <div className="microservice-chain-arrow" aria-hidden="true">
-                      -&gt;
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        )}
-        <div className="modal-actions">
-          <button
-            type="button"
-            onClick={() => {
-              if (!redeployLoading) {
-                setRedeployModalOpen(false);
-                setRedeployError(null);
-              }
-            }}
-          >
-            Close
-          </button>
-          <button
-            type="button"
-            className="builder-card"
-            onClick={async () => {
-              setMicroserviceActionLabel('Refreshing status...');
-              await refreshMicroserviceStatus({ refresh: true });
-              setMicroserviceActionLabel(null);
-            }}
-            disabled={microserviceStatusLoading || redeployLoading}
-          >
-            {microserviceStatusLoading ? 'Refreshing...' : 'Refresh status'}
-          </button>
-          {redeployReady && (
-            <button
-              type="button"
-              className="builder-card builder-card-primary microservice-pulse"
-              onClick={handleRedeployFcomProcessor}
-              disabled={redeployLoading || !hasEditPermission}
-            >
-              Redeploy FCOM Processor
-            </button>
-          )}
-        </div>
-      </Modal>
-  ) : null;
+  const microserviceModal = (
+    <MicroserviceStatusModal
+      isOpen={redeployModalOpen}
+      redeployReady={redeployReady}
+      showMicroserviceWarning={showMicroserviceWarning}
+      missingMicroservices={missingMicroservices}
+      unhealthyMicroservices={unhealthyMicroservices}
+      microserviceStatusError={microserviceStatusError}
+      microserviceIsStale={microserviceIsStale}
+      microserviceLastRefreshed={microserviceLastRefreshed}
+      redeployError={redeployError}
+      microserviceStatusLoading={microserviceStatusLoading}
+      requiredMicroservices={requiredMicroservices}
+      microserviceActionLabel={microserviceActionLabel}
+      redeployLoading={redeployLoading}
+      hasEditPermission={hasEditPermission}
+      formatTime={formatTime}
+      getServiceTone={getServiceTone}
+      getServiceStatusText={getServiceStatusText}
+      onDeployMicroservice={handleDeployMicroservice}
+      onRedeployMicroservice={handleRedeployMicroservice}
+      onClose={() => {
+        if (!redeployLoading) {
+          setRedeployModalOpen(false);
+          setRedeployError(null);
+        }
+      }}
+      onRefreshStatus={async () => {
+        setMicroserviceActionLabel('Refreshing status...');
+        await refreshMicroserviceStatus({ refresh: true });
+        setMicroserviceActionLabel(null);
+      }}
+      onRedeployFcomProcessor={handleRedeployFcomProcessor}
+    />
+  );
 
   const comBrowserPanelProps = {
     hasEditPermission,
