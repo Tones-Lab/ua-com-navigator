@@ -93,6 +93,7 @@ Commit message file location (hard rule):
 - Write commit message files under `/root/navigator/tmp` only.
 - Canonical path: `/root/navigator/tmp/commit_msg.txt`.
 - Do not write commit message files under `/tmp`.
+- When using `git commit -F`, the `-F` path must point to `/root/navigator/tmp/*` (never `/tmp/*`).
 
 ## Repo hygiene (hard rule)
 
