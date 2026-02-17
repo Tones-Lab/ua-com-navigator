@@ -13,14 +13,8 @@ import FcomFilePreview from './features/fcom/FcomFilePreview';
 import FcomBuilderSidebar from './features/fcom/FcomBuilderSidebar';
 import FcomReviewCommitModal from './features/fcom/FcomReviewCommitModal';
 import FcomFlowModalStack from './features/fcom/FcomFlowModalStack';
-import FcomProcessorTooltip from './features/fcom/FcomProcessorTooltip';
-import FcomConfirmModals from './features/fcom/FcomConfirmModals';
-import FcomFieldSelectionModals from './features/fcom/FcomFieldSelectionModals';
-import FcomOverrideRemovalModals from './features/fcom/FcomOverrideRemovalModals';
-import FcomTrapVariablesModal from './features/fcom/FcomTrapVariablesModal';
+import FcomAuxOverlays from './features/fcom/FcomAuxOverlays';
 import TrapComposerModal from './features/fcom/TrapComposerModal';
-import FcomPathHelpModal from './features/fcom/FcomPathHelpModal';
-import FcomSaveOverlays from './features/fcom/FcomSaveOverlays';
 import useFcomBuilderContextValue from './features/fcom/builder/useFcomBuilderContextValue';
 import type {
   FlowPaletteItem,
@@ -10512,74 +10506,36 @@ export default function App() {
                           availableEventFields={availableEventFields}
                           getEventFieldDescription={getEventFieldDescription}
                         />
-                        <FcomConfirmModals
+                        <FcomAuxOverlays
                           builderSwitchModal={builderSwitchModal}
-                          onCancelBuilderSwitch={() => setBuilderSwitchModal({ open: false })}
-                          onConfirmBuilderSwitch={() => {
-                            if (builderSwitchModal.to) {
-                              applyBuilderTypeSwitch(builderSwitchModal.to);
-                            }
-                            setBuilderSwitchModal({ open: false });
-                          }}
-                          panelNavWarningOpen={panelNavWarning.open}
-                          onConfirmPanelNavWarning={() =>
-                            setPanelNavWarning((prev) => ({ ...prev, open: false }))
-                          }
-                          pendingNavOpen={Boolean(pendingNav)}
-                          onCancelPendingNav={() => setPendingNav(null)}
-                          onConfirmPendingNav={() => {
-                            const action = pendingNav;
-                            setPendingNav(null);
-                            discardAllEdits();
-                            if (action) {
-                              action();
-                            }
-                          }}
-                          pendingCancelOpen={Boolean(pendingCancel)}
-                          onCancelPendingCancel={() => setPendingCancel(null)}
-                          onConfirmPendingCancel={() => {
-                            const next = pendingCancel;
-                            setPendingCancel(null);
-                            if (!next) {
-                              return;
-                            }
-                            if (next.type === 'builder') {
-                              closeBuilder();
-                              return;
-                            }
-                            if (next.type === 'panel' && next.panelKey) {
-                              discardEventEdit(next.panelKey);
-                            }
-                          }}
+                          setBuilderSwitchModal={setBuilderSwitchModal}
+                          applyBuilderTypeSwitch={applyBuilderTypeSwitch}
+                          panelNavWarning={panelNavWarning}
+                          setPanelNavWarning={setPanelNavWarning}
+                          pendingNav={pendingNav}
+                          setPendingNav={setPendingNav}
+                          discardAllEdits={discardAllEdits}
+                          pendingCancel={pendingCancel}
+                          setPendingCancel={setPendingCancel}
+                          closeBuilder={closeBuilder}
+                          discardEventEdit={discardEventEdit}
                           pendingReviewDiscard={pendingReviewDiscard}
-                          onCancelPendingReviewDiscard={() => setPendingReviewDiscard(false)}
-                          onConfirmPendingReviewDiscard={() => {
-                            setPendingReviewDiscard(false);
-                            discardAllEdits();
-                            setShowReviewModal(false);
-                          }}
-                        />
-                        <FcomOverrideRemovalModals
+                          setPendingReviewDiscard={setPendingReviewDiscard}
+                          setShowReviewModal={setShowReviewModal}
                           removeOverrideModal={removeOverrideModal}
-                          onCloseRemoveOverride={() => setRemoveOverrideModal({ open: false })}
-                          onConfirmRemoveOverride={confirmRemoveOverride}
+                          setRemoveOverrideModal={setRemoveOverrideModal}
+                          confirmRemoveOverride={confirmRemoveOverride}
                           removeAllOverridesModal={removeAllOverridesModal}
-                          onCloseRemoveAllOverrides={() => setRemoveAllOverridesModal({ open: false })}
-                          onConfirmRemoveAllOverrides={confirmRemoveAllOverrides}
-                          onOpenAdvancedFlow={(objectName) => {
-                            openAdvancedFlowModal('object', objectName, null);
-                          }}
-                        />
-                        <FcomProcessorTooltip tooltip={processorTooltip} />
-                        <FcomSaveOverlays
+                          setRemoveAllOverridesModal={setRemoveAllOverridesModal}
+                          confirmRemoveAllOverrides={confirmRemoveAllOverrides}
+                          openAdvancedFlowModal={openAdvancedFlowModal}
+                          processorTooltip={processorTooltip}
                           saveLoading={saveLoading}
                           saveElapsed={saveElapsed}
                           overrideSaveDisplayStatus={overrideSaveDisplayStatus}
                           redeployLoading={redeployLoading}
                           microserviceActionLabel={microserviceActionLabel}
                           redeployElapsed={redeployElapsed}
-                        />
-                        <FcomFieldSelectionModals
                           showAddFieldModal={showAddFieldModal}
                           addFieldContext={addFieldContext}
                           addFieldSearch={addFieldSearch}
@@ -10589,38 +10545,30 @@ export default function App() {
                           reservedEventFields={reservedEventFields}
                           getEventFieldDescription={getEventFieldDescription}
                           addFieldToPanel={addFieldToPanel}
-                          onCloseAddField={() => setShowAddFieldModal(false)}
+                          setShowAddFieldModal={setShowAddFieldModal}
                           eventFieldPickerOpen={eventFieldPickerOpen}
                           eventFieldSearch={eventFieldSearch}
                           setEventFieldSearch={setEventFieldSearch}
                           handleEventFieldInsertSelect={handleEventFieldInsertSelect}
-                          onCloseEventFieldPicker={() => {
-                            setEventFieldPickerOpen(false);
-                            setEventFieldInsertContext(null);
-                          }}
-                        />
-                        <FcomPathHelpModal
-                          open={showPathModal}
-                          currentPath={getCurrentPath()}
-                          onClose={() => setShowPathModal(false)}
-                        />
-                        <FcomTrapVariablesModal
-                          open={varModalOpen}
-                          mode={varModalMode}
-                          variables={varModalVars}
-                          selectedToken={varModalToken}
+                          setEventFieldPickerOpen={setEventFieldPickerOpen}
+                          setEventFieldInsertContext={setEventFieldInsertContext}
+                          showPathModal={showPathModal}
+                          getCurrentPath={getCurrentPath}
+                          setShowPathModal={setShowPathModal}
+                          varModalOpen={varModalOpen}
+                          varModalMode={varModalMode}
+                          varModalVars={varModalVars}
+                          varModalToken={varModalToken}
                           varListRef={varListRef}
                           varRowRefs={varRowRefs}
                           renderValue={renderValue}
                           formatDescription={formatDescription}
                           renderEnums={renderEnums}
                           getModalOverlayStyle={getModalOverlayStyle}
-                          onInsertSelect={handleVarInsertSelect}
-                          onClose={() => {
-                            setVarModalOpen(false);
-                            setVarModalMode('view');
-                            setVarInsertContext(null);
-                          }}
+                          handleVarInsertSelect={handleVarInsertSelect}
+                          setVarModalOpen={setVarModalOpen}
+                          setVarModalMode={setVarModalMode}
+                          setVarInsertContext={setVarInsertContext}
                         />
                       </div>
                     </div>

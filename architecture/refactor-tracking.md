@@ -378,6 +378,11 @@ Validation:
   - Updated `App.tsx` to replace the inline modal quartet with `FcomFlowModalStack` while preserving existing callbacks, state guards, and modal-stack behavior.
   - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
   - Test Delta: Low risk (code-movement extraction for FCOM modal composition); Add now; Coverage type: UI sanity (open/close each extracted modal, advanced flow save/cancel, flow editor edit/save, field reference stacking).
+- 2026-02-17: Post-item cleanup (FCOM auxiliary overlay group extraction from App).
+  - Added `features/fcom/FcomAuxOverlays.tsx` to compose confirm dialogs, override-removal dialogs, processor tooltip, save overlays, field-selection dialogs, path help, and trap-variable modal wrappers.
+  - Updated `App.tsx` to replace the remaining inline FCOM overlay/modal wrapper cluster with a single `FcomAuxOverlays` composition call.
+  - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
+  - Test Delta: Low risk (code-movement extraction for overlay/modal composition); Add now; Coverage type: UI sanity (all extracted confirms/modals/overlays open-close behavior and handler wiring parity).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.
