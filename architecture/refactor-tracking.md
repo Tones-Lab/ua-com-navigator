@@ -101,7 +101,7 @@ Validation:
 - Filter input still updates rows as expected.
 
 ### 8) Microservice chain component extraction
-Status: Not Started
+Status: Done
 Scope: Extract chain + card UI into dedicated components and reuse in modal.
 Validation:
 - Open Microservice Status modal; confirm chain, status text, and actions unchanged.
@@ -304,6 +304,11 @@ Validation:
   - Updated `hooks/useOverviewState.ts` and `App.tsx` to use `useSortableTable` instead of duplicated inline sort toggles.
   - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
   - Test Delta: Medium risk (column sort direction/state propagation in overview and folder tables); Add now; Coverage type: E2E (toggle each sortable column in both tables and verify order + indicator, confirm filter inputs still narrow rows).
+- 2026-02-16: Item 8 completed (microservice chain/card extraction).
+  - Added `features/microservices/MicroserviceStatusCard.tsx` and `features/microservices/MicroserviceChain.tsx`.
+  - Updated `features/microservices/MicroserviceStatusModal.tsx` to delegate chain and card rendering to the new components while preserving action-state logic and control callbacks.
+  - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
+  - Test Delta: Medium risk (microservice modal status/action rendering and deploy/redeploy controls); Add now; Coverage type: E2E (open microservice status modal, refresh status, verify chain arrows/card tones/status text, and run deploy/redeploy action buttons).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.
