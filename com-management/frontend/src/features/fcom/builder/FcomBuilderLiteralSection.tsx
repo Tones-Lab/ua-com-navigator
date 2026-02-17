@@ -1,13 +1,14 @@
-import { useFcomBuilderContext } from './FcomBuilderContext';
+import {
+  useFcomBuilderActionsContext,
+  useFcomBuilderViewContext,
+} from './FcomBuilderContext';
 
 export default function FcomBuilderLiteralSection() {
+  const { isBuilderTargetReady, builderLiteralText, literalDirty } = useFcomBuilderViewContext();
   const {
-    isBuilderTargetReady,
-    builderLiteralText,
     handleLiteralInputChange,
-    literalDirty,
     applyLiteralValue,
-  } = useFcomBuilderContext();
+  } = useFcomBuilderActionsContext();
   return (
     <div className="builder-section">
       <div className="builder-section-title">Literal Editor</div>

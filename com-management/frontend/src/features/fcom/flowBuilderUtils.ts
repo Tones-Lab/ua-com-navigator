@@ -1,8 +1,21 @@
 import type { FlowNode } from './flowUtils';
 
 type NormalizeSourcePath = (value: string) => string;
+type ProcessorPayload = Record<string, unknown>;
+type ProcessorConfig = Record<string, unknown>;
+type SwitchCaseConfig = {
+  match?: unknown;
+  operator?: unknown;
+  processors?: FlowNode[];
+};
 
-type BuildNested = (nodes: FlowNode[]) => any[];
+type BuildNested = (nodes: FlowNode[]) => ProcessorPayload[];
+
+const asFlowNodeArray = (value: unknown): FlowNode[] =>
+  Array.isArray(value) ? (value as FlowNode[]) : [];
+
+const asSwitchCaseArray = (value: unknown): SwitchCaseConfig[] =>
+  Array.isArray(value) ? (value as SwitchCaseConfig[]) : [];
 
 export const parseJsonValue = <T,>(value: string | undefined, fallback: T): T => {
   if (!value || !value.trim()) {
@@ -17,16 +30,16 @@ export const parseJsonValue = <T,>(value: string | undefined, fallback: T): T =>
 
 export const buildProcessorPayloadFromConfig = (
   processorType: string,
-  config: Record<string, any>,
+  config: ProcessorConfig,
   normalizeSourcePath: NormalizeSourcePath,
   buildNested?: BuildNested,
-): any => {
+): ProcessorPayload => {
   if (processorType === 'set') {
     const sourceValue =
       config.sourceType === 'path'
         ? normalizeSourcePath(String(config.source || ''))
         : config.source;
-    let argsValue: any[] | undefined;
+    let argsValue: unknown[] | undefined;
     if (typeof config.argsText === 'string' && config.argsText.trim()) {
       try {
         const parsed = JSON.parse(config.argsText);
@@ -65,7 +78,7 @@ export const buildProcessorPayloadFromConfig = (
     return {
       append: {
         source: config.source ?? '',
-        array: parseJsonValue(config.arrayText, [] as any[]),
+        array: parseJsonValue(config.arrayText as string | undefined, [] as unknown[]),
         targetField: config.targetField ?? '',
       },
     };
@@ -110,7 +123,7 @@ export const buildProcessorPayloadFromConfig = (
     };
   }
   if (processorType === 'foreach') {
-    const nestedNodes = Array.isArray(config.processors) ? config.processors : [];
+    const nestedNodes = asFlowNodeArray(config.processors);
     return {
       foreach: {
         source: config.source ?? '',
@@ -149,8 +162,8 @@ export const buildProcessorPayloadFromConfig = (
     return {
       lookup: {
         source: config.source ?? '',
-        properties: parseJsonValue(config.propertiesText, {}),
-        fallback: parseJsonValue(config.fallbackText, {}),
+        properties: parseJsonValue(config.propertiesText as string | undefined, {}),
+        fallback: parseJsonValue(config.fallbackText as string | undefined, {}),
         targetField: config.targetField ?? '',
       },
     };
@@ -237,20 +250,16 @@ export const buildProcessorPayloadFromConfig = (
     };
   }
   if (processorType === 'switch') {
-    const cases = Array.isArray(config.cases) ? config.cases : [];
-    const defaultProcessors = Array.isArray(config.defaultProcessors)
-      ? config.defaultProcessors
-      : [];
+    const cases = asSwitchCaseArray(config.cases);
+    const defaultProcessors = asFlowNodeArray(config.defaultProcessors);
     return {
       switch: {
         source: config.source ?? '',
         operator: config.operator ?? '',
-        case: cases.map((item: any) => ({
+        case: cases.map((item) => ({
           match: item.match ?? '',
           ...(item.operator ? { operator: item.operator } : {}),
-          then: buildNested
-            ? buildNested(Array.isArray(item.processors) ? item.processors : [])
-            : [],
+          then: buildNested ? buildNested(asFlowNodeArray(item.processors)) : [],
         })),
         default: buildNested ? buildNested(defaultProcessors) : [],
       },
@@ -274,7 +283,7 @@ export const buildFlowProcessor = (
   node: FlowNode,
   normalizeSourcePath: NormalizeSourcePath,
   buildNested?: BuildNested,
-): any => {
+): ProcessorPayload => {
   if (node.kind === 'if') {
     return {
       if: {
@@ -297,5 +306,5 @@ export const buildFlowProcessor = (
 export const buildFlowProcessors = (
   nodes: FlowNode[],
   normalizeSourcePath: NormalizeSourcePath,
-): any[] =>
+): ProcessorPayload[] =>
   nodes.map((node) => buildFlowProcessor(node, normalizeSourcePath, (items) => buildFlowProcessors(items, normalizeSourcePath)));

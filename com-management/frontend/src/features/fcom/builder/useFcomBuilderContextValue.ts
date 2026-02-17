@@ -2,7 +2,7 @@ import type { FcomBuilderContextValue } from './FcomBuilderContext';
 
 type UseFcomBuilderContextValueParams = Omit<FcomBuilderContextValue, 'builderOverrideVersion'> & {
   getOverrideVersionInfo: (objectName?: string | null) => FcomBuilderContextValue['builderOverrideVersion'];
-  getObjectByPanelKey: (panelKey: string) => any;
+  getObjectByPanelKey: (panelKey: string) => Record<string, unknown> | null | undefined;
 };
 
 export default function useFcomBuilderContextValue({
@@ -11,8 +11,13 @@ export default function useFcomBuilderContextValue({
   getObjectByPanelKey,
   ...rest
 }: UseFcomBuilderContextValueParams): FcomBuilderContextValue {
+  const builderObject = builderTarget ? getObjectByPanelKey(builderTarget.panelKey) : null;
+  const builderObjectName =
+    builderObject && typeof builderObject['@objectName'] === 'string'
+      ? builderObject['@objectName']
+      : null;
   const builderOverrideVersion = builderTarget
-    ? getOverrideVersionInfo(getObjectByPanelKey(builderTarget.panelKey)?.['@objectName'])
+    ? getOverrideVersionInfo(builderObjectName)
     : null;
 
   return {

@@ -1,18 +1,17 @@
-import { useFcomBuilderContext } from './FcomBuilderContext';
+import {
+  useFcomBuilderActionsContext,
+  useFcomBuilderViewContext,
+} from './FcomBuilderContext';
 
 export default function FcomBuilderHeader() {
+  const { builderTarget, builderOverrideVersion, builderDirty, canUndoBuilder, canRedoBuilder, builderOpen } =
+    useFcomBuilderViewContext();
   const {
-    builderTarget,
-    builderOverrideVersion,
-    builderDirty,
-    canUndoBuilder,
-    canRedoBuilder,
     handleBuilderUndo,
     handleBuilderRedo,
     setShowBuilderHelpModal,
     requestCancelBuilder,
-    builderOpen,
-  } = useFcomBuilderContext();
+  } = useFcomBuilderActionsContext();
   return (
     <div className="builder-header">
       <div>

@@ -1,14 +1,15 @@
-import { useFcomBuilderContext } from './FcomBuilderContext';
+import {
+  useFcomBuilderActionsContext,
+  useFcomBuilderViewContext,
+} from './FcomBuilderContext';
 import type { BuilderType } from './types';
 
 export default function FcomBuilderTypeSelector() {
+  const { builderFocus, builderTypeLocked, isBuilderTargetReady } = useFcomBuilderViewContext();
   const {
-    builderFocus,
-    builderTypeLocked,
-    isBuilderTargetReady,
     setBuilderSwitchModal,
     applyBuilderTypeSwitch,
-  } = useFcomBuilderContext();
+  } = useFcomBuilderActionsContext();
   return (
     <div className="builder-section">
       <div className="builder-section-title">

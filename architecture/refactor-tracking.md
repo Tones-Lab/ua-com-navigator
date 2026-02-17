@@ -71,7 +71,7 @@ Validation:
 - Favorites star toggles still work for MIB file.
 
 ### 4) Flow editor / advanced flow refactor
-Status: Not Started
+Status: Done
 Scope: Extract flow canvas, palette, validation, and editor into a flow feature module.
 Validation:
 - Open Advanced Flow (global/object), add nodes, save, and verify staged changes.
@@ -150,6 +150,53 @@ Validation:
   - Added Playwright regressions for processor builder progression and switch/foreach configure editors.
   - Hardened e2e helpers to support reset-label variants and dataset-agnostic file/object selection.
   - Test Delta: High-risk builder flow contract covered via E2E; utility-level tests queued for stabilization phase where fixture control is available.
+- 2026-02-14: Builder context surface tightening.
+  - Split builder context into explicit `view` and `actions` contexts while preserving a compatibility hook.
+  - Migrated builder subcomponents to consume only required slices via dedicated hooks.
+  - Result: lower coupling per component and clearer boundaries for future App/context decomposition.
+  - Test Delta: High-risk builder interaction path; awaiting pre-run test brief confirmation before executing regression checks per team workflow.
+- 2026-02-16: Flow editor typing/build unblock kickoff (Item 4).
+  - Fixed strict config-input typing in `FcomFlowEditorModal` by normalizing processor config values to safe input strings.
+  - Fixed builder override-version lookup typing in `useFcomBuilderContextValue` via explicit `@objectName` narrowing.
+  - Applied permanent `isRecord` initialization-order hardening in `App.tsx` and resolved follow-on strict null/undefined mismatch.
+  - Result: frontend `npm run build` and `npm run lint` both pass with no App/flow typing blockers.
+  - Test Delta: Medium risk (flow editor input/config typing and helper ordering); Add now; Coverage type: E2E (flow editor open/edit/save in object + global lanes).
+- 2026-02-16: Step 4 extraction started (flow tree helper deduplication).
+  - Switched `App.tsx` flow-tree operations to shared `features/fcom/flowUtils` helpers (`appendNodeAtPath`, `removeNodeById`, `findNodeById`, `replaceNodeById`) and removed duplicated inline implementations.
+  - Result: reduced `App.tsx` flow orchestration duplication and moved core tree logic behind feature-module boundaries.
+  - Test Delta: Medium risk (advanced-flow tree mutation path); Add now; Coverage type: E2E (advanced flow add/edit/remove node in object and global lanes).
+- 2026-02-16: Step 4 extraction continued (flow validation + focus traversal module).
+  - Added `features/fcom/flowValidation.ts` and moved processor-config validation, recursive flow-node validation, and focus-target traversal out of `App.tsx`.
+  - Added `validateFlowEditorDraft` in `flowValidation.ts` and switched `App.tsx` flow-editor error computation to the shared helper.
+  - Updated `App.tsx` to consume shared validation/focus utilities and removed duplicated local flow-validation logic.
+  - Result: narrower App flow orchestration surface and clearer module boundary between flow UI orchestration and validation/traversal rules.
+  - Test Delta: Medium risk (flow validation + focus/highlight behavior); Add now; Coverage type: E2E (advanced-flow validation errors and focus-target highlighting across object/global lanes).
+- 2026-02-16: Step 4 extraction continued (flow editor state orchestration hook).
+  - Added `features/fcom/useFlowEditorState.ts` to own flow-editor open/cancel/save behavior and draft lifecycle.
+  - Updated `App.tsx` to consume hook-provided flow-editor state and handlers instead of local inline orchestration.
+  - Result: reduced `App.tsx` modal orchestration surface and clearer separation of flow-editor state management from page-level composition.
+  - Test Delta: Medium risk (flow editor open/save/cancel wiring); Add now; Coverage type: E2E (open node editor, modify processor config, save/cancel across object/global lanes).
+- 2026-02-16: Step 4 extraction continued (flow payload builder dedup).
+  - Switched `App.tsx` to use shared `features/fcom/flowBuilderUtils` exports for processor payload normalization and flow payload generation.
+  - Removed duplicated inline payload-construction block from `App.tsx` and kept App-level wrapper calls for compatibility.
+  - Result: reduced App flow-transformation duplication and consolidated payload-shape behavior in a dedicated flow feature module.
+  - Test Delta: Medium risk (advanced-flow payload generation and serialization); Add now; Coverage type: E2E (advanced flow save + JSON preview parity for object/global lanes).
+- 2026-02-16: Step 4 extraction continued (advanced-flow override upsert utility).
+  - Added `features/fcom/advancedFlowUtils.ts` and moved patch-op detection plus advanced-flow override upsert/remove rules out of `App.tsx`.
+  - Updated Advanced Flow open/save path in `App.tsx` to use shared `hasPatchOps` and `upsertAdvancedFlowOverrideEntry` helpers.
+  - Result: reduced App save-path mutation complexity and centralized v2 advanced-flow override entry behavior.
+  - Test Delta: Medium risk (advanced-flow save mutation semantics); Add now; Coverage type: E2E (global pre/post save clear+add, object-lane save clear+add).
+- 2026-02-16: Step 4 extraction continued (flow editor type unification).
+  - Updated `FcomFlowEditorModal.tsx` to use shared `FlowEditorState` from `useFlowEditorState`.
+  - Result: removed duplicate modal-local flow-editor state typing and reduced drift risk between App and modal contracts.
+  - Test Delta: Low risk (type-only contract unification); Queue for stabilization; Coverage type: Integration.
+- 2026-02-16: Step 4 extraction completed (canvas + parser + orchestration hook).
+  - Added `features/fcom/FlowCanvas.tsx` and moved recursive flow-lane rendering/layout out of `App.tsx`.
+  - Added `features/fcom/flowNodeParser.ts` and moved processor-payload→flow-node parse logic out of `App.tsx`.
+  - Added `features/fcom/useAdvancedFlowOrchestration.ts` and moved Advanced Flow open/save orchestration into a dedicated feature hook.
+  - Updated `App.tsx` to consume extracted modules and keep only composition-level wiring.
+  - Result: Item 4 target achieved; flow canvas, validation, editor state, payload builders, parser, and advanced-flow orchestration now reside in feature modules.
+  - Test Delta: High risk (advanced-flow orchestration + recursive flow canvas); Add now; Coverage type: E2E (open/edit/save/close/focus for object/global lanes and nested if/foreach/switch branches).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.

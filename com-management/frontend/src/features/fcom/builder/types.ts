@@ -1,4 +1,6 @@
 import type { Dispatch, ReactNode, SetStateAction } from 'react';
+import type { ConditionTree } from '../builderUtils';
+import type { FlowBranchPath, FlowNode } from '../flowUtils';
 
 export type BuilderType = 'literal' | 'eval' | 'processor';
 export type BuilderFocus = BuilderType | null;
@@ -19,7 +21,7 @@ export type BuilderSwitchModalState = {
   to?: BuilderType | null;
 };
 
-export type BuilderCondition = { id: string; condition: any; result: string };
+export type BuilderCondition = { id: string; condition: ConditionTree; result: string };
 
 export type OpenAdvancedFlowModal = (
   scope: 'object' | 'global',
@@ -29,7 +31,7 @@ export type OpenAdvancedFlowModal = (
 
 export type RenderConditionNode = (
   rowId: string,
-  condition: any,
+  condition: ConditionTree,
   depth: number,
   isNested: boolean,
   groupCount: number,
@@ -37,22 +39,23 @@ export type RenderConditionNode = (
 
 export type RenderProcessorConfigFields = (
   processorType: string,
-  config: Record<string, any>,
+  config: Record<string, unknown>,
   onChange: (key: string, value: string | boolean) => void,
   context: 'flow' | 'builder',
   fieldErrors?: Record<string, string[]>,
 ) => ReactNode;
 
 export type RenderFlowList = (
-  nodes: any[],
-  path: any,
-  setNodes: Dispatch<SetStateAction<any[]>>,
+  nodes: FlowNode[],
+  path: FlowBranchPath,
+  setNodes: Dispatch<SetStateAction<FlowNode[]>>,
   scope: 'object' | 'global',
   lane: 'object' | 'pre' | 'post',
   nodeErrorsMap?: Record<string, string[]>,
 ) => ReactNode;
 
-export type ProcessorFlowNode = Record<string, unknown>;
+export type ProcessorFlowNode = FlowNode;
+export type ProcessorPayload = Record<string, unknown>;
 
 export type ProcessorCatalogItem = {
   id: string;
@@ -79,6 +82,7 @@ export type ProcessorSwitchCase = {
 };
 
 export type ProcessorBuilderConfig = {
+  targetField?: string;
   processors?: ProcessorFlowNode[];
   defaultProcessors?: ProcessorFlowNode[];
   cases?: ProcessorSwitchCase[];

@@ -89,12 +89,18 @@ Refs: <issue/PR/link>
 
 Hard rule: do not use one‑line commit messages for non‑trivial changes.
 
+Commit message file location (hard rule):
+- Write commit message files under `/root/navigator/tmp` only.
+- Canonical path: `/root/navigator/tmp/commit_msg.txt`.
+- Do not write commit message files under `/tmp`.
+
 ## Repo hygiene (hard rule)
 
 - Do not commit `/coms` (large vendor data/config). It is ignored by `.gitignore`.
 - Do not commit `agent.md` (local server notes). It is ignored by `.gitignore`.
 - Do not commit `.env` files (use `.env.example` for documentation).
 - Temporary files must be written under `/root/navigator/tmp` only. Do not write to `/tmp` or any other external temp directory.
+- This includes commit message files, scratch patches, and any test/runtime temporary artifacts.
 
 ## Testing discipline
 

@@ -3,10 +3,18 @@ export type FlowNodeBase = {
   kind: 'processor' | 'if';
 };
 
+export type FlowSwitchCase = {
+  id: string;
+  match?: string;
+  operator?: string;
+  processors?: FlowNode[];
+  [key: string]: unknown;
+};
+
 export type FlowProcessorNode = FlowNodeBase & {
   kind: 'processor';
   processorType: string;
-  config?: Record<string, any>;
+  config?: Record<string, unknown>;
 };
 
 export type FlowIfNode = FlowNodeBase & {
@@ -27,6 +35,12 @@ export type FlowBranchPath =
   | { kind: 'if'; id: string; branch: 'then' | 'else' }
   | { kind: 'foreach'; id: string; branch: 'processors' }
   | { kind: 'switch'; id: string; branch: 'case' | 'default'; caseId?: string };
+
+const asFlowNodeArray = (value: unknown): FlowNode[] =>
+  Array.isArray(value) ? (value as FlowNode[]) : [];
+
+const asSwitchCaseArray = (value: unknown): FlowSwitchCase[] =>
+  Array.isArray(value) ? (value as FlowSwitchCase[]) : [];
 
 export const updateBranchInFlow = (
   nodes: FlowNode[],
@@ -53,7 +67,7 @@ export const updateBranchInFlow = (
       } as FlowIfNode;
     }
     if (node.kind === 'processor' && node.processorType === 'foreach') {
-      const processors = Array.isArray(node.config?.processors) ? node.config.processors : [];
+      const processors = asFlowNodeArray(node.config?.processors);
       if (node.id === path.id) {
         const updatedBranch = updater(processors);
         return {
@@ -73,10 +87,8 @@ export const updateBranchInFlow = (
       } as FlowProcessorNode;
     }
     if (node.kind === 'processor' && node.processorType === 'switch') {
-      const cases = Array.isArray(node.config?.cases) ? node.config.cases : [];
-      const defaultProcessors = Array.isArray(node.config?.defaultProcessors)
-        ? node.config.defaultProcessors
-        : [];
+      const cases = asSwitchCaseArray(node.config?.cases);
+      const defaultProcessors = asFlowNodeArray(node.config?.defaultProcessors);
       if (node.id === path.id) {
         if (path.branch === 'default') {
           const updatedBranch = updater(defaultProcessors);
@@ -89,19 +101,15 @@ export const updateBranchInFlow = (
           } as FlowProcessorNode;
         }
         if (path.branch === 'case' && path.caseId) {
-          const updatedCases = cases.map((item: any) =>
+          const updatedCases = cases.map((item) =>
             item.id === path.caseId
               ? {
                   ...item,
-                  processors: updater(Array.isArray(item.processors) ? item.processors : []),
+                  processors: updater(asFlowNodeArray(item.processors)),
                 }
               : {
                   ...item,
-                  processors: updateBranchInFlow(
-                    Array.isArray(item.processors) ? item.processors : [],
-                    path,
-                    updater,
-                  ),
+                  processors: updateBranchInFlow(asFlowNodeArray(item.processors), path, updater),
                 },
           );
           return {
@@ -113,13 +121,9 @@ export const updateBranchInFlow = (
           } as FlowProcessorNode;
         }
       }
-      const updatedCases = cases.map((item: any) => ({
+      const updatedCases = cases.map((item) => ({
         ...item,
-        processors: updateBranchInFlow(
-          Array.isArray(item.processors) ? item.processors : [],
-          path,
-          updater,
-        ),
+        processors: updateBranchInFlow(asFlowNodeArray(item.processors), path, updater),
       }));
       return {
         ...node,
@@ -167,7 +171,7 @@ export const removeNodeById = (
       return acc;
     }
     if (node.kind === 'processor' && node.processorType === 'foreach') {
-      const nested = Array.isArray(node.config?.processors) ? node.config.processors : [];
+      const nested = asFlowNodeArray(node.config?.processors);
       const nestedResult = removeNodeById(nested, nodeId);
       if (nestedResult.removed) {
         removed = nestedResult.removed;
@@ -182,12 +186,9 @@ export const removeNodeById = (
       return acc;
     }
     if (node.kind === 'processor' && node.processorType === 'switch') {
-      const cases = Array.isArray(node.config?.cases) ? node.config.cases : [];
-      const updatedCases = cases.map((item: any) => {
-        const result = removeNodeById(
-          Array.isArray(item.processors) ? item.processors : [],
-          nodeId,
-        );
+      const cases = asSwitchCaseArray(node.config?.cases);
+      const updatedCases = cases.map((item) => {
+        const result = removeNodeById(asFlowNodeArray(item.processors), nodeId);
         if (result.removed) {
           removed = result.removed;
         }
@@ -196,9 +197,7 @@ export const removeNodeById = (
           processors: result.nodes,
         };
       });
-      const defaults = Array.isArray(node.config?.defaultProcessors)
-        ? node.config.defaultProcessors
-        : [];
+      const defaults = asFlowNodeArray(node.config?.defaultProcessors);
       const defaultResult = removeNodeById(defaults, nodeId);
       if (defaultResult.removed) {
         removed = defaultResult.removed;
@@ -235,26 +234,21 @@ export const findNodeById = (nodes: FlowNode[], nodeId: string): FlowNode | null
       }
     }
     if (node.kind === 'processor' && node.processorType === 'foreach') {
-      const nested = Array.isArray(node.config?.processors) ? node.config.processors : [];
+      const nested = asFlowNodeArray(node.config?.processors);
       const foundNested = findNodeById(nested, nodeId);
       if (foundNested) {
         return foundNested;
       }
     }
     if (node.kind === 'processor' && node.processorType === 'switch') {
-      const cases = Array.isArray(node.config?.cases) ? node.config.cases : [];
+      const cases = asSwitchCaseArray(node.config?.cases);
       for (const item of cases) {
-        const foundCase = findNodeById(
-          Array.isArray(item.processors) ? item.processors : [],
-          nodeId,
-        );
+        const foundCase = findNodeById(asFlowNodeArray(item.processors), nodeId);
         if (foundCase) {
           return foundCase;
         }
       }
-      const defaults = Array.isArray(node.config?.defaultProcessors)
-        ? node.config.defaultProcessors
-        : [];
+      const defaults = asFlowNodeArray(node.config?.defaultProcessors);
       const foundDefault = findNodeById(defaults, nodeId);
       if (foundDefault) {
         return foundDefault;
@@ -281,7 +275,7 @@ export const replaceNodeById = (
       } as FlowIfNode;
     }
     if (node.kind === 'processor' && node.processorType === 'foreach') {
-      const nested = Array.isArray(node.config?.processors) ? node.config.processors : [];
+      const nested = asFlowNodeArray(node.config?.processors);
       return {
         ...node,
         config: {
@@ -291,18 +285,12 @@ export const replaceNodeById = (
       } as FlowProcessorNode;
     }
     if (node.kind === 'processor' && node.processorType === 'switch') {
-      const cases = Array.isArray(node.config?.cases) ? node.config.cases : [];
-      const updatedCases = cases.map((item: any) => ({
+      const cases = asSwitchCaseArray(node.config?.cases);
+      const updatedCases = cases.map((item) => ({
         ...item,
-        processors: replaceNodeById(
-          Array.isArray(item.processors) ? item.processors : [],
-          nodeId,
-          nextNode,
-        ),
+        processors: replaceNodeById(asFlowNodeArray(item.processors), nodeId, nextNode),
       }));
-      const defaults = Array.isArray(node.config?.defaultProcessors)
-        ? node.config.defaultProcessors
-        : [];
+      const defaults = asFlowNodeArray(node.config?.defaultProcessors);
       return {
         ...node,
         config: {

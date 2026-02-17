@@ -1,13 +1,22 @@
-import { useFcomBuilderContext } from './FcomBuilderContext';
+import {
+  useFcomBuilderActionsContext,
+  useFcomBuilderViewContext,
+} from './FcomBuilderContext';
 
 export default function FcomBuilderEvalSection() {
   const {
     builderMode,
-    setBuilderMode,
     hasEditPermission,
+    builderConditions,
+    builderElseResult,
+    friendlyPreview,
+    builderRegularText,
+    isBuilderTargetReady,
+  } = useFcomBuilderViewContext();
+  const {
+    setBuilderMode,
     setAdvancedProcessorScope,
     setShowAdvancedProcessorModal,
-    builderConditions,
     setBuilderConditions,
     updateBuilderCondition,
     handleFriendlyConditionInputChange,
@@ -19,17 +28,13 @@ export default function FcomBuilderEvalSection() {
     createGroupNode,
     nextBuilderId,
     renderConditionNode,
-    builderElseResult,
-    friendlyPreview,
     applyFriendlyEval,
     formatEvalReadableList,
-    builderRegularText,
     handleRegularEvalInputChange,
     clearRegularEval,
     applyRegularEval,
     applyBuilderTemplate,
-    isBuilderTargetReady,
-  } = useFcomBuilderContext();
+  } = useFcomBuilderActionsContext();
   return (
     <div className="builder-section">
       <div className="builder-section-title">Eval Builder</div>

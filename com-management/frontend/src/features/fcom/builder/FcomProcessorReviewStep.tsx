@@ -1,10 +1,10 @@
 type FcomProcessorReviewStepProps = {
   builderPatchMode: boolean;
-  builderPatchPreview: any | null;
-  processorPayload: any;
+  builderPatchPreview: Record<string, unknown> | null;
+  processorPayload: Record<string, unknown> | null;
   showProcessorJson: boolean;
   setShowProcessorJson: (updater: (prev: boolean) => boolean) => void;
-  getProcessorSummaryLines: (payload: any) => string[];
+  getProcessorSummaryLines: (payload: unknown) => string[];
   setProcessorStep: (step: 'select' | 'configure' | 'review') => void;
   applyProcessor: () => void;
 };

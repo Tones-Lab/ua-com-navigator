@@ -31,6 +31,29 @@ import useFavorites from './hooks/useFavorites';
 import useOverviewState from './hooks/useOverviewState';
 import useSearchState from './hooks/useSearchState';
 import {
+  appendNodeAtPath,
+  removeNodeById,
+} from './features/fcom/flowUtils';
+import {
+  collectFocusMatches,
+  validateFlowNode,
+  validateFlowEditorDraft,
+  validateFlowNodes,
+  type FlowNodeErrorMap,
+  type FocusMatch,
+} from './features/fcom/flowValidation';
+import {
+  buildFlowProcessors as buildFlowProcessorsShared,
+  buildProcessorPayloadFromConfig as buildProcessorPayloadFromConfigShared,
+} from './features/fcom/flowBuilderUtils';
+import {
+  hasPatchOps,
+} from './features/fcom/advancedFlowUtils';
+import useFlowEditorState from './features/fcom/useFlowEditorState';
+import FlowCanvas from './features/fcom/FlowCanvas';
+import { buildFlowNodesFromProcessors as buildFlowNodesFromProcessorsShared } from './features/fcom/flowNodeParser';
+import useAdvancedFlowOrchestration from './features/fcom/useAdvancedFlowOrchestration';
+import {
   buildCurrentDisplayPath,
   buildBreadcrumbsFromNode,
   buildBreadcrumbsFromPath,
@@ -532,15 +555,18 @@ export default function App() {
 
   const getCurrentPath = () => buildCurrentDisplayPath(selectedFile?.PathID, browseNode);
 
-  const isFileReadPayload = (payload: any) => {
-    if (!payload || typeof payload !== 'object') {
+  const isRecord = (value: unknown): value is Record<string, unknown> =>
+    typeof value === 'object' && value !== null && !Array.isArray(value);
+
+  const isFileReadPayload = (payload: unknown) => {
+    if (!isRecord(payload)) {
       return false;
     }
-    const content = payload.content;
-    if (!content || typeof content !== 'object') {
+    const content = isRecord(payload.content) ? payload.content : null;
+    if (!content) {
       return false;
     }
-    if (Array.isArray(content.data) || Array.isArray(content.objects)) {
+    if (Array.isArray(content['data']) || Array.isArray(content['objects'])) {
       return true;
     }
     return Object.keys(content).length > 0;
@@ -554,13 +580,13 @@ export default function App() {
   };
 
   const [browseError, setBrowseError] = useState<string | null>(null);
-  const [browseData, setBrowseData] = useState<any>(null);
+  const [browseData, setBrowseData] = useState<unknown>(null);
   const [browseNode, setBrowseNode] = useState<string | null>(null);
-  const [entries, setEntries] = useState<any[]>([]);
+  const [entries, setEntries] = useState<BrowseEntry[]>([]);
   const browseSnapshotRef = useRef<{
-    browseData: any;
+    browseData: unknown;
     browseNode: string | null;
-    entries: any[];
+    entries: BrowseEntry[];
     breadcrumbs: Array<{ label: string; node: string | null }>;
   } | null>(null);
   const {
@@ -571,8 +597,8 @@ export default function App() {
     isFavorite,
     toggleFavorite,
   } = useFavorites({ isAuthenticated, activeApp });
-  const [selectedFolder, setSelectedFolder] = useState<any>(null);
-  const [folderOverview, setFolderOverview] = useState<any>(null);
+  const [selectedFolder, setSelectedFolder] = useState<BrowseEntry | null>(null);
+  const [folderOverview, setFolderOverview] = useState<unknown>(null);
   const [folderLoading, setFolderLoading] = useState(false);
   const [folderTableFilter, setFolderTableFilter] = useState('');
   const [folderTableSort, setFolderTableSort] = useState<{
@@ -580,25 +606,34 @@ export default function App() {
     direction: 'asc' | 'desc';
   }>({ key: 'schemaErrors', direction: 'desc' });
   const folderTableRows = useMemo(() => {
-    const rows = Array.isArray(folderOverview?.topFiles) ? folderOverview.topFiles : [];
+    const toRecord = (value: unknown): Record<string, unknown> | null =>
+      typeof value === 'object' && value !== null && !Array.isArray(value)
+        ? (value as Record<string, unknown>)
+        : null;
+    const folderOverviewData = toRecord(folderOverview);
+    const topFiles = folderOverviewData?.['topFiles'];
+    const rows = Array.isArray(topFiles) ? topFiles : [];
     const filterText = folderTableFilter.trim().toLowerCase();
     const filteredRows = filterText
-      ? rows.filter((row: any) =>
-          String(row?.file || '')
+      ? rows.filter((row: unknown) => {
+          const rowData = toRecord(row);
+          return String(rowData?.file || '')
             .toLowerCase()
-            .includes(filterText),
-        )
+            .includes(filterText);
+        })
       : rows;
-    const sortedRows = [...filteredRows].sort((a: any, b: any) => {
+    const sortedRows = [...filteredRows].sort((a: unknown, b: unknown) => {
+      const rowA = toRecord(a);
+      const rowB = toRecord(b);
       if (folderTableSort.key === 'file') {
-        const aName = String(a?.file || '');
-        const bName = String(b?.file || '');
+        const aName = String(rowA?.file || '');
+        const bName = String(rowB?.file || '');
         return folderTableSort.direction === 'asc'
           ? aName.localeCompare(bName)
           : bName.localeCompare(aName);
       }
-      const aValue = Number(a?.[folderTableSort.key] ?? 0);
-      const bValue = Number(b?.[folderTableSort.key] ?? 0);
+      const aValue = Number(rowA?.[folderTableSort.key] ?? 0);
+      const bValue = Number(rowB?.[folderTableSort.key] ?? 0);
       return folderTableSort.direction === 'asc' ? aValue - bValue : bValue - aValue;
     });
     return sortedRows;
@@ -615,8 +650,8 @@ export default function App() {
     { label: '/', node: null },
   ]);
   const breadcrumbsRef = useRef(breadcrumbs);
-  const [selectedFile, setSelectedFile] = useState<any>(null);
-  const [fileData, setFileData] = useState<any>(null);
+  const [selectedFile, setSelectedFile] = useState<BrowseEntry | null>(null);
+  const [fileData, setFileData] = useState<unknown>(null);
   const [fileLoading, setFileLoading] = useState(false);
   const [fileLoadStageTarget, setFileLoadStageTarget] = useState<
     'original' | 'overrides' | 'compare' | 'render' | null
@@ -679,14 +714,14 @@ export default function App() {
   const [panelDrafts, setPanelDrafts] = useState<Record<string, any>>({});
   const [panelEvalModes, setPanelEvalModes] = useState<Record<string, Record<string, boolean>>>({});
   const [panelOverrideBaselines, setPanelOverrideBaselines] = useState<
-    Record<string, { objectName: string; method: string; entries: any[] }>
+    Record<string, { objectName: string; method: string; entries: unknown[] }>
   >({});
   const [redeployReady, setRedeployReady] = useState(false);
   const [redeployModalOpen, setRedeployModalOpen] = useState(false);
   const [redeployLoading, setRedeployLoading] = useState(false);
   const [redeployError, setRedeployError] = useState<string | null>(null);
   const [microserviceActionLabel, setMicroserviceActionLabel] = useState<string | null>(null);
-  const [microserviceStatus, setMicroserviceStatus] = useState<any | null>(null);
+  const [microserviceStatus, setMicroserviceStatus] = useState<unknown>(null);
   const [microserviceStatusLoading, setMicroserviceStatusLoading] = useState(false);
   const [microserviceStatusError, setMicroserviceStatusError] = useState<string | null>(null);
   const [microserviceLastRefreshed, setMicroserviceLastRefreshed] = useState<string | null>(null);
@@ -694,7 +729,7 @@ export default function App() {
   const [overrideInfo, setOverrideInfo] = useState<any | null>(null);
   const [, setOverrideLoading] = useState(false);
   const [overrideError, setOverrideError] = useState<string | null>(null);
-  const [pendingOverrideSave, setPendingOverrideSave] = useState<any[] | null>(null);
+  const [pendingOverrideSave, setPendingOverrideSave] = useState<unknown[] | null>(null);
   const [pendingOverrideConversions, setPendingOverrideConversions] = useState<
     Record<string, { entry: any; method: string; scope: 'post' }>
   >({});
@@ -849,7 +884,7 @@ export default function App() {
   type FlowProcessorNode = FlowNodeBase & {
     kind: 'processor';
     processorType: string;
-    config?: Record<string, any>;
+    config?: Record<string, unknown>;
   };
   type FlowIfNode = FlowNodeBase & {
     kind: 'if';
@@ -867,6 +902,84 @@ export default function App() {
     | { kind: 'if'; id: string; branch: 'then' | 'else' }
     | { kind: 'foreach'; id: string; branch: 'processors' }
     | { kind: 'switch'; id: string; branch: 'case' | 'default'; caseId?: string };
+  type UnknownRecord = Record<string, unknown>;
+  type BrowseEntry = {
+    PathID: string;
+    PathName?: string;
+    icon?: string;
+    etag?: string;
+    ModificationTime?: string;
+  } & UnknownRecord;
+  type SearchResultItem = {
+    name?: string;
+    pathId?: string;
+    pathID?: string;
+    path?: string;
+    source?: string;
+  } & UnknownRecord;
+  type TrapVarbind = { oid: string; type: string; value: string };
+  type ParsedTrapCommand = {
+    version?: string;
+    community?: string;
+    host?: string;
+    trapOid?: string;
+    mibModule?: string;
+    varbinds: TrapVarbind[];
+  };
+  type TrapTestItem = {
+    objectName: string;
+    sourceLabel: string;
+    parsed: ParsedTrapCommand;
+  };
+  type MicroserviceEntry = {
+    name?: string;
+    label?: string;
+    installed?: boolean;
+    runningState?: string;
+    running?: boolean;
+    available?: boolean;
+  } & UnknownRecord;
+  const getApiErrorMessage = (error: unknown, fallback: string) => {
+    if (!isRecord(error)) {
+      return fallback;
+    }
+    const response = isRecord(error.response) ? error.response : null;
+    const data = response && isRecord(response.data) ? response.data : null;
+    if (data && typeof data.error === 'string' && data.error.trim()) {
+      return data.error;
+    }
+    if (typeof error.message === 'string' && error.message.trim()) {
+      return error.message;
+    }
+    return fallback;
+  };
+  const getResultFiles = (value: unknown): unknown[] | undefined => {
+    if (!isRecord(value)) {
+      return undefined;
+    }
+    const result = isRecord(value.result) ? value.result : null;
+    return Array.isArray(result?.files) ? result.files : undefined;
+  };
+  const getObjectNameValue = (obj: unknown): string | null => {
+    if (!isRecord(obj)) {
+      return null;
+    }
+    return typeof obj['@objectName'] === 'string' ? obj['@objectName'] : null;
+  };
+  const getTrapVariables = (obj: unknown): unknown[] => {
+    const trap = isRecord(obj) && isRecord(obj.trap) ? obj.trap : null;
+    if (!trap) {
+      return [];
+    }
+    const variables = trap.variables;
+    return Array.isArray(variables) ? variables : [];
+  };
+  const getSetPayload = (value: unknown): UnknownRecord | null => {
+    if (!isRecord(value)) {
+      return null;
+    }
+    return isRecord(value.set) ? value.set : null;
+  };
   const [builderProcessorConfig, setBuilderProcessorConfig] = useState<ProcessorBuilderConfig>({
     sourceType: 'literal',
     source: '',
@@ -971,281 +1084,6 @@ export default function App() {
       config: getDefaultProcessorConfig('set', fallbackTarget),
     };
   };
-  const updateBranchInFlow = (
-    nodes: FlowNode[],
-    path: FlowBranchPath,
-    updater: (items: FlowNode[]) => FlowNode[],
-  ): FlowNode[] => {
-    if (path.kind === 'root') {
-      return updater(nodes);
-    }
-    return nodes.map((node) => {
-      if (node.kind === 'if') {
-        if (node.id === path.id) {
-          const branchItems = path.branch === 'then' ? node.then : node.else;
-          const updatedBranch = updater(branchItems);
-          return {
-            ...node,
-            [path.branch]: updatedBranch,
-          } as FlowIfNode;
-        }
-        return {
-          ...node,
-          then: updateBranchInFlow(node.then, path, updater),
-          else: updateBranchInFlow(node.else, path, updater),
-        } as FlowIfNode;
-      }
-      if (node.kind === 'processor' && node.processorType === 'foreach') {
-        const processors = Array.isArray(node.config?.processors) ? node.config.processors : [];
-        if (node.id === path.id) {
-          const updatedBranch = updater(processors);
-          return {
-            ...node,
-            config: {
-              ...(node.config || {}),
-              processors: updatedBranch,
-            },
-          } as FlowProcessorNode;
-        }
-        return {
-          ...node,
-          config: {
-            ...(node.config || {}),
-            processors: updateBranchInFlow(processors, path, updater),
-          },
-        } as FlowProcessorNode;
-      }
-      if (node.kind === 'processor' && node.processorType === 'switch') {
-        const cases = Array.isArray(node.config?.cases) ? node.config.cases : [];
-        const defaultProcessors = Array.isArray(node.config?.defaultProcessors)
-          ? node.config.defaultProcessors
-          : [];
-        if (node.id === path.id) {
-          if (path.branch === 'default') {
-            const updatedBranch = updater(defaultProcessors);
-            return {
-              ...node,
-              config: {
-                ...(node.config || {}),
-                defaultProcessors: updatedBranch,
-              },
-            } as FlowProcessorNode;
-          }
-          if (path.branch === 'case' && path.caseId) {
-            const updatedCases = cases.map((item: any) =>
-              item.id === path.caseId
-                ? {
-                    ...item,
-                    processors: updater(Array.isArray(item.processors) ? item.processors : []),
-                  }
-                : {
-                    ...item,
-                    processors: updateBranchInFlow(
-                      Array.isArray(item.processors) ? item.processors : [],
-                      path,
-                      updater,
-                    ),
-                  },
-            );
-            return {
-              ...node,
-              config: {
-                ...(node.config || {}),
-                cases: updatedCases,
-              },
-            } as FlowProcessorNode;
-          }
-        }
-        const updatedCases = cases.map((item: any) => ({
-          ...item,
-          processors: updateBranchInFlow(
-            Array.isArray(item.processors) ? item.processors : [],
-            path,
-            updater,
-          ),
-        }));
-        return {
-          ...node,
-          config: {
-            ...(node.config || {}),
-            cases: updatedCases,
-            defaultProcessors: updateBranchInFlow(defaultProcessors, path, updater),
-          },
-        } as FlowProcessorNode;
-      }
-      return node;
-    });
-  };
-  const appendNodeAtPath = (nodes: FlowNode[], path: FlowBranchPath, node: FlowNode): FlowNode[] =>
-    updateBranchInFlow(nodes, path, (items) => [...items, node]);
-  const removeNodeById = (
-    nodes: FlowNode[],
-    nodeId: string,
-  ): { nodes: FlowNode[]; removed: FlowNode | null } => {
-    let removed: FlowNode | null = null;
-    const updated = nodes.reduce<FlowNode[]>((acc, node) => {
-      if (node.id === nodeId) {
-        removed = node;
-        return acc;
-      }
-      if (node.kind === 'if') {
-        const thenResult = removeNodeById(node.then, nodeId);
-        const elseResult = removeNodeById(node.else, nodeId);
-        if (thenResult.removed) {
-          removed = thenResult.removed;
-        }
-        if (elseResult.removed) {
-          removed = elseResult.removed;
-        }
-        acc.push({
-          ...node,
-          then: thenResult.nodes,
-          else: elseResult.nodes,
-        });
-        return acc;
-      }
-      if (node.kind === 'processor' && node.processorType === 'foreach') {
-        const nested = Array.isArray(node.config?.processors) ? node.config.processors : [];
-        const nestedResult = removeNodeById(nested, nodeId);
-        if (nestedResult.removed) {
-          removed = nestedResult.removed;
-        }
-        acc.push({
-          ...node,
-          config: {
-            ...(node.config || {}),
-            processors: nestedResult.nodes,
-          },
-        } as FlowProcessorNode);
-        return acc;
-      }
-      if (node.kind === 'processor' && node.processorType === 'switch') {
-        const cases = Array.isArray(node.config?.cases) ? node.config.cases : [];
-        const updatedCases = cases.map((item: any) => {
-          const result = removeNodeById(
-            Array.isArray(item.processors) ? item.processors : [],
-            nodeId,
-          );
-          if (result.removed) {
-            removed = result.removed;
-          }
-          return {
-            ...item,
-            processors: result.nodes,
-          };
-        });
-        const defaults = Array.isArray(node.config?.defaultProcessors)
-          ? node.config.defaultProcessors
-          : [];
-        const defaultResult = removeNodeById(defaults, nodeId);
-        if (defaultResult.removed) {
-          removed = defaultResult.removed;
-        }
-        acc.push({
-          ...node,
-          config: {
-            ...(node.config || {}),
-            cases: updatedCases,
-            defaultProcessors: defaultResult.nodes,
-          },
-        } as FlowProcessorNode);
-        return acc;
-      }
-      acc.push(node);
-      return acc;
-    }, []);
-    return { nodes: updated, removed };
-  };
-  const findNodeById = (nodes: FlowNode[], nodeId: string): FlowNode | null => {
-    for (const node of nodes) {
-      if (node.id === nodeId) {
-        return node;
-      }
-      if (node.kind === 'if') {
-        const foundThen = findNodeById(node.then, nodeId);
-        if (foundThen) {
-          return foundThen;
-        }
-        const foundElse = findNodeById(node.else, nodeId);
-        if (foundElse) {
-          return foundElse;
-        }
-      }
-      if (node.kind === 'processor' && node.processorType === 'foreach') {
-        const nested = Array.isArray(node.config?.processors) ? node.config.processors : [];
-        const foundNested = findNodeById(nested, nodeId);
-        if (foundNested) {
-          return foundNested;
-        }
-      }
-      if (node.kind === 'processor' && node.processorType === 'switch') {
-        const cases = Array.isArray(node.config?.cases) ? node.config.cases : [];
-        for (const item of cases) {
-          const foundCase = findNodeById(
-            Array.isArray(item.processors) ? item.processors : [],
-            nodeId,
-          );
-          if (foundCase) {
-            return foundCase;
-          }
-        }
-        const defaults = Array.isArray(node.config?.defaultProcessors)
-          ? node.config.defaultProcessors
-          : [];
-        const foundDefault = findNodeById(defaults, nodeId);
-        if (foundDefault) {
-          return foundDefault;
-        }
-      }
-    }
-    return null;
-  };
-  const replaceNodeById = (nodes: FlowNode[], nodeId: string, nextNode: FlowNode): FlowNode[] =>
-    nodes.map((node) => {
-      if (node.id === nodeId) {
-        return nextNode;
-      }
-      if (node.kind === 'if') {
-        return {
-          ...node,
-          then: replaceNodeById(node.then, nodeId, nextNode),
-          else: replaceNodeById(node.else, nodeId, nextNode),
-        } as FlowIfNode;
-      }
-      if (node.kind === 'processor' && node.processorType === 'foreach') {
-        const nested = Array.isArray(node.config?.processors) ? node.config.processors : [];
-        return {
-          ...node,
-          config: {
-            ...(node.config || {}),
-            processors: replaceNodeById(nested, nodeId, nextNode),
-          },
-        } as FlowProcessorNode;
-      }
-      if (node.kind === 'processor' && node.processorType === 'switch') {
-        const cases = Array.isArray(node.config?.cases) ? node.config.cases : [];
-        const updatedCases = cases.map((item: any) => ({
-          ...item,
-          processors: replaceNodeById(
-            Array.isArray(item.processors) ? item.processors : [],
-            nodeId,
-            nextNode,
-          ),
-        }));
-        const defaults = Array.isArray(node.config?.defaultProcessors)
-          ? node.config.defaultProcessors
-          : [];
-        return {
-          ...node,
-          config: {
-            ...(node.config || {}),
-            cases: updatedCases,
-            defaultProcessors: replaceNodeById(defaults, nodeId, nextNode),
-          },
-        } as FlowProcessorNode;
-      }
-      return node;
-    });
   const getFlowStateByLane = (scope: 'object' | 'global', lane: 'object' | 'pre' | 'post') => {
     if (scope === 'global') {
       if (lane === 'pre') {
@@ -1255,525 +1093,23 @@ export default function App() {
     }
     return { nodes: advancedFlow, setNodes: setAdvancedFlow };
   };
-  const openFlowEditor = (
-    nodeId: string,
-    scope: 'object' | 'global',
-    lane: 'object' | 'pre' | 'post',
-    nodesOverride?: FlowNode[],
-    setNodesOverride?: React.Dispatch<React.SetStateAction<FlowNode[]>>,
-  ) => {
-    const nodes = nodesOverride || getFlowStateByLane(scope, lane).nodes;
-    const node = findNodeById(nodes, nodeId);
-    if (!node) {
-      return;
-    }
-    setFlowEditor({ scope, lane, nodeId, setNodesOverride });
-    setFlowEditorDraft(JSON.parse(JSON.stringify(node)) as FlowNode);
-  };
-  const parseJsonValue = <T,>(value: string | undefined, fallback: T): T => {
-    if (!value || !value.trim()) {
-      return fallback;
-    }
-    try {
-      return JSON.parse(value) as T;
-    } catch {
-      return fallback;
-    }
-  };
-
   const buildProcessorPayloadFromConfig = (
     processorType: string,
-    config: Record<string, any>,
-    buildNested?: (nodes: FlowNode[]) => any[],
-  ): any => {
-    if (processorType === 'set') {
-      const sourceValue =
-        config.sourceType === 'path'
-          ? normalizeSourcePath(String(config.source || ''))
-          : config.source;
-      let argsValue: any[] | undefined;
-      if (typeof config.argsText === 'string' && config.argsText.trim()) {
-        try {
-          const parsed = JSON.parse(config.argsText);
-          if (Array.isArray(parsed)) {
-            argsValue = parsed;
-          }
-        } catch {
-          argsValue = undefined;
-        }
-      }
-      return {
-        set: {
-          source: sourceValue,
-          ...(argsValue ? { args: argsValue } : {}),
-          targetField: config.targetField || '',
-        },
-      };
-    }
-    if (processorType === 'regex') {
-      const sourceValue =
-        config.sourceType === 'literal'
-          ? String(config.source || '')
-          : normalizeSourcePath(String(config.source || ''));
-      const groupNumber = Number(config.group);
-      const hasGroup = Number.isFinite(groupNumber) && String(config.group).trim() !== '';
-      return {
-        regex: {
-          source: sourceValue,
-          pattern: config.pattern || '',
-          ...(hasGroup ? { group: groupNumber } : {}),
-          targetField: config.targetField || '',
-        },
-      };
-    }
-    if (processorType === 'append') {
-      return {
-        append: {
-          source: config.source ?? '',
-          array: parseJsonValue(config.arrayText, [] as any[]),
-          targetField: config.targetField ?? '',
-        },
-      };
-    }
-    if (processorType === 'appendToOutputStream') {
-      return {
-        appendToOutputStream: {
-          source: config.source ?? '',
-          output: config.output ?? '',
-        },
-      };
-    }
-    if (processorType === 'break') {
-      return { break: {} };
-    }
-    if (processorType === 'convert') {
-      return {
-        convert: {
-          source: config.source ?? '',
-          type: config.type ?? '',
-          targetField: config.targetField ?? '',
-        },
-      };
-    }
-    if (processorType === 'copy') {
-      return {
-        copy: {
-          source: config.source ?? '',
-          targetField: config.targetField ?? '',
-        },
-      };
-    }
-    if (processorType === 'discard') {
-      return { discard: {} };
-    }
-    if (processorType === 'eval') {
-      return {
-        eval: {
-          source: config.source ?? '',
-          ...(config.targetField ? { targetField: config.targetField } : {}),
-        },
-      };
-    }
-    if (processorType === 'foreach') {
-      const nestedNodes = Array.isArray(config.processors) ? config.processors : [];
-      return {
-        foreach: {
-          source: config.source ?? '',
-          ...(config.keyVal ? { keyVal: config.keyVal } : {}),
-          ...(config.valField ? { valField: config.valField } : {}),
-          processors: buildNested ? buildNested(nestedNodes) : nestedNodes,
-        },
-      };
-    }
-    if (processorType === 'grok') {
-      return {
-        grok: {
-          source: config.source ?? '',
-          pattern: config.pattern ?? '',
-          targetField: config.targetField ?? '',
-        },
-      };
-    }
-    if (processorType === 'json') {
-      return {
-        json: {
-          source: config.source ?? '',
-          targetField: config.targetField ?? '',
-        },
-      };
-    }
-    if (processorType === 'log') {
-      return {
-        log: {
-          type: config.type ?? '',
-          source: config.source ?? '',
-        },
-      };
-    }
-    if (processorType === 'lookup') {
-      return {
-        lookup: {
-          source: config.source ?? '',
-          properties: parseJsonValue(config.propertiesText, {}),
-          fallback: parseJsonValue(config.fallbackText, {}),
-          targetField: config.targetField ?? '',
-        },
-      };
-    }
-    if (processorType === 'math') {
-      return {
-        math: {
-          source: config.source ?? '',
-          operation: config.operation ?? '',
-          value: config.value ?? '',
-          targetField: config.targetField ?? '',
-        },
-      };
-    }
-    if (processorType === 'remove') {
-      return {
-        remove: {
-          source: config.source ?? '',
-        },
-      };
-    }
-    if (processorType === 'rename') {
-      return {
-        rename: {
-          source: config.source ?? '',
-          targetField: config.targetField ?? '',
-        },
-      };
-    }
-    if (processorType === 'replace') {
-      return {
-        replace: {
-          source: config.source ?? '',
-          pattern: config.pattern ?? '',
-          replacement: config.replacement ?? '',
-          ...(typeof config.regex === 'boolean' ? { regex: config.regex } : {}),
-          targetField: config.targetField ?? '',
-        },
-      };
-    }
-    if (processorType === 'setOutputStream') {
-      return {
-        setOutputStream: {
-          output: config.output ?? '',
-        },
-      };
-    }
-    if (processorType === 'sort') {
-      return {
-        sort: {
-          source: config.source ?? '',
-          targetField: config.targetField ?? '',
-        },
-      };
-    }
-    if (processorType === 'split') {
-      return {
-        split: {
-          source: config.source ?? '',
-          delimiter: config.delimiter ?? '',
-          targetField: config.targetField ?? '',
-        },
-      };
-    }
-    if (processorType === 'strcase') {
-      return {
-        strcase: {
-          source: config.source ?? '',
-          type: config.type ?? '',
-          targetField: config.targetField ?? '',
-        },
-      };
-    }
-    if (processorType === 'substr') {
-      const startValue = config.start ?? '';
-      const endValue = config.end ?? '';
-      return {
-        substr: {
-          source: config.source ?? '',
-          ...(String(startValue).trim() ? { start: Number(startValue) } : {}),
-          ...(String(endValue).trim() ? { end: Number(endValue) } : {}),
-          targetField: config.targetField ?? '',
-        },
-      };
-    }
-    if (processorType === 'switch') {
-      const cases = Array.isArray(config.cases) ? config.cases : [];
-      const defaultProcessors = Array.isArray(config.defaultProcessors)
-        ? config.defaultProcessors
-        : [];
-      return {
-        switch: {
-          source: config.source ?? '',
-          operator: config.operator ?? '',
-          case: cases.map((item: any) => ({
-            match: item.match ?? '',
-            ...(item.operator ? { operator: item.operator } : {}),
-            then: buildNested
-              ? buildNested(Array.isArray(item.processors) ? item.processors : [])
-              : [],
-          })),
-          default: buildNested ? buildNested(defaultProcessors) : [],
-        },
-      };
-    }
-    if (processorType === 'trim') {
-      return {
-        trim: {
-          source: config.source ?? '',
-          ...(config.cutset ? { cutset: config.cutset } : {}),
-          targetField: config.targetField ?? '',
-        },
-      };
-    }
-    return {
-      [processorType]: config || {},
-    };
-  };
-
-  const buildFlowProcessor = (node: FlowNode): any => {
-    if (node.kind === 'if') {
-      return {
-        if: {
-          source: node.condition.property,
-          operator: node.condition.operator,
-          value: node.condition.value,
-          processors: buildFlowProcessors(node.then),
-          else: buildFlowProcessors(node.else),
-        },
-      };
-    }
-    return buildProcessorPayloadFromConfig(
-      node.processorType,
-      node.config || {},
-      buildFlowProcessors,
+    config: Record<string, unknown>,
+    buildNested?: (nodes: FlowNode[]) => Record<string, unknown>[],
+  ): Record<string, unknown> =>
+    buildProcessorPayloadFromConfigShared(
+      processorType,
+      config,
+      normalizeSourcePath,
+      buildNested,
     );
-  };
   const [advancedFlowFocusTarget, setAdvancedFlowFocusTarget] = useState<string | null>(null);
   const [advancedFlowFocusIndex, setAdvancedFlowFocusIndex] = useState(0);
   const [advancedFlowFocusOnly, setAdvancedFlowFocusOnly] = useState(false);
   const advancedFlowHighlightRef = useRef<HTMLSpanElement | null>(null);
-  const buildFlowProcessors = (nodes: FlowNode[]) => nodes.map(buildFlowProcessor);
-  type FlowValidationResult = {
-    fieldErrors: Record<string, string[]>;
-    nodeErrors: string[];
-  };
-  type FlowNodeErrorMap = Record<string, string[]>;
-  const hasEventPath = (value: any): boolean => {
-    if (value == null) {
-      return false;
-    }
-    if (typeof value === 'string') {
-      return value.includes('$.event');
-    }
-    if (Array.isArray(value)) {
-      return value.some((entry) => hasEventPath(entry));
-    }
-    if (typeof value === 'object') {
-      return Object.values(value).some((entry) => hasEventPath(entry));
-    }
-    return false;
-  };
-  const isFieldOptional = (label?: string) => Boolean(label && /optional/i.test(label));
-  const processorRequiredFields: Record<string, string[]> = {
-    set: ['sourceType', 'source', 'targetField'],
-    regex: ['sourceType', 'source', 'pattern', 'targetField'],
-    append: ['source', 'array', 'targetField'],
-    appendToOutputStream: ['source', 'output'],
-    convert: ['source', 'type', 'targetField'],
-    copy: ['source', 'targetField'],
-    eval: ['source'],
-    foreach: ['source', 'keyVal', 'valField'],
-    grok: ['source', 'pattern', 'targetField'],
-    json: ['source', 'targetField'],
-    log: ['type', 'source'],
-    lookup: ['source', 'properties', 'targetField'],
-    math: ['source', 'operation', 'value', 'targetField'],
-    remove: ['source'],
-    rename: ['source', 'targetField'],
-    replace: ['source', 'pattern', 'replacement', 'targetField'],
-    setOutputStream: ['output'],
-    sort: ['source', 'targetField'],
-    split: ['source', 'delimiter', 'targetField'],
-    strcase: ['source', 'type', 'targetField'],
-    substr: ['source', 'targetField'],
-    switch: ['source', 'operator'],
-    trim: ['source', 'targetField'],
-  };
-  const getProcessorRequiredFields = (processorType: string) => {
-    if (processorRequiredFields[processorType]) {
-      return processorRequiredFields[processorType];
-    }
-    const specs = processorConfigSpecs[processorType] || [];
-    return specs.filter((spec) => !isFieldOptional(spec.label)).map((spec) => spec.key);
-  };
-  const validateProcessorConfig = (
-    processorType: string,
-    config: Record<string, any>,
-    lane: 'object' | 'pre' | 'post',
-  ): FlowValidationResult => {
-    const requiredKeys = new Set(getProcessorRequiredFields(processorType));
-    const fieldErrors: Record<string, string[]> = {};
-    const nodeErrors: string[] = [];
-    (processorConfigSpecs[processorType] || []).forEach((spec) => {
-      const isJsonField = spec.type === 'json';
-      const valueKey = isJsonField ? `${spec.key}Text` : spec.key;
-      const rawValue = config?.[valueKey];
-      const stringValue = typeof rawValue === 'string' ? rawValue.trim() : rawValue;
-      const isRequired = requiredKeys.has(spec.key);
-      if (isRequired) {
-        if (stringValue === '' || stringValue === undefined || stringValue === null) {
-          fieldErrors[spec.key] = [...(fieldErrors[spec.key] || []), `${spec.label} is required.`];
-        }
-      }
-      if (isJsonField && typeof rawValue === 'string' && rawValue.trim()) {
-        try {
-          const parsed = JSON.parse(rawValue);
-          if (lane === 'pre' && hasEventPath(parsed)) {
-            fieldErrors[spec.key] = [
-              ...(fieldErrors[spec.key] || []),
-              'Pre scope cannot reference $.event.*.',
-            ];
-          }
-        } catch {
-          fieldErrors[spec.key] = [
-            ...(fieldErrors[spec.key] || []),
-            `${spec.label} must be valid JSON.`,
-          ];
-        }
-      }
-      if (
-        lane === 'pre' &&
-        !isJsonField &&
-        typeof rawValue === 'string' &&
-        rawValue.includes('$.event')
-      ) {
-        fieldErrors[spec.key] = [
-          ...(fieldErrors[spec.key] || []),
-          'Pre scope cannot reference $.event.*.',
-        ];
-      }
-    });
-    if (processorType === 'switch') {
-      const cases = Array.isArray(config.cases) ? config.cases : [];
-      if (cases.length === 0) {
-        nodeErrors.push('Switch must include at least one case.');
-      }
-      if (cases.some((entry: any) => !String(entry.match ?? '').trim())) {
-        nodeErrors.push('All switch cases must include a match value.');
-      }
-    }
-    if (processorType === 'foreach' && !String(config.source ?? '').trim()) {
-      fieldErrors.source = [...(fieldErrors.source || []), 'Source is required.'];
-    }
-    if (processorType === 'if') {
-      if (!String(config.source ?? '').trim()) {
-        fieldErrors.source = [...(fieldErrors.source || []), 'Source is required.'];
-      }
-      if (!String(config.value ?? '').trim()) {
-        fieldErrors.value = [...(fieldErrors.value || []), 'Value is required.'];
-      }
-    }
-    return { fieldErrors, nodeErrors };
-  };
-  const validateFlowNode = (
-    node: FlowNode,
-    lane: 'object' | 'pre' | 'post',
-    map: FlowNodeErrorMap,
-  ) => {
-    if (node.kind === 'if') {
-      const errors: string[] = [];
-      if (!String(node.condition.property || '').trim()) {
-        errors.push('Condition property is required.');
-      }
-      if (!String(node.condition.value || '').trim()) {
-        errors.push('Condition value is required.');
-      }
-      if (node.then.length === 0 && node.else.length === 0) {
-        errors.push('If must include at least one processor in Then or Else.');
-      }
-      if (lane === 'pre' && (node.condition.property || '').includes('$.event')) {
-        errors.push('Pre scope cannot reference $.event.* in condition property.');
-      }
-      if (lane === 'pre' && (node.condition.value || '').includes('$.event')) {
-        errors.push('Pre scope cannot reference $.event.* in condition value.');
-      }
-      if (errors.length > 0) {
-        map[node.id] = errors;
-      }
-      node.then.forEach((child) => validateFlowNode(child, lane, map));
-      node.else.forEach((child) => validateFlowNode(child, lane, map));
-      return;
-    }
-    const { fieldErrors, nodeErrors } = validateProcessorConfig(
-      node.processorType,
-      node.config || {},
-      lane,
-    );
-    const flatErrors = [...Object.values(fieldErrors).flat(), ...nodeErrors];
-    if (flatErrors.length > 0) {
-      map[node.id] = flatErrors;
-    }
-    if (node.processorType === 'foreach') {
-      const processors = Array.isArray(node.config?.processors) ? node.config.processors : [];
-      processors.forEach((child: FlowNode) => validateFlowNode(child, lane, map));
-    }
-    if (node.processorType === 'switch') {
-      const cases = Array.isArray(node.config?.cases) ? node.config.cases : [];
-      cases.forEach((entry: any) => {
-        const processors = Array.isArray(entry.processors) ? entry.processors : [];
-        processors.forEach((child: FlowNode) => validateFlowNode(child, lane, map));
-      });
-      const defaults = Array.isArray(node.config?.defaultProcessors)
-        ? node.config.defaultProcessors
-        : [];
-      defaults.forEach((child: FlowNode) => validateFlowNode(child, lane, map));
-    }
-  };
-  const validateFlowNodes = (
-    nodes: FlowNode[],
-    lane: 'object' | 'pre' | 'post',
-  ): FlowNodeErrorMap => {
-    const map: FlowNodeErrorMap = {};
-    nodes.forEach((node) => validateFlowNode(node, lane, map));
-    return map;
-  };
-  type FocusMatch = { lane: 'object' | 'pre' | 'post'; processor: any };
-  const collectFocusMatches = (payloads: any[], targetField: string, lane: FocusMatch['lane']) => {
-    const matches: FocusMatch[] = [];
-    const walk = (items: any[]) => {
-      (items || []).forEach((item) => {
-        if (!item || typeof item !== 'object') {
-          return;
-        }
-        if (item.if) {
-          walk(Array.isArray(item.if.processors) ? item.if.processors : []);
-          walk(Array.isArray(item.if.else) ? item.if.else : []);
-          return;
-        }
-        if (item.foreach?.processors) {
-          walk(Array.isArray(item.foreach.processors) ? item.foreach.processors : []);
-        }
-        if (Array.isArray(item.switch?.case)) {
-          item.switch.case.forEach((entry: any) =>
-            walk(Array.isArray(entry.then) ? entry.then : []),
-          );
-        }
-        if (Array.isArray(item.switch?.default)) {
-          walk(item.switch.default);
-        }
-        if (getProcessorTargetField(item) === targetField) {
-          matches.push({ lane, processor: item });
-        }
-      });
-    };
-    walk(payloads);
-    return matches;
-  };
+  const buildFlowProcessors = (nodes: FlowNode[]): Record<string, unknown>[] =>
+    buildFlowProcessorsShared(nodes, normalizeSourcePath);
   const renderJsonWithFocus = (jsonString: string, focusJson?: string) => {
     if (!focusJson || !jsonString.includes(focusJson)) {
       return <pre className="code-block">{jsonString}</pre>;
@@ -1815,13 +1151,15 @@ export default function App() {
   const [advancedFlow, setAdvancedFlow] = useState<FlowNode[]>([]);
   const [globalPreFlow, setGlobalPreFlow] = useState<FlowNode[]>([]);
   const [globalPostFlow, setGlobalPostFlow] = useState<FlowNode[]>([]);
-  const [flowEditor, setFlowEditor] = useState<{
-    scope: 'object' | 'global';
-    lane: 'object' | 'pre' | 'post';
-    nodeId: string;
-    setNodesOverride?: React.Dispatch<React.SetStateAction<FlowNode[]>>;
-  } | null>(null);
-  const [flowEditorDraft, setFlowEditorDraft] = useState<FlowNode | null>(null);
+  const {
+    flowEditor,
+    setFlowEditor,
+    flowEditorDraft,
+    setFlowEditorDraft,
+    openFlowEditor,
+    handleCancelFlowEditor,
+    handleSaveFlowEditor,
+  } = useFlowEditorState(getFlowStateByLane);
   const [showFieldReferenceModal, setShowFieldReferenceModal] = useState(false);
   const [eventFieldPickerOpen, setEventFieldPickerOpen] = useState(false);
   const [eventFieldSearch, setEventFieldSearch] = useState('');
@@ -1846,15 +1184,22 @@ export default function App() {
       );
     }
     return (
-      isPreScopeEventPath(draft.config?.source) ||
-      isPreScopeEventPath(draft.config?.targetField) ||
-      isPreScopeEventPath(draft.config?.pattern)
+      isPreScopeEventPath(typeof draft.config?.source === 'string' ? draft.config.source : null) ||
+      isPreScopeEventPath(
+        typeof draft.config?.targetField === 'string' ? draft.config.targetField : null,
+      ) ||
+      isPreScopeEventPath(typeof draft.config?.pattern === 'string' ? draft.config.pattern : null)
     );
   };
 
-  const getNestedValue = (source: any, path: string) =>
-    path.split('.').reduce((acc, key) => (acc == null ? undefined : acc[key]), source);
-  const parsePermissionFlag = (value: any) => {
+  const getNestedValue = (source: unknown, path: string) =>
+    path.split('.').reduce<unknown>((acc, key) => {
+      if (!isRecord(acc)) {
+        return undefined;
+      }
+      return acc[key];
+    }, source);
+  const parsePermissionFlag = (value: unknown) => {
     if (typeof value === 'boolean') {
       return value;
     }
@@ -1872,7 +1217,7 @@ export default function App() {
     }
     return false;
   };
-  const parseAccessValue = (value: any) => {
+  const parseAccessValue = (value: unknown) => {
     if (typeof value === 'string') {
       const normalized = value.trim().toLowerCase();
       if (/\b(write|update|edit|modify|rw|readwrite)\b/.test(normalized)) {
@@ -1884,9 +1229,9 @@ export default function App() {
     }
     return null;
   };
-  const findRulePermissionValues = (source: any) => {
-    const matches: any[] = [];
-    const walk = (node: any, pathKeys: string[]) => {
+  const findRulePermissionValues = (source: unknown) => {
+    const matches: unknown[] = [];
+    const walk = (node: unknown, pathKeys: string[]) => {
       if (!node) {
         return;
       }
@@ -1894,7 +1239,7 @@ export default function App() {
         node.forEach((item, index) => walk(item, [...pathKeys, String(index)]));
         return;
       }
-      if (typeof node !== 'object') {
+      if (!isRecord(node)) {
         return;
       }
       Object.entries(node).forEach(([key, value]) => {
@@ -2142,14 +1487,16 @@ export default function App() {
     if (!help?.example) {
       return;
     }
-    let parsed: any = null;
+    let parsed: unknown = null;
     try {
       parsed = JSON.parse(help.example);
     } catch {
       return;
     }
-    const processorKey = Object.keys(parsed || {})[0];
-    const payload = parsed?.[processorKey];
+    const parsedRecord = isRecord(parsed) ? parsed : null;
+    const processorKey = parsedRecord ? Object.keys(parsedRecord)[0] : '';
+    const payload = parsedRecord && processorKey ? parsedRecord[processorKey] : null;
+    const payloadRecord = isRecord(payload) ? payload : null;
     if (!processorKey || !payload) {
       return;
     }
@@ -2159,9 +1506,9 @@ export default function App() {
           ? {
               ...prev,
               condition: {
-                property: String(payload.source ?? ''),
-                operator: String(payload.operator ?? '=='),
-                value: String(payload.value ?? ''),
+                property: String(payloadRecord?.['source'] ?? ''),
+                operator: String(payloadRecord?.['operator'] ?? '=='),
+                value: String(payloadRecord?.['value'] ?? ''),
               },
             }
           : prev,
@@ -2513,7 +1860,7 @@ export default function App() {
       return;
     }
     const obj = getObjectByPanelKey(builderTarget.panelKey);
-    const trapVars = obj?.trap?.variables || [];
+    const trapVars = getTrapVariables(obj);
     if (
       tryOpenVarInsertModal({
         panelKey: builderTarget.panelKey,
@@ -2583,7 +1930,7 @@ export default function App() {
       return;
     }
     const obj = getObjectByPanelKey(builderTarget.panelKey);
-    const trapVars = obj?.trap?.variables || [];
+    const trapVars = getTrapVariables(obj);
     if (
       tryOpenVarInsertModal({
         panelKey: builderTarget.panelKey,
@@ -2729,14 +2076,18 @@ export default function App() {
     return `fcom.redeployReady.${serverKey}.${sessionId}`;
   }, [serverId, session?.server_id, session?.session_id, session?.user]);
 
-  const requiredMicroservices = Array.isArray(microserviceStatus?.required)
-    ? microserviceStatus.required
+  const microserviceStatusData = isRecord(microserviceStatus) ? microserviceStatus : null;
+  const requiredRawMicroservices = Array.isArray(microserviceStatusData?.required)
+    ? microserviceStatusData.required
     : [];
+  const requiredMicroservices: MicroserviceEntry[] = requiredRawMicroservices
+    .filter((entry): entry is UnknownRecord => isRecord(entry))
+    .map((entry) => entry as MicroserviceEntry);
   const missingMicroservices = requiredMicroservices
-    .filter((entry: any) => !entry?.installed)
-    .map((entry: any) => entry?.label || entry?.name || 'unknown');
+    .filter((entry) => !entry?.installed)
+    .map((entry) => entry?.label || entry?.name || 'unknown');
   const unhealthyMicroservices = requiredMicroservices
-    .filter((entry: any) => {
+    .filter((entry) => {
       if (!entry?.installed) {
         return false;
       }
@@ -2745,12 +2096,12 @@ export default function App() {
       }
       return entry?.running === false;
     })
-    .map((entry: any) => entry?.label || entry?.name || 'unknown');
+    .map((entry) => entry?.label || entry?.name || 'unknown');
   const unknownMicroservices = requiredMicroservices
-    .filter((entry: any) => entry?.installed && entry?.runningState === 'unknown')
-    .map((entry: any) => entry?.label || entry?.name || 'unknown');
+    .filter((entry) => entry?.installed && entry?.runningState === 'unknown')
+    .map((entry) => entry?.label || entry?.name || 'unknown');
   const fcomServiceStatus = requiredMicroservices.find(
-    (entry: any) => entry?.name === 'fcom-processor',
+    (entry) => entry?.name === 'fcom-processor',
   );
   const showMicroserviceWarning =
     missingMicroservices.length > 0 || unhealthyMicroservices.length > 0;
@@ -2770,7 +2121,7 @@ export default function App() {
         ? 'warn'
         : showMicroserviceUnknown
           ? 'warn'
-          : microserviceStatus?.chainReady
+          : Boolean(microserviceStatusData?.chainReady)
           ? 'ok'
           : 'warn';
   const microserviceIndicatorLabel = microserviceStatusLoading
@@ -2804,7 +2155,7 @@ export default function App() {
     const microserviceIsStale =
       microserviceLastRefreshedAt !== null &&
       Date.now() - microserviceLastRefreshedAt > microserviceStaleMs;
-  const getServiceTone = (entry: any): 'ok' | 'warn' | 'error' => {
+  const getServiceTone = (entry: MicroserviceEntry): 'ok' | 'warn' | 'error' => {
     if (!entry?.installed) {
       return 'error';
     }
@@ -2816,7 +2167,7 @@ export default function App() {
     }
     return 'ok';
   };
-  const getServiceStatusText = (entry: any): string => {
+  const getServiceStatusText = (entry: MicroserviceEntry): string => {
     if (!entry?.installed) {
       return entry?.available ? 'Missing (available to deploy)' : 'Missing (not in catalog)';
     }
@@ -2851,10 +2202,8 @@ export default function App() {
       const resp = await api.getMicroserviceStatus(options);
       setMicroserviceStatus(resp.data);
       setMicroserviceLastRefreshed(new Date().toISOString());
-    } catch (err: any) {
-      setMicroserviceStatusError(
-        err?.response?.data?.error || 'Failed to load microservice status',
-      );
+    } catch (err: unknown) {
+      setMicroserviceStatusError(getApiErrorMessage(err, 'Failed to load microservice status'));
     } finally {
       setMicroserviceStatusLoading(false);
     }
@@ -2977,9 +2326,9 @@ export default function App() {
         if (isMounted) {
           setPcomDevices(devices);
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         if (isMounted) {
-          setPcomDevicesError(err?.response?.data?.error || 'Failed to load devices');
+          setPcomDevicesError(getApiErrorMessage(err, 'Failed to load devices'));
           setPcomDevices([]);
         }
       } finally {
@@ -3131,9 +2480,9 @@ export default function App() {
       console.info('Login response:', resp?.data);
       setSession(resp.data);
       setActiveApp('overview');
-    } catch (err: any) {
-      console.error('Login error:', err?.response?.data || err);
-      setError(err?.response?.data?.error || 'Login failed');
+    } catch (err: unknown) {
+      console.error('Login error:', err);
+      setError(getApiErrorMessage(err, 'Login failed'));
     } finally {
       setLoading(false);
     }
@@ -3346,8 +2695,8 @@ export default function App() {
       await loadOverview({ forceRebuild: true });
       setCacheActionMessage('Overview cache refresh triggered.');
       return true;
-    } catch (err: any) {
-      setCacheActionMessage(err?.response?.data?.error || 'Failed to refresh overview cache');
+    } catch (err: unknown) {
+      setCacheActionMessage(getApiErrorMessage(err, 'Failed to refresh overview cache'));
       return false;
     }
   };
@@ -3358,8 +2707,8 @@ export default function App() {
       await rebuildSearchIndexAndTrack();
       setCacheActionMessage('Search cache rebuild started.');
       return true;
-    } catch (err: any) {
-      setCacheActionMessage(err?.response?.data?.error || 'Failed to refresh search cache');
+    } catch (err: unknown) {
+      setCacheActionMessage(getApiErrorMessage(err, 'Failed to refresh search cache'));
       return false;
     }
   };
@@ -3383,10 +2732,8 @@ export default function App() {
       });
       setCacheActionMessage('Folder overview cache refreshed.');
       return true;
-    } catch (err: any) {
-      setCacheActionMessage(
-        err?.response?.data?.error || 'Failed to refresh folder overview cache',
-      );
+    } catch (err: unknown) {
+      setCacheActionMessage(getApiErrorMessage(err, 'Failed to refresh folder overview cache'));
       return false;
     }
   };
@@ -3459,8 +2806,8 @@ export default function App() {
       if (query) {
         await runSearch(query);
       }
-    } catch (err: any) {
-      setSearchError(err?.response?.data?.error || 'Failed to rebuild index');
+    } catch (err: unknown) {
+      setSearchError(getApiErrorMessage(err, 'Failed to rebuild index'));
     } finally {
       setSearchLoading(false);
     }
@@ -3477,8 +2824,22 @@ export default function App() {
     return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
   };
 
-  const getSearchResultName = (result: any) =>
-    result?.name || result?.pathId?.split('/').pop() || result?.pathId;
+  const getSearchResultName = (result: SearchResultItem): string => {
+    const resultPathId =
+      typeof result?.pathId === 'string'
+        ? result.pathId
+        : typeof result?.path === 'string'
+          ? result.path
+          : '';
+    const fallbackName = resultPathId.split('/').pop() || resultPathId;
+    if (typeof result?.name === 'string' && result.name) {
+      return result.name;
+    }
+    if (fallbackName) {
+      return fallbackName;
+    }
+    return '';
+  };
 
   const loadNodeInternal = async (node: string | null, label?: string): Promise<boolean> => {
     setBrowseError(null);
@@ -3504,8 +2865,8 @@ export default function App() {
         }
       }
       return true;
-    } catch (err: any) {
-      setBrowseError(err?.response?.data?.error || 'Failed to load files');
+    } catch (err: unknown) {
+      setBrowseError(getApiErrorMessage(err, 'Failed to load files'));
       if (browseSnapshotRef.current) {
         setBrowseData(browseSnapshotRef.current.browseData);
         setEntries(browseSnapshotRef.current.entries);
@@ -3535,9 +2896,10 @@ export default function App() {
     await loadNodeInternal(null, '/');
   };
 
-  const isFolder = (entry: any) => {
-    const icon = String(entry?.icon || '').toLowerCase();
-    const name = String(entry?.PathName || '').toLowerCase();
+  const isFolder = (entry: unknown) => {
+    const normalizedEntry = isRecord(entry) ? (entry as BrowseEntry) : null;
+    const icon = String(normalizedEntry?.icon || '').toLowerCase();
+    const name = String(normalizedEntry?.PathName || '').toLowerCase();
     return (
       icon.includes('folder') ||
       icon.includes('sitemap') ||
@@ -3554,8 +2916,13 @@ export default function App() {
     });
   };
 
-  const handleOpenFileInternal = async (entry: any) => {
-    const timingLabel = entry?.PathID ? `file-load:${entry.PathID}` : 'file-load:unknown';
+  const handleOpenFileInternal = async (entry: BrowseEntry) => {
+    const pathId = typeof entry?.PathID === 'string' ? entry.PathID : '';
+    if (!pathId) {
+      setFileError('Invalid file selection');
+      return;
+    }
+    const timingLabel = pathId ? `file-load:${pathId}` : 'file-load:unknown';
     const timingStart = nowMs();
     const logTiming = (step: string, start: number) => {
       const elapsed = Math.round(nowMs() - start);
@@ -3581,8 +2948,8 @@ export default function App() {
     setSelectedFolder(null);
     setFolderOverview(null);
     setSelectedFile(entry);
-    if (entry?.PathID) {
-      scrollStateByFileRef.current[entry.PathID] = 0;
+    if (pathId) {
+      scrollStateByFileRef.current[pathId] = 0;
     }
     if (friendlyViewRef.current) {
       friendlyViewRef.current.scrollTop = 0;
@@ -3602,8 +2969,8 @@ export default function App() {
     }
     setFileLoadStageTarget('original');
     setFileLoading(true);
-    if (entry?.PathID) {
-      setBreadcrumbs(buildBreadcrumbsFromPath(entry.PathID));
+    if (pathId) {
+      setBreadcrumbs(buildBreadcrumbsFromPath(pathId));
     }
     try {
       const readStart = nowMs();
@@ -3612,7 +2979,7 @@ export default function App() {
         let attempt = 0;
         while (attempt < 3) {
           try {
-            return await api.readFile(entry.PathID);
+            return await api.readFile(pathId);
           } catch (error) {
             attempt += 1;
             if (attempt >= 3) {
@@ -3622,23 +2989,23 @@ export default function App() {
             await new Promise((resolve) => setTimeout(resolve, 1000));
           }
         }
-        return await api.readFile(entry.PathID);
+        return await api.readFile(pathId);
       };
       const resp = await readWithRetry();
       logTiming('readFile', readStart);
       setFileData(resp.data);
-      const inferredApp = inferAppFromPath(entry?.PathID);
+      const inferredApp = inferAppFromPath(pathId);
       const shouldLoadOverrides = (inferredApp ?? activeApp) === 'fcom';
       if (shouldLoadOverrides) {
         setFileLoadStageTarget('overrides');
         setOverrideLoading(true);
         try {
           const overridesStart = nowMs();
-          const overridesResp = await api.getOverrides(entry.PathID);
+          const overridesResp = await api.getOverrides(pathId);
           logTiming('getOverrides', overridesStart);
           setOverrideInfo(overridesResp.data);
-        } catch (err: any) {
-          setOverrideError(err?.response?.data?.error || 'Failed to load overrides');
+        } catch (err: unknown) {
+          setOverrideError(getApiErrorMessage(err, 'Failed to load overrides'));
           setOverrideInfo(null);
         } finally {
           setOverrideLoading(false);
@@ -3669,8 +3036,8 @@ export default function App() {
       setCommitMessage('');
       setViewMode('friendly');
       setFileLoadStageTarget('render');
-    } catch (err: any) {
-      setFileError(err?.response?.data?.error || 'Failed to load file');
+    } catch (err: unknown) {
+      setFileError(getApiErrorMessage(err, 'Failed to load file'));
       setFileLoadStageTarget(null);
     } finally {
       setFileLoading(false);
@@ -3683,19 +3050,24 @@ export default function App() {
     }
   };
 
-  const handleOpenFile = async (entry: any) => {
+  const handleOpenFile = async (entry: BrowseEntry) => {
     if (!confirmDiscardIfDirty(() => handleOpenFileInternal(entry))) {
       return;
     }
   };
 
-  const handleOpenFolder = async (entry: any) => {
+  const handleOpenFolder = async (entry: BrowseEntry) => {
     if (!confirmDiscardIfDirty(() => handleOpenFolderInternal(entry))) {
       return;
     }
   };
 
-  const handleOpenFolderInternal = async (entry: any) => {
+  const handleOpenFolderInternal = async (entry: BrowseEntry) => {
+    const pathId = typeof entry?.PathID === 'string' ? entry.PathID : '';
+    if (!pathId) {
+      setBrowseError('Invalid folder selection');
+      return;
+    }
     closeBuilder();
     setPanelEditState({});
     setPanelDrafts({});
@@ -3719,12 +3091,12 @@ export default function App() {
     setFolderOverview(null);
     setFolderLoading(true);
     try {
-      setBreadcrumbs(buildBreadcrumbsFromPath(entry.PathID));
-      await loadNodeInternal(entry.PathID);
-      const resp = await api.getFolderOverview(entry.PathID, 25);
+      setBreadcrumbs(buildBreadcrumbsFromPath(pathId));
+      await loadNodeInternal(pathId);
+      const resp = await api.getFolderOverview(pathId, 25);
       setFolderOverview(resp.data);
-    } catch (err: any) {
-      setBrowseError(err?.response?.data?.error || 'Failed to load folder overview');
+    } catch (err: unknown) {
+      setBrowseError(getApiErrorMessage(err, 'Failed to load folder overview'));
     } finally {
       setFolderLoading(false);
     }
@@ -3760,8 +3132,8 @@ export default function App() {
           // ignore browse failures
         }
       }
-    } catch (err: any) {
-      setBrowseError(err?.response?.data?.error || 'Failed to restore file from URL');
+    } catch (err: unknown) {
+      setBrowseError(getApiErrorMessage(err, 'Failed to restore file from URL'));
     }
   };
 
@@ -3770,7 +3142,7 @@ export default function App() {
       void openFileFromUrlInternal(fileId, nodeParam);
     });
 
-  const handleOpenSearchResult = async (result: any) => {
+  const handleOpenSearchResult = async (result: SearchResultItem) => {
     const pathId = result?.pathId || result?.path || '';
     if (!pathId) {
       return;
@@ -3945,8 +3317,9 @@ export default function App() {
     };
   };
 
-  const openTrapComposerFromTest = async (obj: any) => {
-    const testCommand = obj?.test;
+  const openTrapComposerFromTest = async (obj: unknown) => {
+    const sourceObject = isRecord(obj) ? obj : null;
+    const testCommand = sourceObject?.test;
     if (!testCommand || typeof testCommand !== 'string') {
       triggerToast('No test trap command found for this object.', false);
       return;
@@ -3958,7 +3331,7 @@ export default function App() {
     }
     setTrapSource('fcom');
     setTrapError(null);
-    setTrapObjectName(String(obj?.['@objectName'] || obj?.name || ''));
+    setTrapObjectName(String(sourceObject?.['@objectName'] || sourceObject?.name || ''));
     setTrapHost('');
     setTrapPort(162);
     let nextHost = '';
@@ -3986,23 +3359,13 @@ export default function App() {
     await loadBrokerServers({ currentHost: nextHost, forceDefault: true });
   };
 
-  const buildTrapTestItems = (objects: any[], sourceLabel: string) => {
-    const items: Array<{
-      objectName: string;
-      sourceLabel: string;
-      parsed: {
-        version?: string;
-        community?: string;
-        host?: string;
-        trapOid?: string;
-        mibModule?: string;
-        varbinds: Array<{ oid: string; type: string; value: string }>;
-      };
-    }> = [];
+  const buildTrapTestItems = (objects: unknown[], sourceLabel: string) => {
+    const items: TrapTestItem[] = [];
     let missing = 0;
     let invalid = 0;
     objects.forEach((obj) => {
-      const testCommand = obj?.test;
+      const sourceObject = isRecord(obj) ? obj : null;
+      const testCommand = sourceObject?.test;
       if (!testCommand || typeof testCommand !== 'string') {
         missing += 1;
         return;
@@ -4013,7 +3376,7 @@ export default function App() {
         return;
       }
       items.push({
-        objectName: String(obj?.['@objectName'] || obj?.name || 'Object'),
+        objectName: String(sourceObject?.['@objectName'] || sourceObject?.name || 'Object'),
         sourceLabel,
         parsed,
       });
@@ -4025,18 +3388,7 @@ export default function App() {
   };
 
   const openBulkTrapModal = async (
-    items: Array<{
-      objectName: string;
-      sourceLabel: string;
-      parsed: {
-        version?: string;
-        community?: string;
-        host?: string;
-        trapOid?: string;
-        mibModule?: string;
-        varbinds: Array<{ oid: string; type: string; value: string }>;
-      };
-    }>,
+    items: TrapTestItem[],
     label: string,
   ) => {
     if (items.length === 0) {
@@ -4086,9 +3438,8 @@ export default function App() {
       const sourceLabel = vendor ? `${vendor} / ${fileName}` : fileName;
       const { items } = buildTrapTestItems(objects, sourceLabel);
       await openBulkTrapModal(items, sourceLabel);
-    } catch (err: any) {
-      const message =
-        err?.response?.data?.error || err?.message || 'Failed to load file for testing';
+    } catch (err: unknown) {
+      const message = getApiErrorMessage(err, 'Failed to load file for testing');
       triggerToast(message, false);
     } finally {
       setFileTestLoading((prev) => ({
@@ -4128,12 +3479,21 @@ export default function App() {
   const getFolderFileIds = () => {
     const listed = entries
       .filter((entry) => !isFolder(entry) && entry?.PathID)
-      .map((entry) => entry.PathID);
+      .map((entry) => entry.PathID)
+      .filter((value): value is string => typeof value === 'string' && value.length > 0);
     if (listed.length > 0) {
       return listed;
     }
-    const fallbackRows = Array.isArray(folderOverview?.topFiles) ? folderOverview.topFiles : [];
-    return fallbackRows.map((row: any) => row?.pathId).filter(Boolean);
+    const folderOverviewData = isRecord(folderOverview) ? folderOverview : null;
+    const fallbackRows = Array.isArray(folderOverviewData?.topFiles)
+      ? folderOverviewData.topFiles
+      : [];
+    return fallbackRows
+      .map((row) => {
+        const item = isRecord(row) ? row : null;
+        return typeof item?.pathId === 'string' ? item.pathId : '';
+      })
+      .filter((value): value is string => value.length > 0);
   };
 
   const handleTestVendorFiles = async () => {
@@ -4152,18 +3512,7 @@ export default function App() {
     const folderLabel = selectedFolder?.PathName || selectedFolder?.PathID || 'this folder';
     const vendor = getVendorFromPath(selectedFolder?.PathID) || folderLabel;
     const sourceLabel = `${vendor} / all files`;
-    const allItems: Array<{
-      objectName: string;
-      sourceLabel: string;
-      parsed: {
-        version?: string;
-        community?: string;
-        host?: string;
-        trapOid?: string;
-        mibModule?: string;
-        varbinds: Array<{ oid: string; type: string; value: string }>;
-      };
-    }> = [];
+    const allItems: TrapTestItem[] = [];
     try {
       for (const fileId of fileIds) {
         const resp = await api.readFile(fileId);
@@ -4175,9 +3524,8 @@ export default function App() {
         allItems.push(...items);
       }
       await openBulkTrapModal(allItems, sourceLabel);
-    } catch (err: any) {
-      const message =
-        err?.response?.data?.error || err?.message || 'Failed to load folder files for testing';
+    } catch (err: unknown) {
+      const message = getApiErrorMessage(err, 'Failed to load folder files for testing');
       triggerToast(message, false);
     } finally {
       setVendorTestLoading(false);
@@ -4224,8 +3572,8 @@ export default function App() {
       if (data.length === 0) {
         setTrapManualOpen(true);
       }
-    } catch (err: any) {
-      setTrapServerError(err?.response?.data?.error || 'Failed to load servers');
+    } catch (err: unknown) {
+      setTrapServerError(getApiErrorMessage(err, 'Failed to load servers'));
       setTrapManualOpen(true);
     }
   };
@@ -4254,32 +3602,36 @@ export default function App() {
       try {
         const resp = await api.searchComs(`${baseName}-FCOM.json`, 'name', 10);
         const results = Array.isArray(resp.data?.results) ? resp.data.results : [];
-        const candidates = results.filter((result: any) => {
-          const name = String(result?.name || '').toLowerCase();
+        const candidates = results.filter((result: unknown) => {
+          const candidate = isRecord(result) ? result : null;
+          const name = String(candidate?.name || '').toLowerCase();
           return name === `${baseName.toLowerCase()}-fcom.json`;
         });
         for (const candidate of candidates) {
           if (!active) {
             return;
           }
-          const fileId = candidate?.pathId || candidate?.pathID || candidate?.path;
+          const row = isRecord(candidate) ? candidate : null;
+          const fileId = row?.pathId || row?.pathID || row?.path;
           if (!fileId) {
             continue;
           }
           const fileResp = await api.readFile(String(fileId));
           const objects = getFriendlyObjects(fileResp.data);
-          const match = objects.find((obj: any) => {
-            const objName = String(obj?.['@objectName'] || obj?.name || '').toLowerCase();
+          const match = objects.find((obj: unknown) => {
+            const sourceObject = isRecord(obj) ? obj : null;
+            const objName = String(sourceObject?.['@objectName'] || sourceObject?.name || '').toLowerCase();
             return expectedNames.has(objName);
           });
-          const testCommand = match?.test;
+          const matchObject = isRecord(match) ? match : null;
+          const testCommand = matchObject?.test;
           if (match && typeof testCommand === 'string') {
             const parsed = parseTrapTestCommand(testCommand);
             if (!parsed?.trapOid) {
               continue;
             }
             setMibTrapDefaults({
-              objectName: String(match?.['@objectName'] || match?.name || definitionName),
+              objectName: String(matchObject?.['@objectName'] || matchObject?.name || definitionName),
               module: moduleName,
               sourceFile: String(fileId),
               testCommand,
@@ -4451,12 +3803,10 @@ export default function App() {
           }
           setPcomSnmpCommunity(community);
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         if (isMounted) {
           setPcomSnmpProfile(null);
-          setPcomSnmpProfileError(
-            err?.response?.data?.error || err?.message || 'Failed to load SNMP access profile',
-          );
+          setPcomSnmpProfileError(getApiErrorMessage(err, 'Failed to load SNMP access profile'));
         }
       } finally {
         if (isMounted) {
@@ -4527,19 +3877,19 @@ export default function App() {
       const stderr = String(resp.data?.stderr || '').trim();
       const combined = stdout && stderr ? `${stdout}\n\n${stderr}` : stdout || stderr;
       setPcomPollOutput(combined || 'No output received.');
-    } catch (err: any) {
-      const message = err?.response?.data?.error || err?.message || 'Failed to run snmpwalk';
-      setPcomPollError(message);
+    } catch (err: unknown) {
+      setPcomPollError(getApiErrorMessage(err, 'Failed to run snmpwalk'));
     } finally {
       setPcomPollLoading(false);
     }
   };
 
-  const openTrapComposer = async (definition: any, sourcePath?: string | null) => {
+  const openTrapComposer = async (definition: unknown, sourcePath?: string | null) => {
+    const trapDefinition = isRecord(definition) ? definition : null;
     setTrapError(null);
     setTrapSource('mib');
-    setTrapObjectName(String(definition?.name || ''));
-    const resolvedOid = definition?.fullOid || definition?.oid;
+    setTrapObjectName(String(trapDefinition?.name || ''));
+    const resolvedOid = trapDefinition?.fullOid || trapDefinition?.oid;
     setTrapOid(resolvedOid ? String(resolvedOid) : '');
     setTrapVarbinds([{ oid: '', type: 's', value: '' }]);
     setTrapHost('');
@@ -4592,8 +3942,8 @@ export default function App() {
         triggerToast(`Test Trap: ${label} sent to ${destination}`, true);
       }
       setTrapModalOpen(false);
-    } catch (err: any) {
-      const message = err?.response?.data?.error || 'Failed to send trap';
+    } catch (err: unknown) {
+      const message = getApiErrorMessage(err, 'Failed to send trap');
       setTrapError(message);
       if (trapSource === 'fcom') {
         const label = trapObjectName || 'Object';
@@ -4653,11 +4003,12 @@ export default function App() {
       try {
         await api.sendTrap(payload);
         passed += 1;
-      } catch (err: any) {
+      } catch (err: unknown) {
+        const message = getApiErrorMessage(err, 'Failed to send trap');
         console.warn('[TrapTest] send failed', {
           objectName: item.objectName,
           sourceLabel: item.sourceLabel,
-          message: err?.response?.data?.error || err?.message,
+          message,
         });
         failed += 1;
         setBulkTrapProgress((prev) => ({
@@ -4668,7 +4019,7 @@ export default function App() {
           ...prev,
           {
             objectName: item.objectName,
-            message: err?.response?.data?.error || err?.message || 'Failed to send trap',
+            message,
             item,
           },
         ]);
@@ -4704,7 +4055,7 @@ export default function App() {
     await sendBulkTraps();
   };
 
-  const saveWithContent = async (content: any, message: string) => {
+  const saveWithContent = async (content: unknown, message: string) => {
     if (!selectedFile) {
       return null;
     }
@@ -4715,7 +4066,9 @@ export default function App() {
     setSaveSuccess(null);
     setSaveLoading(true);
     try {
-      const etag = fileData?.etag || '';
+      const fileDataRecord = isRecord(fileData) ? fileData : null;
+      const etagValue = fileDataRecord?.['etag'];
+      const etag = typeof etagValue === 'string' ? etagValue : '';
       const commit = message.trim();
       const resp = await api.saveFile(selectedFile.PathID, content, etag, commit);
       setSaveSuccess('Saved successfully');
@@ -4735,8 +4088,8 @@ export default function App() {
       setViewMode('friendly');
       setShowCommitModal(false);
       return resp;
-    } catch (err: any) {
-      setSaveError(err?.response?.data?.error || 'Failed to save file');
+    } catch (err: unknown) {
+      setSaveError(getApiErrorMessage(err, 'Failed to save file'));
       return null;
     } finally {
       setSaveLoading(false);
@@ -4751,8 +4104,8 @@ export default function App() {
     await saveWithContent(content, message);
   };
 
-  const isTransientSocketError = (err: any) => {
-    if (!err) {
+  const isTransientSocketError = (err: unknown) => {
+    if (!isRecord(err)) {
       return false;
     }
     const message = String(
@@ -4780,7 +4133,7 @@ export default function App() {
     if (!ensureEditPermission()) {
       return;
     }
-    const applyOverrideSaveResults = (files: any[] | undefined) => {
+    const applyOverrideSaveResults = (files: unknown[] | undefined) => {
       if (!Array.isArray(files) || files.length === 0) {
         setOverrideSaveStatus((prev) =>
           prev.map((entry) =>
@@ -4791,16 +4144,16 @@ export default function App() {
       }
       const fileMap = new Map(
         files
-          .filter((entry) => entry && typeof entry.fileName === 'string')
+          .filter((entry): entry is UnknownRecord => isRecord(entry) && typeof entry.fileName === 'string')
           .map((entry) => [String(entry.fileName), String(entry.status || 'done')]),
       );
       setOverrideSaveStatus((prev) => {
         if (prev.length === 0) {
           return files
-            .filter((entry) => entry && typeof entry.fileName === 'string')
+            .filter((entry): entry is UnknownRecord => isRecord(entry) && typeof entry.fileName === 'string')
             .map((entry) => ({
-              objectName: entry.fileName,
-              fileName: entry.fileName,
+              objectName: String(entry.fileName),
+              fileName: String(entry.fileName),
               status:
                 entry.status === 'failed'
                   ? 'failed'
@@ -4835,13 +4188,22 @@ export default function App() {
       let objectNames = staged.editedObjects;
       if (objectNames.length === 0) {
         objectNames = pendingOverrideSave
-          .map((entry: any) => entry?.['@objectName'])
-          .filter((name: any) => typeof name === 'string' && name.length > 0);
+          .map((entry: unknown) => {
+            const row = isRecord(entry) ? entry : null;
+            return typeof row?.['@objectName'] === 'string' ? row['@objectName'] : '';
+          })
+          .filter((name): name is string => typeof name === 'string' && name.length > 0);
       }
       const unique = Array.from(new Set(objectNames));
       return unique.map((objectName) => {
+        const overrideInfoData = isRecord(overrideInfo) ? overrideInfo : null;
+        const byObject =
+          overrideInfoData && isRecord(overrideInfoData.overrideFilesByObject)
+            ? overrideInfoData.overrideFilesByObject
+            : null;
+        const objectEntry = byObject && isRecord(byObject[objectName]) ? byObject[objectName] : null;
         const fileName =
-          overrideInfo?.overrideFilesByObject?.[objectName]?.fileName ||
+          (objectEntry && typeof objectEntry.fileName === 'string' ? objectEntry.fileName : '') ||
           `${objectName}.override.json`;
         return { objectName, fileName, status: 'queued' as const };
       });
@@ -4851,32 +4213,31 @@ export default function App() {
     ) => {
       setOverrideSaveStatus((prev) => prev.map((item) => ({ ...item, status })));
     };
-    const applyProgressUpdate = (entry: {
-      fileName: string;
-      action?: string;
-      status?: string;
-    }) => {
-      if (!entry?.fileName) {
+    const applyProgressUpdate = (entry: unknown) => {
+      const progressEntry = isRecord(entry) ? entry : null;
+      const fileName = typeof progressEntry?.fileName === 'string' ? progressEntry.fileName : '';
+      if (!fileName) {
         return;
       }
+      const progressStatus = typeof progressEntry?.status === 'string' ? progressEntry.status : '';
       const normalizedStatus =
-        entry.status === 'failed'
+        progressStatus === 'failed'
           ? 'failed'
-          : entry.status === 'saving'
+          : progressStatus === 'saving'
             ? 'saving'
-            : entry.status === 'retrying'
+            : progressStatus === 'retrying'
               ? 'retrying'
-              : entry.status === 'done'
+              : progressStatus === 'done'
                 ? 'done'
                 : 'queued';
       setOverrideSaveStatus((prev) => {
-        const existingIndex = prev.findIndex((item) => item.fileName === entry.fileName);
+        const existingIndex = prev.findIndex((item) => item.fileName === fileName);
         if (existingIndex === -1) {
           return [
             ...prev,
             {
-              objectName: entry.fileName,
-              fileName: entry.fileName,
+              objectName: fileName,
+              fileName,
               status: normalizedStatus,
             },
           ];
@@ -4903,7 +4264,7 @@ export default function App() {
       const contentType = response.headers.get('content-type') || '';
       const isEventStream = contentType.includes('text/event-stream');
       if (!response.ok && !isEventStream) {
-        let errorPayload: any = null;
+        let errorPayload: unknown = null;
         try {
           errorPayload = await response.json();
         } catch {
@@ -4917,7 +4278,7 @@ export default function App() {
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
       let buffer = '';
-      let completedPayload: any = null;
+      let completedPayload: unknown = null;
       while (true) {
         const { value, done } = await reader.read();
         if (done) {
@@ -4940,7 +4301,7 @@ export default function App() {
           if (!dataText) {
             return;
           }
-          let payload: any = null;
+          let payload: unknown = null;
           try {
             payload = JSON.parse(dataText);
           } catch {
@@ -4964,13 +4325,13 @@ export default function App() {
     setSaveLoading(true);
     setOverrideSaveStatus(buildOverrideSaveStatus());
     try {
-      let respData: any = null;
+      let respData: unknown = null;
       let attempt = 0;
       while (true) {
         try {
           respData = await streamOverrideSave();
           break;
-        } catch (streamError: any) {
+        } catch (streamError: unknown) {
           if (isTransientSocketError(streamError) && attempt < retryDelays.length) {
             setSaveError(`Connection dropped. Retrying (${attempt + 1}/${retryDelays.length})…`);
             setAllOverrideStatus('retrying');
@@ -4979,7 +4340,7 @@ export default function App() {
             attempt += 1;
             continue;
           }
-          if (streamError?.error || streamError?.result) {
+          if (isRecord(streamError) && (streamError?.error || streamError?.result)) {
             throw streamError;
           }
           const fallback = await api.saveOverrides(
@@ -4993,7 +4354,7 @@ export default function App() {
       }
       if (respData) {
         setOverrideInfo(respData);
-        applyOverrideSaveResults(respData?.result?.files);
+        applyOverrideSaveResults(getResultFiles(respData));
       }
       try {
         const refreshed = await api.getOverrides(selectedFile.PathID);
@@ -5013,30 +4374,29 @@ export default function App() {
       setPanelDrafts({});
       setPanelOverrideRemovals({});
       setPanelNavWarning({ open: false, fields: {} });
-    } catch (err: any) {
+    } catch (err: unknown) {
       if (isTransientSocketError(err) && selectedFile?.PathID) {
         setSaveError('Save completed, but the connection dropped. Refreshing overrides…');
         try {
           const refreshed = await api.getOverrides(selectedFile.PathID);
           setOverrideInfo(refreshed.data);
           setSaveError(null);
-          applyOverrideSaveResults(err?.response?.data?.result?.files);
+          applyOverrideSaveResults(getResultFiles(err));
           triggerToast('Connection recovered. Overrides refreshed.', true);
-        } catch (refreshError: any) {
+        } catch (refreshError: unknown) {
           setSaveError(
-            refreshError?.response?.data?.error ||
+            getApiErrorMessage(
+              refreshError,
               'Connection dropped and override refresh failed. Please refresh the page.',
+            ),
           );
-          applyOverrideSaveResults(err?.response?.data?.result?.files);
+          applyOverrideSaveResults(getResultFiles(err));
         }
       } else {
-        const errorMessage =
-          err?.response?.data?.error || err?.error || err?.message || 'Failed to save overrides';
-        setSaveError(errorMessage);
-        if (err?.response?.data?.result?.files) {
-          applyOverrideSaveResults(err.response.data.result.files);
-        } else if (err?.result?.files) {
-          applyOverrideSaveResults(err.result.files);
+        setSaveError(getApiErrorMessage(err, 'Failed to save overrides'));
+        const resultFiles = getResultFiles(err);
+        if (resultFiles) {
+          applyOverrideSaveResults(resultFiles);
         } else {
           setOverrideSaveStatus((prev) => prev.map((entry) => ({ ...entry, status: 'failed' })));
         }
@@ -5071,9 +4431,8 @@ export default function App() {
       setRedeployReadyState(false);
       setRedeployModalOpen(false);
       triggerToast('FCOM Processor redeployed', true);
-    } catch (err: any) {
-      const message = err?.response?.data?.error || 'Failed to redeploy FCOM Processor';
-      setRedeployError(message);
+    } catch (err: unknown) {
+      setRedeployError(getApiErrorMessage(err, 'Failed to redeploy FCOM Processor'));
     } finally {
       setRedeployLoading(false);
       setMicroserviceActionLabel(null);
@@ -5095,9 +4454,8 @@ export default function App() {
       setMicroserviceActionLabel('Refreshing status...');
       await refreshMicroserviceStatus();
       triggerToast(`${label} deployed`, true);
-    } catch (err: any) {
-      const message = err?.response?.data?.error || `Failed to deploy ${label}`;
-      setRedeployError(message);
+    } catch (err: unknown) {
+      setRedeployError(getApiErrorMessage(err, `Failed to deploy ${label}`));
     } finally {
       setRedeployLoading(false);
       setMicroserviceActionLabel(null);
@@ -5123,17 +4481,21 @@ export default function App() {
         setRedeployReadyState(false);
       }
       triggerToast(`${label} redeployed`, true);
-    } catch (err: any) {
-      const message = err?.response?.data?.error || `Failed to redeploy ${label}`;
-      setRedeployError(message);
+    } catch (err: unknown) {
+      setRedeployError(getApiErrorMessage(err, `Failed to redeploy ${label}`));
     } finally {
       setRedeployLoading(false);
       setMicroserviceActionLabel(null);
     }
   };
 
-  const getPreviewContent = (data: any) => {
-    const ruleText = data?.content?.data?.[0]?.RuleText;
+  const getPreviewContent = (data: unknown): unknown => {
+    const dataRecord = isRecord(data) ? data : null;
+    const content = dataRecord && isRecord(dataRecord.content) ? dataRecord.content : null;
+    const contentData = content && Array.isArray(content.data) ? content.data : [];
+    const firstRow = contentData[0];
+    const firstRecord = isRecord(firstRow) ? firstRow : null;
+    const ruleText = firstRecord?.RuleText;
     if (typeof ruleText === 'string') {
       try {
         return JSON.parse(ruleText);
@@ -5141,25 +4503,25 @@ export default function App() {
         return ruleText;
       }
     }
-    return data?.content?.data?.[0] ?? data?.content ?? data ?? {};
+    return firstRow ?? content ?? data ?? {};
   };
 
-  const getFriendlyObjects = (data: any) => {
+  const getFriendlyObjects = (data: unknown): UnknownRecord[] => {
     const content = getPreviewContent(data);
-    if (Array.isArray(content?.objects)) {
-      return content.objects;
+    if (isRecord(content) && Array.isArray(content.objects)) {
+      return content.objects.filter((item): item is UnknownRecord => isRecord(item));
     }
     if (Array.isArray(content)) {
-      return content;
+      return content.filter((item): item is UnknownRecord => isRecord(item));
     }
-    if (content && typeof content === 'object') {
+    if (isRecord(content)) {
       return [content];
     }
     return [];
   };
 
-  const isTestableObject = (obj: any) => {
-    const testCommand = obj?.test;
+  const isTestableObject = (obj: unknown) => {
+    const testCommand = isRecord(obj) ? obj.test : undefined;
     if (!testCommand || typeof testCommand !== 'string') {
       return false;
     }
@@ -5168,7 +4530,11 @@ export default function App() {
   };
 
   const getBaseOverrides = () =>
-    Array.isArray(overrideInfo?.overrides) ? overrideInfo.overrides : [];
+    (() => {
+      const overrideInfoData = isRecord(overrideInfo) ? overrideInfo : null;
+      const overrides = overrideInfoData?.overrides;
+      return Array.isArray(overrides) ? overrides : [];
+    })();
 
   const getWorkingOverrides = () => pendingOverrideSave || getBaseOverrides();
 
@@ -5177,11 +4543,13 @@ export default function App() {
     if (eventsSchemaFields.length > 0) {
       eventsSchemaFields.forEach((field) => fields.add(field));
     }
-    getFriendlyObjects(fileData).forEach((obj: any) => {
-      Object.keys(obj?.event || {}).forEach((field) => fields.add(field));
+    getFriendlyObjects(fileData).forEach((obj) => {
+      const event = isRecord(obj.event) ? obj.event : null;
+      Object.keys(event || {}).forEach((field) => fields.add(field));
     });
-    getWorkingOverrides().forEach((entry: any) => {
-      Object.keys(entry?.event || {}).forEach((field) => fields.add(field));
+    getWorkingOverrides().forEach((entry: unknown) => {
+      const event = isRecord(entry) && isRecord(entry.event) ? entry.event : null;
+      Object.keys(event || {}).forEach((field) => fields.add(field));
     });
     Object.values(panelAddedFields).forEach((list) => {
       (list || []).forEach((field) => fields.add(field));
@@ -5199,15 +4567,15 @@ export default function App() {
     }
     const objectNames = new Set(
       getFriendlyObjects(fileData)
-        .map((obj: any) => obj?.['@objectName'])
-        .filter(Boolean),
+        .map((obj) => (typeof obj['@objectName'] === 'string' ? obj['@objectName'] : null))
+        .filter((name): name is string => Boolean(name)),
     );
     if (objectNames.size === 0) {
       return false;
     }
-    return overrides.some((entry: any) => {
-      const name = entry?.['@objectName'];
-      return name && objectNames.has(name);
+    return overrides.some((entry: unknown) => {
+      const name = isRecord(entry) ? entry['@objectName'] : undefined;
+      return typeof name === 'string' && objectNames.has(name);
     });
   }, [selectedFile, fileData, overrideInfo, pendingOverrideSave]);
 
@@ -5215,24 +4583,43 @@ export default function App() {
     if (!objectName) {
       return null;
     }
-    return overrideInfo?.overrideFilesByObject?.[objectName] || null;
+    const overrideInfoData = isRecord(overrideInfo) ? overrideInfo : null;
+    const byObject =
+      overrideInfoData && isRecord(overrideInfoData.overrideFilesByObject)
+        ? overrideInfoData.overrideFilesByObject
+        : null;
+    return byObject?.[objectName] || null;
   };
 
   const getOverrideMetaForObject = (objectName?: string | null) => {
     if (!objectName) {
       return null;
     }
-    return overrideInfo?.overrideMetaByObject?.[objectName] || null;
+    const overrideInfoData = isRecord(overrideInfo) ? overrideInfo : null;
+    const byObject =
+      overrideInfoData && isRecord(overrideInfoData.overrideMetaByObject)
+        ? overrideInfoData.overrideMetaByObject
+        : null;
+    return byObject?.[objectName] || null;
   };
 
   const getOverrideRuleLinkForObject = (objectName?: string | null) => {
     const fileInfo = getOverrideFileInfoForObject(objectName);
     const meta = getOverrideMetaForObject(objectName);
-    const fileName = meta?.pathName || fileInfo?.fileName;
-    if (!fileName || !overrideInfo?.overrideRootRulePath) {
+    const fileInfoRecord = isRecord(fileInfo) ? fileInfo : null;
+    const metaRecord = isRecord(meta) ? meta : null;
+    const fileName =
+      (typeof metaRecord?.['pathName'] === 'string' ? metaRecord['pathName'] : '') ||
+      (typeof fileInfoRecord?.['fileName'] === 'string' ? fileInfoRecord['fileName'] : '');
+    const overrideInfoData = isRecord(overrideInfo) ? overrideInfo : null;
+    const overrideRootRulePath =
+      overrideInfoData && typeof overrideInfoData.overrideRootRulePath === 'string'
+        ? overrideInfoData.overrideRootRulePath
+        : '';
+    if (!fileName || !overrideRootRulePath) {
       return null;
     }
-    const rootPath = normalizeRulesPath(overrideInfo.overrideRootRulePath);
+    const rootPath = normalizeRulesPath(overrideRootRulePath);
     const filePath = `${rootPath}/${fileName}`.replace(/^\/+/, '');
     const nodePath = filePath.split('/').slice(0, -1).join('/');
     const params = new URLSearchParams(window.location.search);
@@ -5262,9 +4649,9 @@ export default function App() {
     }
     let hasV2 = false;
     let hasV3 = false;
-    entries.forEach((entry: any) => {
+    entries.forEach((entry) => {
       const processors = Array.isArray(entry?.processors) ? entry.processors : [];
-      const hasPatch = processors.some((proc: any) => proc?.op && proc?.path);
+      const hasPatch = processors.some((proc: unknown) => isRecord(proc) && proc.op && proc.path);
       if (entry?.version === 'v3' || hasPatch) {
         hasV3 = true;
         return;
@@ -5290,11 +4677,14 @@ export default function App() {
   };
 
   const overrideIndex = useMemo(() => {
-    const entries = getWorkingOverrides();
-    const map = new Map<string, any[]>();
-    entries.forEach((overrideEntry: any) => {
-      const name = overrideEntry?.['@objectName'];
-      if (!name) {
+    const entries: unknown[] = getWorkingOverrides();
+    const map = new Map<string, UnknownRecord[]>();
+    entries.forEach((overrideEntry: unknown) => {
+      if (!isRecord(overrideEntry)) {
+        return;
+      }
+      const name = overrideEntry['@objectName'];
+      if (typeof name !== 'string' || !name) {
         return;
       }
       const list = map.get(name) || [];
@@ -5304,11 +4694,17 @@ export default function App() {
     return map;
   }, [overrideInfo, pendingOverrideSave]);
 
-  const getOverrideMethod = () =>
-    overrideInfo?.method ||
-    (String(selectedFile?.PathID || '').includes('/syslog/') ? 'syslog' : 'trap');
+  const getOverrideMethod = () => {
+    const overrideInfoData = isRecord(overrideInfo) ? overrideInfo : null;
+    const method =
+      overrideInfoData && typeof overrideInfoData.method === 'string' ? overrideInfoData.method : '';
+    return method || (String(selectedFile?.PathID || '').includes('/syslog/') ? 'syslog' : 'trap');
+  };
 
-  const getOverrideEntries = () => getWorkingOverrides();
+  const getOverrideEntries = (): UnknownRecord[] =>
+    (getWorkingOverrides() as unknown[]).filter(
+      (entry: unknown): entry is UnknownRecord => isRecord(entry),
+    );
 
   const getOverrideEntry = (params: {
     objectName?: string;
@@ -5316,7 +4712,7 @@ export default function App() {
     method: string;
   }) =>
     getOverrideEntries().find(
-      (entry: any) =>
+      (entry) =>
         entry?.scope === params.scope &&
         entry?.method === params.method &&
         (params.objectName
@@ -5324,91 +4720,11 @@ export default function App() {
           : !entry?.['@objectName']),
     );
 
-  const buildFlowNodesFromProcessors = (processors: any[]): FlowNode[] => {
-    const parseProcessor = (processor: any): FlowNode | null => {
-      if (!processor || typeof processor !== 'object') {
-        return null;
-      }
-      const type = Object.keys(processor || {})[0];
-      const payload = (processor as any)[type] || {};
-      if (type === 'if') {
-        return {
-          id: nextFlowId(),
-          kind: 'if',
-          condition: {
-            property: String(payload.source ?? ''),
-            operator: String(payload.operator ?? '=='),
-            value: String(payload.value ?? ''),
-          },
-          then: buildFlowNodesFromProcessors(
-            Array.isArray(payload.processors) ? payload.processors : [],
-          ),
-          else: buildFlowNodesFromProcessors(Array.isArray(payload.else) ? payload.else : []),
-        } as FlowIfNode;
-      }
-      if (type === 'foreach') {
-        return {
-          id: nextFlowId(),
-          kind: 'processor',
-          processorType: 'foreach',
-          config: {
-            source: payload.source ?? '',
-            keyVal: payload.key ?? '',
-            valField: payload.value ?? '',
-            processors: buildFlowNodesFromProcessors(
-              Array.isArray(payload.processors) ? payload.processors : [],
-            ),
-          },
-        } as FlowProcessorNode;
-      }
-      if (type === 'switch') {
-        const cases = Array.isArray(payload.case) ? payload.case : [];
-        return {
-          id: nextFlowId(),
-          kind: 'processor',
-          processorType: 'switch',
-          config: {
-            source: payload.source ?? '',
-            operator: payload.operator ?? '',
-            cases: cases.map((item: any) => ({
-              id: nextSwitchCaseId(),
-              match: item.match ?? '',
-              operator: item.operator ?? '',
-              processors: buildFlowNodesFromProcessors(Array.isArray(item.then) ? item.then : []),
-            })),
-            defaultProcessors: buildFlowNodesFromProcessors(
-              Array.isArray(payload.default) ? payload.default : [],
-            ),
-          },
-        } as FlowProcessorNode;
-      }
-      const config: Record<string, any> = { ...(payload || {}) };
-      if (type === 'set') {
-        const sourceValue = payload.source;
-        config.sourceType =
-          typeof sourceValue === 'string' && sourceValue.startsWith('$.') ? 'path' : 'literal';
-        if (Array.isArray(payload.args)) {
-          config.argsText = JSON.stringify(payload.args, null, 2);
-        }
-      }
-      if (type === 'append' && Array.isArray(payload.array)) {
-        config.arrayText = JSON.stringify(payload.array, null, 2);
-      }
-      if (type === 'lookup' && payload.properties && typeof payload.properties === 'object') {
-        config.propertiesText = JSON.stringify(payload.properties, null, 2);
-      }
-      if (type === 'lookup' && payload.fallback && typeof payload.fallback === 'object') {
-        config.fallbackText = JSON.stringify(payload.fallback, null, 2);
-      }
-      return {
-        id: nextFlowId(),
-        kind: 'processor',
-        processorType: type,
-        config,
-      } as FlowProcessorNode;
-    };
-    return (processors || []).map(parseProcessor).filter((node): node is FlowNode => Boolean(node));
-  };
+  const buildFlowNodesFromProcessors = (processors: unknown[]): FlowNode[] =>
+    buildFlowNodesFromProcessorsShared(processors, {
+      nextFlowId,
+      nextSwitchCaseId,
+    });
 
   const decodeJsonPointerSegment = (segment: string) =>
     segment.replace(/~1/g, '/').replace(/~0/g, '~');
@@ -5438,21 +4754,23 @@ export default function App() {
     return `$.event.${parts.join('.')}`;
   };
 
-  const getPatchTargetField = (processor: any) => {
-    if (!processor || typeof processor !== 'object') {
+  const getPatchTargetField = (processor: unknown) => {
+    if (!isRecord(processor)) {
       return null;
     }
     if (!processor.op || !processor.path) {
       return null;
     }
-    const setTarget = processor?.value?.set?.targetField;
+    const valuePayload = isRecord(processor.value) ? processor.value : null;
+    const setPayload = getSetPayload(valuePayload);
+    const setTarget = setPayload?.targetField;
     if (typeof setTarget === 'string') {
       return setTarget;
     }
     return getJsonPointerEventPath(String(processor.path));
   };
 
-  const buildEventPatchOp = (_objectName: string, field: string, value: any) => ({
+  const buildEventPatchOp = (_objectName: string, field: string, value: unknown) => ({
     op: 'add',
     path: '/-',
     value: {
@@ -5463,8 +4781,8 @@ export default function App() {
     },
   });
 
-  const getProcessorTargetField = (processor: any) => {
-    if (!processor || typeof processor !== 'object') {
+  const getProcessorTargetField = (processor: unknown) => {
+    if (!isRecord(processor)) {
       return null;
     }
     if (processor?.op && processor?.path) {
@@ -5490,37 +4808,39 @@ export default function App() {
       'trim',
     ];
     for (const key of keys) {
-      const target = processor?.[key]?.targetField;
-      if (target) {
+      const payload = isRecord(processor[key]) ? processor[key] : null;
+      const target = payload?.targetField;
+      if (typeof target === 'string' && target) {
         return target;
       }
     }
     return null;
   };
 
-  const getProcessorType = (processor: any) =>
-    processor && typeof processor === 'object'
+  const getProcessorType = (processor: unknown) =>
+    isRecord(processor)
       ? processor.op
         ? 'patch'
         : Object.keys(processor || {})[0]
       : null;
 
-  const getProcessorSummaryLines = (processor: any) => {
+  const getProcessorSummaryLines = (processor: unknown) => {
     const type = getProcessorType(processor);
+    const processorRecord = isRecord(processor) ? processor : null;
     if (!type) {
       return [] as string[];
     }
-    if (type === 'patch') {
-      const lines: string[] = [`Op: ${processor.op}`];
-      if (processor.path) {
-        lines.push(`Path: ${processor.path}`);
+    if (type === 'patch' && processorRecord) {
+      const lines: string[] = [`Op: ${String(processorRecord.op ?? '')}`];
+      if (processorRecord.path) {
+        lines.push(`Path: ${String(processorRecord.path)}`);
       }
-      if (processor.value !== undefined) {
-        lines.push(`Value: ${formatOverrideValue(processor.value)}`);
+      if (processorRecord.value !== undefined) {
+        lines.push(`Value: ${formatOverrideValue(processorRecord.value)}`);
       }
       return lines;
     }
-    const payload = processor[type] || {};
+    const payload = processorRecord && isRecord(processorRecord[type]) ? processorRecord[type] : {};
     const lines: string[] = [`Type: ${type}`];
     if (payload.source !== undefined) {
       lines.push(`Source: ${payload.source}`);
@@ -5562,7 +4882,7 @@ export default function App() {
     return lines;
   };
 
-  const formatOverrideValue = (value: any) => {
+  const formatOverrideValue = (value: unknown) => {
     if (value === undefined) {
       return '—';
     }
@@ -5576,8 +4896,8 @@ export default function App() {
     }
   };
 
-  const getProcessorDisplayValue = (processor: any) => {
-    if (processor?.set) {
+  const getProcessorDisplayValue = (processor: unknown) => {
+    if (isRecord(processor) && isRecord(processor.set)) {
       return formatOverrideValue(processor.set.source);
     }
     const summary = getProcessorSummaryLines(processor);
@@ -5587,8 +4907,8 @@ export default function App() {
     return 'override';
   };
 
-  const buildIfConditionLabel = (payload: any) => {
-    if (!payload || typeof payload !== 'object') {
+  const buildIfConditionLabel = (payload: unknown) => {
+    if (!isRecord(payload)) {
       return 'condition';
     }
     const source = payload.source ?? 'value';
@@ -5597,18 +4917,22 @@ export default function App() {
     return `${source} ${operator} ${value}`.trim();
   };
 
-  const getOverrideTargetMap = (processors: any[]) => {
-    const map = new Map<string, any>();
-    const visit = (list: any[]) => {
-      (list || []).forEach((processor: any) => {
+  const getOverrideTargetMap = (processors: unknown[]) => {
+    const map = new Map<string, unknown>();
+    const visit = (list: unknown[]) => {
+      (list || []).forEach((processor: unknown) => {
+        if (!isRecord(processor)) {
+          return;
+        }
         if (processor?.op && processor?.path) {
           return;
         }
-        if (processor?.if) {
-          const payload = processor.if;
+        const ifPayload = isRecord(processor.if) ? processor.if : null;
+        if (ifPayload) {
+          const payload = ifPayload;
           const condition = buildIfConditionLabel(payload);
-          const thenMap = getOverrideTargetMap(payload.processors || []);
-          const elseMap = getOverrideTargetMap(payload.else || []);
+          const thenMap = getOverrideTargetMap(Array.isArray(payload.processors) ? payload.processors : []);
+          const elseMap = getOverrideTargetMap(Array.isArray(payload.else) ? payload.else : []);
           const targets = new Set<string>([...thenMap.keys(), ...elseMap.keys()]);
           targets.forEach((target) => {
             const thenValue = thenMap.get(target) ?? 'no change';
@@ -5622,7 +4946,7 @@ export default function App() {
         }
         const target = getProcessorTargetField(processor);
         if (target) {
-          if (processor?.set) {
+          if (isRecord(processor.set)) {
             map.set(target, processor.set.source);
           } else {
             map.set(target, getProcessorDisplayValue(processor));
@@ -5634,9 +4958,12 @@ export default function App() {
     return map;
   };
 
-  const getPatchOverrideMap = (processors: any[]) => {
-    const map = new Map<string, any>();
-    (processors || []).forEach((processor: any) => {
+  const getPatchOverrideMap = (processors: unknown[]) => {
+    const map = new Map<string, unknown>();
+    (processors || []).forEach((processor: unknown) => {
+      if (!isRecord(processor)) {
+        return;
+      }
       if (!processor?.op || !processor?.path) {
         return;
       }
@@ -5647,16 +4974,18 @@ export default function App() {
       if (!target) {
         return;
       }
+      const valuePayload = isRecord(processor.value) ? processor.value : null;
+      const setPayload = getSetPayload(valuePayload);
       const patchValue =
-        processor?.value?.set && Object.prototype.hasOwnProperty.call(processor.value.set, 'source')
-          ? processor.value.set.source
+        setPayload && Object.prototype.hasOwnProperty.call(setPayload, 'source')
+          ? setPayload.source
           : processor.value;
       map.set(target, patchValue);
     });
     return map;
   };
 
-  const stringifyProcessor = (processor: any) => {
+  const stringifyProcessor = (processor: unknown) => {
     try {
       return JSON.stringify(processor || {});
     } catch {
@@ -5664,26 +4993,34 @@ export default function App() {
     }
   };
 
-  const diffOverrides = (baseOverrides: any[], stagedOverrides: any[]) => {
-    const indexOverrides = (overrides: any[]) => {
+  const diffOverrides = (baseOverrides: unknown[], stagedOverrides: unknown[]) => {
+    const indexOverrides = (overrides: unknown[]) => {
       const map = new Map<
         string,
-        { entry: any; objectName?: string; scope?: string; method?: string }
+        { entry: Record<string, unknown>; objectName?: string; scope?: string; method?: string }
       >();
-      overrides.forEach((entry: any) => {
+      overrides.forEach((entry) => {
+        if (!isRecord(entry)) {
+          return;
+        }
         const objectName = entry?.['@objectName'];
         const scope = entry?.scope || 'post';
         const method = entry?.method || '';
         const key = `${method}:${scope}:${objectName || '__global__'}`;
-        map.set(key, { entry, objectName, scope, method });
+        map.set(key, {
+          entry,
+          objectName: typeof objectName === 'string' ? objectName : undefined,
+          scope: typeof scope === 'string' ? scope : undefined,
+          method: typeof method === 'string' ? method : undefined,
+        });
       });
       return map;
     };
 
-    const splitProcessors = (processors: any[]) => {
-      const targeted = new Map<string, any>();
-      const untargeted = new Map<string, any>();
-      processors.forEach((proc: any, index: number) => {
+    const splitProcessors = (processors: unknown[]) => {
+      const targeted = new Map<string, unknown>();
+      const untargeted = new Map<string, unknown>();
+      processors.forEach((proc, index: number) => {
         const target = getProcessorTargetField(proc) || getPatchTargetField(proc);
         if (target) {
           if (!targeted.has(target)) {
@@ -5707,11 +5044,11 @@ export default function App() {
       fieldChanges: Array<{
         target: string;
         action: 'added' | 'updated' | 'removed';
-        before?: any;
-        after?: any;
+        before?: unknown;
+        after?: unknown;
         origin: 'event' | 'processor';
       }>;
-      processorChanges: Array<{ action: 'added' | 'removed'; processor: any }>;
+      processorChanges: Array<{ action: 'added' | 'removed'; processor: unknown }>;
     }> = [];
 
     allKeys.forEach((key) => {
@@ -5744,8 +5081,8 @@ export default function App() {
       const fieldChanges: Array<{
         target: string;
         action: 'added' | 'updated' | 'removed';
-        before?: any;
-        after?: any;
+        before?: unknown;
+        after?: unknown;
         origin: 'event' | 'processor';
       }> = [];
       targets.forEach((target) => {
@@ -5783,7 +5120,7 @@ export default function App() {
       });
 
       const procKeys = new Set<string>([...baseUntargeted.keys(), ...stagedUntargeted.keys()]);
-      const processorChanges: Array<{ action: 'added' | 'removed'; processor: any }> = [];
+      const processorChanges: Array<{ action: 'added' | 'removed'; processor: unknown }> = [];
       procKeys.forEach((procKey) => {
         const before = baseUntargeted.get(procKey);
         const after = stagedUntargeted.get(procKey);
@@ -5820,17 +5157,17 @@ export default function App() {
     return { sections, totalChanges, editedObjects };
   };
 
-  const getBaseObjectByName = (objectName?: string) => {
+  const getBaseObjectByName = (objectName?: string): UnknownRecord | null => {
     if (!objectName) {
       return null;
     }
-    return (
-      getFriendlyObjects(fileData).find((item: any) => item?.['@objectName'] === objectName) ||
-      null
-    );
+    return getFriendlyObjects(fileData).find(
+      (item: unknown): item is UnknownRecord =>
+        isRecord(item) && item['@objectName'] === objectName,
+    ) || null;
   };
 
-  const stringifyOverrideValue = (value: any) => {
+  const stringifyOverrideValue = (value: unknown) => {
     if (value === undefined) {
       return 'undefined';
     }
@@ -5847,28 +5184,27 @@ export default function App() {
     }
   };
 
-  const areOverrideValuesEqual = (left: any, right: any) =>
+  const areOverrideValuesEqual = (left: unknown, right: unknown) =>
     stringifyOverrideValue(left) === stringifyOverrideValue(right);
 
-  const getOverrideEventMap = (entry: any) => {
-    if (!entry || typeof entry !== 'object') {
-      return {} as Record<string, any>;
+  const getOverrideEventMap = (entry: unknown) => {
+    if (!isRecord(entry)) {
+      return {} as Record<string, unknown>;
     }
-    const objectName = entry?.['@objectName'];
-    const baseObj = getBaseObjectByName(objectName);
+    const objectName = typeof entry['@objectName'] === 'string' ? entry['@objectName'] : undefined;
+    const baseObj = getBaseObjectByName(objectName as string | undefined);
     const baseEvent =
-      baseObj?.event && typeof baseObj.event === 'object' ? baseObj.event : ({} as any);
+      baseObj && isRecord(baseObj.event) ? baseObj.event : {};
     const processors = Array.isArray(entry?.processors) ? entry.processors : [];
     const patchOverrides = getPatchOverrideMap(processors);
-    const eventOverrides =
-      entry?.event && typeof entry.event === 'object' ? entry.event : ({} as any);
-    const mergedOverrides: Record<string, any> = { ...eventOverrides };
+    const eventOverrides = isRecord(entry.event) ? entry.event : {};
+    const mergedOverrides: Record<string, unknown> = { ...eventOverrides };
     patchOverrides.forEach((value, target) => {
       if (target.startsWith('$.event.')) {
         mergedOverrides[target.replace('$.event.', '')] = value;
       }
     });
-    const diff: Record<string, any> = {};
+    const diff: Record<string, unknown> = {};
     Object.keys(mergedOverrides).forEach((field) => {
       const overrideValue = mergedOverrides[field];
       const baseValue = baseEvent[field];
@@ -5879,8 +5215,9 @@ export default function App() {
     return diff;
   };
 
-  const getOverrideFlags = (obj: any) => {
-    const objectName = obj?.['@objectName'];
+  const getOverrideFlags = (obj: unknown) => {
+    const objectNameRaw = isRecord(obj) ? obj['@objectName'] : undefined;
+    const objectName = typeof objectNameRaw === 'string' ? objectNameRaw : '';
     if (!objectName) {
       return {
         event: false,
@@ -5891,11 +5228,11 @@ export default function App() {
       };
     }
     const overrides = overrideIndex.get(objectName) || [];
-    const processors = overrides.flatMap((entry: any) =>
+    const processors = overrides.flatMap((entry) =>
       Array.isArray(entry?.processors) ? entry.processors : [],
     );
     const targets = processors.map(getProcessorTargetField).filter(Boolean) as string[];
-    const hasEventOverrides = overrides.some((entry: any) => {
+    const hasEventOverrides = overrides.some((entry) => {
       const diff = getOverrideEventMap(entry);
       return Object.keys(diff).length > 0;
     });
@@ -5905,7 +5242,7 @@ export default function App() {
     );
     const pre = targets.some((target) => target.startsWith('$.preProcessors'));
     const hasProcessors = processors.length > 0;
-    const hasUntargeted = processors.some((proc: any) => !getProcessorTargetField(proc));
+    const hasUntargeted = processors.some((proc: unknown) => !getProcessorTargetField(proc));
     return {
       event,
       trap,
@@ -5915,19 +5252,20 @@ export default function App() {
     };
   };
 
-  const getOverrideTargets = (obj: any) => {
-    const objectName = obj?.['@objectName'];
+  const getOverrideTargets = (obj: unknown) => {
+    const objectNameRaw = isRecord(obj) ? obj['@objectName'] : undefined;
+    const objectName = typeof objectNameRaw === 'string' ? objectNameRaw : '';
     if (!objectName) {
       return new Set<string>();
     }
     const overrides = overrideIndex.get(objectName) || [];
-    const processors = overrides.flatMap((entry: any) =>
+    const processors = overrides.flatMap((entry) =>
       Array.isArray(entry?.processors) ? entry.processors : [],
     );
     const targetMap = getOverrideTargetMap(processors);
     const patchMap = getPatchOverrideMap(processors);
     patchMap.forEach((value, target) => targetMap.set(target, value));
-    overrides.forEach((entry: any) => {
+    overrides.forEach((entry) => {
       const eventOverrides = getOverrideEventMap(entry);
       Object.keys(eventOverrides).forEach((field) => {
         targetMap.set(`$.event.${field}`, eventOverrides[field]);
@@ -5936,19 +5274,20 @@ export default function App() {
     return new Set<string>(Array.from(targetMap.keys()));
   };
 
-  const getProcessorTargets = (obj: any) => getDirectOverrideTargets(obj);
+  const getProcessorTargets = (obj: unknown) => getDirectOverrideTargets(obj);
 
-  const getProcessorFieldSummary = (obj: any, field: string) => {
-    const objectName = obj?.['@objectName'];
+  const getProcessorFieldSummary = (obj: unknown, field: string) => {
+    const objectNameRaw = isRecord(obj) ? obj['@objectName'] : undefined;
+    const objectName = typeof objectNameRaw === 'string' ? objectNameRaw : '';
     if (!objectName) {
       return '';
     }
     const overrides = overrideIndex.get(objectName) || [];
-    const processors = overrides.flatMap((entry: any) =>
+    const processors = overrides.flatMap((entry) =>
       Array.isArray(entry?.processors) ? entry.processors : [],
     );
     const target = `$.event.${field}`;
-    const processor = processors.find((proc: any) => getProcessorTargetField(proc) === target);
+    const processor = processors.find((proc: unknown) => getProcessorTargetField(proc) === target);
     if (!processor) {
       return '';
     }
@@ -5959,19 +5298,20 @@ export default function App() {
     return getProcessorDisplayValue(processor);
   };
 
-  const getOverrideValueMap = (obj: any) => {
-    const objectName = obj?.['@objectName'];
+  const getOverrideValueMap = (obj: unknown) => {
+    const objectNameRaw = isRecord(obj) ? obj['@objectName'] : undefined;
+    const objectName = typeof objectNameRaw === 'string' ? objectNameRaw : '';
     if (!objectName) {
-      return new Map<string, any>();
+      return new Map<string, unknown>();
     }
     const overrides = overrideIndex.get(objectName) || [];
-    const processors = overrides.flatMap((entry: any) =>
+    const processors = overrides.flatMap((entry) =>
       Array.isArray(entry?.processors) ? entry.processors : [],
     );
     const targetMap = getOverrideTargetMap(processors);
     const patchMap = getPatchOverrideMap(processors);
     patchMap.forEach((value, target) => targetMap.set(target, value));
-    overrides.forEach((entry: any) => {
+    overrides.forEach((entry) => {
       const eventOverrides = getOverrideEventMap(entry);
       Object.keys(eventOverrides).forEach((field) => {
         targetMap.set(`$.event.${field}`, eventOverrides[field]);
@@ -5992,19 +5332,22 @@ export default function App() {
     return getNestedValue(obj, cleanedPath);
   };
 
-  const getEffectiveEventValue = (obj: any, field: string) => {
+  const getEffectiveEventValue = (obj: unknown, field: string) => {
+    const objRecord = isRecord(obj) ? obj : null;
     if (field === trapOidField) {
-      return obj?.trap?.oid;
+      const trap = objRecord && isRecord(objRecord.trap) ? objRecord.trap : null;
+      return trap?.oid;
     }
     const overrides = getOverrideValueMap(obj);
     const target = `$.event.${field}`;
     if (overrides.has(target)) {
       return overrides.get(target);
     }
-    return obj?.event?.[field];
+    const event = objRecord && isRecord(objRecord.event) ? objRecord.event : null;
+    return event?.[field];
   };
 
-  const getPanelDirtyFields = (obj: any, panelKey: string) => {
+  const getPanelDirtyFields = (obj: unknown, panelKey: string) => {
     const draft = panelDrafts?.[panelKey]?.event;
     if (!draft) {
       return [] as string[];
@@ -6025,7 +5368,7 @@ export default function App() {
     return dirty;
   };
 
-  const getEventOverrideFields = (obj: any) => {
+  const getEventOverrideFields = (obj: unknown) => {
     const overrideValueMap = getOverrideValueMap(obj);
     const fields: string[] = [];
     overrideValueMap.forEach((_value, target) => {
@@ -6036,16 +5379,17 @@ export default function App() {
     return fields;
   };
 
-  const getDirectOverrideTargets = (obj: any) => {
-    const objectName = obj?.['@objectName'];
+  const getDirectOverrideTargets = (obj: unknown) => {
+    const objectNameRaw = isRecord(obj) ? obj['@objectName'] : undefined;
+    const objectName = typeof objectNameRaw === 'string' ? objectNameRaw : '';
     if (!objectName) {
       return new Set<string>();
     }
     const overrides = overrideIndex.get(objectName) || [];
     const targets = new Set<string>();
-    overrides.forEach((entry: any) => {
+    overrides.forEach((entry) => {
       const processors = Array.isArray(entry?.processors) ? entry.processors : [];
-      processors.forEach((proc: any) => {
+      processors.forEach((proc: unknown) => {
         const target = getProcessorTargetField(proc);
         if (target) {
           targets.add(target);
@@ -6057,16 +5401,21 @@ export default function App() {
 
   const getPanelDirtyMap = () => {
     const map: Record<string, string[]> = {};
-    const objects = getFriendlyObjects(fileData);
-    objects.forEach((obj: any, idx: number) => {
+    const objects: unknown[] = getFriendlyObjects(fileData);
+    objects.forEach((obj: unknown, idx: number) => {
       const baseKey = getObjectKey(obj, idx);
       const panelKey = `${baseKey}:event`;
       if (!panelEditState[panelKey]) {
         return;
       }
       const dirty = getPanelDirtyFields(obj, panelKey);
+      const objRecord = isRecord(obj) ? obj : null;
+      const objectName =
+        objRecord && typeof objRecord['@objectName'] === 'string'
+          ? objRecord['@objectName']
+          : undefined;
       const hasPendingConversion = Boolean(
-        getPendingOverrideConversion(obj?.['@objectName']),
+        getPendingOverrideConversion(objectName),
       );
       if (dirty.length > 0 || hasPendingConversion) {
         const nextDirty = dirty.length > 0 ? [...dirty] : [];
@@ -6085,10 +5434,9 @@ export default function App() {
   const isEvalMode = (panelKey: string, field: string) =>
     panelEvalModes?.[panelKey]?.[field] ?? false;
 
-  const isEvalValue = (value: any) =>
-    value && typeof value === 'object' && typeof value.eval === 'string';
+  const isEvalValue = (value: unknown) => isRecord(value) && typeof value.eval === 'string';
 
-  const shouldShowEvalToggle = (panelKey: string, field: string, obj: any) =>
+  const shouldShowEvalToggle = (panelKey: string, field: string, obj: unknown) =>
     isEvalMode(panelKey, field) || isEvalValue(getEffectiveEventValue(obj, field));
 
   const positionOverrideTooltip = (target: EventTarget | null) => {
@@ -6124,7 +5472,7 @@ export default function App() {
   const renderFieldBadges = (
     panelKey: string,
     field: string,
-    obj: any,
+    obj: unknown,
     overrideTargets: Set<string>,
   ) => {
     const evalFlag = shouldShowEvalToggle(panelKey, field, obj);
@@ -6134,24 +5482,26 @@ export default function App() {
     if (!evalFlag && !processorFlag) {
       return null;
     }
-    const objectName = obj?.['@objectName'];
+    const objectName = getObjectNameValue(obj);
     const processors = objectName
-      ? (overrideIndex.get(objectName) || []).flatMap((entry: any) =>
-          Array.isArray(entry?.processors) ? entry.processors : [],
+      ? (overrideIndex.get(objectName) || []).flatMap((entry: unknown) => {
+          const overrideEntry = isRecord(entry) ? entry : null;
+          return Array.isArray(overrideEntry?.processors) ? overrideEntry.processors : [];
+        },
         )
       : [];
     const processor = processors.find(
-      (proc: any) => getProcessorTargetField(proc) === `$.event.${field}`,
+      (proc: unknown) => getProcessorTargetField(proc) === `$.event.${field}`,
     );
     const processorSummary = processor ? getProcessorSummaryLines(processor) : [];
     const overrideHoverProps = {
-      onMouseEnter: (event: any) => {
+      onMouseEnter: (event: React.MouseEvent<HTMLElement>) => {
         activeOverrideTooltipRef.current = event.currentTarget;
         positionOverrideTooltip(event.currentTarget);
         setSuppressVarTooltip(true);
         setSuppressEvalTooltip(true);
       },
-      onMouseMove: (event: any) => {
+      onMouseMove: (event: React.MouseEvent<HTMLElement>) => {
         positionOverrideTooltip(event.currentTarget);
       },
       onMouseLeave: () => {
@@ -6159,7 +5509,7 @@ export default function App() {
         setSuppressVarTooltip(false);
         setSuppressEvalTooltip(false);
       },
-      onFocus: (event: any) => {
+      onFocus: (event: React.FocusEvent<HTMLElement>) => {
         activeOverrideTooltipRef.current = event.currentTarget;
         positionOverrideTooltip(event.currentTarget);
         setSuppressVarTooltip(true);
@@ -6205,13 +5555,13 @@ export default function App() {
   };
 
   const overrideTooltipHoverProps = {
-    onMouseEnter: (event: any) => {
+    onMouseEnter: (event: React.MouseEvent<HTMLElement>) => {
       activeOverrideTooltipRef.current = event.currentTarget;
       positionOverrideTooltip(event.currentTarget);
       setSuppressVarTooltip(true);
       setSuppressEvalTooltip(true);
     },
-    onMouseMove: (event: any) => {
+    onMouseMove: (event: React.MouseEvent<HTMLElement>) => {
       positionOverrideTooltip(event.currentTarget);
     },
     onMouseLeave: () => {
@@ -6219,7 +5569,7 @@ export default function App() {
       setSuppressVarTooltip(false);
       setSuppressEvalTooltip(false);
     },
-    onFocus: (event: any) => {
+    onFocus: (event: React.FocusEvent<HTMLElement>) => {
       activeOverrideTooltipRef.current = event.currentTarget;
       positionOverrideTooltip(event.currentTarget);
       setSuppressVarTooltip(true);
@@ -6233,8 +5583,8 @@ export default function App() {
   };
 
   const renderOverrideSummaryCard = (
-    obj: any,
-    overrideValueMap: Map<string, any>,
+    obj: unknown,
+    overrideValueMap: Map<string, unknown>,
     fields: string[],
     title: string,
   ) => {
@@ -6246,13 +5596,13 @@ export default function App() {
         }
         return { field, value: overrideValueMap.get(target) };
       })
-      .filter(Boolean) as Array<{ field: string; value: any }>;
+      .filter(Boolean) as Array<{ field: string; value: unknown }>;
 
     if (rows.length === 0) {
       return null;
     }
 
-    const overrideVersion = getOverrideVersionInfo(obj?.['@objectName']);
+    const overrideVersion = getOverrideVersionInfo(getObjectNameValue(obj));
 
     return (
       <div className="override-summary-card" role="tooltip">
@@ -6266,11 +5616,12 @@ export default function App() {
         <ul className="override-summary-list">
           {rows.map((row) => {
             const target = row.field.startsWith('$.') ? row.field : `$.event.${row.field}`;
-            const baseValue = getBaseObjectValue(obj?.['@objectName'], target);
+            const objectName = getObjectNameValue(obj);
+            const baseValue = getBaseObjectValue(objectName ?? undefined, target);
             const originalDisplay =
               baseValue === undefined
                 ? 'New'
-                : renderValue(baseValue, obj?.trap?.variables, { suppressEvalTooltip: true });
+                : renderValue(baseValue, getTrapVariables(obj), { suppressEvalTooltip: true });
             return (
               <li key={`${row.field}-${String(row.value)}`} className="override-summary-item">
                 <span className="override-summary-field">{row.field}</span>
@@ -6351,9 +5702,11 @@ export default function App() {
     }
     const methodValues = new Set<string>();
     const subMethodValues = new Set<string>();
-    objects.forEach((obj: any) => {
-      const method = obj?.method ?? obj?.event?.Method;
-      const subMethod = obj?.event?.SubMethod ?? obj?.subMethod;
+    objects.forEach((obj: unknown) => {
+      const objRecord = isRecord(obj) ? obj : null;
+      const eventRecord = objRecord && isRecord(objRecord.event) ? objRecord.event : null;
+      const method = objRecord?.method ?? eventRecord?.Method;
+      const subMethod = eventRecord?.SubMethod ?? objRecord?.subMethod;
       if (method) {
         methodValues.add(String(method));
       }
@@ -6381,9 +5734,12 @@ export default function App() {
     }
     const objects = getFriendlyObjects(fileData);
     const methods = objects
-      .map((obj: any) => obj?.method ?? obj?.event?.Method)
+      .map((obj) => {
+        const eventRecord = isRecord(obj.event) ? obj.event : null;
+        return obj.method ?? eventRecord?.Method;
+      })
       .filter(Boolean)
-      .map((value: any) => String(value));
+      .map((value) => String(value));
     if (methods.length === 0) {
       return false;
     }
@@ -6395,16 +5751,18 @@ export default function App() {
     return String(pathId).toLowerCase().includes('/trap/');
   }, [selectedFolder?.PathID]);
 
-  const getExistingEventFields = (obj: any, panelKey: string) => {
+  const getExistingEventFields = (obj: unknown, panelKey: string) => {
     const fields = new Set<string>();
-    Object.keys(obj?.event || {}).forEach((field) => fields.add(field));
+    const objRecord = isRecord(obj) ? obj : null;
+    const eventRecord = objRecord && isRecord(objRecord.event) ? objRecord.event : null;
+    Object.keys(eventRecord || {}).forEach((field) => fields.add(field));
     getEventOverrideFields(obj).forEach((field) => fields.add(field));
     (panelAddedFields[panelKey] || []).forEach((field) => fields.add(field));
     getStagedDirtyFields(obj).forEach((field) => fields.add(field));
     return fields;
   };
 
-  const getBaseEventFields = (obj: any, panelKey: string) => {
+  const getBaseEventFields = (obj: unknown, panelKey: string) => {
     const existing = getExistingEventFields(obj, panelKey);
     const headerFields = new Set<string>();
     if (fileMethodInfo.methodUniform && fileMethodInfo.method) {
@@ -6416,13 +5774,15 @@ export default function App() {
     return baseEventFieldOrder.filter((field) => existing.has(field) && !headerFields.has(field));
   };
 
-  const getAdditionalEventFields = (obj: any, panelKey: string) => {
+  const getAdditionalEventFields = (obj: unknown, panelKey: string) => {
     const existing = Array.from(getExistingEventFields(obj, panelKey));
     const baseFields = new Set(getBaseEventFields(obj, panelKey));
     const additional = existing.filter(
       (field) => !baseFields.has(field) && !reservedEventFields.has(field),
     );
-    if (isTrapFileContext && obj?.trap?.oid && !additional.includes(trapOidField)) {
+    const objRecord = isRecord(obj) ? obj : null;
+    const trapRecord = objRecord && isRecord(objRecord.trap) ? objRecord.trap : null;
+    if (isTrapFileContext && trapRecord?.oid && !additional.includes(trapOidField)) {
       additional.push(trapOidField);
     }
     return additional;
@@ -6475,7 +5835,7 @@ export default function App() {
     setShowAddFieldModal(false);
   };
 
-  const isFieldDirty = (obj: any, panelKey: string, field: string) => {
+  const isFieldDirty = (obj: unknown, panelKey: string, field: string) => {
     const removals = new Set(panelOverrideRemovals[panelKey] || []);
     if (removals.has(field)) {
       return true;
@@ -6489,32 +5849,36 @@ export default function App() {
   const isFieldPendingRemoval = (panelKey: string, field: string) =>
     (panelOverrideRemovals[panelKey] || []).includes(field);
 
-  const isFieldNew = (obj: any, field: string) =>
-    getBaseObjectValue(obj?.['@objectName'], `$.event.${field}`) === undefined;
+  const isFieldNew = (obj: unknown, field: string) =>
+    getBaseObjectValue(getObjectNameValue(obj) || undefined, `$.event.${field}`) === undefined;
 
-  const getEditableValue = (value: any) => {
+  const getEditableValue = (value: unknown) => {
     if (value === null || value === undefined) {
       return { editable: true, display: '', isEval: false };
     }
     if (typeof value === 'string' || typeof value === 'number') {
       return { editable: true, display: String(value), isEval: false };
     }
-    if (typeof value === 'object' && typeof value.eval === 'string') {
+    if (isRecord(value) && typeof value.eval === 'string') {
       return { editable: true, display: value.eval, isEval: true };
     }
     return { editable: true, display: JSON.stringify(value), isEval: false };
   };
 
-  const cloneOverrideEntry = (entry: any) => JSON.parse(JSON.stringify(entry));
+  const cloneOverrideEntry = <T,>(entry: T): T => JSON.parse(JSON.stringify(entry));
 
-  const getObjectOverrideEntries = (overrides: any[], objectName: string, method: string) =>
+  const getObjectOverrideEntries = (overrides: unknown[], objectName: string, method: string) =>
     overrides.filter(
-      (entry: any) => entry?.['@objectName'] === objectName && entry?.method === method,
+      (entry) =>
+        isRecord(entry) && entry['@objectName'] === objectName && entry.method === method,
     );
 
-  const getBaseEventDisplay = (obj: any, field: string) => {
-    const objectName = obj?.['@objectName'];
-    const baseValue = getBaseObjectValue(objectName, `$.event.${field}`);
+  const getBaseEventDisplay = (obj: unknown, field: string) => {
+    const objectName = getObjectNameValue(obj);
+    const baseValue = getBaseObjectValue(
+      typeof objectName === 'string' ? objectName : undefined,
+      `$.event.${field}`,
+    );
     if (baseValue === undefined) {
       return 'New';
     }
@@ -6522,12 +5886,12 @@ export default function App() {
     return display || '—';
   };
 
-  const startEventEdit = (obj: any, key: string) => {
+  const startEventEdit = (obj: unknown, key: string) => {
     if (!hasEditPermission) {
       return;
     }
     const baseKey = key.includes(':') ? key.slice(0, key.lastIndexOf(':')) : key;
-    const draft: Record<string, any> = {};
+    const draft: Record<string, string> = {};
     const evalModes: Record<string, boolean> = {};
     getEventFieldList(obj, key).forEach((field) => {
       const value = getEffectiveEventValue(obj, field);
@@ -6543,7 +5907,7 @@ export default function App() {
       ...prev,
       [key]: evalModes,
     }));
-    const objectName = obj?.['@objectName'];
+    const objectName = getObjectNameValue(obj);
     const method = getOverrideMethod();
     if (objectName) {
       const baselineEntries = getObjectOverrideEntries(
@@ -6568,7 +5932,8 @@ export default function App() {
 
   const cancelEventEdit = (key: string) => {
     const baseKey = key.includes(':') ? key.slice(0, key.lastIndexOf(':')) : key;
-    const objectName = getObjectByPanelKey(key)?.['@objectName'];
+    const objectNameRaw = getObjectByPanelKey(key)?.['@objectName'];
+    const objectName = typeof objectNameRaw === 'string' ? objectNameRaw : undefined;
     clearPendingOverrideConversion(objectName);
     setPanelDrafts((prev) => {
       const next = { ...prev };
@@ -6657,7 +6022,8 @@ export default function App() {
   };
 
   const discardEventEdit = (panelKey: string) => {
-    const objectName = getObjectByPanelKey(panelKey)?.['@objectName'];
+    const objectNameRaw = getObjectByPanelKey(panelKey)?.['@objectName'];
+    const objectName = typeof objectNameRaw === 'string' ? objectNameRaw : undefined;
     clearPendingOverrideConversion(objectName);
     discardPanelOverrides(panelKey);
     cancelEventEdit(panelKey);
@@ -6677,9 +6043,10 @@ export default function App() {
     closeBuilder();
   };
 
-  const requestCancelEventEdit = (obj: any, key: string) => {
+  const requestCancelEventEdit = (obj: unknown, key: string) => {
+    const pendingObjectName = getObjectNameValue(getObjectByPanelKey(key));
     const hasPendingConversion = Boolean(
-      getPendingOverrideConversion(getObjectByPanelKey(key)?.['@objectName']),
+      getPendingOverrideConversion(pendingObjectName),
     );
     if (
       getPanelDirtyFields(obj, key).length > 0 ||
@@ -6692,7 +6059,7 @@ export default function App() {
     cancelEventEdit(key);
   };
 
-  const buildOverridePatchOp = (objectName: string, field: string, value: any) =>
+  const buildOverridePatchOp = (objectName: string, field: string, value: unknown) =>
     buildEventPatchOp(objectName, field, value);
 
   const getPendingOverrideConversion = (objectName?: string | null) => {
@@ -6730,25 +6097,29 @@ export default function App() {
     const method = getOverrideMethod();
     const scope = 'post';
     const entry = overrides.find(
-      (item: any) =>
-        item?.['@objectName'] === objectName && item?.method === method && item?.scope === scope,
+      (item: unknown) =>
+        isRecord(item) &&
+        item['@objectName'] === objectName &&
+        item.method === method &&
+        item.scope === scope,
     );
     if (!entry) {
       return false;
     }
-    const processors = Array.isArray(entry?.processors) ? entry.processors : [];
+    const processors: unknown[] = Array.isArray(entry?.processors) ? entry.processors : [];
     if (processors.length === 0) {
       return false;
     }
-    if (processors.some((proc: any) => proc?.op && proc?.path)) {
+    if (processors.some((proc: unknown) => isRecord(proc) && proc.op && proc.path)) {
       return false;
     }
-    const convertible = processors.filter((processor: any) => {
+    const convertible = processors.filter((processor: unknown) => {
       const target = getProcessorTargetField(processor);
       if (!target || !target.startsWith('$.event.')) {
         return false;
       }
-      return Boolean(processor?.set && Object.prototype.hasOwnProperty.call(processor.set, 'source'));
+      const setPayload = getSetPayload(processor);
+      return Boolean(setPayload && Object.prototype.hasOwnProperty.call(setPayload, 'source'));
     });
     return convertible.length > 0 && convertible.length === processors.length;
   };
@@ -6761,19 +6132,22 @@ export default function App() {
     const method = getOverrideMethod();
     const scope = 'post';
     const matchIndex = overrides.findIndex(
-      (entry: any) =>
-        entry?.['@objectName'] === objectName && entry?.method === method && entry?.scope === scope,
+      (entry: unknown) =>
+        isRecord(entry) &&
+        entry['@objectName'] === objectName &&
+        entry.method === method &&
+        entry.scope === scope,
     );
     if (matchIndex < 0) {
       triggerToast('Conversion failed: override not found.', false);
       return;
     }
     const entry = overrides[matchIndex];
-    const processors = Array.isArray(entry?.processors) ? entry.processors : [];
-    const patchOps: any[] = [];
+    const processors: unknown[] = Array.isArray(entry?.processors) ? entry.processors : [];
+    const patchOps: unknown[] = [];
 
-    processors.forEach((processor: any) => {
-      if (processor?.op && processor?.path) {
+    processors.forEach((processor: unknown) => {
+      if (isRecord(processor) && processor.op && processor.path) {
         patchOps.push(processor);
         return;
       }
@@ -6781,11 +6155,12 @@ export default function App() {
       if (!target || !target.startsWith('$.event.')) {
         return;
       }
-      if (!processor?.set || !Object.prototype.hasOwnProperty.call(processor.set, 'source')) {
+      const setPayload = getSetPayload(processor);
+      if (!setPayload || !Object.prototype.hasOwnProperty.call(setPayload, 'source')) {
         return;
       }
       const field = target.replace('$.event.', '');
-      const nextOp = buildOverridePatchOp(objectName, field, processor.set.source);
+      const nextOp = buildOverridePatchOp(objectName, field, setPayload.source);
       for (let i = patchOps.length - 1; i >= 0; i -= 1) {
         if (getPatchTargetField(patchOps[i]) === target) {
           patchOps.splice(i, 1);
@@ -6825,20 +6200,18 @@ export default function App() {
     openAdvancedFlowModal('object', objectName, null);
   };
 
-  const saveEventEdit = async (obj: any, key: string) => {
+  const saveEventEdit = async (obj: unknown, key: string) => {
     if (!selectedFile) {
       return;
     }
     if (!ensureEditPermission()) {
       return;
     }
-    const objectName = obj?.['@objectName'];
+    const objectName = getObjectNameValue(obj);
     if (!objectName) {
       return;
     }
-    const method =
-      overrideInfo?.method ||
-      (String(selectedFile.PathID || '').includes('/syslog/') ? 'syslog' : 'trap');
+    const method = getOverrideMethod();
     const scope = 'post';
     const pendingConversion = getPendingOverrideConversion(objectName);
     const hasPendingConversion = Boolean(
@@ -6866,7 +6239,7 @@ export default function App() {
       });
     });
     stagedRemovedFields.forEach((field) => removalFields.add(field));
-    const updates: { field: string; value: any }[] = [];
+    const updates: { field: string; value: unknown }[] = [];
     getEventFieldList(obj, key).forEach((field) => {
       if (stagedRemovedFields.has(field)) {
         return;
@@ -6875,7 +6248,7 @@ export default function App() {
       const draftValue = draft[field];
       const { display } = getEditableValue(original);
       if (String(draftValue ?? '') !== String(display ?? '')) {
-        let value: any = draftValue;
+        let value: unknown = draftValue;
         if (
           !isEvalMode(key, field) &&
           draftValue !== '' &&
@@ -6905,13 +6278,14 @@ export default function App() {
       return;
     }
 
-    const existingOverrides = Array.isArray(overrideInfo?.overrides)
-      ? [...overrideInfo.overrides]
-      : [];
+    const existingOverrides = [...getBaseOverrides()];
     const baseOverrides = pendingOverrideSave ? [...pendingOverrideSave] : existingOverrides;
     const matchIndex = baseOverrides.findIndex(
-      (entry: any) =>
-        entry?.['@objectName'] === objectName && entry?.method === method && entry?.scope === scope,
+      (entry: unknown) =>
+        isRecord(entry) &&
+        entry['@objectName'] === objectName &&
+        entry.method === method &&
+        entry.scope === scope,
     );
     let overrideEntry =
       matchIndex >= 0
@@ -6947,7 +6321,7 @@ export default function App() {
 
     if (isV2Mode) {
       if (removalFields.size > 0) {
-        processors = processors.filter((proc: any) => {
+        processors = processors.filter((proc: unknown) => {
           const target = getProcessorTargetField(proc);
           if (!target) {
             return true;
@@ -6962,7 +6336,9 @@ export default function App() {
           return;
         }
         const targetField = `$.event.${field}`;
-        processors = processors.filter((proc: any) => getProcessorTargetField(proc) !== targetField);
+        processors = processors.filter(
+          (proc: unknown) => getProcessorTargetField(proc) !== targetField,
+        );
         processors.push({
           set: {
             source: value,
@@ -6973,7 +6349,9 @@ export default function App() {
 
       overrideEntry.version = 'v2';
     } else {
-      const hasNonPatch = processors.some((proc: any) => !(proc?.op && proc?.path));
+      const hasNonPatch = processors.some(
+        (proc: unknown) => !(isRecord(proc) && proc.op && proc.path),
+      );
       if (hasNonPatch) {
         setSaveError('Advanced processors are not supported in v3 override files yet.');
         return;
@@ -6983,7 +6361,7 @@ export default function App() {
       }
 
       if (removalFields.size > 0) {
-        processors = processors.filter((proc: any) => {
+        processors = processors.filter((proc: unknown) => {
           const target = getPatchTargetField(proc);
           if (!target) {
             return true;
@@ -6998,7 +6376,7 @@ export default function App() {
           return;
         }
         const targetField = `$.event.${field}`;
-        processors = processors.filter((proc: any) => getPatchTargetField(proc) !== targetField);
+        processors = processors.filter((proc: unknown) => getPatchTargetField(proc) !== targetField);
         processors.push(buildOverridePatchOp(objectName, field, value));
       });
     }
@@ -7054,7 +6432,7 @@ export default function App() {
     cancelEventEdit(key);
   };
 
-  const openRemoveOverrideModal = (obj: any, field: string, panelKey: string) => {
+  const openRemoveOverrideModal = (obj: unknown, field: string, panelKey: string) => {
     if (!hasEditPermission || !panelEditState[panelKey]) {
       return;
     }
@@ -7062,7 +6440,7 @@ export default function App() {
     const isNewField = baseDisplay === 'New';
     setRemoveOverrideModal({
       open: true,
-      objectName: obj?.['@objectName'],
+      objectName: getObjectNameValue(obj) || undefined,
       field,
       baseValue: baseDisplay || '—',
       panelKey,
@@ -7117,23 +6495,23 @@ export default function App() {
     setRemoveOverrideModal({ open: false });
   };
 
-  const openRemoveAllOverridesModal = (obj: any, panelKey: string) => {
+  const openRemoveAllOverridesModal = (obj: unknown, panelKey: string) => {
     if (!hasEditPermission || !panelEditState[panelKey]) {
       return;
     }
-    const objectName = obj?.['@objectName'];
+    const objectName = getObjectNameValue(obj);
     if (!objectName) {
       return;
     }
     const overrides = overrideIndex.get(objectName) || [];
     const eventOverrideFields = new Set<string>();
-    const processors = overrides.flatMap((entry: any) =>
+    const processors = overrides.flatMap((entry) =>
       Array.isArray(entry?.processors) ? entry.processors : [],
     );
     const hasAdvancedFlow = processors.some(
-      (proc: any) => !getProcessorTargetField(proc) && !(proc?.op && proc?.path),
+      (proc: unknown) => !getProcessorTargetField(proc) && !(isRecord(proc) && proc.op && proc.path),
     );
-    overrides.forEach((entry: any) => {
+    overrides.forEach((entry) => {
       const eventOverrides = getOverrideEventMap(entry);
       Object.keys(eventOverrides).forEach((field) => eventOverrideFields.add(field));
     });
@@ -7228,9 +6606,9 @@ export default function App() {
     setRemoveAllOverridesModal({ open: false });
   };
 
-  const getObjectKey = (obj: any, index: number) => {
-    const name = obj?.['@objectName'];
-    return name ? `name:${name}` : `idx:${index}`;
+  const getObjectKey = (obj: unknown, index: number) => {
+    const name = isRecord(obj) ? obj['@objectName'] : undefined;
+    return typeof name === 'string' && name ? `name:${name}` : `idx:${index}`;
   };
 
   const getStickyOffset = (container: HTMLElement | null) => {
@@ -7987,7 +7365,7 @@ export default function App() {
       return;
     }
     const obj = builderTarget ? getObjectByPanelKey(builderTarget.panelKey) : null;
-    const trapVars = obj?.trap?.variables || [];
+    const trapVars = getTrapVariables(obj);
     if (
       tryOpenVarInsertModal({
         panelKey: '__flow__',
@@ -8028,7 +7406,7 @@ export default function App() {
       return;
     }
     const obj = getObjectByPanelKey(builderTarget.panelKey);
-    const trapVars = obj?.trap?.variables || [];
+    const trapVars = getTrapVariables(obj);
     if (
       tryOpenVarInsertModal({
         panelKey: builderTarget.panelKey,
@@ -8077,7 +7455,7 @@ export default function App() {
     if (inputType && !inputType.startsWith('insert')) {
       return;
     }
-    const trapVars = obj?.trap?.variables || [];
+    const trapVars = getTrapVariables(obj);
     if (
       tryOpenVarInsertModal({
         panelKey,
@@ -8150,12 +7528,12 @@ export default function App() {
     const draftValue = panelDrafts?.[panelKey]?.event?.[field];
     const evalSource = builderProcessor?.set?.source;
     const evalTextFromOverride =
-      typeof evalSource === 'object' && typeof evalSource.eval === 'string'
+      isRecord(evalSource) && typeof evalSource.eval === 'string'
         ? evalSource.eval
         : null;
     const evalValue = getEffectiveEventValue(obj, field);
     const evalTextFromValue =
-      typeof evalValue === 'object' && typeof evalValue.eval === 'string'
+      isRecord(evalValue) && typeof evalValue.eval === 'string'
         ? evalValue.eval
         : typeof evalValue === 'string'
           ? evalValue.trim()
@@ -8163,7 +7541,7 @@ export default function App() {
     const evalEnabled =
       isEvalMode(panelKey, field) ||
       Boolean(evalTextFromOverride) ||
-      (typeof evalValue === 'object' && typeof evalValue.eval === 'string');
+      (isRecord(evalValue) && typeof evalValue.eval === 'string');
     const evalText = evalEnabled
       ? typeof draftValue === 'string' && draftValue.trim()
         ? draftValue.trim()
@@ -8467,9 +7845,7 @@ export default function App() {
     if (!objectName) {
       return null;
     }
-    return (
-      getFriendlyObjects(fileData).find((item: any) => item?.['@objectName'] === objectName) || null
-    );
+    return getFriendlyObjects(fileData).find((item) => item['@objectName'] === objectName) || null;
   };
 
   const normalizeTargetField = (value: string, fallbackField?: string) => {
@@ -8494,9 +7870,11 @@ export default function App() {
     return `$.event.${trimmed}`;
   };
 
+  const asConfigString = (value: unknown) => (typeof value === 'string' ? value : '');
+
   const getBuilderProcessorConfig = () => {
     const targetField = normalizeTargetField(
-      builderProcessorConfig.targetField || '',
+      asConfigString(builderProcessorConfig.targetField),
       builderTarget?.field,
     );
     return {
@@ -8967,156 +8345,21 @@ export default function App() {
       detail: string;
     } | null,
   ) => (
-    <div
-      className={`flow-lane${advancedFlowFocusTarget ? ' flow-lane-focused' : ''}`}
+    <FlowCanvas
+      nodes={nodes}
+      path={path}
+      setNodes={setNodes}
+      scope={scope}
+      lane={lane}
+      nodeErrorsMap={nodeErrorsMap}
+      versionInfo={versionInfo}
+      focusTarget={advancedFlowFocusTarget}
+      getFlowNodeLabel={getFlowNodeLabel}
+      nodeMatchesFocusTarget={nodeMatchesFocusTarget}
       onDragOver={handleFlowDragOver}
-      onDrop={(event) => handleFlowDrop(event, path, setNodes, scope, lane)}
-    >
-      {nodes.length === 0 && <div className="flow-empty">Drop processors here</div>}
-      {nodes.map((node) => {
-        const isFocused = nodeMatchesFocusTarget(node, advancedFlowFocusTarget);
-        const versionMode = versionInfo?.mode;
-        const showVersionBadge = scope === 'object' && versionMode && versionMode !== 'none';
-        const isV3 = versionMode === 'v3';
-        const badgeText = showVersionBadge ? (isV3 ? 'v3' : '! v2') : '';
-        const badgeTitle = isV3
-          ? 'JSON Patch (v3) processor.'
-          : 'Legacy v2 processor. We recommend moving to v3.';
-        return (
-          <div
-            key={node.id}
-            className={`${node.kind === 'if' ? 'flow-node flow-node-if' : 'flow-node'}${nodeErrorsMap?.[node.id]?.length ? ' flow-node-error' : ''}${isFocused ? ' flow-node-focused' : ''}`}
-            draggable
-            onDragStart={(event) => {
-              const payload = JSON.stringify({
-                source: 'flow',
-                nodeId: node.id,
-              });
-              event.dataTransfer.setData('application/json', payload);
-              event.dataTransfer.setData('text/plain', payload);
-            }}
-          >
-            <div className="flow-node-header">
-              <div className="flow-node-title">
-                {getFlowNodeLabel(node)}
-                {showVersionBadge && (
-                  <span
-                    className={`flow-node-version-badge${
-                      isV3 ? ' flow-node-version-badge-v3' : ' flow-node-version-badge-v2'
-                    }`}
-                    title={badgeTitle}
-                  >
-                    {badgeText}
-                  </span>
-                )}
-              </div>
-              <div className="flow-node-actions">
-                {isFocused && <span className="flow-node-focus-badge">Focused</span>}
-                {nodeErrorsMap?.[node.id]?.length ? (
-                  <span className="flow-node-error-badge" title={nodeErrorsMap[node.id].join(' ')}>
-                    {nodeErrorsMap[node.id].length}
-                  </span>
-                ) : null}
-                <button
-                  type="button"
-                  className="flow-node-edit"
-                  onClick={() => openFlowEditor(node.id, scope, lane, nodes, setNodes)}
-                >
-                  Edit
-                </button>
-                <button
-                  type="button"
-                  className="flow-node-remove"
-                  onClick={() => setNodes((prev) => removeNodeById(prev, node.id).nodes)}
-                >
-                  Remove
-                </button>
-              </div>
-            </div>
-            {node.kind === 'if' && (
-              <div className="flow-branches">
-                <div className="flow-branch">
-                  <div className="flow-branch-title">Then</div>
-                  {renderFlowList(
-                    node.then,
-                    { kind: 'if', id: node.id, branch: 'then' },
-                    setNodes,
-                    scope,
-                    lane,
-                    nodeErrorsMap,
-                    versionInfo,
-                  )}
-                </div>
-                <div className="flow-branch">
-                  <div className="flow-branch-title">Else</div>
-                  {renderFlowList(
-                    node.else,
-                    { kind: 'if', id: node.id, branch: 'else' },
-                    setNodes,
-                    scope,
-                    lane,
-                    nodeErrorsMap,
-                    versionInfo,
-                  )}
-                </div>
-              </div>
-            )}
-            {node.kind === 'processor' && node.processorType === 'foreach' && (
-              <div className="flow-branches">
-                <div className="flow-branch">
-                  <div className="flow-branch-title">Per-item processors</div>
-                  {renderFlowList(
-                    Array.isArray(node.config?.processors) ? node.config.processors : [],
-                    { kind: 'foreach', id: node.id, branch: 'processors' },
-                    setNodes,
-                    scope,
-                    lane,
-                    nodeErrorsMap,
-                    versionInfo,
-                  )}
-                </div>
-              </div>
-            )}
-            {node.kind === 'processor' && node.processorType === 'switch' && (
-              <div className="flow-branches">
-                <div className="flow-branch">
-                  <div className="flow-branch-title">Cases</div>
-                  {(Array.isArray(node.config?.cases) ? node.config.cases : []).map((item: any) => (
-                    <div key={item.id} className="flow-branch flow-branch-nested">
-                      <div className="flow-branch-title">Case</div>
-                      {renderFlowList(
-                        Array.isArray(item.processors) ? item.processors : [],
-                        { kind: 'switch', id: node.id, branch: 'case', caseId: item.id },
-                        setNodes,
-                        scope,
-                        lane,
-                        nodeErrorsMap,
-                        versionInfo,
-                      )}
-                    </div>
-                  ))}
-                </div>
-                <div className="flow-branch">
-                  <div className="flow-branch-title">Default</div>
-                  {renderFlowList(
-                    Array.isArray(node.config?.defaultProcessors)
-                      ? node.config.defaultProcessors
-                      : [],
-                    { kind: 'switch', id: node.id, branch: 'default' },
-                    setNodes,
-                    scope,
-                    lane,
-                    nodeErrorsMap,
-                    versionInfo,
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-        );
-      })}
-      <div className="flow-drop-gap" aria-hidden="true" />
-    </div>
+      onDrop={handleFlowDrop}
+      onOpenEditor={openFlowEditor}
+    />
   );
 
   const applyProcessor = () => {
@@ -9131,21 +8374,20 @@ export default function App() {
     if (!processor) {
       return;
     }
-    const objectName = obj?.['@objectName'];
+    const objectName = getObjectNameValue(obj);
     if (!objectName) {
       return;
     }
-    const existingOverrides = Array.isArray(overrideInfo?.overrides)
-      ? [...overrideInfo.overrides]
-      : [];
+    const existingOverrides = [...getBaseOverrides()];
     const baseOverrides = pendingOverrideSave ? [...pendingOverrideSave] : existingOverrides;
-    const method =
-      overrideInfo?.method ||
-      (String(selectedFile.PathID || '').includes('/syslog/') ? 'syslog' : 'trap');
+    const method = getOverrideMethod();
     const scope = 'post';
     const matchIndex = baseOverrides.findIndex(
-      (entry: any) =>
-        entry?.['@objectName'] === objectName && entry?.method === method && entry?.scope === scope,
+      (entry: unknown) =>
+        isRecord(entry) &&
+        entry['@objectName'] === objectName &&
+        entry.method === method &&
+        entry.scope === scope,
     );
     const overrideEntry =
       matchIndex >= 0
@@ -9172,9 +8414,11 @@ export default function App() {
     }
 
     const patchOp = (() => {
-      if (processor?.set && processor?.set?.targetField?.startsWith('$.event.')) {
-        const field = processor.set.targetField.replace('$.event.', '');
-        return buildOverridePatchOp(objectName, field, processor.set.source);
+      const setPayload = getSetPayload(processor);
+      const targetField = typeof setPayload?.targetField === 'string' ? setPayload.targetField : '';
+      if (targetField.startsWith('$.event.')) {
+        const field = targetField.replace('$.event.', '');
+        return buildOverridePatchOp(objectName, field, setPayload?.source);
       }
       return null;
     })();
@@ -9432,12 +8676,12 @@ export default function App() {
       const prePayloads = buildFlowProcessors(globalPreFlow);
       const postPayloads = buildFlowProcessors(globalPostFlow);
       return [
-        ...collectFocusMatches(prePayloads, advancedFlowFocusTarget, 'pre'),
-        ...collectFocusMatches(postPayloads, advancedFlowFocusTarget, 'post'),
+        ...collectFocusMatches(prePayloads, advancedFlowFocusTarget, 'pre', getProcessorTargetField),
+        ...collectFocusMatches(postPayloads, advancedFlowFocusTarget, 'post', getProcessorTargetField),
       ];
     }
     const objectPayloads = buildFlowProcessors(advancedFlow);
-    return collectFocusMatches(objectPayloads, advancedFlowFocusTarget, 'object');
+    return collectFocusMatches(objectPayloads, advancedFlowFocusTarget, 'object', getProcessorTargetField);
   }, [
     advancedFlowFocusTarget,
     advancedProcessorScope,
@@ -9554,24 +8798,25 @@ export default function App() {
     });
     return map;
   }, [stagedDiff.sections]);
-  const getStagedDirtyFields = (obj: any) => {
-    const objectName = obj?.['@objectName'];
+  const getStagedDirtyFields = (obj: unknown) => {
+    const objectName = getObjectNameValue(obj);
     if (!objectName) {
       return [] as string[];
     }
     return Array.from(stagedFieldChangeMap.get(objectName)?.keys() || []);
   };
-  const getStagedFieldChange = (obj: any, field: string) => {
-    const objectName = obj?.['@objectName'];
+  const getStagedFieldChange = (obj: unknown, field: string) => {
+    const objectName = getObjectNameValue(obj);
     if (!objectName) {
       return undefined;
     }
     return stagedFieldChangeMap.get(objectName)?.get(field);
   };
-  const isFieldStagedDirty = (obj: any, field: string) => Boolean(getStagedFieldChange(obj, field));
-  const isFieldStagedRemoved = (obj: any, field: string) =>
+  const isFieldStagedDirty = (obj: unknown, field: string) =>
+    Boolean(getStagedFieldChange(obj, field));
+  const isFieldStagedRemoved = (obj: unknown, field: string) =>
     getStagedFieldChange(obj, field) === 'removed';
-  const formatDiffValue = (value: any) =>
+  const formatDiffValue = (value: unknown) =>
     value === undefined ? '' : JSON.stringify(value, null, 2);
 
   const diffLines = (beforeText: string, afterText: string) => {
@@ -9612,7 +8857,7 @@ export default function App() {
     return output;
   };
 
-  const renderInlineDiff = (beforeValue: any, afterValue: any, mode: 'after' | 'original') => {
+  const renderInlineDiff = (beforeValue: unknown, afterValue: unknown, mode: 'after' | 'original') => {
     const beforeText = formatDiffValue(beforeValue);
     const afterText = formatDiffValue(afterValue);
     const lines = diffLines(beforeText, afterText);
@@ -9673,199 +8918,52 @@ export default function App() {
     setExpandedOriginals({});
   }, [showReviewModal, reviewStep, stagedDiff.sections]);
 
+  const { openAdvancedFlowModal: openAdvancedFlowModalInternal, saveAdvancedFlow } =
+    useAdvancedFlowOrchestration({
+      selectedFile,
+      builderTarget,
+      getObjectByPanelKey,
+      getOverrideMethod,
+      getOverrideEntry,
+      buildFlowNodesFromProcessors,
+      buildFlowProcessors,
+      setAdvancedFlowNotice,
+      setShowAdvancedFlowJsonPreview,
+      setSaveError,
+      setGlobalPreFlow,
+      setGlobalPostFlow,
+      setAdvancedFlow,
+      setAdvancedFlowBaseline,
+      setAdvancedFlowTarget,
+      setAdvancedProcessorScope,
+      setAdvancedProcessorSearch,
+      setAdvancedFlowFocusTarget,
+      setAdvancedFlowFocusIndex,
+      setAdvancedFlowFocusOnly,
+      setAdvancedFlowDefaultTarget,
+      setFlowEditor: () => setFlowEditor(null),
+      setFlowEditorDraft: () => setFlowEditorDraft(null),
+      ensureEditPermission,
+      advancedFlowTarget,
+      pendingOverrideSave,
+      getBaseOverrides,
+      advancedProcessorScope,
+      globalPreFlow,
+      globalPostFlow,
+      advancedFlow,
+      setPendingOverrideSave,
+      triggerToast,
+    });
+
   const openAdvancedFlowModal: (
     scope: 'object' | 'global',
     objectNameOverride?: string | null,
     focusTargetField?: string | null,
   ) => void = (scope, objectNameOverride, focusTargetField) => {
-    if (!selectedFile) {
-      return;
+    const opened = openAdvancedFlowModalInternal(scope, objectNameOverride, focusTargetField);
+    if (opened) {
+      setShowAdvancedProcessorModal(true);
     }
-    setAdvancedFlowNotice(null);
-    setShowAdvancedFlowJsonPreview(false);
-    const getObjectName = () => {
-      if (scope === 'global') {
-        return null;
-      }
-      if (objectNameOverride) {
-        return objectNameOverride;
-      }
-      if (builderTarget?.panelKey) {
-        return getObjectByPanelKey(builderTarget.panelKey)?.['@objectName'] || null;
-      }
-      return null;
-    };
-    const objectName = getObjectName();
-    if (scope === 'object' && !objectName) {
-      setSaveError('Select an object to open Advanced Flow.');
-      return;
-    }
-    const method = getOverrideMethod();
-    const hasPatchOps = (processors: any[]) =>
-      processors.some((processor: any) => processor?.op && processor?.path);
-    if (scope === 'global') {
-      const preEntry = getOverrideEntry({ scope: 'pre', method });
-      const postEntry = getOverrideEntry({ scope: 'post', method });
-      const preProcessors = Array.isArray(preEntry?.processors) ? preEntry.processors : [];
-      const postProcessors = Array.isArray(postEntry?.processors) ? postEntry.processors : [];
-      if (hasPatchOps(preProcessors) || hasPatchOps(postProcessors)) {
-        setSaveError('Advanced Flow only supports v2 processor overrides.');
-        return;
-      }
-      const preNodes = buildFlowNodesFromProcessors(preProcessors);
-      const postNodes = buildFlowNodesFromProcessors(postProcessors);
-      setGlobalPreFlow(preNodes);
-      setGlobalPostFlow(postNodes);
-      setAdvancedFlow([]);
-      setAdvancedFlowBaseline({
-        scope: 'global',
-        pre: JSON.stringify(buildFlowProcessors(preNodes)),
-        post: JSON.stringify(buildFlowProcessors(postNodes)),
-      });
-    } else if (objectName) {
-      const entry = getOverrideEntry({ objectName, scope: 'post', method });
-      const processors = Array.isArray(entry?.processors) ? entry.processors : [];
-      if (hasPatchOps(processors)) {
-        setSaveError('Advanced Flow only supports v2 processor overrides.');
-        return;
-      }
-      const nodes = buildFlowNodesFromProcessors(processors);
-      setAdvancedFlow(nodes);
-      setAdvancedFlowBaseline({
-        scope: 'object',
-        objectName,
-        object: JSON.stringify(buildFlowProcessors(nodes)),
-      });
-    }
-    setAdvancedFlowTarget({ scope, objectName: objectName || undefined, method });
-    setAdvancedProcessorScope(scope);
-    setAdvancedProcessorSearch('');
-    setAdvancedFlowFocusTarget(focusTargetField || null);
-    setAdvancedFlowFocusIndex(0);
-    setAdvancedFlowFocusOnly(false);
-    setAdvancedFlowDefaultTarget(focusTargetField || null);
-    setFlowEditor(null);
-    setFlowEditorDraft(null);
-    setSaveError(null);
-    setShowAdvancedProcessorModal(true);
-  };
-
-  const saveAdvancedFlow = () => {
-    if (!ensureEditPermission()) {
-      return;
-    }
-    if (!advancedFlowTarget) {
-      setSaveError('Select a target before saving Advanced Flow.');
-      return;
-    }
-    const method = advancedFlowTarget.method || getOverrideMethod();
-    const baseOverrides = pendingOverrideSave
-      ? [...pendingOverrideSave]
-      : Array.isArray(overrideInfo?.overrides)
-        ? [...overrideInfo.overrides]
-        : [];
-    const updateOverrideEntry = (params: {
-      objectName?: string;
-      scope: 'pre' | 'post';
-      processors: any[];
-    }) => {
-      const matchIndex = baseOverrides.findIndex(
-        (entry: any) =>
-          entry?.scope === params.scope &&
-          entry?.method === method &&
-          (params.objectName
-            ? entry?.['@objectName'] === params.objectName
-            : !entry?.['@objectName']),
-      );
-      const existing = matchIndex >= 0 ? { ...baseOverrides[matchIndex] } : null;
-      const hasEventOverrides =
-        existing?.event &&
-        typeof existing.event === 'object' &&
-        Object.keys(existing.event).length > 0;
-      if (params.processors.length === 0) {
-        if (!existing) {
-          return;
-        }
-        if (!hasEventOverrides) {
-          baseOverrides.splice(matchIndex, 1);
-          return;
-        }
-        const nextEntry = {
-          ...existing,
-          version: 'v2',
-          processors: [],
-        };
-        baseOverrides[matchIndex] = nextEntry;
-        return;
-      }
-      const nextEntry = existing
-        ? {
-            ...existing,
-            version: 'v2',
-            processors: params.processors,
-          }
-        : {
-            name: params.objectName
-              ? `${params.objectName} Override`
-              : 'Global Override',
-            description: params.objectName
-              ? `Overrides for ${params.objectName}`
-              : 'Global processor overrides',
-            domain: 'fault',
-            method,
-            scope: params.scope,
-            ...(params.objectName ? { '@objectName': params.objectName } : {}),
-            _type: 'override',
-            version: 'v2',
-            processors: params.processors,
-          };
-      if (matchIndex >= 0) {
-        baseOverrides[matchIndex] = nextEntry;
-      } else {
-        baseOverrides.push(nextEntry);
-      }
-    };
-
-    if (advancedProcessorScope === 'global') {
-      const preProcessors = buildFlowProcessors(globalPreFlow);
-      const postProcessors = buildFlowProcessors(globalPostFlow);
-      updateOverrideEntry({ scope: 'pre', processors: preProcessors });
-      updateOverrideEntry({ scope: 'post', processors: postProcessors });
-      setAdvancedFlowBaseline({
-        scope: 'global',
-        pre: JSON.stringify(preProcessors),
-        post: JSON.stringify(postProcessors),
-      });
-      const count = preProcessors.length + postProcessors.length;
-      triggerToast(
-        count === 0
-          ? 'Cleared global Advanced Flow processors (staged).'
-          : `Staged ${count} global Advanced Flow processor${count === 1 ? '' : 's'}.`,
-        true,
-      );
-    } else {
-      const objectName = advancedFlowTarget.objectName;
-      if (!objectName) {
-        setSaveError('Select an object before saving Advanced Flow.');
-        return;
-      }
-      const processors = buildFlowProcessors(advancedFlow);
-      updateOverrideEntry({ objectName, scope: 'post', processors });
-      setAdvancedFlowBaseline({
-        scope: 'object',
-        objectName,
-        object: JSON.stringify(processors),
-      });
-      const count = processors.length;
-      triggerToast(
-        count === 0
-          ? `Cleared Advanced Flow processors for ${objectName} (staged).`
-          : `Staged ${count} Advanced Flow processor${count === 1 ? '' : 's'} for ${objectName}.`,
-        true,
-      );
-    }
-    setPendingOverrideSave(baseOverrides);
-    setSaveError(null);
   };
 
   const advancedFlowPatchPreview = useMemo(() => {
@@ -9886,8 +8984,7 @@ export default function App() {
       return null;
     }
     const processors = Array.isArray(entry?.processors) ? entry.processors : [];
-    const hasPatchOps = processors.some((proc: any) => proc?.op && proc?.path);
-    if (!hasPatchOps && entry?.version !== 'v3') {
+    if (!hasPatchOps(processors) && entry?.version !== 'v3') {
       return null;
     }
     return JSON.stringify(entry, null, 2);
@@ -9908,7 +9005,7 @@ export default function App() {
         ...prev,
         ...getDefaultProcessorConfig(
           'set',
-          builderTarget ? `$.event.${builderTarget.field}` : prev.targetField || '',
+          builderTarget ? `$.event.${builderTarget.field}` : asConfigString(prev.targetField),
         ),
       }));
       return;
@@ -9920,7 +9017,7 @@ export default function App() {
         ...prev,
         ...getDefaultProcessorConfig(
           'regex',
-          builderTarget ? `$.event.${builderTarget.field}` : prev.targetField || '',
+          builderTarget ? `$.event.${builderTarget.field}` : asConfigString(prev.targetField),
         ),
       }));
       return;
@@ -9931,7 +9028,7 @@ export default function App() {
       ...prev,
       ...getDefaultProcessorConfig(
         item.id,
-        builderTarget ? `$.event.${builderTarget.field}` : prev.targetField || '',
+        builderTarget ? `$.event.${builderTarget.field}` : asConfigString(prev.targetField),
       ),
       ...(item.id === 'foreach' ? { processors: [] } : {}),
       ...(item.id === 'switch'
@@ -10105,7 +9202,7 @@ export default function App() {
       return;
     }
     const obj = getObjectByPanelKey(builderTarget.panelKey);
-    const trapVars = obj?.trap?.variables || [];
+    const trapVars = getTrapVariables(obj);
     tryOpenVarInsertModal({
       panelKey: builderTarget.panelKey,
       field: 'builderCondition',
@@ -10134,7 +9231,7 @@ export default function App() {
       return;
     }
     const obj = getObjectByPanelKey(builderTarget.panelKey);
-    const trapVars = obj?.trap?.variables || [];
+    const trapVars = getTrapVariables(obj);
     tryOpenVarInsertModal({
       panelKey: builderTarget.panelKey,
       field: 'builderResult',
@@ -10161,7 +9258,7 @@ export default function App() {
       return;
     }
     const obj = getObjectByPanelKey(builderTarget.panelKey);
-    const trapVars = obj?.trap?.variables || [];
+    const trapVars = getTrapVariables(obj);
     tryOpenVarInsertModal({
       panelKey: builderTarget.panelKey,
       field: 'builderElse',
@@ -10624,16 +9721,17 @@ export default function App() {
     const objects = getFriendlyObjects(fileData);
     const matches: string[] = [];
     const options: Array<{ key: string; label: string }> = [];
-    objects.forEach((obj: any, idx: number) => {
+    objects.forEach((obj: unknown, idx: number) => {
       try {
         const text = JSON.stringify(obj).toLowerCase();
         if (text.includes(query)) {
           const key = getObjectKey(obj, idx);
+          const label =
+            isRecord(obj) && typeof obj['@objectName'] === 'string'
+              ? obj['@objectName']
+              : `Object ${idx + 1}`;
           matches.push(key);
-          options.push({
-            key,
-            label: obj?.['@objectName'] || `Object ${idx + 1}`,
-          });
+          options.push({ key, label });
         }
       } catch {
         // ignore
@@ -10654,16 +9752,17 @@ export default function App() {
     const objects = getFriendlyObjects(fileData);
     const keys: string[] = [];
     const options: Array<{ key: string; label: string }> = [];
-    objects.forEach((obj: any, idx: number) => {
+    objects.forEach((obj: unknown, idx: number) => {
       if (!getOverrideFlags(obj).any) {
         return;
       }
       const key = getObjectKey(obj, idx);
+      const label =
+        isRecord(obj) && typeof obj['@objectName'] === 'string'
+          ? obj['@objectName']
+          : `Object ${idx + 1}`;
       keys.push(key);
-      options.push({
-        key,
-        label: obj?.['@objectName'] || `Object ${idx + 1}`,
-      });
+      options.push({ key, label });
     });
     setOverrideObjectKeys(keys);
     setOverrideObjectOptions(options);
@@ -11174,53 +10273,26 @@ export default function App() {
       return null;
     }
     const obj = getObjectByPanelKey(builderTarget.panelKey);
-    const objectName = obj?.['@objectName'];
+    const objectName =
+      isRecord(obj) && typeof obj['@objectName'] === 'string' ? obj['@objectName'] : null;
     if (!objectName) {
       return null;
     }
     const target = getProcessorTargetField(processorPayload);
-    if (!target || !target.startsWith('$.event.') || !processorPayload?.set) {
+    const setPayload = getSetPayload(processorPayload);
+    if (!target || !target.startsWith('$.event.') || !setPayload) {
       return null;
     }
     const field = target.replace('$.event.', '');
-    return buildOverridePatchOp(objectName, field, processorPayload.set.source);
+    return buildOverridePatchOp(objectName, field, setPayload.source);
   })();
-  const builderTrapVars = builderTarget
-    ? getObjectByPanelKey(builderTarget.panelKey)?.trap?.variables || []
-    : [];
+  const builderTrapVars = builderTarget ? getTrapVariables(getObjectByPanelKey(builderTarget.panelKey)) : [];
   const flowEditorLane = flowEditor?.lane || 'object';
-  const flowEditorValidation =
-    flowEditorDraft?.kind === 'processor'
-      ? validateProcessorConfig(
-          flowEditorDraft.processorType,
-          flowEditorDraft.config || {},
-          flowEditorLane,
-        )
-      : flowEditorDraft?.kind === 'if'
-        ? {
-            fieldErrors: {},
-            nodeErrors:
-              validateFlowNodes([flowEditorDraft], flowEditorLane)[flowEditorDraft.id] || [],
-          }
-        : { fieldErrors: {}, nodeErrors: [] };
+  const flowEditorValidation = validateFlowEditorDraft(flowEditorDraft, flowEditorLane);
   const flowEditorFieldErrors = flowEditorValidation.fieldErrors;
   const flowEditorNodeErrors = flowEditorValidation.nodeErrors;
   const flowEditorHasErrors =
     flowEditorNodeErrors.length > 0 || Object.keys(flowEditorFieldErrors).length > 0;
-  const handleCancelFlowEditor = () => {
-    setFlowEditor(null);
-    setFlowEditorDraft(null);
-  };
-  const handleSaveFlowEditor = () => {
-    if (!flowEditor || !flowEditorDraft) {
-      return;
-    }
-    const setNodes =
-      flowEditor.setNodesOverride || getFlowStateByLane(flowEditor.scope, flowEditor.lane).setNodes;
-    setNodes((prev) => replaceNodeById(prev, flowEditor.nodeId, flowEditorDraft));
-    setFlowEditor(null);
-    setFlowEditorDraft(null);
-  };
   const focusedFlowJson = focusedFlowMatch
     ? JSON.stringify(focusedFlowMatch.processor, null, 2)
     : '';
@@ -11481,13 +10553,18 @@ export default function App() {
           <div className="microservice-loading">Loading status...</div>
         ) : (
           <div className="microservice-chain">
-            {requiredMicroservices.map((entry: any, idx: number) => {
+            {requiredMicroservices.map((entry: MicroserviceEntry, idx: number) => {
               const tone = getServiceTone(entry);
-              const label = entry?.label || entry?.name || 'Unknown';
+              const label = String(entry?.label || entry?.name || 'Unknown');
               const canDeploy = !entry?.installed && entry?.available;
+              const serviceName = typeof entry?.name === 'string' ? entry.name : '';
+              const workload = isRecord(entry?.workload) ? entry.workload : null;
+              const workloadReady = workload && typeof workload['ready'] !== 'undefined' ? workload['ready'] : '0';
+              const workloadAvailable =
+                workload && typeof workload['available'] !== 'undefined' ? workload['available'] : '0';
               const canRedeploy =
                 Boolean(entry?.installed) &&
-                (entry?.name === 'fcom-processor' || !entry?.running);
+                (serviceName === 'fcom-processor' || !entry?.running);
               const actionLabel = (microserviceActionLabel || '').toLowerCase();
               const labelKey = String(label).toLowerCase();
               const isActionFor = labelKey && actionLabel.includes(labelKey);
@@ -11495,7 +10572,7 @@ export default function App() {
               const isRedeploying = isActionFor && actionLabel.startsWith('redeploying');
               const isWorking = isDeploying || isRedeploying;
               return (
-                <div key={entry?.name || idx} className="microservice-chain-step">
+                <div key={serviceName || idx} className="microservice-chain-step">
                   <div
                     className={`microservice-card microservice-card-${tone}${
                       isWorking ? ' microservice-card-working' : ''
@@ -11515,9 +10592,9 @@ export default function App() {
                       <div className="microservice-card-title">{label}</div>
                     </div>
                     <div className="microservice-card-status">{getServiceStatusText(entry)}</div>
-                    {entry?.workload && (
+                    {workload && (
                       <div className="microservice-card-meta">
-                        Ready {entry.workload.ready || '0'} - Available {entry.workload.available || '0'}
+                        Ready {String(workloadReady)} - Available {String(workloadAvailable)}
                       </div>
                     )}
                     {isWorking && (
@@ -11531,7 +10608,7 @@ export default function App() {
                         <button
                           type="button"
                           className="builder-card builder-card-primary"
-                          onClick={() => handleDeployMicroservice(entry.name, label)}
+                          onClick={() => handleDeployMicroservice(serviceName, label)}
                           disabled={redeployLoading || !hasEditPermission}
                         >
                           {isDeploying ? 'Deploying...' : 'Deploy'}
@@ -11541,7 +10618,7 @@ export default function App() {
                         <button
                           type="button"
                           className="builder-card builder-card-primary"
-                          onClick={() => handleRedeployMicroservice(entry.name, label)}
+                          onClick={() => handleRedeployMicroservice(serviceName, label)}
                           disabled={redeployLoading || !hasEditPermission}
                         >
                           {isRedeploying ? 'Redeploying...' : 'Redeploy'}
@@ -12741,8 +11818,13 @@ export default function App() {
                                     field.toLowerCase().includes(addFieldSearch.toLowerCase()),
                                   )
                                   .map((field) => {
+                                    const contextObj = isRecord(addFieldContext.obj)
+                                      ? addFieldContext.obj
+                                      : null;
+                                    const contextEvent =
+                                      contextObj && isRecord(contextObj.event) ? contextObj.event : {};
                                     const existingFields = new Set([
-                                      ...Object.keys(addFieldContext.obj?.event || {}),
+                                      ...Object.keys(contextEvent),
                                       ...(panelAddedFields[addFieldContext.panelKey] || []),
                                     ]);
                                     const isReserved = reservedEventFields.has(field);
@@ -13028,16 +12110,16 @@ export default function App() {
                       <div className="file-details">
                         <FileTitleRow
                           title={selectedFile?.PathName ? selectedFile.PathName : 'Select a PCOM file'}
-                          path={selectedFile?.PathID ? formatDisplayPath(selectedFile.PathID) : null}
+                          path={selectedFile && selectedFile.PathID ? formatDisplayPath(selectedFile.PathID) : null}
                           favorite={
                             selectedFile
                               ? {
-                                  active: isFavorite('file', selectedFile.PathID),
+                                  active: isFavorite('file', String(selectedFile.PathID || '')),
                                   onToggle: () =>
                                     toggleFavorite({
                                       type: 'file',
-                                      pathId: selectedFile.PathID,
-                                      label: selectedFile.PathName,
+                                      pathId: String(selectedFile.PathID || ''),
+                                      label: String(selectedFile.PathName || selectedFile.PathID || ''),
                                       node: browseNode || undefined,
                                     }),
                                 }

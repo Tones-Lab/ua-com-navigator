@@ -1,14 +1,17 @@
 import { expect, type Page } from '@playwright/test';
 
+declare const process: { env?: Record<string, string | undefined> };
+
 type LoginOptions = {
   serverLabel?: string;
   username: string;
   password: string;
 };
 
-const defaultServerLabel = process.env.COM_UI_SERVER_LABEL || '';
-const defaultUsername = process.env.COM_UI_USERNAME || 'admin';
-const defaultPassword = process.env.COM_UI_PASSWORD || 'admin';
+const env = process.env || {};
+const defaultServerLabel = env.COM_UI_SERVER_LABEL || '';
+const defaultUsername = env.COM_UI_USERNAME || 'admin';
+const defaultPassword = env.COM_UI_PASSWORD || 'admin';
 
 export const login = async (page: Page, opts?: Partial<LoginOptions>) => {
   const serverLabel = opts?.serverLabel ?? defaultServerLabel;

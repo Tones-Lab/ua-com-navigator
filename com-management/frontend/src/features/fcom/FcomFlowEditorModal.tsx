@@ -2,13 +2,7 @@ import React from 'react';
 import { processorHelp } from './processorHelp';
 import { processorConfigSpecs } from './processorConfig';
 import type { FlowBranchPath, FlowIfNode, FlowNode, FlowProcessorNode } from './flowUtils';
-
-type FlowEditorState = {
-  scope: 'object' | 'global';
-  lane: 'object' | 'pre' | 'post';
-  nodeId: string;
-  setNodesOverride?: React.Dispatch<React.SetStateAction<FlowNode[]>>;
-};
+import type { FlowEditorState } from './useFlowEditorState';
 
 type FlowNodeErrorMap = Record<string, string[]>;
 
@@ -86,6 +80,17 @@ const FcomFlowEditorModal = ({
   if (!flowEditor || !flowEditorDraft) {
     return null;
   }
+
+  const getConfigInputValue = (key: string) => {
+    if (flowEditorDraft.kind !== 'processor') {
+      return '';
+    }
+    const value = flowEditorDraft.config?.[key];
+    if (typeof value === 'string' || typeof value === 'number') {
+      return String(value);
+    }
+    return '';
+  };
 
   const helpKey = flowEditorDraft.kind === 'if' ? 'if' : flowEditorDraft.processorType;
   const help = processorHelp[helpKey as keyof typeof processorHelp];
@@ -215,7 +220,7 @@ const FcomFlowEditorModal = ({
                 <label className="builder-label">Source</label>
                 <input
                   className="builder-input"
-                  value={flowEditorDraft.config?.source || ''}
+                  value={getConfigInputValue('source')}
                   onChange={(e) =>
                     setFlowEditorDraft((prev) =>
                       prev
@@ -235,7 +240,7 @@ const FcomFlowEditorModal = ({
                 <label className="builder-label">Key field</label>
                 <input
                   className="builder-input"
-                  value={flowEditorDraft.config?.keyVal || ''}
+                  value={getConfigInputValue('keyVal')}
                   onChange={(e) =>
                     setFlowEditorDraft((prev) =>
                       prev
@@ -255,7 +260,7 @@ const FcomFlowEditorModal = ({
                 <label className="builder-label">Value</label>
                 <input
                   className="builder-input"
-                  value={flowEditorDraft.config?.valField || ''}
+                  value={getConfigInputValue('valField')}
                   onChange={(e) =>
                     setFlowEditorDraft((prev) =>
                       prev
@@ -318,7 +323,7 @@ const FcomFlowEditorModal = ({
                 <label className="builder-label">Source</label>
                 <input
                   className="builder-input"
-                  value={flowEditorDraft.config?.source || ''}
+                  value={getConfigInputValue('source')}
                   onChange={(e) =>
                     setFlowEditorDraft((prev) =>
                       prev
@@ -338,7 +343,7 @@ const FcomFlowEditorModal = ({
                 <label className="builder-label">Operator</label>
                 <input
                   className="builder-input"
-                  value={flowEditorDraft.config?.operator || ''}
+                  value={getConfigInputValue('operator')}
                   onChange={(e) =>
                     setFlowEditorDraft((prev) =>
                       prev

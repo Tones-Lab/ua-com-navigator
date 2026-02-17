@@ -1,4 +1,7 @@
-import { useFcomBuilderContext } from './FcomBuilderContext';
+import {
+  useFcomBuilderActionsContext,
+  useFcomBuilderViewContext,
+} from './FcomBuilderContext';
 import FcomProcessorForeachEditor from './FcomProcessorForeachEditor';
 import FcomProcessorReviewStep from './FcomProcessorReviewStep';
 import FcomProcessorSelectStep from './FcomProcessorSelectStep';
@@ -12,21 +15,24 @@ export default function FcomBuilderProcessorSection() {
     builderPatchPreview,
     isBuilderTargetReady,
     builderTarget,
-    openAdvancedFlowModal,
     processorStep,
-    setProcessorStep,
     processorType,
     processorPayload,
     processorCatalog,
-    handleBuilderSelect,
     builderProcessorConfig,
-    setBuilderProcessorConfig,
     builderNestedAddType,
-    setBuilderNestedAddType,
     builderPaletteItems,
     builderSwitchCaseAddType,
-    setBuilderSwitchCaseAddType,
     builderSwitchDefaultAddType,
+    showProcessorJson,
+  } = useFcomBuilderViewContext();
+  const {
+    openAdvancedFlowModal,
+    setProcessorStep,
+    handleBuilderSelect,
+    setBuilderProcessorConfig,
+    setBuilderNestedAddType,
+    setBuilderSwitchCaseAddType,
     setBuilderSwitchDefaultAddType,
     createFlowNodeFromPaletteValue,
     renderProcessorHelp,
@@ -34,11 +40,10 @@ export default function FcomBuilderProcessorSection() {
     renderFlowList,
     getProcessorCatalogLabel,
     getProcessorSummaryLines,
-    showProcessorJson,
     setShowProcessorJson,
     applyProcessor,
     nextSwitchCaseId,
-  } = useFcomBuilderContext();
+  } = useFcomBuilderActionsContext();
 
   const {
     toArray,
