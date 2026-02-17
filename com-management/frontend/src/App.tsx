@@ -15,6 +15,7 @@ import FcomReviewCommitModal from './features/fcom/FcomReviewCommitModal';
 import FcomAdvancedFlowModal from './features/fcom/FcomAdvancedFlowModal';
 import FcomFlowEditorModal from './features/fcom/FcomFlowEditorModal';
 import FcomBuilderHelpModal from './features/fcom/FcomBuilderHelpModal';
+import FcomProcessorTooltip from './features/fcom/FcomProcessorTooltip';
 import FcomFieldReferenceModal from './features/fcom/FcomFieldReferenceModal';
 import FcomConfirmModals from './features/fcom/FcomConfirmModals';
 import FcomFieldSelectionModals from './features/fcom/FcomFieldSelectionModals';
@@ -10585,17 +10586,7 @@ export default function App() {
                             openAdvancedFlowModal('object', objectName, null);
                           }}
                         />
-                        {processorTooltip && (
-                          <div
-                            className="floating-help-tooltip"
-                            style={{ left: processorTooltip.x, top: processorTooltip.y }}
-                            role="tooltip"
-                          >
-                            <div className="floating-help-title">{processorTooltip.title}</div>
-                            <div className="floating-help-text">{processorTooltip.description}</div>
-                            <div className="floating-help-code">{processorTooltip.example}</div>
-                          </div>
-                        )}
+                        <FcomProcessorTooltip tooltip={processorTooltip} />
                         <FcomSaveOverlays
                           saveLoading={saveLoading}
                           saveElapsed={saveElapsed}

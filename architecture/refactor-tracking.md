@@ -368,6 +368,11 @@ Validation:
   - Updated `App.tsx` to replace five inline `ConfirmModal` blocks with one `FcomConfirmModals` composition call while preserving all existing handlers and guard flows.
   - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
   - Test Delta: Low risk (code-movement extraction for confirm-dialog composition); Add now; Coverage type: UI sanity (builder-switch confirm, panel-nav warning, pending-nav discard, pending-cancel discard, review-discard confirm).
+- 2026-02-17: Post-item cleanup (processor tooltip extraction from App).
+  - Added `features/fcom/FcomProcessorTooltip.tsx` and moved floating processor-help tooltip markup out of `App.tsx`.
+  - Updated `App.tsx` to render `FcomProcessorTooltip` with existing tooltip state while preserving position/content behavior.
+  - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
+  - Test Delta: Low risk (code-movement extraction for tooltip presentation); Add now; Coverage type: UI sanity (processor help hover/focus tooltip content and positioning).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.
