@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import api from '../services/api';
+import { getApiErrorMessage } from '../utils/errorUtils';
 
 const COM_SEARCH_QUERY_KEY = 'com.search.query';
 const COM_SEARCH_SCOPE_KEY = 'com.search.scope';
@@ -32,12 +33,11 @@ export default function useSearchState({ isAuthenticated, onStatusUpdate }: UseS
       if (resp.data?.status) {
         onStatusUpdate?.(resp.data.status);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       if (seq !== latestSearchSeqRef.current) {
         return;
       }
-      const message = err?.response?.data?.error || 'Search failed';
-      setSearchError(message);
+      setSearchError(getApiErrorMessage(err, 'Search failed'));
     } finally {
       if (seq === latestSearchSeqRef.current) {
         setSearchLoading(false);

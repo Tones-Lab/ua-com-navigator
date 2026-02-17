@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import api from '../services/api';
+import useRequest from './useRequest';
+import { getApiErrorMessage } from '../utils/errorUtils';
 
 type AppTab = 'overview' | 'fcom' | 'pcom' | 'mib' | 'legacy';
 
@@ -21,8 +23,11 @@ type UseOverviewStateParams = {
 export default function useOverviewState({ isAuthenticated, activeApp }: UseOverviewStateParams) {
   const [overviewStatus, setOverviewStatus] = useState<any | null>(null);
   const [overviewData, setOverviewData] = useState<any | null>(null);
-  const [overviewLoading, setOverviewLoading] = useState(false);
-  const [overviewError, setOverviewError] = useState<string | null>(null);
+  const {
+    loading: overviewLoading,
+    error: overviewError,
+    run: runOverviewRequest,
+  } = useRequest();
   const [overviewRebuildPending, setOverviewRebuildPending] = useState(false);
   const overviewRebuildStartRef = useRef<number | null>(null);
   const overviewStatusPollRef = useRef<number | null>(null);
@@ -73,27 +78,29 @@ export default function useOverviewState({ isAuthenticated, activeApp }: UseOver
     if (!isAuthenticated) {
       return;
     }
-    setOverviewLoading(true);
-    setOverviewError(null);
     try {
-      if (options?.forceRebuild) {
-        setOverviewRebuildPending(true);
-        overviewRebuildStartRef.current = Date.now();
-        startOverviewStatusPolling();
-        await api.rebuildOverviewIndex();
-      }
-      const [statusRes, dataRes] = await Promise.all([api.getOverviewStatus(), api.getOverview()]);
-      setOverviewStatus(statusRes.data);
-      setOverviewData(dataRes.data?.data ?? null);
-    } catch (err: any) {
-      const message = err?.response?.data?.error || err?.message || 'Failed to load overview';
-      setOverviewError(message);
+      await runOverviewRequest(
+        async () => {
+          if (options?.forceRebuild) {
+            setOverviewRebuildPending(true);
+            overviewRebuildStartRef.current = Date.now();
+            startOverviewStatusPolling();
+            await api.rebuildOverviewIndex();
+          }
+          const [statusRes, dataRes] = await Promise.all([api.getOverviewStatus(), api.getOverview()]);
+          setOverviewStatus(statusRes.data);
+          setOverviewData(dataRes.data?.data ?? null);
+        },
+        {
+          getErrorMessage: (err) => getApiErrorMessage(err, 'Failed to load overview'),
+          rethrow: true,
+        },
+      );
+    } catch {
       if (options?.forceRebuild) {
         setOverviewRebuildPending(false);
         stopOverviewStatusPolling();
       }
-    } finally {
-      setOverviewLoading(false);
     }
   };
 

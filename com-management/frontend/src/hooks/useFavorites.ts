@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import api from '../services/api';
+import useRequest from './useRequest';
+import { getApiErrorMessage } from '../utils/errorUtils';
 import type {
   FavoriteEntry,
   FavoriteFileEntry,
@@ -22,8 +24,13 @@ const getFavoriteScope = (app: FavoritesAppTab): FavoriteScope =>
 
 export default function useFavorites({ isAuthenticated, activeApp }: UseFavoritesParams) {
   const [favorites, setFavorites] = useState<FavoriteEntry[]>([]);
-  const [favoritesLoading, setFavoritesLoading] = useState(false);
-  const [favoritesError, setFavoritesError] = useState<string | null>(null);
+  const {
+    loading: favoritesLoading,
+    error: favoritesError,
+    setError: setFavoritesError,
+    setLoading: setFavoritesLoading,
+    run: runFavoritesRequest,
+  } = useRequest();
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -42,21 +49,14 @@ export default function useFavorites({ isAuthenticated, activeApp }: UseFavorite
 
     let isMounted = true;
     const loadFavorites = async () => {
-      setFavoritesError(null);
-      setFavoritesLoading(true);
-      try {
-        const resp = await api.getFavorites(getFavoriteScope(activeApp));
-        if (isMounted) {
-          setFavorites(resp.data?.favorites || []);
-        }
-      } catch (err: any) {
-        if (isMounted) {
-          setFavoritesError(err?.response?.data?.error || 'Failed to load favorites');
-        }
-      } finally {
-        if (isMounted) {
-          setFavoritesLoading(false);
-        }
+      const resp = await runFavoritesRequest(
+        () => api.getFavorites(getFavoriteScope(activeApp)),
+        {
+          getErrorMessage: (err) => getApiErrorMessage(err, 'Failed to load favorites'),
+        },
+      );
+      if (isMounted && resp) {
+        setFavorites(resp.data?.favorites || []);
       }
     };
 
@@ -77,25 +77,39 @@ export default function useFavorites({ isAuthenticated, activeApp }: UseFavorite
       if (!supportsFavorites(activeApp)) {
         return;
       }
-      try {
-        setFavoritesError(null);
-        const scope = getFavoriteScope(activeApp);
-        if (isFavorite(favorite.type, favorite.pathId)) {
-          const resp = await api.removeFavorite({
-            type: favorite.type,
-            pathId: favorite.pathId,
-            scope,
-          });
-          setFavorites(resp.data?.favorites || []);
-        } else {
-          const resp = await api.addFavorite({ ...favorite, scope });
-          setFavorites(resp.data?.favorites || []);
+      const scope = getFavoriteScope(activeApp);
+      if (isFavorite(favorite.type, favorite.pathId)) {
+        const resp = await runFavoritesRequest(
+          () =>
+            api.removeFavorite({
+              type: favorite.type,
+              pathId: favorite.pathId,
+              scope,
+            }),
+          {
+            getErrorMessage: (err) => getApiErrorMessage(err, 'Failed to update favorites'),
+            clearError: true,
+          },
+        );
+        if (!resp) {
+          return;
         }
-      } catch (err: any) {
-        setFavoritesError(err?.response?.data?.error || 'Failed to update favorites');
+        setFavorites(resp.data?.favorites || []);
+      } else {
+        const resp = await runFavoritesRequest(
+          () => api.addFavorite({ ...favorite, scope }),
+          {
+            getErrorMessage: (err) => getApiErrorMessage(err, 'Failed to update favorites'),
+            clearError: true,
+          },
+        );
+        if (!resp) {
+          return;
+        }
+        setFavorites(resp.data?.favorites || []);
       }
     },
-    [activeApp, isFavorite],
+    [activeApp, isFavorite, runFavoritesRequest],
   );
 
   const favoritesFiles = useMemo(

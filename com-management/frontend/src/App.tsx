@@ -29,6 +29,7 @@ import useMibWorkspace from './features/mib/useMibWorkspace';
 import useCacheStatus from './hooks/useCacheStatus';
 import useFavorites from './hooks/useFavorites';
 import useOverviewState from './hooks/useOverviewState';
+import useRequest from './hooks/useRequest';
 import useSearchState from './hooks/useSearchState';
 import {
   appendNodeAtPath,
@@ -63,6 +64,7 @@ import {
   getVendorFromPath,
   normalizeRulesPath,
 } from './utils/pathUtils';
+import { getApiErrorMessage } from './utils/errorUtils';
 import {
   getDefaultBrowseNode,
   inferAppFromPath,
@@ -297,8 +299,13 @@ export default function App() {
       snmpAccessId?: string;
     }>
   >([]);
-  const [pcomDevicesLoading, setPcomDevicesLoading] = useState(false);
-  const [pcomDevicesError, setPcomDevicesError] = useState<string | null>(null);
+  const {
+    loading: pcomDevicesLoading,
+    error: pcomDevicesError,
+    setLoading: setPcomDevicesLoading,
+    setError: setPcomDevicesError,
+    run: runPcomDevicesRequest,
+  } = useRequest();
   const [trapVarbinds, setTrapVarbinds] = useState<
     Array<{ oid: string; type: string; value: string }>
   >([]);
@@ -722,8 +729,13 @@ export default function App() {
   const [redeployError, setRedeployError] = useState<string | null>(null);
   const [microserviceActionLabel, setMicroserviceActionLabel] = useState<string | null>(null);
   const [microserviceStatus, setMicroserviceStatus] = useState<unknown>(null);
-  const [microserviceStatusLoading, setMicroserviceStatusLoading] = useState(false);
-  const [microserviceStatusError, setMicroserviceStatusError] = useState<string | null>(null);
+  const {
+    loading: microserviceStatusLoading,
+    error: microserviceStatusError,
+    setLoading: setMicroserviceStatusLoading,
+    setError: setMicroserviceStatusError,
+    run: runMicroserviceStatusRequest,
+  } = useRequest();
   const [microserviceLastRefreshed, setMicroserviceLastRefreshed] = useState<string | null>(null);
   const [eventsSchemaFields, setEventsSchemaFields] = useState<string[]>([]);
   const [overrideInfo, setOverrideInfo] = useState<any | null>(null);
@@ -939,20 +951,6 @@ export default function App() {
     running?: boolean;
     available?: boolean;
   } & UnknownRecord;
-  const getApiErrorMessage = (error: unknown, fallback: string) => {
-    if (!isRecord(error)) {
-      return fallback;
-    }
-    const response = isRecord(error.response) ? error.response : null;
-    const data = response && isRecord(response.data) ? response.data : null;
-    if (data && typeof data.error === 'string' && data.error.trim()) {
-      return data.error;
-    }
-    if (typeof error.message === 'string' && error.message.trim()) {
-      return error.message;
-    }
-    return fallback;
-  };
   const getResultFiles = (value: unknown): unknown[] | undefined => {
     if (!isRecord(value)) {
       return undefined;
@@ -2196,16 +2194,12 @@ export default function App() {
     if (!isAuthenticated) {
       return;
     }
-    setMicroserviceStatusLoading(true);
-    setMicroserviceStatusError(null);
-    try {
-      const resp = await api.getMicroserviceStatus(options);
+    const resp = await runMicroserviceStatusRequest(() => api.getMicroserviceStatus(options), {
+      getErrorMessage: (err) => getApiErrorMessage(err, 'Failed to load microservice status'),
+    });
+    if (resp) {
       setMicroserviceStatus(resp.data);
       setMicroserviceLastRefreshed(new Date().toISOString());
-    } catch (err: unknown) {
-      setMicroserviceStatusError(getApiErrorMessage(err, 'Failed to load microservice status'));
-    } finally {
-      setMicroserviceStatusLoading(false);
     }
   };
 
@@ -2318,23 +2312,17 @@ export default function App() {
     }
     let isMounted = true;
     const loadDevices = async () => {
-      setPcomDevicesLoading(true);
-      setPcomDevicesError(null);
-      try {
-        const resp = await api.getDevices({ limit: 500, start: 0 });
+      const resp = await runPcomDevicesRequest(() => api.getDevices({ limit: 500, start: 0 }), {
+        getErrorMessage: (err) => getApiErrorMessage(err, 'Failed to load devices'),
+      });
+      if (!isMounted) {
+        return;
+      }
+      if (resp) {
         const devices = Array.isArray(resp.data?.devices) ? resp.data.devices : [];
-        if (isMounted) {
-          setPcomDevices(devices);
-        }
-      } catch (err: unknown) {
-        if (isMounted) {
-          setPcomDevicesError(getApiErrorMessage(err, 'Failed to load devices'));
-          setPcomDevices([]);
-        }
-      } finally {
-        if (isMounted) {
-          setPcomDevicesLoading(false);
-        }
+        setPcomDevices(devices);
+      } else {
+        setPcomDevices([]);
       }
     };
     loadDevices();

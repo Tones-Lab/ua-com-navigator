@@ -79,7 +79,7 @@ Validation:
 - Validate error highlighting and focus behavior.
 
 ### 5) Request state hook + error handling standardization
-Status: Not Started
+Status: In Progress
 Scope: Replace repeated loading/error patterns with a `useRequest` hook and shared error formatter.
 Validation:
 - Trigger errors in MIB search and browse and confirm messages still show.
@@ -197,6 +197,17 @@ Validation:
   - Updated `App.tsx` to consume extracted modules and keep only composition-level wiring.
   - Result: Item 4 target achieved; flow canvas, validation, editor state, payload builders, parser, and advanced-flow orchestration now reside in feature modules.
   - Test Delta: High risk (advanced-flow orchestration + recursive flow canvas); Add now; Coverage type: E2E (open/edit/save/close/focus for object/global lanes and nested if/foreach/switch branches).
+- 2026-02-16: Item 5 kickoff (request-state + shared error formatting).
+  - Added `hooks/useRequest.ts` to centralize loading/error state + request execution pattern.
+  - Added `utils/errorUtils.ts` with shared `getApiErrorMessage` and switched `App.tsx`, `useSearchState`, `useFavorites`, and `useOverviewState` to consume shared error formatting.
+  - Updated `useFavorites` and `useOverviewState` to use `useRequest` for repeated loading/error request patterns.
+  - Result: reduced duplicated request-state boilerplate and standardized API error extraction surface across App/hooks.
+  - Test Delta: Medium risk (loading/error indicator parity in overview/favorites/search); Add now; Coverage type: E2E (favorites fetch failure message, search error message, overview loading/error states).
+- 2026-02-16: Item 5 continued (App request-state adoption).
+  - Switched App microservice-status and MIB device-load request flows to use `hooks/useRequest` (`run` + shared loading/error state) while keeping existing UI/state behavior.
+  - Removed duplicate App-local error-formatter implementation and fully consolidated on `utils/errorUtils.ts` for API error extraction.
+  - Result: additional repeated loading/error request blocks in `App.tsx` now follow shared hook/formatter pattern.
+  - Test Delta: Medium risk (microservice status + MIB device-loading indicators/messages); Add now; Coverage type: E2E (microservice modal refresh, MIB tab device load success/failure states).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.
