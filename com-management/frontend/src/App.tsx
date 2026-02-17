@@ -16,6 +16,7 @@ import FcomBuilderHelpModal from './features/fcom/FcomBuilderHelpModal';
 import FcomFieldReferenceModal from './features/fcom/FcomFieldReferenceModal';
 import FcomFieldSelectionModals from './features/fcom/FcomFieldSelectionModals';
 import FcomOverrideRemovalModals from './features/fcom/FcomOverrideRemovalModals';
+import FcomTrapVariablesModal from './features/fcom/FcomTrapVariablesModal';
 import useFcomBuilderContextValue from './features/fcom/builder/useFcomBuilderContextValue';
 import type {
   FlowPaletteItem,
@@ -11284,106 +11285,24 @@ export default function App() {
                               </div>
                           </Modal>
                         )}
-                        {varModalOpen && (
-                          <div
-                            className="modal-overlay"
-                            style={getModalOverlayStyle('varModal', 2)}
-                            role="dialog"
-                            aria-modal="true"
-                          >
-                            <div className="modal modal-wide">
-                              <h3>
-                                Trap variables ({varModalVars.length})
-                                {varModalToken ? ` for ${varModalToken}` : ''}
-                              </h3>
-                              {varModalMode === 'insert' && (
-                                <p className="muted">Select a variable to insert.</p>
-                              )}
-                              {varModalVars.length === 0 ? (
-                                <div className="empty-state">No trap variables available.</div>
-                              ) : (
-                                <div className="var-list" ref={varListRef}>
-                                  {varModalVars.map((variable: any, index: number) => {
-                                    const token = `$v${index + 1}`;
-                                    const isSelected = token === varModalToken;
-                                    return (
-                                      <div
-                                        className={`trap-var${isSelected ? ' trap-var-selected' : ''}${varModalMode === 'insert' ? ' trap-var-clickable' : ''}`}
-                                        key={variable?.name || variable?.oid || index}
-                                        ref={(el) => {
-                                          varRowRefs.current[token] = el;
-                                        }}
-                                        role={varModalMode === 'insert' ? 'button' : undefined}
-                                        tabIndex={varModalMode === 'insert' ? 0 : undefined}
-                                        onClick={() => {
-                                          if (varModalMode === 'insert') {
-                                            handleVarInsertSelect(token);
-                                          }
-                                        }}
-                                        onKeyDown={(e) => {
-                                          if (
-                                            varModalMode === 'insert' &&
-                                            (e.key === 'Enter' || e.key === ' ')
-                                          ) {
-                                            e.preventDefault();
-                                            handleVarInsertSelect(token);
-                                          }
-                                        }}
-                                      >
-                                        <div className="trap-var-title">
-                                          <span className="trap-var-name">
-                                            {renderValue(variable?.name)}
-                                          </span>
-                                          <span
-                                            className={`pill${isSelected ? ' pill-selected' : ''}`}
-                                          >
-                                            {token}
-                                          </span>
-                                          {variable?.valueType && (
-                                            <span className="pill">{variable.valueType}</span>
-                                          )}
-                                        </div>
-                                        <div className="trap-var-grid">
-                                          <div className="trap-var-col">
-                                            <div className="trap-var-row">
-                                              <span className="label">OID</span>
-                                              <span className="value monospace">
-                                                {renderValue(variable?.oid)}
-                                              </span>
-                                            </div>
-                                            <div className="trap-var-row">
-                                              <span className="label">Description</span>
-                                              <span className="value">
-                                                {formatDescription(variable?.description)}
-                                              </span>
-                                            </div>
-                                          </div>
-                                          <div className="trap-var-col">
-                                            {renderEnums(variable?.enums) || (
-                                              <span className="muted">No enums</span>
-                                            )}
-                                          </div>
-                                        </div>
-                                      </div>
-                                    );
-                                  })}
-                                </div>
-                              )}
-                              <div className="modal-actions">
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    setVarModalOpen(false);
-                                    setVarModalMode('view');
-                                    setVarInsertContext(null);
-                                  }}
-                                >
-                                  Close
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        )}
+                        <FcomTrapVariablesModal
+                          open={varModalOpen}
+                          mode={varModalMode}
+                          variables={varModalVars}
+                          selectedToken={varModalToken}
+                          varListRef={varListRef}
+                          varRowRefs={varRowRefs}
+                          renderValue={renderValue}
+                          formatDescription={formatDescription}
+                          renderEnums={renderEnums}
+                          getModalOverlayStyle={getModalOverlayStyle}
+                          onInsertSelect={handleVarInsertSelect}
+                          onClose={() => {
+                            setVarModalOpen(false);
+                            setVarModalMode('view');
+                            setVarInsertContext(null);
+                          }}
+                        />
                       </div>
                     </div>
                   </div>

@@ -261,6 +261,11 @@ Validation:
   - Converted Path Help/Tool Overview overlay in `App.tsx` to shared `Modal` shell usage.
   - Result: further reduction of inline modal markup in App with field-selection modal behavior preserved via feature component composition.
   - Test Delta: Medium risk (field insertion modal filtering/selection behavior and path-help modal close/copy affordance); Add now; Coverage type: E2E (open add-field modal, select/add field, open event field picker insertion, open/close path help + copy path).
+- 2026-02-16: Item 2 continued (trap-variable modal body extraction).
+  - Added `features/fcom/FcomTrapVariablesModal.tsx` and moved trap-variable modal body markup out of `App.tsx`.
+  - Updated `App.tsx` to compose the new modal component while preserving insert-mode keyboard/click behavior and stacked overlay z-index.
+  - Result: reduced another large inline modal block in App and kept trap-variable rendering behavior feature-scoped.
+  - Test Delta: Medium risk (trap-variable selection/insert interactions + modal close reset behavior); Add now; Coverage type: E2E (open trap-variable modal in view/insert mode, select variable token, close modal and verify state reset).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.
