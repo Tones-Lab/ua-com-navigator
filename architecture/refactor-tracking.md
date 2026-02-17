@@ -282,6 +282,10 @@ Validation:
   - Migrated initial builder surfaces to shared components: `features/fcom/builder/FcomBuilderHeader.tsx`, `FcomBuilderEvalSection.tsx`, `FcomBuilderProcessorSection.tsx`, `FcomProcessorSwitchEditor.tsx`, and `FcomProcessorReviewStep.tsx`.
   - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
   - Test Delta: Medium risk (builder action controls and pill appearance in header/review flows); Add now; Coverage type: E2E (undo/redo links, advanced processor entry links, switch case add/remove actions, review JSON toggle, and header pills in v2/mixed + unsaved states).
+- 2026-02-16: Item 6 continued (flow editor builder-link standardization).
+  - Migrated `features/fcom/FcomFlowEditorModal.tsx` builder-link buttons (field reference, apply example, switch case add/remove) to shared `BuilderLink`.
+  - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
+  - Test Delta: Medium risk (flow editor switch-case actions and field-reference quick access); Add now; Coverage type: E2E (open flow editor, open field reference, apply example, add/remove switch cases).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.

@@ -1,4 +1,5 @@
 import React from 'react';
+import BuilderLink from '../../components/BuilderLink';
 import { processorHelp } from './processorHelp';
 import { processorConfigSpecs } from './processorConfig';
 import type { FlowBranchPath, FlowIfNode, FlowNode, FlowProcessorNode } from './flowUtils';
@@ -108,17 +109,17 @@ const FcomFlowEditorModal = ({
             Configure Processor
             {flowEditorDraft ? ` \u2014 ${getFlowNodeLabel(flowEditorDraft)}` : ''}
           </h3>
-          <button type="button" className="builder-link" onClick={onShowFieldReference}>
+          <BuilderLink onClick={onShowFieldReference}>
             Field reference
-          </button>
+          </BuilderLink>
         </div>
         {help && (
           <div className="builder-hint">
             <div>{help.description}</div>
             <div className="builder-example-row">
-              <button type="button" className="builder-link" onClick={applyFlowEditorExample}>
+              <BuilderLink onClick={applyFlowEditorExample}>
                 Apply example
-              </button>
+              </BuilderLink>
               <span className="builder-example-code">{help.example}</span>
             </div>
           </div>
@@ -424,9 +425,7 @@ const FcomFlowEditorModal = ({
                         />
                       </div>
                       <div className="flow-switch-case-row">
-                        <button
-                          type="button"
-                          className="builder-link"
+                        <BuilderLink
                           onClick={() =>
                             setFlowEditorDraft((prev) => {
                               if (!prev || prev.kind !== 'processor') {
@@ -446,13 +445,11 @@ const FcomFlowEditorModal = ({
                           }
                         >
                           Remove case
-                        </button>
+                        </BuilderLink>
                       </div>
                     </div>
                   ))}
-                  <button
-                    type="button"
-                    className="builder-link"
+                  <BuilderLink
                     onClick={() =>
                       setFlowEditorDraft((prev) => {
                         if (!prev || prev.kind !== 'processor') {
@@ -478,7 +475,7 @@ const FcomFlowEditorModal = ({
                     }
                   >
                     Add case
-                  </button>
+                  </BuilderLink>
                 </div>
               </div>
               <div className="builder-hint">
