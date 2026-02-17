@@ -40,6 +40,7 @@ import useFcomFileHeaderProps from './hooks/useFcomFileHeaderProps';
 import useFcomFilePreviewProps from './hooks/useFcomFilePreviewProps';
 import useFcomFlowModalStackProps from './hooks/useFcomFlowModalStackProps';
 import useFcomReviewCommitModalProps from './hooks/useFcomReviewCommitModalProps';
+import useMicroserviceModalHostProps from './hooks/useMicroserviceModalHostProps';
 import useOverviewState from './hooks/useOverviewState';
 import usePcomAdvancedSettingsModalProps from './hooks/usePcomAdvancedSettingsModalProps';
 import useRequest from './hooks/useRequest';
@@ -10537,6 +10538,33 @@ export default function App() {
     onClose: () => setShowUserMenu(false),
   });
 
+  const microserviceModalHostProps = useMicroserviceModalHostProps({
+    redeployModalOpen,
+    redeployReady,
+    showMicroserviceWarning,
+    missingMicroservices,
+    unhealthyMicroservices,
+    microserviceStatusError,
+    microserviceIsStale,
+    microserviceLastRefreshed,
+    redeployError,
+    microserviceStatusLoading,
+    requiredMicroservices,
+    microserviceActionLabel,
+    redeployLoading,
+    hasEditPermission,
+    formatTime,
+    getServiceTone,
+    getServiceStatusText,
+    handleDeployMicroservice,
+    handleRedeployMicroservice,
+    setRedeployModalOpen,
+    setRedeployError,
+    setMicroserviceActionLabel,
+    refreshMicroserviceStatus,
+    handleRedeployFcomProcessor,
+  });
+
   return (
     <ErrorBoundary>
       <div className="app">
@@ -10739,32 +10767,7 @@ export default function App() {
           )}
           <UserPreferencesModal {...userPreferencesModalProps} />
         </main>
-        <MicroserviceModalHost
-          redeployModalOpen={redeployModalOpen}
-          redeployReady={redeployReady}
-          showMicroserviceWarning={showMicroserviceWarning}
-          missingMicroservices={missingMicroservices}
-          unhealthyMicroservices={unhealthyMicroservices}
-          microserviceStatusError={microserviceStatusError}
-          microserviceIsStale={microserviceIsStale}
-          microserviceLastRefreshed={microserviceLastRefreshed}
-          redeployError={redeployError}
-          microserviceStatusLoading={microserviceStatusLoading}
-          requiredMicroservices={requiredMicroservices}
-          microserviceActionLabel={microserviceActionLabel}
-          redeployLoading={redeployLoading}
-          hasEditPermission={hasEditPermission}
-          formatTime={formatTime}
-          getServiceTone={getServiceTone}
-          getServiceStatusText={getServiceStatusText}
-          handleDeployMicroservice={handleDeployMicroservice}
-          handleRedeployMicroservice={handleRedeployMicroservice}
-          setRedeployModalOpen={setRedeployModalOpen}
-          setRedeployError={setRedeployError}
-          setMicroserviceActionLabel={setMicroserviceActionLabel}
-          refreshMicroserviceStatus={refreshMicroserviceStatus}
-          handleRedeployFcomProcessor={handleRedeployFcomProcessor}
-        />
+        <MicroserviceModalHost {...microserviceModalHostProps} />
       </div>
     </ErrorBoundary>
   );
