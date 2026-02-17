@@ -43,6 +43,7 @@ import useFcomReviewCommitModalProps from './hooks/useFcomReviewCommitModalProps
 import useMicroserviceModalHostProps from './hooks/useMicroserviceModalHostProps';
 import useMibWorkspaceProps from './hooks/useMibWorkspaceProps';
 import useOverviewState from './hooks/useOverviewState';
+import useOverviewPageProps from './hooks/useOverviewPageProps';
 import usePcomAdvancedSettingsModalProps from './hooks/usePcomAdvancedSettingsModalProps';
 import usePcomWorkspaceViewProps from './hooks/usePcomWorkspaceViewProps';
 import useRequest from './hooks/useRequest';
@@ -10681,6 +10682,24 @@ export default function App() {
     renderRawHighlightedText,
   });
 
+  const overviewPageProps = useOverviewPageProps({
+    overviewStatus,
+    overviewTopN,
+    setOverviewTopN,
+    loadOverview,
+    overviewLoading,
+    overviewVendorFilter,
+    setOverviewVendorFilter,
+    overviewError,
+    overviewData,
+    overviewProtocols,
+    formatRelativeAge,
+    formatOverviewNumber,
+    handleOverviewFolderClick,
+    toggleOverviewSort,
+    overviewVendorSort,
+  });
+
   return (
     <ErrorBoundary>
       <div className="app">
@@ -10709,23 +10728,7 @@ export default function App() {
           {isAuthenticated ? (
             <>
               {activeApp === 'overview' ? (
-                <OverviewPage
-                  overviewStatus={overviewStatus}
-                  overviewTopN={overviewTopN}
-                  setOverviewTopN={setOverviewTopN}
-                  loadOverview={loadOverview}
-                  overviewLoading={overviewLoading}
-                  overviewVendorFilter={overviewVendorFilter}
-                  setOverviewVendorFilter={setOverviewVendorFilter}
-                  overviewError={overviewError}
-                  overviewData={overviewData}
-                  overviewProtocols={overviewProtocols}
-                  formatRelativeAge={formatRelativeAge}
-                  formatOverviewNumber={formatOverviewNumber}
-                  handleOverviewFolderClick={handleOverviewFolderClick}
-                  toggleOverviewSort={toggleOverviewSort}
-                  overviewVendorSort={overviewVendorSort}
-                />
+                <OverviewPage {...overviewPageProps} />
               ) : activeApp === 'fcom' ? (
                 <div className="split-layout">
                   <FcomBrowserPanel {...comBrowserPanelProps} />

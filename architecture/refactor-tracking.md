@@ -468,6 +468,11 @@ Validation:
   - Updated `App.tsx` to pass a single spread object (`pcomWorkspaceViewProps`) while preserving browser/preview wiring and object-selection controls.
   - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
   - Test Delta: Low risk (code-movement extraction for prop assembly); Add now; Coverage type: UI sanity (PCOM tab file open, object selection, friendly/raw preview toggles, and raw-match navigation controls).
+- 2026-02-17: Post-item cleanup (Overview page props hook extraction from App).
+  - Added `hooks/useOverviewPageProps.ts` and moved `OverviewPage` prop object assembly out of `App.tsx`.
+  - Updated `App.tsx` to pass a single spread object (`overviewPageProps`) while preserving overview filters, sorting, and folder navigation wiring.
+  - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
+  - Test Delta: Low risk (code-movement extraction for prop assembly); Add now; Coverage type: UI sanity (overview load/top-N controls, vendor filter/sort, and folder drilldown behavior).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.
