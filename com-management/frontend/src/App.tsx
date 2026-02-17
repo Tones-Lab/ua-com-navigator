@@ -21,6 +21,7 @@ import type {
   ProcessorCatalogItem,
 } from './features/fcom/builder/types';
 import ComFilePreview from './components/ComFilePreview';
+import ConfirmModal from './components/ConfirmModal';
 import ActionRow from './components/ActionRow';
 import useCompactPanel from './components/useCompactPanel';
 import Modal from './components/Modal';
@@ -11040,34 +11041,24 @@ export default function App() {
                           getModalOverlayStyle={getModalOverlayStyle}
                           onClose={() => setShowFieldReferenceModal(false)}
                         />
-                        {builderSwitchModal.open && (
-                          <Modal ariaLabel="Switch builder type">
-                              <h3>Switch builder type</h3>
-                              <p>
-                                Switch from {builderSwitchModal.from} to {builderSwitchModal.to}?
-                                This will replace the current configuration.
-                              </p>
-                              <div className="modal-actions">
-                                <button
-                                  type="button"
-                                  onClick={() => setBuilderSwitchModal({ open: false })}
-                                >
-                                  Cancel
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    if (builderSwitchModal.to) {
-                                      applyBuilderTypeSwitch(builderSwitchModal.to);
-                                    }
-                                    setBuilderSwitchModal({ open: false });
-                                  }}
-                                >
-                                  Switch
-                                </button>
-                              </div>
-                          </Modal>
-                        )}
+                        <ConfirmModal
+                          open={builderSwitchModal.open}
+                          title="Switch builder type"
+                          message={
+                            <>
+                              Switch from {builderSwitchModal.from} to {builderSwitchModal.to}? This
+                              will replace the current configuration.
+                            </>
+                          }
+                          onCancel={() => setBuilderSwitchModal({ open: false })}
+                          onConfirm={() => {
+                            if (builderSwitchModal.to) {
+                              applyBuilderTypeSwitch(builderSwitchModal.to);
+                            }
+                            setBuilderSwitchModal({ open: false });
+                          }}
+                          confirmLabel="Switch"
+                        />
                         {removeOverrideModal.open && (
                           <div className="modal-overlay" role="dialog" aria-modal="true">
                             <div className="modal">
@@ -11172,100 +11163,63 @@ export default function App() {
                             <div className="floating-help-code">{processorTooltip.example}</div>
                           </div>
                         )}
-                        {panelNavWarning.open && (
-                          <Modal ariaLabel="Unsaved panel edits">
-                              <h3>Unsaved panel edits</h3>
-                              <p>Please save or cancel the panel edits before navigating away.</p>
-                              <div className="modal-actions">
-                                <button
-                                  type="button"
-                                  onClick={() =>
-                                    setPanelNavWarning((prev) => ({ ...prev, open: false }))
-                                  }
-                                >
-                                  OK
-                                </button>
-                              </div>
-                          </Modal>
-                        )}
-                        {pendingNav && (
-                          <Modal ariaLabel="Unsaved changes">
-                              <h3>Unsaved changes</h3>
-                              <p>You have unsaved changes. Discard and navigate away?</p>
-                              <div className="modal-actions">
-                                <button type="button" onClick={() => setPendingNav(null)}>
-                                  Cancel
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    const action = pendingNav;
-                                    setPendingNav(null);
-                                    discardAllEdits();
-                                    if (action) {
-                                      action();
-                                    }
-                                  }}
-                                >
-                                  Discard
-                                </button>
-                              </div>
-                          </Modal>
-                        )}
-                        {pendingCancel && (
-                          <Modal ariaLabel="Discard changes">
-                              <h3>Discard changes?</h3>
-                              <p>You have unsaved changes. Discard them?</p>
-                              <div className="modal-actions">
-                                <button type="button" onClick={() => setPendingCancel(null)}>
-                                  Cancel
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    const next = pendingCancel;
-                                    setPendingCancel(null);
-                                    if (!next) {
-                                      return;
-                                    }
-                                    if (next.type === 'builder') {
-                                      closeBuilder();
-                                      return;
-                                    }
-                                    if (next.type === 'panel' && next.panelKey) {
-                                      discardEventEdit(next.panelKey);
-                                    }
-                                  }}
-                                >
-                                  Discard
-                                </button>
-                              </div>
-                          </Modal>
-                        )}
-                        {pendingReviewDiscard && (
-                          <Modal ariaLabel="Discard staged changes">
-                              <h3>Discard changes?</h3>
-                              <p>Discard all staged changes?</p>
-                              <div className="modal-actions">
-                                <button
-                                  type="button"
-                                  onClick={() => setPendingReviewDiscard(false)}
-                                >
-                                  Cancel
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    setPendingReviewDiscard(false);
-                                    discardAllEdits();
-                                    setShowReviewModal(false);
-                                  }}
-                                >
-                                  Discard
-                                </button>
-                              </div>
-                          </Modal>
-                        )}
+                        <ConfirmModal
+                          open={panelNavWarning.open}
+                          title="Unsaved panel edits"
+                          message="Please save or cancel the panel edits before navigating away."
+                          onConfirm={() =>
+                            setPanelNavWarning((prev) => ({ ...prev, open: false }))
+                          }
+                          confirmLabel="OK"
+                        />
+                        <ConfirmModal
+                          open={Boolean(pendingNav)}
+                          title="Unsaved changes"
+                          message="You have unsaved changes. Discard and navigate away?"
+                          onCancel={() => setPendingNav(null)}
+                          onConfirm={() => {
+                            const action = pendingNav;
+                            setPendingNav(null);
+                            discardAllEdits();
+                            if (action) {
+                              action();
+                            }
+                          }}
+                          confirmLabel="Discard"
+                        />
+                        <ConfirmModal
+                          open={Boolean(pendingCancel)}
+                          title="Discard changes?"
+                          message="You have unsaved changes. Discard them?"
+                          onCancel={() => setPendingCancel(null)}
+                          onConfirm={() => {
+                            const next = pendingCancel;
+                            setPendingCancel(null);
+                            if (!next) {
+                              return;
+                            }
+                            if (next.type === 'builder') {
+                              closeBuilder();
+                              return;
+                            }
+                            if (next.type === 'panel' && next.panelKey) {
+                              discardEventEdit(next.panelKey);
+                            }
+                          }}
+                          confirmLabel="Discard"
+                        />
+                        <ConfirmModal
+                          open={pendingReviewDiscard}
+                          title="Discard changes?"
+                          message="Discard all staged changes?"
+                          onCancel={() => setPendingReviewDiscard(false)}
+                          onConfirm={() => {
+                            setPendingReviewDiscard(false);
+                            discardAllEdits();
+                            setShowReviewModal(false);
+                          }}
+                          confirmLabel="Discard"
+                        />
                         {saveLoading && (
                           <div className="save-overlay" aria-live="polite" aria-busy="true">
                             <div className="save-overlay-card">

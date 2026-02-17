@@ -246,6 +246,11 @@ Validation:
   - Updated `App.tsx` to compose these dedicated modal components instead of inline body markup.
   - Result: modal body ownership moved further toward feature-scoped components with no behavior changes.
   - Test Delta: Medium risk (modal content rendering + close handlers + stacked field reference visibility); Add now; Coverage type: E2E (open/close Builder Help and Field Reference while Advanced Flow/Flow Editor are open).
+- 2026-02-16: Item 2 continued (shared confirm modal extraction).
+  - Added `components/ConfirmModal.tsx` as a shared confirm-dialog shell over `components/Modal.tsx`.
+  - Replaced repeated App inline confirm modal bodies (builder type switch, panel-nav warning, unsaved navigation, pending cancel, pending review discard) with `ConfirmModal` composition.
+  - Result: duplicated confirm-dialog body markup reduced and modal action semantics standardized across common confirm flows.
+  - Test Delta: Medium risk (confirm-dialog action wiring and cancel/confirm labels); Add now; Coverage type: E2E (trigger each converted confirm path and verify cancel/confirm side effects).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.
