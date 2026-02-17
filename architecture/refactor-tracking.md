@@ -45,7 +45,7 @@ Validation:
 - Re-run lint and build.
 
 ### 2) Modal system standardization
-Status: Not Started
+Status: In Progress
 Scope: Create shared modal shells + stack manager; move each modal body into its own component.
 Validation:
 - Open each modal and confirm layout and close behavior:
@@ -234,6 +234,18 @@ Validation:
   - Updated `App.tsx` to consume the staged-review UI hook and removed duplicate inline effect orchestration.
   - Result: Item 1 scope is complete; App now primarily composes extracted feature modules/hooks for browse/deeplink, staged review model/state, MIB, Legacy, and advanced flow concerns.
   - Test Delta: High risk (review CTA pulse + review section expansion behavior); Add now; Coverage type: E2E (staged changes present/absent pulse behavior, review modal first-open section defaults, original diff toggle persistence).
+- 2026-02-16: Item 2 kickoff (modal shell + stack manager standardization).
+  - Added `hooks/useModalStack.ts` and moved modal z-index stack bookkeeping (`updateModalStack` + `getModalOverlayStyle`) out of `App.tsx`.
+  - Extended shared `components/Modal.tsx` with `style` support for stacked overlay cases.
+  - Switched multiple App inline overlays to shared `Modal` shell (Builder Help, Field Reference, builder-switch confirm, and unsaved-change confirmation dialogs).
+  - Result: modal shell usage is now more consistent and stack behavior is centralized behind a dedicated hook.
+  - Test Delta: Medium risk (modal layering and close-action parity across converted dialogs); Add now; Coverage type: E2E (open/close converted dialogs + verify stacked field-reference overlay above advanced flow/editor modals).
+- 2026-02-16: Item 2 continued (modal body component extraction).
+  - Added `features/fcom/FcomBuilderHelpModal.tsx` and moved Builder Help modal body out of `App.tsx`.
+  - Added `features/fcom/FcomFieldReferenceModal.tsx` and moved Field Reference modal body out of `App.tsx` while preserving stacked overlay styling via shared modal stack styles.
+  - Updated `App.tsx` to compose these dedicated modal components instead of inline body markup.
+  - Result: modal body ownership moved further toward feature-scoped components with no behavior changes.
+  - Test Delta: Medium risk (modal content rendering + close handlers + stacked field reference visibility); Add now; Coverage type: E2E (open/close Builder Help and Field Reference while Advanced Flow/Flow Editor are open).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.

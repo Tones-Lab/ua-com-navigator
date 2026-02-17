@@ -12,6 +12,8 @@ import FcomBuilderSidebar from './features/fcom/FcomBuilderSidebar';
 import FcomRawPreview from './features/fcom/FcomRawPreview';
 import FcomAdvancedFlowModal from './features/fcom/FcomAdvancedFlowModal';
 import FcomFlowEditorModal from './features/fcom/FcomFlowEditorModal';
+import FcomBuilderHelpModal from './features/fcom/FcomBuilderHelpModal';
+import FcomFieldReferenceModal from './features/fcom/FcomFieldReferenceModal';
 import useFcomBuilderContextValue from './features/fcom/builder/useFcomBuilderContextValue';
 import type {
   FlowPaletteItem,
@@ -32,6 +34,7 @@ import useBrowseDeepLink from './hooks/useBrowseDeepLink';
 import useOverviewState from './hooks/useOverviewState';
 import useRequest from './hooks/useRequest';
 import useSearchState from './hooks/useSearchState';
+import useModalStack from './hooks/useModalStack';
 import useStagedReviewUiState from './hooks/useStagedReviewUiState';
 import {
   appendNodeAtPath,
@@ -834,7 +837,6 @@ export default function App() {
   const [advancedFlowDefaultTarget, setAdvancedFlowDefaultTarget] = useState<string | null>(null);
   const [advancedFlowNotice, setAdvancedFlowNotice] = useState<string | null>(null);
   const [showAdvancedFlowJsonPreview, setShowAdvancedFlowJsonPreview] = useState(false);
-  const [modalStack, setModalStack] = useState<string[]>([]);
   const flowEditorModalRef = useRef<HTMLDivElement | null>(null);
   const advancedFlowModalRef = useRef<HTMLDivElement | null>(null);
   const trapModalRef = useRef<HTMLDivElement | null>(null);
@@ -862,6 +864,7 @@ export default function App() {
     y: number;
   } | null>(null);
   const [builderLiteralText, setBuilderLiteralText] = useState('');
+  const { updateModalStack, getModalOverlayStyle } = useModalStack();
   const [builderSwitchModal, setBuilderSwitchModal] = useState<{
     open: boolean;
     from?: 'eval' | 'processor' | 'literal' | null;
@@ -6506,22 +6509,6 @@ export default function App() {
     selectedFile.PathID === highlightPathId,
   );
 
-  const modalBaseZ = 1200;
-  const modalStepZ = 10;
-  const updateModalStack = (id: string, open: boolean) => {
-    setModalStack((prev) => {
-      if (open) {
-        return prev.includes(id) ? prev : [...prev, id];
-      }
-      return prev.filter((entry) => entry !== id);
-    });
-  };
-  const getModalOverlayStyle = (id: string, fallbackLevel = 0) => {
-    const index = modalStack.indexOf(id);
-    const level = index >= 0 ? index : fallbackLevel;
-    return { zIndex: modalBaseZ + level * modalStepZ };
-  };
-
   const triggerValidationPulse = (container: HTMLElement | null) => {
     if (!container) {
       return;
@@ -10950,50 +10937,10 @@ export default function App() {
                               )}
                           </Modal>
                         )}
-                        {showBuilderHelpModal && (
-                          <div className="modal-overlay" role="dialog" aria-modal="true">
-                            <div className="modal modal-wide">
-                              <h3>Builder Help</h3>
-                              <div className="builder-help-section">
-                                <h4>Processor Builder</h4>
-                                <p>
-                                  Use processors to transform or set event fields after a match.
-                                  Select a processor, configure inputs, and review the generated
-                                  JSON before applying.
-                                </p>
-                                <ul>
-                                  <li>
-                                    <strong>Set</strong>: assign a literal or copy from a field
-                                    path.
-                                  </li>
-                                  <li>
-                                    <strong>Regex</strong>: extract a value using a capture group.
-                                  </li>
-                                </ul>
-                              </div>
-                              <div className="builder-help-section">
-                                <h4>Eval Builder</h4>
-                                <p>
-                                  Use Friendly for guided conditions or Regular for raw expressions.
-                                  Click $v tokens to see trap variable details.
-                                </p>
-                              </div>
-                              <div className="builder-help-section">
-                                <h4>References</h4>
-                                <p>Docs: architecture/FCOM_Curation_UI_Plan.md</p>
-                                <p>UA REST/processor docs (internal UA documentation).</p>
-                              </div>
-                              <div className="modal-actions">
-                                <button
-                                  type="button"
-                                  onClick={() => setShowBuilderHelpModal(false)}
-                                >
-                                  Close
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        )}
+                        <FcomBuilderHelpModal
+                          open={showBuilderHelpModal}
+                          onClose={() => setShowBuilderHelpModal(false)}
+                        />
                         <FcomAdvancedFlowModal
                           showAdvancedProcessorModal={showAdvancedProcessorModal}
                           pendingAdvancedFlowClose={pendingAdvancedFlowClose}
@@ -11085,67 +11032,16 @@ export default function App() {
                           onCancelFlowEditor={handleCancelFlowEditor}
                           onSaveFlowEditor={handleSaveFlowEditor}
                         />
-                        {showFieldReferenceModal && (
-                          <div
-                            className={`modal-overlay${
-                              showAdvancedProcessorModal || flowEditor ? ' modal-overlay-top' : ''
-                            }`}
-                            style={getModalOverlayStyle('fieldReference', 2)}
-                            role="dialog"
-                            aria-modal="true"
-                          >
-                            <div className="modal modal-wide">
-                              <h3>Field Reference</h3>
-                              <div className="field-reference">
-                                <div className="field-reference-section">
-                                  <div className="field-reference-title">Common JSON paths</div>
-                                  <ul>
-                                    <li>$.event.* (post scope event fields)</li>
-                                    <li>$.trap.*, $.syslog.* (method-specific inputs)</li>
-                                    <li>$.localmem.* (per-event memory)</li>
-                                    <li>$.globalmem.* (requires Coherence)</li>
-                                    <li>$.lookups.&lt;lookup&gt;.&lt;key&gt;</li>
-                                    <li>$.foreach.&lt;keyField|valField&gt;</li>
-                                    <li>$.error.message</li>
-                                  </ul>
-                                </div>
-                                <div className="field-reference-section">
-                                  <div className="field-reference-title">
-                                    Event fields (from this file)
-                                  </div>
-                                  {availableEventFields.length === 0 ? (
-                                    <div className="field-reference-empty">
-                                      No event fields found in this file.
-                                    </div>
-                                  ) : (
-                                    <div className="field-reference-grid">
-                                      {availableEventFields.map((field) => (
-                                        <span
-                                          key={field}
-                                          className="field-reference-chip"
-                                          title={getEventFieldDescription(field)}
-                                        >
-                                          $.event.{field}
-                                        </span>
-                                      ))}
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                              <div className="modal-actions">
-                                <button
-                                  type="button"
-                                  onClick={() => setShowFieldReferenceModal(false)}
-                                >
-                                  Close
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        )}
+                        <FcomFieldReferenceModal
+                          open={showFieldReferenceModal}
+                          hasModalOnTop={Boolean(showAdvancedProcessorModal || flowEditor)}
+                          availableEventFields={availableEventFields}
+                          getEventFieldDescription={getEventFieldDescription}
+                          getModalOverlayStyle={getModalOverlayStyle}
+                          onClose={() => setShowFieldReferenceModal(false)}
+                        />
                         {builderSwitchModal.open && (
-                          <div className="modal-overlay" role="dialog" aria-modal="true">
-                            <div className="modal">
+                          <Modal ariaLabel="Switch builder type">
                               <h3>Switch builder type</h3>
                               <p>
                                 Switch from {builderSwitchModal.from} to {builderSwitchModal.to}?
@@ -11170,8 +11066,7 @@ export default function App() {
                                   Switch
                                 </button>
                               </div>
-                            </div>
-                          </div>
+                          </Modal>
                         )}
                         {removeOverrideModal.open && (
                           <div className="modal-overlay" role="dialog" aria-modal="true">
@@ -11278,8 +11173,7 @@ export default function App() {
                           </div>
                         )}
                         {panelNavWarning.open && (
-                          <div className="modal-overlay" role="dialog" aria-modal="true">
-                            <div className="modal">
+                          <Modal ariaLabel="Unsaved panel edits">
                               <h3>Unsaved panel edits</h3>
                               <p>Please save or cancel the panel edits before navigating away.</p>
                               <div className="modal-actions">
@@ -11292,12 +11186,10 @@ export default function App() {
                                   OK
                                 </button>
                               </div>
-                            </div>
-                          </div>
+                          </Modal>
                         )}
                         {pendingNav && (
-                          <div className="modal-overlay" role="dialog" aria-modal="true">
-                            <div className="modal">
+                          <Modal ariaLabel="Unsaved changes">
                               <h3>Unsaved changes</h3>
                               <p>You have unsaved changes. Discard and navigate away?</p>
                               <div className="modal-actions">
@@ -11318,12 +11210,10 @@ export default function App() {
                                   Discard
                                 </button>
                               </div>
-                            </div>
-                          </div>
+                          </Modal>
                         )}
                         {pendingCancel && (
-                          <div className="modal-overlay" role="dialog" aria-modal="true">
-                            <div className="modal">
+                          <Modal ariaLabel="Discard changes">
                               <h3>Discard changes?</h3>
                               <p>You have unsaved changes. Discard them?</p>
                               <div className="modal-actions">
@@ -11350,12 +11240,10 @@ export default function App() {
                                   Discard
                                 </button>
                               </div>
-                            </div>
-                          </div>
+                          </Modal>
                         )}
                         {pendingReviewDiscard && (
-                          <div className="modal-overlay" role="dialog" aria-modal="true">
-                            <div className="modal">
+                          <Modal ariaLabel="Discard staged changes">
                               <h3>Discard changes?</h3>
                               <p>Discard all staged changes?</p>
                               <div className="modal-actions">
@@ -11376,8 +11264,7 @@ export default function App() {
                                   Discard
                                 </button>
                               </div>
-                            </div>
-                          </div>
+                          </Modal>
                         )}
                         {saveLoading && (
                           <div className="save-overlay" aria-live="polite" aria-busy="true">
