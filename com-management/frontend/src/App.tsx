@@ -35,6 +35,7 @@ import useFavorites from './hooks/useFavorites';
 import useBrowseDeepLink from './hooks/useBrowseDeepLink';
 import useBuilderSidebar from './hooks/useBuilderSidebar';
 import useComBrowserPanelProps from './hooks/useComBrowserPanelProps';
+import useFcomFileHeaderProps from './hooks/useFcomFileHeaderProps';
 import useFcomFilePreviewProps from './hooks/useFcomFilePreviewProps';
 import useOverviewState from './hooks/useOverviewState';
 import useRequest from './hooks/useRequest';
@@ -10207,6 +10208,42 @@ export default function App() {
     renderRawHighlightedText,
   });
 
+  const fcomFileHeaderProps = useFcomFileHeaderProps({
+    selectedFile,
+    browseNode,
+    isFavorite,
+    toggleFavorite,
+    formatDisplayPath,
+    fileMethod: fileMethodInfo.method,
+    fileSubMethod: fileMethodInfo.subMethod,
+    overrideInfo,
+    overrideError,
+    hasLocalOverrides,
+    viewMode,
+    setViewMode,
+    openAdvancedFlowModal,
+    hasEditPermission,
+    showTestControls: isTrapFileContext,
+    onTestFile: handleTestCurrentFile,
+    fileTestLoading: selectedFile?.PathID ? isFileTestLoading(selectedFile.PathID) : false,
+    fileTestLabel: selectedFile?.PathID ? getVendorFromPath(selectedFile.PathID) : '',
+    reviewCtaPulse,
+    setReviewStep,
+    setShowReviewModal,
+    hasStagedChanges,
+    stagedDiff,
+    hasGlobalAdvancedFlow,
+    fileError,
+    saveError,
+    saveSuccess,
+    overrideSaveStatus: overrideSaveDisplayStatus,
+    saveLoading,
+    stagedToast,
+    highlightQuery,
+    highlightFileName,
+    fileNamePingActive,
+  });
+
   return (
     <ErrorBoundary>
       <div className="app">
@@ -10278,45 +10315,7 @@ export default function App() {
                             isFileTesting={isFileTestLoading}
                           />
                         )}
-                        <FcomFileHeader
-                          selectedFile={selectedFile}
-                          browseNode={browseNode}
-                          isFavorite={isFavorite}
-                          toggleFavorite={toggleFavorite}
-                          formatDisplayPath={formatDisplayPath}
-                          fileMethod={fileMethodInfo.method}
-                          fileSubMethod={fileMethodInfo.subMethod}
-                          overrideInfo={overrideInfo}
-                          overrideError={overrideError}
-                          hasLocalOverrides={hasLocalOverrides}
-                          viewMode={viewMode}
-                          setViewMode={setViewMode}
-                          openAdvancedFlowModal={openAdvancedFlowModal}
-                          hasEditPermission={hasEditPermission}
-                          showTestControls={isTrapFileContext}
-                          onTestFile={handleTestCurrentFile}
-                          fileTestLoading={
-                            selectedFile?.PathID ? isFileTestLoading(selectedFile.PathID) : false
-                          }
-                          fileTestLabel={
-                            selectedFile?.PathID ? getVendorFromPath(selectedFile.PathID) : ''
-                          }
-                          reviewCtaPulse={reviewCtaPulse}
-                          setReviewStep={setReviewStep}
-                          setShowReviewModal={setShowReviewModal}
-                          hasStagedChanges={hasStagedChanges}
-                          stagedDiff={stagedDiff}
-                          hasGlobalAdvancedFlow={hasGlobalAdvancedFlow}
-                          fileError={fileError}
-                          saveError={saveError}
-                          saveSuccess={saveSuccess}
-                          overrideSaveStatus={overrideSaveDisplayStatus}
-                          saveLoading={saveLoading}
-                          stagedToast={stagedToast}
-                          highlightQuery={highlightQuery}
-                          highlightFileName={highlightFileName}
-                          fileNamePingActive={fileNamePingActive}
-                        />
+                        <FcomFileHeader {...fcomFileHeaderProps} />
                         <FcomFilePreview {...fcomFilePreviewProps} />
                         <FcomReviewCommitModal
                           open={showReviewModal}
