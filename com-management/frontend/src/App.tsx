@@ -20,6 +20,7 @@ import useCacheStatus from './hooks/useCacheStatus';
 import useFavorites from './hooks/useFavorites';
 import useBrowseDeepLink from './hooks/useBrowseDeepLink';
 import useAppHeaderProps from './hooks/useAppHeaderProps';
+import useAuthenticatedMainContentProps from './hooks/useAuthenticatedMainContentProps';
 import useBuilderSidebar from './hooks/useBuilderSidebar';
 import useComBrowserPanelProps from './hooks/useComBrowserPanelProps';
 import useFcomAuxOverlaysProps from './hooks/useFcomAuxOverlaysProps';
@@ -10729,7 +10730,7 @@ export default function App() {
     onLogout: handleLogout,
   });
 
-  const authenticatedMainContentProps = {
+  const authenticatedMainContentProps = useAuthenticatedMainContentProps({
     isAuthenticated,
     activeApp,
     overviewPageProps,
@@ -10746,7 +10747,7 @@ export default function App() {
     trapComposerModalProps,
     pcomAdvancedSettingsModalProps,
     signInScreenProps,
-  };
+  });
 
   return (
     <ErrorBoundary>
