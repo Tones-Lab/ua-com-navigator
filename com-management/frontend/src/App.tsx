@@ -34,6 +34,7 @@ import PcomAdvancedSettingsModal from './features/mib/PcomAdvancedSettingsModal'
 import useCacheStatus from './hooks/useCacheStatus';
 import useFavorites from './hooks/useFavorites';
 import useBrowseDeepLink from './hooks/useBrowseDeepLink';
+import useComBrowserPanelProps from './hooks/useComBrowserPanelProps';
 import useOverviewState from './hooks/useOverviewState';
 import useRequest from './hooks/useRequest';
 import useSearchState from './hooks/useSearchState';
@@ -10087,7 +10088,7 @@ export default function App() {
     />
   );
 
-  const comBrowserPanelProps = {
+  const comBrowserPanelProps = useComBrowserPanelProps({
     hasEditPermission,
     setShowPathModal,
     breadcrumbs,
@@ -10098,7 +10099,7 @@ export default function App() {
     setSearchScope,
     handleSearchSubmit,
     searchLoading,
-    handleClearSearch: clearSearch,
+    clearSearch,
     handleResetNavigation,
     favoritesFolders,
     favoritesFiles,
@@ -10115,7 +10116,7 @@ export default function App() {
     entries,
     isFolder,
     handleOpenFile,
-  };
+  });
 
   return (
     <ErrorBoundary>
