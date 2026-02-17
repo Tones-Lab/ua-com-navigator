@@ -513,6 +513,11 @@ Validation:
   - Updated `App.tsx` to call `useMicroserviceModalHostArgs` and pass the returned object into `useMicroserviceModalHostProps`.
   - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
   - Test Delta: Low risk (code-movement extraction for args assembly); Add now; Coverage type: UI sanity (microservice modal data rendering and deploy/redeploy/refresh handler wiring parity).
+- 2026-02-17: Post-item cleanup (MIB workspace args hook extraction from App).
+  - Added `hooks/useMibWorkspaceArgs.ts` and moved `useMibWorkspaceProps(...)` argument assembly out of `App.tsx`.
+  - Updated `App.tsx` to call `useMibWorkspaceArgs` and pass the returned object into `useMibWorkspaceProps`.
+  - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
+  - Test Delta: Low risk (code-movement extraction for args assembly); Add now; Coverage type: UI sanity (MIB workspace data/handler wiring parity for browse/search/details and PCOM poll controls).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.

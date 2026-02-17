@@ -31,6 +31,7 @@ import useFcomFolderOverviewProps from './hooks/useFcomFolderOverviewProps';
 import useFcomReviewCommitModalProps from './hooks/useFcomReviewCommitModalProps';
 import useMicroserviceModalHostArgs from './hooks/useMicroserviceModalHostArgs';
 import useMicroserviceModalHostProps from './hooks/useMicroserviceModalHostProps';
+import useMibWorkspaceArgs from './hooks/useMibWorkspaceArgs';
 import useMibWorkspaceProps from './hooks/useMibWorkspaceProps';
 import useOverviewState from './hooks/useOverviewState';
 import useOverviewPageProps from './hooks/useOverviewPageProps';
@@ -10561,7 +10562,7 @@ export default function App() {
 
   const microserviceModalHostProps = useMicroserviceModalHostProps(microserviceModalHostArgs);
 
-  const mibWorkspaceProps = useMibWorkspaceProps({
+  const mibWorkspaceArgs = useMibWorkspaceArgs({
     isCompactPanel,
     mibPath,
     mibSearch,
@@ -10636,6 +10637,8 @@ export default function App() {
     setMibSearch,
     setMibSearchScope,
   });
+
+  const mibWorkspaceProps = useMibWorkspaceProps(mibWorkspaceArgs);
 
   const signInScreenProps = useSignInScreenProps({
     serverId,
