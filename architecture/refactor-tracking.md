@@ -393,6 +393,11 @@ Validation:
   - Updated `App.tsx` to compose `AuthHeaderActions` while preserving indicator behavior, user-menu open flow (`flushSync`), and logout wiring.
   - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
   - Test Delta: Low risk (code-movement extraction for header action composition); Add now; Coverage type: UI sanity (header indicator opens modal, user menu opens cleanly, logout action still fires).
+- 2026-02-17: Post-item cleanup (app header shell extraction from App).
+  - Added `app/AppHeader.tsx` and moved app title + tabs + authenticated action-shell composition out of `App.tsx`.
+  - Updated `App.tsx` to render `AppHeader` while preserving tab changes, microservice-indicator open behavior, user-menu `flushSync` flow, and logout wiring.
+  - Validation: `npm run lint` and `npm run build` passed in `com-management/frontend` (existing non-blocking Vite chunk-size warning unchanged).
+  - Test Delta: Low risk (code-movement extraction for top-level header composition); Add now; Coverage type: UI sanity (tabs switch apps, header actions preserve behavior).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.

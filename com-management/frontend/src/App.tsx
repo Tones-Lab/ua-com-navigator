@@ -2,8 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { useSessionStore } from './stores';
 import api from './services/api';
-import AppTabs from './app/AppTabs';
-import AuthHeaderActions from './app/AuthHeaderActions';
+import AppHeader from './app/AppHeader';
 import MicroserviceModalHost from './app/MicroserviceModalHost';
 import SignInScreen from './app/SignInScreen';
 import UserPreferencesModal from './app/UserPreferencesModal';
@@ -10121,30 +10120,27 @@ export default function App() {
   return (
     <ErrorBoundary>
       <div className="app">
-        <header className="app-header">
-          <h1>COM Curation &amp; Management</h1>
-          {isAuthenticated && <AppTabs activeApp={activeApp} onChange={handleAppTabChange} />}
-          {isAuthenticated && (
-            <AuthHeaderActions
-              microserviceIndicatorState={microserviceIndicatorState}
-              microserviceNeedsRedeploy={microserviceNeedsRedeploy}
-              microserviceIndicatorTitle={microserviceIndicatorTitle}
-              microserviceIndicatorLabel={microserviceIndicatorLabel}
-              onOpenMicroserviceModal={() => {
-                setRedeployError(null);
-                setRedeployModalOpen(true);
-              }}
-              userName={session?.user}
-              onOpenUserMenu={() => {
-                flushSync(() => {
-                  setCacheActionMessage(null);
-                  setShowUserMenu(true);
-                });
-              }}
-              onLogout={handleLogout}
-            />
-          )}
-        </header>
+        <AppHeader
+          isAuthenticated={isAuthenticated}
+          activeApp={activeApp}
+          onTabChange={handleAppTabChange}
+          microserviceIndicatorState={microserviceIndicatorState}
+          microserviceNeedsRedeploy={microserviceNeedsRedeploy}
+          microserviceIndicatorTitle={microserviceIndicatorTitle}
+          microserviceIndicatorLabel={microserviceIndicatorLabel}
+          onOpenMicroserviceModal={() => {
+            setRedeployError(null);
+            setRedeployModalOpen(true);
+          }}
+          userName={session?.user}
+          onOpenUserMenu={() => {
+            flushSync(() => {
+              setCacheActionMessage(null);
+              setShowUserMenu(true);
+            });
+          }}
+          onLogout={handleLogout}
+        />
         <main className="app-main">
           {isAuthenticated ? (
             <>
