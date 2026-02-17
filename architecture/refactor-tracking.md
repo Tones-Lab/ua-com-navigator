@@ -256,6 +256,11 @@ Validation:
   - Updated `App.tsx` to delegate those dialogs to the feature component while preserving existing callbacks and advanced-flow handoff behavior.
   - Result: override-removal dialog ownership is now feature-scoped instead of inline in App composition.
   - Test Delta: Medium risk (remove override/remove-all confirmation behavior and Advanced Flow handoff link); Add now; Coverage type: E2E (single-field remove, remove-all, and open-advanced-flow from remove-all dialog).
+- 2026-02-16: Item 2 continued (field-selection modal extraction + path-help shell standardization).
+  - Added `features/fcom/FcomFieldSelectionModals.tsx` and moved Add Field and Event Field picker modal bodies out of `App.tsx`.
+  - Converted Path Help/Tool Overview overlay in `App.tsx` to shared `Modal` shell usage.
+  - Result: further reduction of inline modal markup in App with field-selection modal behavior preserved via feature component composition.
+  - Test Delta: Medium risk (field insertion modal filtering/selection behavior and path-help modal close/copy affordance); Add now; Coverage type: E2E (open add-field modal, select/add field, open event field picker insertion, open/close path help + copy path).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.

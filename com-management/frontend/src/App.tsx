@@ -14,6 +14,7 @@ import FcomAdvancedFlowModal from './features/fcom/FcomAdvancedFlowModal';
 import FcomFlowEditorModal from './features/fcom/FcomFlowEditorModal';
 import FcomBuilderHelpModal from './features/fcom/FcomBuilderHelpModal';
 import FcomFieldReferenceModal from './features/fcom/FcomFieldReferenceModal';
+import FcomFieldSelectionModals from './features/fcom/FcomFieldSelectionModals';
 import FcomOverrideRemovalModals from './features/fcom/FcomOverrideRemovalModals';
 import useFcomBuilderContextValue from './features/fcom/builder/useFcomBuilderContextValue';
 import type {
@@ -11213,91 +11214,28 @@ export default function App() {
                             </div>
                           </div>
                         )}
-                        {showAddFieldModal && addFieldContext && (
-                          <div className="modal-overlay" role="dialog" aria-modal="true">
-                            <div className="modal modal-wide">
-                              <h3>Add Event Field</h3>
-                              <p>Select a field from this file, or add a new one.</p>
-                              <input
-                                type="text"
-                                placeholder="Search fields"
-                                value={addFieldSearch}
-                                onChange={(e) => setAddFieldSearch(e.target.value)}
-                              />
-                              <div className="add-field-list">
-                                {availableEventFields
-                                  .filter((field) =>
-                                    field.toLowerCase().includes(addFieldSearch.toLowerCase()),
-                                  )
-                                  .map((field) => {
-                                    const contextObj = isRecord(addFieldContext.obj)
-                                      ? addFieldContext.obj
-                                      : null;
-                                    const contextEvent =
-                                      contextObj && isRecord(contextObj.event) ? contextObj.event : {};
-                                    const existingFields = new Set([
-                                      ...Object.keys(contextEvent),
-                                      ...(panelAddedFields[addFieldContext.panelKey] || []),
-                                    ]);
-                                    const isReserved = reservedEventFields.has(field);
-                                    const isExisting = existingFields.has(field);
-                                    const description = getEventFieldDescription(field);
-                                    const titleParts = [
-                                      ...(isReserved ? ['Reserved field'] : []),
-                                      ...(isExisting ? ['Already present'] : []),
-                                      ...(description ? [description] : []),
-                                    ];
-                                    return (
-                                      <button
-                                        key={field}
-                                        type="button"
-                                        className={
-                                          isReserved || isExisting
-                                            ? 'add-field-item add-field-item-disabled'
-                                            : 'add-field-item'
-                                        }
-                                        onClick={() => {
-                                          if (!isReserved && !isExisting) {
-                                            addFieldToPanel(field);
-                                          }
-                                        }}
-                                        disabled={isReserved || isExisting}
-                                        title={titleParts.join(' • ')}
-                                      >
-                                        {field}
-                                      </button>
-                                    );
-                                  })}
-                                {availableEventFields.length === 0 && (
-                                  <div className="empty-state">
-                                    No event fields found in this file.
-                                  </div>
-                                )}
-                                {addFieldSearch.trim() &&
-                                  !availableEventFields.some(
-                                    (field) =>
-                                      field.toLowerCase() === addFieldSearch.trim().toLowerCase(),
-                                  ) && (
-                                    <button
-                                      type="button"
-                                      className="add-field-item"
-                                      onClick={() => addFieldToPanel(addFieldSearch.trim())}
-                                    >
-                                      Add "{addFieldSearch.trim()}"
-                                    </button>
-                                  )}
-                              </div>
-                              <div className="modal-actions">
-                                <button type="button" onClick={() => setShowAddFieldModal(false)}>
-                                  Close
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        )}
+                        <FcomFieldSelectionModals
+                          showAddFieldModal={showAddFieldModal}
+                          addFieldContext={addFieldContext}
+                          addFieldSearch={addFieldSearch}
+                          setAddFieldSearch={setAddFieldSearch}
+                          availableEventFields={availableEventFields}
+                          panelAddedFields={panelAddedFields}
+                          reservedEventFields={reservedEventFields}
+                          getEventFieldDescription={getEventFieldDescription}
+                          addFieldToPanel={addFieldToPanel}
+                          onCloseAddField={() => setShowAddFieldModal(false)}
+                          eventFieldPickerOpen={eventFieldPickerOpen}
+                          eventFieldSearch={eventFieldSearch}
+                          setEventFieldSearch={setEventFieldSearch}
+                          handleEventFieldInsertSelect={handleEventFieldInsertSelect}
+                          onCloseEventFieldPicker={() => {
+                            setEventFieldPickerOpen(false);
+                            setEventFieldInsertContext(null);
+                          }}
+                        />
                         {showPathModal && (
-                          <div className="modal-overlay" role="dialog" aria-modal="true">
-                            <div className="modal">
+                          <Modal ariaLabel="Tool Overview">
                               <h3>Tool Overview</h3>
                               <div className="help-section">
                                 <h4>Current Path</h4>
@@ -11344,8 +11282,7 @@ export default function App() {
                                   Close
                                 </button>
                               </div>
-                            </div>
-                          </div>
+                          </Modal>
                         )}
                         {varModalOpen && (
                           <div
@@ -11439,69 +11376,6 @@ export default function App() {
                                     setVarModalOpen(false);
                                     setVarModalMode('view');
                                     setVarInsertContext(null);
-                                  }}
-                                >
-                                  Close
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-                        {eventFieldPickerOpen && (
-                          <div className="modal-overlay" role="dialog" aria-modal="true">
-                            <div className="modal modal-wide">
-                              <h3>Event Fields</h3>
-                              <input
-                                type="text"
-                                placeholder="Search event fields"
-                                value={eventFieldSearch}
-                                onChange={(e) => setEventFieldSearch(e.target.value)}
-                              />
-                              <div className="add-field-list">
-                                {availableEventFields
-                                  .filter((field) =>
-                                    field
-                                      .toLowerCase()
-                                      .includes(eventFieldSearch.trim().toLowerCase()),
-                                  )
-                                  .map((field) => (
-                                    <button
-                                      type="button"
-                                      key={field}
-                                      className="add-field-item"
-                                      onClick={() => handleEventFieldInsertSelect(field)}
-                                      title={getEventFieldDescription(field)}
-                                    >
-                                      $.event.{field}
-                                    </button>
-                                  ))}
-                                {availableEventFields.length === 0 && (
-                                  <div className="empty-state">
-                                    No event fields found in this file.
-                                  </div>
-                                )}
-                                {eventFieldSearch.trim() &&
-                                  !availableEventFields.some(
-                                    (field) =>
-                                      field.toLowerCase() === eventFieldSearch.trim().toLowerCase(),
-                                  ) && (
-                                    <button
-                                      type="button"
-                                      className="add-field-item"
-                                      onClick={() =>
-                                        handleEventFieldInsertSelect(eventFieldSearch.trim())
-                                      }
-                                    >
-                                      Add "{eventFieldSearch.trim()}"
-                                    </button>
-                                  )}
-                              </div>
-                              <div className="modal-actions">
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    setEventFieldPickerOpen(false);
-                                    setEventFieldInsertContext(null);
                                   }}
                                 >
                                   Close
