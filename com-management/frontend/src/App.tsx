@@ -32,6 +32,7 @@ import useBrowseDeepLink from './hooks/useBrowseDeepLink';
 import useOverviewState from './hooks/useOverviewState';
 import useRequest from './hooks/useRequest';
 import useSearchState from './hooks/useSearchState';
+import useStagedReviewUiState from './hooks/useStagedReviewUiState';
 import {
   appendNodeAtPath,
   removeNodeById,
@@ -718,22 +719,13 @@ export default function App() {
   const [viewMode, setViewMode] = useState<'friendly' | 'preview'>('friendly');
   const [, setOriginalText] = useState('');
   const [, setShowCommitModal] = useState(false);
-  const [showReviewModal, setShowReviewModal] = useState(false);
-  const [reviewStep, setReviewStep] = useState<'review' | 'commit'>('review');
   const [suppressVarTooltip, setSuppressVarTooltip] = useState(false);
   const [suppressEvalTooltip, setSuppressEvalTooltip] = useState(false);
   const [stagedToast, setStagedToast] = useState<string | null>(null);
-  const [reviewCtaPulse, setReviewCtaPulse] = useState(false);
   const [toastPulseAfter, setToastPulseAfter] = useState(false);
-  const [expandedOriginals, setExpandedOriginals] = useState<Record<string, boolean>>({});
-  const [stagedSectionOpen, setStagedSectionOpen] = useState<Record<string, boolean>>({});
   const toastTimeoutRef = useRef<number | null>(null);
-  const reviewModalOpenRef = useRef(false);
   const unsavedChangesRef = useRef(false);
   const pulseTimeoutRef = useRef<number | null>(null);
-  const reviewPulseIntervalRef = useRef<number | null>(null);
-  const reviewPulseTimeoutRef = useRef<number | null>(null);
-  const stagedPulseActiveRef = useRef(false);
   const [saveElapsed, setSaveElapsed] = useState(0);
   const [redeployElapsed, setRedeployElapsed] = useState(0);
   const [pendingNav, setPendingNav] = useState<null | (() => void)>(null);
@@ -8493,53 +8485,26 @@ export default function App() {
   const workingOverrides = getWorkingOverrides();
   const stagedDiff = diffOverrides(baseOverrides, workingOverrides);
   const hasStagedChanges = stagedDiff.totalChanges > 0;
-  useEffect(() => {
-    if (!hasStagedChanges || !hasEditPermission) {
-      if (reviewPulseIntervalRef.current) {
-        window.clearInterval(reviewPulseIntervalRef.current);
-        reviewPulseIntervalRef.current = null;
-      }
-      if (reviewPulseTimeoutRef.current) {
-        window.clearTimeout(reviewPulseTimeoutRef.current);
-        reviewPulseTimeoutRef.current = null;
-      }
-      stagedPulseActiveRef.current = false;
-      setReviewCtaPulse(false);
-      return;
-    }
-
-    const triggerPulse = () => {
-      setReviewCtaPulse(true);
-      if (reviewPulseTimeoutRef.current) {
-        window.clearTimeout(reviewPulseTimeoutRef.current);
-      }
-      reviewPulseTimeoutRef.current = window.setTimeout(() => {
-        setReviewCtaPulse(false);
-      }, 1400);
-    };
-
-    if (!stagedPulseActiveRef.current) {
-      triggerPulse();
-      stagedPulseActiveRef.current = true;
-    }
-
-    if (!reviewPulseIntervalRef.current) {
-      reviewPulseIntervalRef.current = window.setInterval(triggerPulse, 6000);
-    }
-
-    return () => {
-      if (reviewPulseIntervalRef.current) {
-        window.clearInterval(reviewPulseIntervalRef.current);
-        reviewPulseIntervalRef.current = null;
-      }
-      if (reviewPulseTimeoutRef.current) {
-        window.clearTimeout(reviewPulseTimeoutRef.current);
-        reviewPulseTimeoutRef.current = null;
-      }
-      stagedPulseActiveRef.current = false;
-      setReviewCtaPulse(false);
-    };
-  }, [hasStagedChanges, hasEditPermission]);
+  const stagedSectionTitles = useMemo(
+    () => stagedDiff.sections.map((section) => section.title),
+    [stagedDiff.sections],
+  );
+  const {
+    showReviewModal,
+    setShowReviewModal,
+    reviewStep,
+    setReviewStep,
+    reviewCtaPulse,
+    setReviewCtaPulse,
+    expandedOriginals,
+    setExpandedOriginals,
+    stagedSectionOpen,
+    setStagedSectionOpen,
+  } = useStagedReviewUiState({
+    hasEditPermission,
+    hasStagedChanges,
+    stagedSectionTitles,
+  });
   const stagedFieldChangeMap = useMemo(
     () => buildStagedFieldChangeMap(stagedDiff.sections),
     [stagedDiff.sections],
@@ -8605,24 +8570,6 @@ export default function App() {
       }
     };
   }, []);
-  useEffect(() => {
-    if (!showReviewModal || reviewStep !== 'review') {
-      reviewModalOpenRef.current = false;
-      return;
-    }
-    if (reviewModalOpenRef.current) {
-      return;
-    }
-    reviewModalOpenRef.current = true;
-    const openByDefault = stagedDiff.sections.length === 1;
-    const next: Record<string, boolean> = {};
-    stagedDiff.sections.forEach((section) => {
-      next[section.title] = openByDefault;
-    });
-    setStagedSectionOpen(next);
-    setExpandedOriginals({});
-  }, [showReviewModal, reviewStep, stagedDiff.sections]);
-
   const { openAdvancedFlowModal: openAdvancedFlowModalInternal, saveAdvancedFlow } =
     useAdvancedFlowOrchestration({
       selectedFile,

@@ -37,7 +37,7 @@ This document tracks refactor items and validation steps. Status values: Not Sta
 ## Items
 
 ### 1) Split App monolith by domain
-Status: In Progress
+Status: Done
 Scope: Extract MIB, FCOM, PCOM, microservice UI and side effects from App into feature modules + hooks.
 Validation:
 - Verify each app tab renders and behaves as before (Overview, FCOM, PCOM, MIB, Legacy).
@@ -229,6 +229,11 @@ Validation:
   - Updated `App.tsx` to use `buildStagedReviewDiff`, `buildStagedFieldChangeMap`, `diffLines`, and `formatDiffValue` from the feature module.
   - Result: staged review modal model logic is now feature-scoped and App keeps composition/orchestration responsibilities.
   - Test Delta: High risk (staged review diff visibility and inline change rendering); Add now; Coverage type: E2E (review modal sections + added/updated/removed field rendering across object/global overrides).
+- 2026-02-16: Item 1 completed (staged review UI orchestration hook extraction).
+  - Added `hooks/useStagedReviewUiState.ts` to own staged-review CTA pulse cadence, review modal section auto-open defaults, and review UI state slices (`showReviewModal`, `reviewStep`, `expandedOriginals`, `stagedSectionOpen`).
+  - Updated `App.tsx` to consume the staged-review UI hook and removed duplicate inline effect orchestration.
+  - Result: Item 1 scope is complete; App now primarily composes extracted feature modules/hooks for browse/deeplink, staged review model/state, MIB, Legacy, and advanced flow concerns.
+  - Test Delta: High risk (review CTA pulse + review section expansion behavior); Add now; Coverage type: E2E (staged changes present/absent pulse behavior, review modal first-open section defaults, original diff toggle persistence).
 
 ## Resume checkpoint (quick retrieval)
 - Last completed cleanup item: processor step navigation extraction + catalog/palette typing propagation.
