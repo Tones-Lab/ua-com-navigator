@@ -19,6 +19,56 @@
 	- Notes: Grounded in docs, FCOM/PCOM files, and schemas; provide guidance on processors, placement, and how-to questions.
 - Legacy rules conversion.
 	- Notes: Start with default foundation rules; evaluate converting legacy fault/performance rules into FCOM/PCOM, including older v4 SNMP polling artifacts.
+- 🔥 Legacy Conversion Projects (user-scoped rule groupings for conversion)
+	- Goal: allow users to create conversion "projects" (named collections of legacy rule files) and switch quickly between them in the Legacy UI.
+	- Problem solved:
+		- Current upload list is flat and noisy for multi-stream work.
+		- Users need isolated working sets (per customer/vendor/use case).
+		- Teams need optional collaboration on the same conversion set.
+	- MVP scope (Phase 1 - required first):
+		- Add project entity for legacy conversion:
+			- Fields: project_id, name, description, owner_user_id, created_at, updated_at, last_opened_at.
+			- Ownership default: private to owner.
+		- Project-scoped file model:
+			- Uploaded legacy files are attached to one project.
+			- Conversion runs/reports are attached to the active project.
+		- UI behavior:
+			- Add "Project switcher" in Legacy workspace.
+			- Add "Create project" and "Rename/Delete project" actions (owner only for destructive ops).
+			- Persist last active project per user/session.
+			- Legacy file panel shows files from active project only (no global file list).
+		- User scoping/security:
+			- By default, users only see their own projects/files/runs.
+			- API queries must filter by authenticated user + selected project context.
+	- Initial implementation data policy (explicit):
+		- Existing uploaded legacy files should be assigned to admin user when this feature lands.
+		- Backward-compat migration can be lightweight; full historical remap is not required.
+		- Expectation: likely cleanup/wipe of prior conversion staging data around rollout.
+	- Collaboration scope (Phase 2 - after MVP):
+		- Add project sharing between users.
+		- ACL roles:
+			- owner: full control + sharing management.
+			- editor: upload files, run conversion, edit/apply suggestions.
+			- viewer: read-only project visibility.
+		- "Share project" UX:
+			- add/remove users from project access list.
+			- explicit role assignment per user.
+	- Guardrails/behavior decisions:
+		- Deleting a project should require explicit confirmation and display impact (#files, #runs).
+		- Switching projects should never mix report state/files between projects.
+		- Legacy conversion actions (preview/create/apply) must execute only against active project assets.
+		- Read-only shared users must not see edit/apply controls.
+	- Acceptance criteria:
+		- A user can create multiple projects and switch between them without cross-project leakage.
+		- A user only sees owned projects in MVP (unless shared in Phase 2).
+		- File list and conversion reports are strictly project-scoped.
+		- Existing uploaded files appear under admin ownership after rollout.
+		- Sharing (Phase 2) allows at least two users to collaborate on one project with role enforcement.
+	- Deliverables:
+		- Backend: project CRUD + project-scoped file/run/report endpoints.
+		- Frontend: project switcher + project management UI + scoped list/report views.
+		- Security: ownership/ACL enforcement at API layer.
+		- Documentation: API + UX flow + rollout notes.
 - 🔥 Framework modernization (OJET-first, single runtime).
 	- Plan: architecture/framework-modernization-plan.md
 - 🔥 Unify Global/Object processor palettes using a single registry source-of-truth.
