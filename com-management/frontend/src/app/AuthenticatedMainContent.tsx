@@ -21,6 +21,7 @@ type AuthenticatedMainContentProps = {
   fcomAuxOverlaysProps: any;
   pcomWorkspaceViewProps: any;
   mibWorkspaceProps: any;
+  hasEditPermission: boolean;
   trapComposerModalProps: any;
   pcomAdvancedSettingsModalProps: any;
   signInScreenProps: any;
@@ -40,6 +41,7 @@ export default function AuthenticatedMainContent({
   fcomAuxOverlaysProps,
   pcomWorkspaceViewProps,
   mibWorkspaceProps,
+  hasEditPermission,
   trapComposerModalProps,
   pcomAdvancedSettingsModalProps,
   signInScreenProps,
@@ -66,7 +68,7 @@ export default function AuthenticatedMainContent({
       ) : activeApp === 'pcom' ? (
         <PcomWorkspaceView {...pcomWorkspaceViewProps} />
       ) : activeApp === 'legacy' ? (
-        <LegacyWorkspace />
+        <LegacyWorkspace hasEditPermission={hasEditPermission} />
       ) : (
         <MibWorkspace {...mibWorkspaceProps} />
       )}

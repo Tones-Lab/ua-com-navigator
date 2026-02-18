@@ -66,9 +66,10 @@
 - PCOM creation helper (UI + script):
 	- Guided creation flow for new PCOM files with validation.
 	- Scripted helper for batch/seeded creation (CLI).
-- Legacy rule to COM helper (script):
-	- Convert legacy rule formats into COM (FCOM/PCOM) with validation output.
-	- Add Legacy Conversion UI entry (tab/link) with upload stub; tie into UA assistant/chatbot or standalone script based on complexity.
+- ✅ Legacy rule to COM helper (script):
+	- ✅ Convert legacy rule formats into COM (FCOM/PCOM) with validation output.
+	- ✅ Legacy Conversion UI entry (tab/link) is implemented with upload + report workflows.
+	- ⏳ Remaining: tie into UA assistant/chatbot and add guided apply/wizard steps for unresolved logic.
 - Testing & quality:
 	- 🧪 UI testing strategy (Vitest + RTL; Playwright/Cypress for E2E).
 	- ✅ Code formatting automation (Prettier + ESLint + Husky/lint-staged).
@@ -228,7 +229,7 @@ FEATURE - P2-feature003 - NEW FEATURE - Guided edit mode with 'highlight' sectio
 
 BUG - P1-bug002 - Need to fix the folder refresh / cache - curernt broken if you click admin while selecting a folder under fcom. throw error in modal. need to resolve this.
 
-BUG - P1-bug003 -Still not showing correct count of overrides in any of the review / summmary pages - why not?
+✅ - BUG - P1-bug003 - Still not showing correct count of overrides in any of the review / summary pages - appears resolved in current build.
 
 BUG - P0-bug004 - CRITICAL - MIB Browser: SNMPtranslate numeric OID resolution is not working (no numeric OIDs shown).
 

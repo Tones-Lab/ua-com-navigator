@@ -10,6 +10,8 @@ import type {
   FavoritesResponse,
   LegacyConversionRequest,
   LegacyConversionResponse,
+  LegacyApplyFcomOverridesRequest,
+  LegacyApplyFcomOverridesResponse,
   LegacyFileReadResponse,
   LegacyUploadsResponse,
   SaveFilePayload,
@@ -248,6 +250,10 @@ class ApiClient {
 
   async runLegacyConversion(payload?: LegacyConversionRequest) {
     return this.client.post<LegacyConversionResponse>('/legacy/convert', payload || {});
+  }
+
+  async applyLegacyFcomOverrides(payload: LegacyApplyFcomOverridesRequest) {
+    return this.client.post<LegacyApplyFcomOverridesResponse>('/legacy/apply-fcom-overrides', payload);
   }
 
   async getDevices(params?: { limit?: number; start?: number }) {

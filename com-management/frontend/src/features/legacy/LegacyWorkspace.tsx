@@ -4,6 +4,7 @@ import InlineMessage from '../../components/InlineMessage';
 import PanelHeader from '../../components/PanelHeader';
 import useRequest from '../../hooks/useRequest';
 import api from '../../services/api';
+import type { LegacyApplyFcomOverridesResponse } from '../../types/api';
 import { getApiErrorMessage } from '../../utils/errorUtils';
 
 type LegacyUploadEntry = {
@@ -13,8 +14,26 @@ type LegacyUploadEntry = {
   modifiedAt: string;
 };
 
-export default function LegacyWorkspace() {
+type LegacyWorkspaceProps = {
+  hasEditPermission: boolean;
+};
+
+type SuggestedEntry = {
+  key: string;
+  sourceType: 'matched' | 'generated';
+  objectName: string;
+  sourceLabel: string;
+  fields: Array<{ field: string; value: string }>;
+  payload: Record<string, any>;
+  initialPayload: Record<string, any>;
+  initialFieldValues: Record<string, string>;
+  rawText: string;
+  rawError: string | null;
+};
+
+export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspaceProps) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const matchPanelRef = useRef<HTMLDivElement | null>(null);
   const [uploadRoot, setUploadRoot] = useState('');
   const [uploadEntries, setUploadEntries] = useState<LegacyUploadEntry[]>([]);
   const {
@@ -26,6 +45,11 @@ export default function LegacyWorkspace() {
     loading: uploading,
     error: uploadError,
     run: runUploadRequest,
+  } = useRequest();
+  const {
+    loading: applyingOverrides,
+    error: applyOverridesError,
+    run: runApplyOverridesRequest,
   } = useRequest();
   const [selectedEntry, setSelectedEntry] = useState<LegacyUploadEntry | null>(null);
   const [selectedContent, setSelectedContent] = useState('');
@@ -64,6 +88,16 @@ export default function LegacyWorkspace() {
   const [showAllMatches, setShowAllMatches] = useState(false);
   const [expandedMatches, setExpandedMatches] = useState<Record<string, boolean>>({});
   const [matchOpenError, setMatchOpenError] = useState<string | null>(null);
+  const [applyOverridesResult, setApplyOverridesResult] = useState<LegacyApplyFcomOverridesResponse | null>(
+    null,
+  );
+  const [cloudyMatchThreshold, setCloudyMatchThreshold] = useState('10');
+  const [suggestedEntries, setSuggestedEntries] = useState<SuggestedEntry[]>([]);
+  const [suggestedExpanded, setSuggestedExpanded] = useState<Record<string, boolean>>({});
+  const [suggestedRawMode, setSuggestedRawMode] = useState(false);
+  const [reviewHintText, setReviewHintText] = useState(
+    'Preview runs a dry-run and jumps to Match diffs (FCOM + Only diffs) for review.',
+  );
 
   const traversal = reportJson?.traversal;
   const traversalFiles = Array.isArray(traversal?.orderedFiles) ? traversal.orderedFiles : [];
@@ -171,6 +205,12 @@ export default function LegacyWorkspace() {
     setShowAllMatches(false);
     setExpandedMatches({});
     setMatchOpenError(null);
+    setApplyOverridesResult(null);
+    setCloudyMatchThreshold('10');
+    setSuggestedEntries([]);
+    setSuggestedExpanded({});
+    setSuggestedRawMode(false);
+    setReviewHintText('Preview runs a dry-run and jumps to Match diffs (FCOM + Only diffs) for review.');
   }, [reportRunId]);
 
   useEffect(() => {
@@ -374,6 +414,337 @@ export default function LegacyWorkspace() {
     }
   };
 
+  const jumpToConfirmedReview = () => {
+    setMatchSourceFilter('fcom');
+    setMatchOnlyDiffs(true);
+    setShowAllMatches(true);
+    window.setTimeout(() => {
+      matchPanelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      matchPanelRef.current?.focus({ preventScroll: true });
+    }, 80);
+  };
+
+  const extractEventFields = (payload: Record<string, any>) => {
+    if (payload?.event && typeof payload.event === 'object' && !Array.isArray(payload.event)) {
+      return Object.entries(payload.event).map(([field, value]) => ({
+        field,
+        value: value === undefined || value === null ? '' : String(value),
+      }));
+    }
+    const processors = Array.isArray(payload?.processors) ? payload.processors : [];
+    return processors
+      .map((processor: any) => {
+        const setConfig = processor?.value?.set;
+        const targetField = String(setConfig?.targetField || '');
+        if (!targetField.startsWith('$.event.')) {
+          return null;
+        }
+        return {
+          field: targetField.replace('$.event.', ''),
+          value:
+            setConfig?.source === undefined || setConfig?.source === null
+              ? ''
+              : String(setConfig.source),
+        };
+      })
+      .filter(Boolean) as Array<{ field: string; value: string }>;
+  };
+
+  const applyEventFieldsToPayload = (
+    payload: Record<string, any>,
+    fields: Array<{ field: string; value: string }>,
+  ) => {
+    const nextPayload: Record<string, any> = { ...(payload || {}) };
+    if (nextPayload.event && typeof nextPayload.event === 'object' && !Array.isArray(nextPayload.event)) {
+      const nextEvent: Record<string, string> = {};
+      fields.forEach((entry) => {
+        if (entry.field.trim()) {
+          nextEvent[entry.field.trim()] = entry.value;
+        }
+      });
+      nextPayload.event = nextEvent;
+      return nextPayload;
+    }
+    nextPayload.processors = fields
+      .filter((entry) => entry.field.trim())
+      .map((entry) => ({
+        op: 'add',
+        path: '/-',
+        value: {
+          set: {
+            source: entry.value,
+            targetField: `$.event.${entry.field.trim()}`,
+          },
+        },
+      }));
+    return nextPayload;
+  };
+
+  const deriveLegacyObjectName = (obj: any) => {
+    const ruleFunction = String(obj?.ruleFunction || '').trim();
+    if (ruleFunction && ruleFunction !== '__global__') {
+      return ruleFunction;
+    }
+    const firstOid = Array.isArray(obj?.oids) && obj.oids.length > 0 ? String(obj.oids[0]) : 'unknown';
+    return `legacy_${firstOid}`;
+  };
+
+  const getSuggestedFieldDependencies = (entry: SuggestedEntry) => {
+    const objects = Array.isArray(reportJson?.legacyObjects) ? reportJson.legacyObjects : [];
+    const sourceFiles = entry.sourceLabel
+      ? entry.sourceLabel.split(',').map((value) => value.trim()).filter(Boolean)
+      : [];
+    const related = objects.filter((obj: any) => {
+      const sameName = deriveLegacyObjectName(obj) === entry.objectName;
+      if (!sameName) {
+        return false;
+      }
+      if (sourceFiles.length === 0) {
+        return true;
+      }
+      return sourceFiles.includes(String(obj?.sourceFile || ''));
+    });
+    const fields = new Set<string>();
+    related.forEach((obj: any) => {
+      const objFields = Array.isArray(obj?.eventFields) ? obj.eventFields : [];
+      objFields.forEach((field: string) => {
+        const normalized = String(field || '').trim();
+        if (normalized) {
+          fields.add(normalized);
+        }
+      });
+    });
+    return Array.from(fields).sort((a, b) => a.localeCompare(b));
+  };
+
+  const getReferenceOnlyFieldRows = (entry: SuggestedEntry, dependencyFields: string[]) => {
+    const mappedFields = new Set(entry.fields.map((item) => item.field));
+    return dependencyFields
+      .filter((field) => !mappedFields.has(field))
+      .map((field) => {
+        const normalized = field.toLowerCase();
+        let pattern = 'set + if/else processors';
+        if (normalized.includes('severity') || normalized.includes('category')) {
+          pattern = 'set + map/lookup processor';
+        } else if (
+          normalized.includes('node') ||
+          normalized.includes('subnode') ||
+          normalized.includes('alias')
+        ) {
+          pattern = 'set processor';
+        } else if (
+          normalized.includes('type') ||
+          normalized.includes('code') ||
+          normalized.includes('group') ||
+          normalized.includes('method')
+        ) {
+          pattern = 'if + map/lookup + set processors';
+        }
+        return {
+          field,
+          reason:
+            'Referenced in legacy rule context/read logic, but no direct assignment was extracted into the phase-1 COM field mapper.',
+          pattern,
+        };
+      });
+  };
+
+  const buildSuggestedEntriesFromResult = (result: LegacyApplyFcomOverridesResponse): SuggestedEntry[] => {
+    const matched = (result.overrides || []).map((entry) => {
+      const payload = { ...(entry.override || {}) };
+      const fields = extractEventFields(payload);
+      const initialPayload = JSON.parse(JSON.stringify(payload || {}));
+      const initialFieldValues = fields.reduce<Record<string, string>>((acc, item) => {
+        acc[item.field] = item.value;
+        return acc;
+      }, {});
+      return {
+        key: `matched:${entry.objectName}:${(entry.sourceFiles || []).join('|')}`,
+        sourceType: 'matched' as const,
+        objectName: entry.objectName,
+        sourceLabel: (entry.sourceFiles || []).join(', '),
+        fields,
+        payload,
+        initialPayload,
+        initialFieldValues,
+        rawText: JSON.stringify(payload, null, 2),
+        rawError: null,
+      };
+    });
+    const generated = (result.generatedDefinitions || []).map((entry) => {
+      const payload = { ...(entry.definition || {}) };
+      const fields = extractEventFields(payload);
+      const initialPayload = JSON.parse(JSON.stringify(payload || {}));
+      const initialFieldValues = fields.reduce<Record<string, string>>((acc, item) => {
+        acc[item.field] = item.value;
+        return acc;
+      }, {});
+      return {
+        key: `generated:${entry.objectName}:${entry.sourceFile}`,
+        sourceType: 'generated' as const,
+        objectName: entry.objectName,
+        sourceLabel: entry.sourceFile,
+        fields,
+        payload,
+        initialPayload,
+        initialFieldValues,
+        rawText: JSON.stringify(payload, null, 2),
+        rawError: null,
+      };
+    });
+    return [...matched, ...generated];
+  };
+
+  const buildEditedPayloadOverrides = () => {
+    const matched = suggestedEntries
+      .filter((entry) => entry.sourceType === 'matched')
+      .map((entry) => ({
+        objectName: entry.objectName,
+        sourceFiles: entry.sourceLabel
+          ? entry.sourceLabel.split(',').map((value) => value.trim()).filter(Boolean)
+          : [],
+        override: entry.payload,
+      }));
+    const generated = suggestedEntries
+      .filter((entry) => entry.sourceType === 'generated')
+      .map((entry) => ({
+        objectName: entry.objectName,
+        sourceFile: entry.sourceLabel,
+        reason: 'User-reviewed generated COM definition.',
+        definition: entry.payload,
+      }));
+    return {
+      overridesOverride: matched,
+      generatedDefinitionsOverride: generated,
+    };
+  };
+
+  const applyConfirmedOverrides = async (dryRun: boolean, autoRefresh: boolean = false) => {
+    if (!reportJson) {
+      return;
+    }
+    const parsedThreshold = Number(cloudyMatchThreshold);
+    const minScore = Number.isFinite(parsedThreshold) ? Math.max(0, parsedThreshold) : 10;
+    const resp = await runApplyOverridesRequest(
+      () =>
+        api.applyLegacyFcomOverrides({
+          report: reportJson,
+          dryRun,
+          minScore,
+          ...(!autoRefresh && suggestedEntries.length > 0 ? buildEditedPayloadOverrides() : {}),
+        }),
+      {
+        getErrorMessage: (err) =>
+          getApiErrorMessage(err, dryRun ? 'Failed to preview confirmed overrides' : 'Failed to create confirmed override bundle'),
+      },
+    );
+    if (!resp) {
+      return;
+    }
+    setApplyOverridesResult(resp.data);
+    const nextSuggestedEntries = buildSuggestedEntriesFromResult(resp.data);
+    setSuggestedEntries(nextSuggestedEntries);
+    setSuggestedExpanded((prev) => {
+      const next: Record<string, boolean> = {};
+      nextSuggestedEntries.forEach((entry, index) => {
+        next[entry.key] = prev[entry.key] ?? index < 6;
+      });
+      return next;
+    });
+    if (!autoRefresh) {
+      setReviewHintText(
+        dryRun
+          ? 'Review loaded below ↓ Match diffs is focused with FCOM + Only diffs filters.'
+          : 'Bundle created. Review loaded below ↓ Match diffs is focused with FCOM + Only diffs filters.',
+      );
+      jumpToConfirmedReview();
+    }
+    if (!dryRun) {
+      const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+      downloadJson(`confirmed-fcom-overrides-${stamp}.json`, resp.data);
+    }
+  };
+
+  useEffect(() => {
+    if (!reportJson) {
+      return;
+    }
+    const timeout = window.setTimeout(() => {
+      void applyConfirmedOverrides(true, true);
+    }, 450);
+    return () => window.clearTimeout(timeout);
+  }, [reportJson, cloudyMatchThreshold]);
+
+  const updateSuggestedField = (key: string, field: string, value: string) => {
+    setSuggestedEntries((prev) =>
+      prev.map((entry) => {
+        if (entry.key !== key) {
+          return entry;
+        }
+        const nextFields = entry.fields.map((item) =>
+          item.field === field
+            ? {
+                ...item,
+                value,
+              }
+            : item,
+        );
+        const nextPayload = applyEventFieldsToPayload(entry.payload, nextFields);
+        return {
+          ...entry,
+          fields: nextFields,
+          payload: nextPayload,
+          rawText: JSON.stringify(nextPayload, null, 2),
+          rawError: null,
+        };
+      }),
+    );
+  };
+
+  const updateSuggestedRaw = (key: string, rawText: string) => {
+    setSuggestedEntries((prev) =>
+      prev.map((entry) => {
+        if (entry.key !== key) {
+          return entry;
+        }
+        try {
+          const parsed = JSON.parse(rawText);
+          return {
+            ...entry,
+            rawText,
+            payload: parsed,
+            fields: extractEventFields(parsed),
+            rawError: null,
+          };
+        } catch {
+          return {
+            ...entry,
+            rawText,
+            rawError: 'Invalid JSON',
+          };
+        }
+      }),
+    );
+  };
+
+  const getSuggestedDirtyMeta = (entry: SuggestedEntry) => {
+    const currentFieldValues = entry.fields.reduce<Record<string, string>>((acc, item) => {
+      acc[item.field] = item.value;
+      return acc;
+    }, {});
+    const fieldKeys = Array.from(
+      new Set([...Object.keys(entry.initialFieldValues), ...Object.keys(currentFieldValues)]),
+    );
+    const changedFields = fieldKeys.filter(
+      (key) => (entry.initialFieldValues[key] ?? '') !== (currentFieldValues[key] ?? ''),
+    );
+    const payloadDirty = JSON.stringify(entry.payload) !== JSON.stringify(entry.initialPayload);
+    return {
+      changedFields,
+      dirty: payloadDirty,
+    };
+  };
+
   const downloadHint = [
     reportText ? getReportFilename('txt') : null,
     reportJson ? getReportFilename('json') : null,
@@ -447,6 +818,7 @@ export default function LegacyWorkspace() {
   });
 
   const visibleMatches = showAllMatches ? filteredMatchDiffs : filteredMatchDiffs.slice(0, 8);
+  const hasSuggestedRawErrors = suggestedEntries.some((entry) => Boolean(entry.rawError));
 
   const visibleObjects = showAllObjects ? filteredObjects : filteredObjects.slice(0, 12);
   const selectedObject = selectedObjectId
@@ -611,6 +983,24 @@ export default function LegacyWorkspace() {
               )}
               {(reportText || reportJson) && (
                 <div className="legacy-report-actions">
+                  {reportJson && (
+                    <div className="legacy-report-muted">
+                      {reviewHintText}
+                    </div>
+                  )}
+                  {reportJson && (
+                    <label className="legacy-report-hint" htmlFor="cloudy-match-threshold">
+                      Cloudy match threshold
+                      <input
+                        id="cloudy-match-threshold"
+                        className="legacy-filter-input"
+                        value={cloudyMatchThreshold}
+                        onChange={(event) => setCloudyMatchThreshold(event.target.value)}
+                        placeholder="10"
+                        inputMode="numeric"
+                      />
+                    </label>
+                  )}
                   {reportText && (
                     <button
                       type="button"
@@ -656,9 +1046,229 @@ export default function LegacyWorkspace() {
                       {showRawReport ? 'Hide raw report' : 'Show raw report'}
                     </button>
                   )}
+                  {reportJson && (
+                    <button
+                      type="button"
+                      className="ghost-button"
+                      disabled={applyingOverrides}
+                      onClick={() => applyConfirmedOverrides(true)}
+                    >
+                      {applyingOverrides ? 'Preparing…' : 'Preview confirmed FCOM overrides'}
+                    </button>
+                  )}
+                  {reportJson && (
+                    <button
+                      type="button"
+                      className="ghost-button"
+                      disabled={applyingOverrides || hasSuggestedRawErrors}
+                      title={hasSuggestedRawErrors ? 'Fix invalid JSON in suggested COM drafts first.' : ''}
+                      onClick={() => applyConfirmedOverrides(false)}
+                    >
+                      {applyingOverrides ? 'Creating…' : 'Create confirmed FCOM override bundle'}
+                    </button>
+                  )}
                   {downloadHint && (
                     <div className="legacy-report-hint">Downloads: {downloadHint}</div>
                   )}
+                </div>
+              )}
+              {applyOverridesError && <InlineMessage tone="error">{applyOverridesError}</InlineMessage>}
+              {applyOverridesResult && (
+                <InlineMessage tone="success">
+                  Existing FCOM matches: {applyOverridesResult.summary.matchedExistingFcomObjects} · Confirmed overrides:{' '}
+                  {applyOverridesResult.summary.confirmedObjects} · Generated COM definitions:{' '}
+                  {applyOverridesResult.summary.generatedDefinitions} · Conflict objects:{' '}
+                  {applyOverridesResult.summary.conflictObjects}
+                  {applyOverridesResult.outputPath ? ` · Saved: ${applyOverridesResult.outputPath}` : ''}
+                </InlineMessage>
+              )}
+              {suggestedEntries.length > 0 && (
+                <div className="legacy-object-panel">
+                  <div className="legacy-object-header">
+                    <div>
+                      <div className="legacy-report-title">Suggested COM definitions</div>
+                      <div className="legacy-report-muted">
+                        Updates live when threshold changes. {hasEditPermission ? 'Editable.' : 'Read-only access.'}
+                      </div>
+                    </div>
+                    <div className="legacy-object-actions">
+                      <div className="legacy-filter-row" role="tablist" aria-label="Suggested definition mode">
+                        <button
+                          type="button"
+                          className={`legacy-filter-chip ${!suggestedRawMode ? 'active' : ''}`}
+                          role="tab"
+                          aria-selected={!suggestedRawMode}
+                          onClick={() => setSuggestedRawMode(false)}
+                        >
+                          Friendly
+                        </button>
+                        <button
+                          type="button"
+                          className={`legacy-filter-chip ${suggestedRawMode ? 'active' : ''}`}
+                          role="tab"
+                          aria-selected={suggestedRawMode}
+                          onClick={() => setSuggestedRawMode(true)}
+                        >
+                          Raw JSON
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="legacy-match-table">
+                    {suggestedEntries.map((entry) => {
+                      const { changedFields, dirty } = getSuggestedDirtyMeta(entry);
+                      const isExpanded = suggestedExpanded[entry.key] !== false;
+                      const dependencyFields = getSuggestedFieldDependencies(entry);
+                      const referenceOnlyFields = getReferenceOnlyFieldRows(entry, dependencyFields);
+                      return (
+                        <div key={entry.key} className="legacy-match-group">
+                          <div className="legacy-match-row">
+                            <div>
+                              <div className="legacy-summary-path">{entry.objectName}</div>
+                              <div className="legacy-match-subtle">{entry.sourceLabel || 'legacy conversion'}</div>
+                              <div className="legacy-report-muted">
+                                {entry.sourceType === 'matched'
+                                  ? 'Will be emitted as a COM override (matched existing FCOM object).'
+                                  : 'Will be emitted as a generated COM definition (no existing FCOM match).'}
+                              </div>
+                            </div>
+                            <div>
+                              <span className="legacy-match-pill">
+                                {entry.sourceType === 'matched' ? 'existing match' : 'generated'}
+                              </span>
+                              {dirty && (
+                                <span className="legacy-match-pill" style={{ marginLeft: 8 }}>
+                                  Dirty ({changedFields.length})
+                                </span>
+                              )}
+                            </div>
+                            <div>{entry.fields.length} field(s)</div>
+                            <div className="legacy-match-actions">
+                              <button
+                                type="button"
+                                className="ghost-button"
+                                onClick={() =>
+                                  setSuggestedExpanded((prev) => ({
+                                    ...prev,
+                                    [entry.key]: !isExpanded,
+                                  }))
+                                }
+                              >
+                                {isExpanded ? 'Collapse' : 'Expand'}
+                              </button>
+                            </div>
+                          </div>
+                          {isExpanded &&
+                            (suggestedRawMode ? (
+                              <div className="legacy-match-details">
+                                <div className="legacy-report-muted" style={{ marginBottom: 8 }}>
+                                  Field dependencies:{' '}
+                                  {dependencyFields.length > 0
+                                    ? dependencyFields.map((field) => `$Event->{${field}}`).join(', ')
+                                    : 'Dependency mapping unavailable for this item (conversion still included).'}
+                                </div>
+                                {referenceOnlyFields.length > 0 && (
+                                  <div className="legacy-summary-table" style={{ marginBottom: 10 }}>
+                                    <div className="legacy-summary-row legacy-summary-header">
+                                      <div>Referenced only</div>
+                                      <div>Why not mapped</div>
+                                      <div>Suggested COM pattern</div>
+                                    </div>
+                                    {referenceOnlyFields.map((row) => (
+                                      <div key={`${entry.key}-raw-ref-${row.field}`} className="legacy-summary-row">
+                                        <div className="legacy-summary-path">{`$Event->{${row.field}}`}</div>
+                                        <div>{row.reason}</div>
+                                        <div>{row.pattern}</div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+                                {dependencyFields.length > 0 && referenceOnlyFields.length === 0 && (
+                                  <div className="legacy-report-muted" style={{ marginBottom: 8 }}>
+                                    All detected dependency fields are already mapped into the current COM suggestion.
+                                  </div>
+                                )}
+                                <textarea
+                                  className="code-block"
+                                  value={entry.rawText}
+                                  onChange={(event) => updateSuggestedRaw(entry.key, event.target.value)}
+                                  rows={Math.max(8, entry.rawText.split('\n').length)}
+                                  readOnly={!hasEditPermission}
+                                />
+                                {entry.rawError && <div className="error">{entry.rawError}</div>}
+                              </div>
+                            ) : (
+                              <div className="legacy-match-details">
+                                <div className="legacy-report-muted" style={{ marginBottom: 8 }}>
+                                  Field dependencies:{' '}
+                                  {dependencyFields.length > 0
+                                    ? dependencyFields.map((field) => `$Event->{${field}}`).join(', ')
+                                    : 'Dependency mapping unavailable for this item (conversion still included).'}
+                                </div>
+                                {referenceOnlyFields.length > 0 && (
+                                  <div className="legacy-summary-table" style={{ marginBottom: 10 }}>
+                                    <div className="legacy-summary-row legacy-summary-header">
+                                      <div>Referenced only</div>
+                                      <div>Why not mapped</div>
+                                      <div>Suggested COM pattern</div>
+                                    </div>
+                                    {referenceOnlyFields.map((row) => (
+                                      <div key={`${entry.key}-friendly-ref-${row.field}`} className="legacy-summary-row">
+                                        <div className="legacy-summary-path">{`$Event->{${row.field}}`}</div>
+                                        <div>{row.reason}</div>
+                                        <div>{row.pattern}</div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+                                {dependencyFields.length > 0 && referenceOnlyFields.length === 0 && (
+                                  <div className="legacy-report-muted" style={{ marginBottom: 8 }}>
+                                    All detected dependency fields are already mapped into the current COM suggestion.
+                                  </div>
+                                )}
+                                {entry.fields.length === 0 ? (
+                                  <div className="legacy-report-muted">No event fields detected for this suggestion.</div>
+                                ) : (
+                                  <div className="legacy-summary-table">
+                                    {entry.fields.map((fieldEntry) => {
+                                      const fieldDirty =
+                                        (entry.initialFieldValues[fieldEntry.field] ?? '') !== fieldEntry.value;
+                                      return (
+                                        <div key={`${entry.key}:${fieldEntry.field}`} className="legacy-summary-row">
+                                          <div className="legacy-summary-path">
+                                            {fieldEntry.field}
+                                            {fieldDirty && (
+                                              <span className="legacy-match-pill" style={{ marginLeft: 8 }}>
+                                                Changed
+                                              </span>
+                                            )}
+                                          </div>
+                                          {hasEditPermission ? (
+                                            <input
+                                              className="legacy-filter-input"
+                                              value={fieldEntry.value}
+                                              onChange={(event) =>
+                                                updateSuggestedField(
+                                                  entry.key,
+                                                  fieldEntry.field,
+                                                  event.target.value,
+                                                )
+                                              }
+                                            />
+                                          ) : (
+                                            <div className="legacy-report-line">{fieldEntry.value || '—'}</div>
+                                          )}
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               )}
               {reportSummary ? (
@@ -1099,7 +1709,7 @@ export default function LegacyWorkspace() {
                     </div>
                   )}
                   <div className="legacy-report-divider" aria-hidden="true" />
-                  <div className="legacy-match-panel">
+                  <div className="legacy-match-panel" ref={matchPanelRef} tabIndex={-1}>
                     <div className="legacy-match-header">
                       <div>
                         <div className="legacy-report-title">Match diffs</div>
@@ -1331,7 +1941,10 @@ export default function LegacyWorkspace() {
           </div>
           <div className="panel-section">
             <div className="panel-section-title">Status</div>
-            <EmptyState>Stub only (upload + conversion coming soon).</EmptyState>
+            <EmptyState>
+              Active workflow: upload, analyze, match, and export reports are available. Guided apply/wizard
+              steps are next.
+            </EmptyState>
           </div>
         </PanelHeader>
       </div>

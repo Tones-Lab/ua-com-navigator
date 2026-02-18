@@ -89,3 +89,56 @@ export type LegacyConversionResponse = {
   textReport: string;
   report: Record<string, any>;
 };
+
+export type LegacyApplyFcomOverridesRequest = {
+  report: Record<string, any>;
+  dryRun?: boolean;
+  minScore?: number;
+  overridesOverride?: Array<{
+    objectName: string;
+    sourceFiles: string[];
+    override: Record<string, any>;
+  }>;
+  generatedDefinitionsOverride?: Array<{
+    objectName: string;
+    sourceFile: string;
+    reason: string;
+    definition: Record<string, any>;
+  }>;
+};
+
+export type LegacyApplyFcomOverrideConflict = {
+  field: string;
+  existingValue: any;
+  incomingValue: any;
+  source: string;
+};
+
+export type LegacyApplyFcomOverridesResponse = {
+  generatedAt: string;
+  dryRun: boolean;
+  minScore: number;
+  summary: {
+    totalMatchDiffs: number;
+    matchedExistingFcomObjects: number;
+    confirmedObjects: number;
+    generatedDefinitions: number;
+    conflictObjects: number;
+  };
+  conflicts: Array<{
+    objectName: string;
+    conflicts: LegacyApplyFcomOverrideConflict[];
+  }>;
+  overrides: Array<{
+    objectName: string;
+    sourceFiles: string[];
+    override: Record<string, any>;
+  }>;
+  generatedDefinitions: Array<{
+    objectName: string;
+    sourceFile: string;
+    reason: string;
+    definition: Record<string, any>;
+  }>;
+  outputPath?: string;
+};

@@ -2007,6 +2007,143 @@ paths:
         '500':
           description: Conversion failed
 
+  /legacy/apply-fcom-overrides:
+    post:
+      tags:
+        - Legacy Conversion
+      summary: Build confirmed FCOM override bundle
+      description: |
+        Builds a confirmed FCOM override bundle from a legacy conversion report.
+        In `dryRun` mode this returns only a preview payload. Otherwise it also writes
+        the generated bundle under the legacy upload root.
+      security:
+        - sessionCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - report
+              properties:
+                report:
+                  type: object
+                  description: Conversion report returned by `/legacy/convert`.
+                dryRun:
+                  type: boolean
+                  default: true
+                minScore:
+                  type: number
+                  default: 10
+                overridesOverride:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      objectName:
+                        type: string
+                      sourceFiles:
+                        type: array
+                        items:
+                          type: string
+                      override:
+                        type: object
+                generatedDefinitionsOverride:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      objectName:
+                        type: string
+                      sourceFile:
+                        type: string
+                      reason:
+                        type: string
+                      definition:
+                        type: object
+      responses:
+        '200':
+          description: Confirmed FCOM overrides prepared
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  generatedAt:
+                    type: string
+                    format: date-time
+                  dryRun:
+                    type: boolean
+                  minScore:
+                    type: number
+                  summary:
+                    type: object
+                    properties:
+                      totalMatchDiffs:
+                        type: integer
+                      matchedExistingFcomObjects:
+                        type: integer
+                      confirmedObjects:
+                        type: integer
+                      generatedDefinitions:
+                        type: integer
+                      conflictObjects:
+                        type: integer
+                  conflicts:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        objectName:
+                          type: string
+                        conflicts:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              field:
+                                type: string
+                              existingValue:
+                                nullable: true
+                              incomingValue:
+                                nullable: true
+                              source:
+                                type: string
+                  overrides:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        objectName:
+                          type: string
+                        sourceFiles:
+                          type: array
+                          items:
+                            type: string
+                        override:
+                          type: object
+                  generatedDefinitions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        objectName:
+                          type: string
+                        sourceFile:
+                          type: string
+                        reason:
+                          type: string
+                        definition:
+                          type: object
+                  outputPath:
+                    type: string
+                    description: Relative path of the saved bundle when `dryRun=false`.
+        '400':
+          description: Invalid request payload
+        '500':
+          description: Failed to generate override bundle
+
   /schema:
     get:
       tags:

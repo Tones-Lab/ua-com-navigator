@@ -9,6 +9,24 @@ Build the first, detailed implementation plan for Legacy Conversion. This phase 
 
 This document intentionally captures all user feedback and all current assumptions in detail. It is not a summary.
 
+## Implementation Status Snapshot (2026-02-18)
+
+The current codebase has implemented a substantial portion of this Phase 1 plan:
+
+- Legacy UI tab/workspace is active (not stub-only): upload files, select files, run conversion/preview, inspect report outputs, filter object/match views, and open matched COM files.
+- Backend legacy routes exist for uploads, safe zip extraction, file read, match-file read, and conversion execution.
+- Core conversion engine exists with traversal discovery, rule classification, object extraction, proposal generation, matching/diff scoring, and report generation.
+- Scripted conversion mode exists and uses the same core conversion engine.
+
+Still not implemented (or intentionally deferred):
+
+- Guided apply workflow to directly create/update COM overrides from validated proposals.
+- Wizard-driven triage for unresolved/low-confidence conversion items.
+- Advanced lookup migration workflow (Perl hashes / external references) into reusable COM processor patterns.
+- Assistant/chatbot integration for conversion remediation guidance.
+
+This status should be treated as the baseline for Phase 2 planning.
+
 ## User Feedback (Required, Verbatim Intent)
 1. Parsing must be "smart" and robust. The sample legacy files are a tiny subset of possible formats. We should design for variability and unknown patterns.
 2. Compare against both FCOM/PCOM and MIBs, but do not depend on MIBs existing. The rules are the source of truth; MIBs are only a helper when present.
@@ -298,6 +316,57 @@ A user-facing report in the Legacy Conversion UI. It must include:
 4. Report generator.
 5. Raw combined override output (secondary view).
 6. Documentation updates for the UI flow and decision variables.
+
+---
+
+## Phase 2 Focus (Target: 80%+ Practical Conversion Coverage)
+
+The next execution phase should prioritize converting more real-world rule logic with explicit user-triage support.
+
+### 1) Quick action: create FCOM overrides for confirmed findings
+
+- Add a primary action in Legacy workspace: "Create FCOM Overrides (confirmed)".
+- Scope only high-confidence matches/proposals first.
+- Route generated outputs through the same review/commit safety model used in FCOM override workflows.
+- Keep dry-run/report-first as the default; require explicit apply confirmation.
+
+### 2) User-review wizard for flagged items
+
+- Introduce a simple step wizard (or modal flow) that walks unresolved items one-by-one.
+- Minimum data per step:
+  - Source snippet / rule function context
+  - Proposed mapping (if any)
+  - Confidence + why
+  - Quick choices: accept proposal, edit target mapping, mark skip/defer
+- Persist triage outcomes so reruns do not restart from zero.
+
+### 3) Advanced lookup migration track
+
+- Detect and classify lookup-heavy patterns:
+  - Perl hash maps
+  - External include/load dependencies
+  - Conditional branches requiring data normalization
+- Convert by pattern families (best-effort, not hardcoded per vendor):
+  - direct map/lookup processors
+  - preprocessor normalization chains
+  - staged enrichment paths when direct conversion is not possible
+- Flag when conversion depends on missing external data and require user confirmation.
+
+### 4) Dirty/needs-input catalog
+
+- Add explicit "Needs User Input" category for logic that cannot be safely inferred.
+- Typical dirty cases to track:
+  - ambiguous object target
+  - multi-candidate match collisions
+  - unresolved includes/lookups
+  - derived values requiring business context
+- Export this catalog in report JSON + UI for auditability.
+
+### Success criteria
+
+- Practical conversion coverage goal: **80%+ of legacy logic converted or confidently mapped**.
+- Remaining 20% should be explicitly documented as user-triaged, with reason codes and next actions.
+- No silent drops: every unresolved or skipped item must appear in report outputs.
 
 ## Dual Execution Mode (GUI + Scripted)
 ### Requirement

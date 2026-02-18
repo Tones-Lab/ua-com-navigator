@@ -22,6 +22,8 @@ The system is composed of:
 - Overview dashboard with vendor summaries
 - MIB browser with stub generation hooks
 - Trap testing utilities
+- Legacy Conversion workspace (uploads, analysis, matching, report export)
+- Legacy conversion CLI/script for batch report and proposal generation
 
 ## Repository layout
 
@@ -112,6 +114,7 @@ Backend configuration is driven by environment variables (see [backend/.env.exam
 | EVENTS_SCHEMA_TTL_MS         | 900000                                          | Cache TTL for event schema                |
 | EVENTS_SCHEMA_PATH           | backend/data/events-schema.json                 | Fallback schema path                      |
 | CACHE_TTL_MS                 | 600000                                          | Cache freshness window for stale refresh  |
+| REQUEST_BODY_LIMIT           | 10mb                                            | Max JSON/form payload size accepted by API |
 | SEARCH_CACHE_TTL_MS          | 600000                                          | Search cache freshness window             |
 | OVERVIEW_CACHE_TTL_MS        | 600000                                          | Overview cache freshness window           |
 | FOLDER_OVERVIEW_TTL_MS       | 600000                                          | Folder cache freshness window             |
@@ -219,6 +222,7 @@ Base path: /api/v1
 - broker/ — broker server data
 - mibs/ — MIB browsing + stub generation
 - overview/ — aggregated vendor overview
+- legacy/ — upload/read/convert legacy rule inputs and reports
 
 See [architecture/openapi-fcom-curation.yaml](../architecture/openapi-fcom-curation.yaml) for full details.
 

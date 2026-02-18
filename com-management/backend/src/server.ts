@@ -40,6 +40,7 @@ const port = process.env.PORT || 3001;
 const sslKeyPath = process.env.SSL_KEY_PATH || '/opt/assure1/etc/ssl/Web.key';
 const sslCertPath = process.env.SSL_CERT_PATH || '/opt/assure1/etc/ssl/Web.crt';
 const useHttps = fs.existsSync(sslKeyPath) && fs.existsSync(sslCertPath);
+const requestBodyLimit = process.env.REQUEST_BODY_LIMIT || '10mb';
 
 app.set('trust proxy', 1);
 app.disable('etag');
@@ -78,8 +79,8 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   next();
 });
 app.use(morgan('combined', { stream: { write: (msg: string) => logger.info(msg.trim()) } }));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: requestBodyLimit }));
+app.use(express.urlencoded({ extended: true, limit: requestBodyLimit }));
 app.use(cookieParser());
 
 // Request ID middleware

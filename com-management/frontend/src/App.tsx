@@ -10775,6 +10775,7 @@ export default function App() {
     fcomAuxOverlaysProps,
     pcomWorkspaceViewProps,
     mibWorkspaceProps,
+    hasEditPermission,
     trapComposerModalProps,
     pcomAdvancedSettingsModalProps,
     signInScreenProps,
