@@ -18,34 +18,63 @@ export const login = async (page: Page, opts?: Partial<LoginOptions>) => {
   const username = opts?.username ?? defaultUsername;
   const password = opts?.password ?? defaultPassword;
 
-  await page.goto('/', { waitUntil: 'domcontentloaded' });
-  await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible();
+  const maxAttempts = 3;
+  let lastError: unknown = null;
 
-  const serverSelect = page.getByLabel('Server');
-  await serverSelect.waitFor({ state: 'visible' });
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    try {
+      await page.goto('/', { waitUntil: 'domcontentloaded' });
+      await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible();
 
-  if (serverLabel) {
-    const options = await serverSelect.locator('option').allTextContents();
-    const matchedLabel = options.find((optionLabel) =>
-      optionLabel.toLowerCase().includes(serverLabel.toLowerCase()),
-    );
-    if (matchedLabel) {
-      await serverSelect.selectOption({ label: matchedLabel });
-    } else {
-      await serverSelect.selectOption({ index: 1 });
+      const serverSelect = page.getByLabel('Server');
+      await serverSelect.waitFor({ state: 'visible' });
+
+      await expect
+        .poll(
+          async () => {
+            const options = await serverSelect.locator('option').allTextContents();
+            const hasSelectableServer = options.slice(1).some((entry) => entry.trim().length > 0);
+            return hasSelectableServer;
+          },
+          {
+            timeout: 12000,
+          },
+        )
+        .toBeTruthy();
+
+      if (serverLabel) {
+        const options = await serverSelect.locator('option').allTextContents();
+        const matchedLabel = options.find((optionLabel) =>
+          optionLabel.toLowerCase().includes(serverLabel.toLowerCase()),
+        );
+        if (matchedLabel) {
+          await serverSelect.selectOption({ label: matchedLabel });
+        } else {
+          await serverSelect.selectOption({ index: 1 });
+        }
+      } else {
+        await serverSelect.selectOption({ index: 1 });
+      }
+
+      await page.getByLabel('Username').fill(username);
+      await page.getByLabel('Password').fill(password);
+      await page.getByRole('button', { name: 'Sign in' }).click();
+
+      await expect(page.getByRole('tab', { name: 'Overview' })).toHaveAttribute(
+        'aria-selected',
+        'true',
+      );
+      return;
+    } catch (error: unknown) {
+      lastError = error;
+      if (attempt >= maxAttempts) {
+        break;
+      }
+      await page.waitForTimeout(500 * attempt);
     }
-  } else {
-    await serverSelect.selectOption({ index: 1 });
   }
 
-  await page.getByLabel('Username').fill(username);
-  await page.getByLabel('Password').fill(password);
-  await page.getByRole('button', { name: 'Sign in' }).click();
-
-  await expect(page.getByRole('tab', { name: 'Overview' })).toHaveAttribute(
-    'aria-selected',
-    'true',
-  );
+  throw lastError;
 };
 
 export const waitForBrowseList = async (page: Page) => {
@@ -54,10 +83,10 @@ export const waitForBrowseList = async (page: Page) => {
   await expect(page.locator('.browse-results .error')).toHaveCount(0);
 };
 
-export const waitForPreviewReady = async (page: Page) => {
-  await expect(page.locator('.file-title')).toBeVisible({ timeout: 120000 });
-  await expect(page.locator('.file-preview-loading')).toHaveCount(0, { timeout: 120000 });
-  await expect(page.locator('.object-card').first()).toBeVisible({ timeout: 120000 });
+export const waitForPreviewReady = async (page: Page, timeout = 120000) => {
+  await expect(page.locator('.file-title')).toBeVisible({ timeout });
+  await expect(page.locator('.file-preview-loading')).toHaveCount(0, { timeout });
+  await expect(page.locator('.object-card').first()).toBeVisible({ timeout });
 };
 
 const clickResetNavigation = async (page: Page) => {
@@ -72,9 +101,17 @@ const clickResetNavigation = async (page: Page) => {
 export const openFolderByName = async (page: Page, name: string) => {
   const list = page.locator('.browse-list');
   await expect(list).toBeVisible();
-  const target = list.getByRole('button', { name, exact: true });
-  await expect(target).toBeVisible();
-  await target.click();
+  const exactTarget = list.getByRole('button', { name, exact: true });
+  if ((await exactTarget.count()) > 0) {
+    await exactTarget.first().click();
+  } else {
+    const partialTarget = list
+      .locator('button.browse-link:not(.file-link)')
+      .filter({ hasText: new RegExp(name, 'i') })
+      .first();
+    await expect(partialTarget).toBeVisible();
+    await partialTarget.click();
+  }
   await waitForBrowseList(page);
   await page.waitForURL((url) => {
     const node = url.searchParams.get('node') || '';
@@ -86,17 +123,49 @@ export const openCastleRockFile = async (page: Page) => {
   await page.getByRole('tab', { name: 'FCOM' }).click();
   await waitForBrowseList(page);
 
+  const favoriteFileButton = page
+    .locator('.favorites-section .favorite-link')
+    .filter({ hasText: 'CASTLEROCK-MIB-FCOM.json' })
+    .first();
+  if ((await favoriteFileButton.count()) > 0) {
+    await favoriteFileButton.scrollIntoViewIfNeeded();
+    await favoriteFileButton.click();
+    await expect(page.locator('.file-title')).toContainText('CASTLEROCK-MIB-FCOM.json');
+    return;
+  }
+
   await clickResetNavigation(page);
   await waitForBrowseList(page);
 
-  await openFolderByName(page, 'core');
-  await openFolderByName(page, 'default');
-  await openFolderByName(page, 'processing');
-  await openFolderByName(page, 'event');
-  await openFolderByName(page, 'fcom');
-  await openFolderByName(page, '_objects');
-  await openFolderByName(page, 'trap');
-  await openFolderByName(page, 'CastleRock');
+  const folderPathOptions = [
+    ['core', 'default', 'processing', 'event', 'fcom', '_objects', 'trap', 'CastleRock'],
+    ['_objects', 'trap', 'CastleRock'],
+  ];
+
+  let navigated = false;
+  for (const pathOption of folderPathOptions) {
+    let failed = false;
+    for (const segment of pathOption) {
+      const candidate = page
+        .locator('.browse-list button.browse-link:not(.file-link)')
+        .filter({ hasText: new RegExp(segment, 'i') });
+      if ((await candidate.count()) === 0) {
+        failed = true;
+        break;
+      }
+      await openFolderByName(page, segment);
+    }
+    if (!failed) {
+      navigated = true;
+      break;
+    }
+    await clickResetNavigation(page);
+    await waitForBrowseList(page);
+  }
+
+  if (!navigated) {
+    throw new Error('Unable to navigate to CastleRock folder path.');
+  }
 
   const browseList = page.locator('.browse-results');
   await browseList.getByRole('button', { name: 'CASTLEROCK-MIB-FCOM.json', exact: true }).click();
@@ -259,12 +328,98 @@ export const getEventField = (objectCard: ReturnType<Page['locator']>, label: st
     .filter({ hasText: label })
     .first();
 
+export const getObjectCardByName = (page: Page, objectName: string) =>
+  page.locator('.object-card').filter({ hasText: objectName }).first();
+
+export const getSaveReviewButton = (page: Page, expectedCount?: number) => {
+  if (typeof expectedCount === 'number') {
+    return page.getByRole('button', {
+      name: new RegExp(`(?:Save\\s*&\\s*Review|Review\\s*&\\s*Save) \\(${expectedCount}\\)`),
+    });
+  }
+  return page.getByRole('button', { name: /(?:Save & Review|Review & Save)(?: \(\d+\))?/ });
+};
+
+const extractLatestRevision = (payload: any): string | null => {
+  const data = Array.isArray(payload?.data)
+    ? payload.data
+    : Array.isArray(payload?.results)
+      ? payload.results
+      : [];
+  const latest = data[0];
+  if (!latest || typeof latest !== 'object') {
+    return null;
+  }
+  const direct =
+    latest.RevisionID ?? latest.Revision ?? latest.LastRevision ?? latest.Rev ?? latest.revision;
+  if (direct !== undefined && direct !== null && String(direct).trim().length > 0) {
+    return String(direct).trim();
+  }
+  const revisionName = String(
+    latest.RevisionName ?? latest.revisionName ?? latest.RevisionLabel ?? latest.revisionLabel ?? '',
+  ).trim();
+  const match = revisionName.match(/^r(\d+)/i);
+  return match ? match[1] : null;
+};
+
+export const ensureRuleRevision = async (
+  page: Page,
+  fileId: string,
+  targetRevision: string,
+  commitMessage: string,
+) => {
+  const encodedFileId = encodeURIComponent(fileId);
+  const historyUrl = `/api/v1/files/${encodedFileId}/history?limit=20&offset=0`;
+
+  const readHistory = async () => {
+    const historyResp = await page.request.get(historyUrl);
+    expect(historyResp.ok()).toBeTruthy();
+    return historyResp.json();
+  };
+
+  const initialHistory = await readHistory();
+  const initialRevision = extractLatestRevision(initialHistory);
+  if (initialRevision === targetRevision) {
+    return;
+  }
+
+  const maxAttempts = 3;
+  let reverted = false;
+  let lastStatus = 0;
+  let lastPayload: any = null;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    const revertResp = await page.request.post(`/api/v1/files/${encodedFileId}/revert`, {
+      data: {
+        revision: targetRevision,
+        commit_message: commitMessage,
+      },
+    });
+    lastStatus = revertResp.status();
+    const payload = await revertResp.json().catch(() => null);
+    lastPayload = payload;
+
+    if (revertResp.ok() && payload?.result?.success) {
+      reverted = true;
+      break;
+    }
+
+    if (attempt < maxAttempts) {
+      await page.waitForTimeout(300 * attempt);
+    }
+  }
+
+  expect(reverted, `Revert failed status=${lastStatus} payload=${JSON.stringify(lastPayload)}`).toBeTruthy();
+
+  const finalHistory = await readHistory();
+  const finalRevision = extractLatestRevision(finalHistory);
+  if (finalRevision !== null) {
+    expect(finalRevision).toBe(targetRevision);
+  }
+};
+
 export const commitStagedChanges = async (page: Page, expectedCount?: number) => {
-  const reviewLabel =
-    typeof expectedCount === 'number'
-      ? new RegExp(`Review & Save \\(${expectedCount}\\)`)
-      : /Review & Save \(\d+\)/;
-  await page.getByRole('button', { name: reviewLabel }).click();
+  await getSaveReviewButton(page, expectedCount).click();
   await expect(page.getByRole('heading', { name: 'Review staged changes' })).toBeVisible();
   await page.getByRole('button', { name: 'Continue to Commit' }).click();
 

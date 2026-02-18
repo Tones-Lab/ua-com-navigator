@@ -239,18 +239,58 @@ export class UAClient {
   /**
    * Revert a rules file to an earlier version
    */
-  async revertRule(id: string, revision: string, commitMessage: string): Promise<any> {
-    try {
-      logger.info(`[UA] Reverting rule: ${id} to revision ${revision}`);
-      const response = await this.client.put(`/rule/Rules/executeRevert/${id}`, {
-        revision,
-        commit_message: commitMessage,
-      });
-      return response.data;
-    } catch (error: any) {
-      logger.error(`[UA] Error reverting rule: ${error.message}`);
-      throw error;
+  async revertRule(
+    id: string,
+    revision: string,
+    commitMessage: string,
+    fileName?: string,
+  ): Promise<any> {
+    const resolvedFileName =
+      typeof fileName === 'string' && fileName.trim().length > 0
+        ? fileName.trim()
+        : String(id).split('/').pop() ?? String(id);
+
+    const form = new URLSearchParams();
+    form.set('FileName', resolvedFileName);
+    form.set('RevertRevision', String(revision));
+
+    const maxAttempts = 3;
+    for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+      try {
+        logger.info(
+          `[UA] Reverting rule: ${id} to revision ${revision} (attempt ${attempt}/${maxAttempts})`,
+        );
+        const response = await this.client.put(`/rule/Rules/executeRevert/${id}`, form.toString(), {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          params: {
+            commit_message: commitMessage,
+            message: commitMessage,
+            comment: commitMessage,
+          },
+        });
+        return response.data;
+      } catch (error: any) {
+        const message = String(error?.message || '').toLowerCase();
+        const code = String(error?.code || '').toUpperCase();
+        const isTransient =
+          message.includes('socket hang up') ||
+          message.includes('timeout') ||
+          code === 'ECONNRESET' ||
+          code === 'ETIMEDOUT' ||
+          code === 'ECONNABORTED';
+
+        if (!isTransient || attempt >= maxAttempts) {
+          logger.error(`[UA] Error reverting rule: ${error.message}`);
+          throw error;
+        }
+
+        await new Promise((resolve) => setTimeout(resolve, 300 * attempt));
+      }
     }
+
+    throw new Error('Failed to revert rule after retries');
   }
 
   /**

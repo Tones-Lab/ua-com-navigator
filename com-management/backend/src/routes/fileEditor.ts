@@ -309,6 +309,86 @@ router.get('/:file_id/history', async (req: Request, res: Response) => {
 });
 
 /**
+ * POST /api/v1/files/:file_id/revert
+ * Revert a file to a specific SVN revision
+ */
+router.post('/:file_id/revert', async (req: Request, res: Response) => {
+  try {
+    if (!(await requireEditPermission(req, res))) {
+      return;
+    }
+
+    const { file_id } = req.params;
+    const { revision, commit_message } = req.body ?? {};
+
+    if (!revision || String(revision).trim().length === 0) {
+      return res.status(400).json({ error: 'Missing revision' });
+    }
+
+    const revertCommitMessage =
+      typeof commit_message === 'string' && commit_message.trim().length > 0
+        ? commit_message.trim()
+        : `TEST-BASELINE revert ${file_id} -> ${String(revision)}`;
+
+    logger.info(`Reverting file ${file_id} to revision ${revision}`);
+    const uaClient = await getUaClientFromSession(req);
+
+    try {
+      const fileIdString = String(file_id);
+      const revertFileName = fileIdString.startsWith('id-')
+        ? fileIdString.slice(3)
+        : fileIdString;
+      const data = await uaClient.revertRule(
+        file_id,
+        String(revision),
+        revertCommitMessage,
+        revertFileName,
+      );
+
+      if (data && typeof data === 'object' && data.success === false) {
+        const message =
+          typeof data.message === 'string' && data.message.trim().length > 0
+            ? data.message
+            : 'UA reported revert failure';
+        return res.status(409).json({
+          error: message,
+          file_id,
+          revision: String(revision),
+          commit_message: revertCommitMessage,
+          result: data,
+        });
+      }
+
+      res.json({
+        file_id,
+        revision: String(revision),
+        commit_message: revertCommitMessage,
+        result: data,
+      });
+    } catch (error: any) {
+      const upstreamStatus = Number(error?.response?.status) || 500;
+      const upstreamData = error?.response?.data;
+      const upstreamMessage =
+        typeof upstreamData?.message === 'string' && upstreamData.message.trim().length > 0
+          ? upstreamData.message
+          : typeof error?.message === 'string' && error.message.trim().length > 0
+            ? error.message
+            : 'Failed to revert file';
+      logger.error(
+        `Error reverting file: ${upstreamMessage}; status=${upstreamStatus}; data=${JSON.stringify(upstreamData ?? null)}`,
+      );
+      res.status(upstreamStatus).json({
+        error: upstreamMessage,
+        result: upstreamData ?? null,
+      });
+    }
+  } catch (error: any) {
+    logger.error(`Error reverting file: ${error.message}`);
+    res.status(401).json({ error: error.message || 'Failed to revert file' });
+  }
+});
+
+/**
  * POST /api/v1/files/:file_id/test
  * Generate and send a test trap for a single event object
  */

@@ -4102,7 +4102,7 @@ export default function App() {
         });
       });
     };
-    const buildOverrideSaveStatus = () => {
+    const getChangedObjectNames = () => {
       const staged = diffOverrides(getBaseOverrides(), pendingOverrideSave);
       let objectNames = staged.editedObjects;
       if (objectNames.length === 0) {
@@ -4113,7 +4113,10 @@ export default function App() {
           })
           .filter((name): name is string => typeof name === 'string' && name.length > 0);
       }
-      const unique = Array.from(new Set(objectNames));
+      return Array.from(new Set(objectNames));
+    };
+    const buildOverrideSaveStatus = () => {
+      const unique = getChangedObjectNames();
       return unique.map((objectName) => {
         const overrideInfoData = isRecord(overrideInfo) ? overrideInfo : null;
         const byObject =
@@ -4170,6 +4173,7 @@ export default function App() {
       });
     };
     const streamOverrideSave = async () => {
+      const changedObjectNames = getChangedObjectNames();
       const response = await fetch('/api/v1/overrides/save-stream', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -4178,6 +4182,7 @@ export default function App() {
           file_id: selectedFile.PathID,
           overrides: pendingOverrideSave,
           commit_message: message.trim(),
+          changed_object_names: changedObjectNames,
         }),
       });
       const contentType = response.headers.get('content-type') || '';
@@ -4266,6 +4271,7 @@ export default function App() {
             selectedFile.PathID,
             pendingOverrideSave,
             message.trim(),
+            getChangedObjectNames(),
           );
           respData = fallback.data;
           break;
@@ -6031,6 +6037,7 @@ export default function App() {
     if (updates.length === 0 && removalFields.size === 0 && !hasPendingConversion) {
       setSaveError(null);
       setSaveSuccess('No changes made.');
+      triggerToast(`No items to stage for ${objectName}.`, false);
       return;
     }
 
@@ -6150,9 +6157,17 @@ export default function App() {
       }
     }
 
-    const stagedCount = updates.length + removalFields.size + (hasPendingConversion ? 1 : 0);
-    setPendingOverrideSave(baseOverrides);
-    triggerToast(`Staged ${stagedCount} event override change(s) for ${objectName}`, true);
+    const stagedDiff = diffOverrides(getBaseOverrides(), baseOverrides);
+    if (stagedDiff.totalChanges === 0) {
+      setPendingOverrideSave(null);
+      triggerToast(`No items to stage for ${objectName}.`, false);
+    } else {
+      setPendingOverrideSave(baseOverrides);
+      triggerToast(
+        `Staged ${stagedDiff.totalChanges} event override change(s) for ${objectName}`,
+        true,
+      );
+    }
     if (hasPendingConversion) {
       clearPendingOverrideConversion(objectName);
     }

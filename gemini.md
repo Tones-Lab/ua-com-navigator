@@ -378,3 +378,83 @@ The FCOM builder is a powerful tool with the potential for even greater utility 
     *   **Natural Language to Expression:** Add a text input where a user can describe their goal in plain English (e.g., "if the severity is critical, set the priority to 1"). The AI service would translate this into a valid 'Eval' expression or a suggested 'Processor' configuration.
     *   **Expression Debugging/Explanation:** Add a button to "Explain this expression." The AI would analyze the current 'Eval' or 'Processor' chain and provide a human-readable summary of what it does, helping to debug complex logic.
     *   **Smart Suggestions:** The AI could proactively suggest processors or transformations based on the data type or name of the field being edited.
+
+---
+
+## 8. Analysis of `refactor-tracking.md` (as of 2026-02-16)
+
+This section provides a critical analysis of the `refactor-tracking.md` document and the ongoing refactoring process it describes. The feedback is intended to identify risks and suggest improvements for the team to consider.
+
+### 8.1. Overall Assessment
+
+The plan is exceptionally well-structured, detailed, and demonstrates a high degree of engineering discipline. The "How we will work" process, the "Test Plan Rubric," and the detailed "Progress log" are excellent practices that provide clarity and accountability. The focus on extracting logic from a monolithic `App.tsx` into feature-sliced modules and custom hooks is a sound and modern approach to frontend refactoring.
+
+However, there are several critical gaps and potential risks that should be addressed.
+
+### 8.2. Critical Issues & Gaps
+
+**1. E2E Test Execution is Blocked:**
+*   **Observation:** The "Resume checkpoint" section notes: *"local Playwright run is currently blocked by fixture/data availability"*.
+*   **Impact:** This is the most significant risk. If the primary validation strategy cannot be executed locally, it slows the development feedback loop, increases the chance of broken code being committed, and makes debugging tests significantly harder.
+*   **Recommendation:** Unblocking local E2E test execution should be the highest priority. This may require creating seed scripts, mock data generators, or abstracting the data layer to be mockable in a local environment.
+
+**2. Potential Over-reliance on E2E Tests:**
+*   **Observation:** The test coverage map and logs show a heavy reliance on E2E tests. Unit and integration tests for utilities and hooks are being "queued for stabilization."
+*   **Impact:** A test suite dominated by E2E tests can be slow, expensive to maintain, and brittle. Deferring faster, more focused tests creates a risk that they will be forgotten.
+*   **Recommendation:** Prioritize the implementation of the queued unit and integration tests to build a more balanced and robust test pyramid. Hooks (`useRequest`) and complex utility functions (`flowUtils`) are ideal candidates for isolated testing.
+
+**3. Ambiguous Definition of "Done":**
+*   **Observation:** Items are marked "Done," but the progress log shows work on them is often interleaved and resumed later (e.g., Item 1).
+*   **Impact:** This makes it difficult to get an accurate, at-a-glance understanding of progress. The status "Done" is misleading if an epic is still being worked on.
+*   **Recommendation:** Consider using more descriptive statuses like "In Progress" or "Partially Complete." Alternatively, break the large items into smaller, more discrete sub-tasks that can be definitively marked as "Done."
+
+### 8.3. Strategic Suggestions & Questions
+
+**1. Long-term `App.tsx` Strategy:**
+*   **Context:** The plan has been successful in extracting logic from `App.tsx`. However, the file likely remains a complex orchestrator of hooks and components.
+*   **Question for the Team:** Is there a long-term plan to refactor the orchestration layer itself? This could involve moving routing responsibilities to a dedicated router configuration and cleaning up the composition of providers at the application's root.
+
+**2. Data Fetching & Caching Strategy:**
+*   **Context:** The `useRequest` hook is a good step for standardizing request state.
+*   **Question for the Team:** Does `useRequest` handle advanced concerns like caching, request de-duplication, and automatic re-fetching? If not, the application could be making redundant API calls or displaying stale data.
+*   **Recommendation:** Investigate adopting a dedicated data-fetching library like **TanStack Query (React Query)** or **SWR**. These libraries solve these problems out-of-the-box and align perfectly with Proposal #4 in this document.
+
+**3. Documentation & Discoverability:**
+*   **Context:** The refactor is creating many new, reusable hooks and components.
+*   **Impact:** Without documentation, these new modules can be hard for the team to discover and use correctly.
+*   **Recommendation:** Implement a lightweight documentation strategy.
+    *   Use **JSDoc** to document the inputs, outputs, and purpose of each new hook.
+    *   Set up **Storybook** to create an interactive component library, which would be invaluable for the new standardized modal and UI components.
+
+---
+
+## 9. Follow-up Analysis of Refactoring Progress (as of 2026-02-17)
+
+This section provides a follow-up analysis based on the rapid progress made in the refactoring effort. While the velocity is impressive, it has introduced significant risk that must be addressed immediately.
+
+### 9.1. Acknowledgment of Progress
+
+The progress made on February 16th and 17th is exceptional. The team has not only completed all planned refactoring items but has also performed a massive "post-item cleanup" to aggressively dismantle the `App.tsx` monolith. The strategy of extracting components and their corresponding props-assembly logic into dedicated hooks is a sophisticated and effective method for improving modularity. This demonstrates a strong commitment to improving the codebase's architecture.
+
+### 9.2. Urgent Priority: Stabilize and Test
+
+The incredible speed of the recent changes has proportionally increased the project's technical risk. The existing testing gaps have now become critical vulnerabilities.
+
+**1. CRITICAL RISK: Blocked E2E Testing**
+*   **Observation:** The note *"local Playwright run is currently blocked by fixture/data availability"* is still present in the tracking document.
+*   **Impact:** After touching dozens of files and fundamentally altering the component architecture, the project's primary regression safety net is disabled. Proceeding with further changes without this validation is extremely dangerous and risks subtle, hard-to-diagnose bugs that will undermine user trust and slow future development.
+*   **Recommendation: HARD STOP.** All further refactoring and feature development must be paused until the local E2E testing environment is fully functional for all developers. This is the single most important priority for the project right now.
+
+**2. HIGH RISK: Insufficient Unit/Integration Test Coverage**
+*   **Observation:** The "post-item cleanup" created a large number of new hooks containing critical presentation and state logic (e.g., `usePcomViewState`, `useAppHeaderHandlers`). These remain untested in isolation.
+*   **Impact:** The project is missing an opportunity to build a fast, reliable, and maintainable "testing pyramid." Unit tests for these hooks would catch bugs much faster than E2E tests and provide precise feedback to developers.
+*   **Recommendation:** Immediately after unblocking E2E tests, the next priority should be to begin adding unit and integration test coverage for the most critical new hooks that have been created.
+
+### 9.3. Strategic Recommendations
+
+*   **Action Plan:**
+    1.  **P0 - Immediate**: **Halt all other work** to unblock the local E2E test suite.
+    2.  **P1 - Next**: Begin writing unit tests for the new, logic-heavy hooks created during the `App.tsx` decomposition.
+    3.  **P2 - Future**: Schedule a review of the new props-assembly hook architecture (`use...Props`, `use...Args`) to evaluate its long-term maintainability and explore potential simplifications.
+
+The team has demonstrated it can move mountains. Now is the time to apply that same focus to reinforcing the foundation with a robust, multi-layered testing strategy.

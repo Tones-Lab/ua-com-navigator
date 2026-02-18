@@ -113,11 +113,17 @@ class ApiClient {
     return this.client.get<unknown>('/overrides', { params: { file_id: fileId } });
   }
 
-  async saveOverrides(fileId: string, overrides: unknown[], commitMessage: string) {
+  async saveOverrides(
+    fileId: string,
+    overrides: unknown[],
+    commitMessage: string,
+    changedObjectNames?: string[],
+  ) {
     return this.client.post<unknown>('/overrides/save', {
       file_id: fileId,
       overrides,
       commit_message: commitMessage,
+      changed_object_names: changedObjectNames,
     });
   }
 

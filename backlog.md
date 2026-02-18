@@ -55,6 +55,8 @@
 - Docs reference: see architecture/fcom-processor-docs-summary.md (UA FCOM processor/override specs).
 
 ## Next (P1)
+- UI Polish: Refine Folder Overview summary to use a clear columnar layout and standardize column naming (e.g., 'COM Schema' vs. 'DB Schema').
+- ⚙️ Tech Debt: Investigate rule management APIs. Confirm /api/rule/Rules/{id} is used for updates and evaluate readDiff, readRevisionHistory, and executeRevert for future features.
 - PCOM COM Navigator UI:
 	- Dedicated PCOM workspace (browse, search, edit, validate).
 	- Align with FCOM UX patterns while supporting PCOM-specific schema.
@@ -177,6 +179,7 @@
 	- Add overrides visibility for PCOM (vendor-level).
 
 ## Later (P2)
+- Feature: Add builder support for the 'enrichment' processor, including configuration for different enrichment sources (e.g., custom, flatfile, redis).
 - Diff viewer and history panel.
 - Event config UI + trap variable helper.
 - Preprocessor editor.

@@ -95,6 +95,44 @@ const parseChartInfo = (chart: string, appVersion: string) => {
   return { helmchart: trimmed, version: appMatch ? appMatch[1] : '' };
 };
 
+const isTransientUaError = (error: any): boolean => {
+  const message = String(error?.message || '').toLowerCase();
+  const code = String(error?.code || error?.errno || '').toLowerCase();
+  return (
+    message.includes('socket hang up') ||
+    message.includes('timeout') ||
+    message.includes('timed out') ||
+    code === 'econnreset' ||
+    code === 'etimedout'
+  );
+};
+
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const withUaRetry = async <T>(
+  label: string,
+  operation: () => Promise<T>,
+  attempts: number = 3,
+): Promise<T> => {
+  let lastError: any = null;
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      return await operation();
+    } catch (error: any) {
+      lastError = error;
+      if (!isTransientUaError(error) || attempt >= attempts) {
+        throw error;
+      }
+      const delayMs = attempt * 500;
+      logger.warn(
+        `[Microservice] ${label} transient failure attempt ${attempt}/${attempts}: ${error?.message || 'unknown error'}`,
+      );
+      await wait(delayMs);
+    }
+  }
+  throw lastError;
+};
+
 const extractCustomValues = (result: any): string | undefined => {
   if (!result || typeof result !== 'object') {
     return undefined;
@@ -124,7 +162,67 @@ const extractCustomValues = (result: any): string | undefined => {
     }
   }
   const match = candidates.find((item) => typeof item === 'string' && item.trim().length > 0);
-  return match ? String(match) : undefined;
+  if (match) {
+    return String(match);
+  }
+  const structured = candidates.find(
+    (item) => item && typeof item === 'object' && !Array.isArray(item),
+  );
+  if (structured) {
+    try {
+      const serialized = JSON.stringify(structured);
+      return serialized.length > 0 ? serialized : undefined;
+    } catch {
+      return undefined;
+    }
+  }
+  return undefined;
+};
+
+const resolveCustomValuesForRedeploy = async (
+  uaClient: UAClient,
+  targetEntry: Record<string, any>,
+  targetMeta: ReturnType<typeof getTargetMeta>,
+  valuesResponse: any,
+): Promise<string | undefined> => {
+  const fromValuesResponse = extractCustomValues(valuesResponse);
+  if (fromValuesResponse) {
+    return fromValuesResponse;
+  }
+
+  const fromInstalledEntry = extractCustomValues(targetEntry);
+  if (fromInstalledEntry) {
+    logger.warn(
+      '[Microservice] Helm values response missing CustomValues; using installed entry fallback',
+    );
+    return fromInstalledEntry;
+  }
+
+  const chartName = targetMeta.chartName || targetMeta.chartRaw;
+  const chartVersion = targetMeta.chartVersion;
+  if (chartName && chartVersion) {
+    try {
+      const catalogValues = await withUaRetry(
+        'catalog-values',
+        () => uaClient.getCatalogHelmChartValues(chartName, chartVersion),
+        3,
+      );
+      const fromCatalog = extractCustomValues(catalogValues);
+      if (fromCatalog) {
+        logger.warn(
+          '[Microservice] Helm values response missing CustomValues; using catalog values fallback',
+        );
+        return fromCatalog;
+      }
+    } catch (error: any) {
+      logger.warn(
+        `[Microservice] Catalog values fallback failed for ${chartName}@${chartVersion}: ${error?.message || 'unknown error'}`,
+      );
+    }
+  }
+
+  logger.warn('[Microservice] CustomValues unavailable from all sources; using empty-object fallback');
+  return '{}';
 };
 
 const extractInstalledEntries = (result: any): Array<Record<string, any>> => {
@@ -429,6 +527,57 @@ const buildCatalogDeployPayload = (
   CustomValues: customValues,
 });
 
+const deployServiceFromCatalog = async (params: {
+  uaClient: UAClient;
+  serviceKey: string;
+  clusterName: string;
+  namespaces: string[];
+  installedEntries: Array<Record<string, any>>;
+}) => {
+  const { uaClient, serviceKey, clusterName, namespaces, installedEntries } = params;
+  const catalogEntries = await fetchCatalogEntries(uaClient);
+  const serviceHints = REQUIRED_CHAIN.find((entry) => entry.key === serviceKey)?.hints || [serviceKey];
+  const catalogEntry = resolveCatalogEntry(
+    catalogEntries,
+    serviceHints.map((item) => item.toLowerCase()),
+  );
+  if (!catalogEntry) {
+    throw new Error('Helm chart not found in catalog');
+  }
+
+  const chartName = pickEntryValue(catalogEntry, ['name', 'Name', 'Helmchart', 'helmchart', 'chart', 'Chart']);
+  const version = pickEntryValue(catalogEntry, ['version', 'Version']);
+  if (!chartName || !version) {
+    throw new Error('Missing catalog chart name or version');
+  }
+
+  const namespace = resolveNamespace(serviceKey, installedEntries, namespaces);
+  if (!namespace) {
+    throw new Error('Unable to select namespace for deployment');
+  }
+
+  const valuesResponse = await withUaRetry(
+    'catalog-default-values',
+    () => uaClient.getCatalogHelmChartValues(chartName, version),
+    3,
+  );
+  const customValues = extractCustomValues(valuesResponse) || '{}';
+  const payload = buildCatalogDeployPayload(clusterName, namespace, chartName, version, customValues);
+
+  const missing = Object.entries(payload)
+    .filter(([key, value]) => ['CustomValues'].indexOf(key) === -1 && !value)
+    .map(([key]) => key);
+  if (missing.length > 0) {
+    throw new Error(`Missing required deploy fields: ${missing.join(', ')}`);
+  }
+
+  const deployResult = await withUaRetry('deploy-helm-from-catalog', () => uaClient.deployHelmChart(payload), 3);
+  if (!deployResult?.success) {
+    throw new Error('Failed to deploy microservice');
+  }
+  return { deployResult, payload };
+};
+
 const buildDeployId = (target: { name: string; namespace: string; cluster: string }) => {
   if (!target.name || !target.namespace || !target.cluster) {
     return '';
@@ -504,17 +653,24 @@ const redeployInstalledEntry = async (
     throw new Error('Missing deploy id');
   }
 
-  const valuesResponse = await uaClient.getHelmChartValues({
-    cluster: targetMeta.cluster,
-    namespace: targetMeta.namespace,
-    helmchart: targetMeta.chartName || targetMeta.chartRaw,
-    releaseName: targetMeta.name,
-    version: targetMeta.chartVersion,
-  });
-  const customValues = extractCustomValues(valuesResponse);
-  if (!customValues) {
-    throw new Error('Missing CustomValues');
-  }
+  const valuesResponse = await withUaRetry(
+    'deploy-values',
+    () =>
+      uaClient.getHelmChartValues({
+        cluster: targetMeta.cluster,
+        namespace: targetMeta.namespace,
+        helmchart: targetMeta.chartName || targetMeta.chartRaw,
+        releaseName: targetMeta.name,
+        version: targetMeta.chartVersion,
+      }),
+    3,
+  );
+  const customValues = await resolveCustomValuesForRedeploy(
+    uaClient,
+    targetEntry,
+    targetMeta,
+    valuesResponse,
+  );
 
   const payload = buildDeployPayload(targetEntry, targetMeta, customValues);
   const missing = Object.entries(payload)
@@ -524,12 +680,12 @@ const redeployInstalledEntry = async (
     throw new Error(`Missing required deploy fields: ${missing.join(', ')}`);
   }
 
-  const deleteResult = await uaClient.uninstallHelmChart(deployId);
+  const deleteResult = await withUaRetry('uninstall-helm', () => uaClient.uninstallHelmChart(deployId), 3);
   if (!deleteResult?.success) {
     throw new Error('Failed to uninstall');
   }
 
-  const deployResult = await uaClient.deployHelmChart(payload);
+  const deployResult = await withUaRetry('deploy-helm', () => uaClient.deployHelmChart(payload), 3);
   if (!deployResult?.success) {
     throw new Error('Failed to redeploy');
   }
@@ -570,26 +726,49 @@ router.post('/redeploy-fcom', async (req: Request, res: Response) => {
       return res.status(404).json({ error: 'No installed Helm charts found' });
     }
 
-    const targetName = (
-      process.env.FCOM_PROCESSOR_RELEASE_NAME ||
-      process.env.FCOM_PROCESSOR_HELM_CHART ||
-      'fcom-processor'
-    ).toLowerCase();
+    const configuredTarget = String(
+      process.env.FCOM_PROCESSOR_RELEASE_NAME || process.env.FCOM_PROCESSOR_HELM_CHART || '',
+    )
+      .trim()
+      .toLowerCase();
+    const targetHints = Array.from(
+      new Set([configuredTarget, 'fcom-processor'].filter((value) => value.length > 0)),
+    );
 
-    const targetEntry = entries.find((entry) => {
-      if (!matchesTarget(entry, targetName)) {
-        return false;
-      }
-      if (!namespaceOverride) {
-        return true;
-      }
-      return pickEntryValue(entry, ['Namespace', 'namespace']) === namespaceOverride;
-    });
-    if (!targetEntry) {
-      return res.status(404).json({
-        error: 'FCOM Processor release not found',
-        action: 'Deploy fcom-processor to continue',
+    const pickTargetEntry = (enforceNamespace: boolean): Record<string, any> | undefined =>
+      entries.find((entry) => {
+        if (!targetHints.some((hint) => matchesTarget(entry, hint))) {
+          return false;
+        }
+        if (!enforceNamespace || !namespaceOverride) {
+          return true;
+        }
+        return pickEntryValue(entry, ['Namespace', 'namespace']) === namespaceOverride;
       });
+
+    const targetEntry = pickTargetEntry(true) || pickTargetEntry(false);
+    if (!targetEntry) {
+      try {
+        const deployment = await deployServiceFromCatalog({
+          uaClient,
+          serviceKey: 'fcom-processor',
+          clusterName,
+          namespaces,
+          installedEntries: entries,
+        });
+        return res.json({
+          success: true,
+          deployed: true,
+          message: 'FCOM Processor was not installed; deployed from catalog.',
+          deployResult: deployment.deployResult,
+        });
+      } catch (deployError: any) {
+        return res.status(404).json({
+          error: 'FCOM Processor release not found',
+          action: 'Deploy fcom-processor to continue',
+          detail: deployError?.message || 'Catalog deployment fallback failed',
+        });
+      }
     }
 
     let deployResult: any;
@@ -603,9 +782,6 @@ router.post('/redeploy-fcom', async (req: Request, res: Response) => {
       );
     } catch (error: any) {
       const message = error?.message || 'Failed to redeploy FCOM Processor';
-      if (message.includes('Missing CustomValues')) {
-        return res.status(400).json({ error: 'Missing CustomValues for FCOM Processor' });
-      }
       if (message.includes('Missing deploy id')) {
         return res.status(400).json({ error: 'Missing deploy id for FCOM Processor' });
       }
@@ -614,6 +790,9 @@ router.post('/redeploy-fcom', async (req: Request, res: Response) => {
       }
       if (message.includes('redeploy')) {
         return res.status(400).json({ error: 'Failed to redeploy FCOM Processor' });
+      }
+      if (message.toLowerCase().includes('socket hang up')) {
+        return res.status(502).json({ error: 'Transient UA connection error during FCOM redeploy' });
       }
       return res.status(400).json({ error: message });
     }

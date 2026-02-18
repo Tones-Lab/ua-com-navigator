@@ -124,11 +124,13 @@ const performOverrideSave = async (params: {
   fileId: string;
   overrides: any[];
   commitMessage: string;
+  changedObjectNames?: string[];
   uaClient: UAClient;
   serverId: string;
   onProgress?: (entry: OverrideSaveProgress) => void;
 }) => {
-  const { fileId, overrides, commitMessage, uaClient, serverId, onProgress } = params;
+  const { fileId, overrides, commitMessage, changedObjectNames, uaClient, serverId, onProgress } =
+    params;
   const resolved = resolveOverrideLocation(String(fileId));
   const resolvedMethod = resolved.method || 'trap';
 
@@ -179,6 +181,25 @@ const performOverrideSave = async (params: {
     .map((obj: any) => obj?.['@objectName'])
     .filter((name: any) => typeof name === 'string' && name.length > 0) as string[];
   const objectNameSet = new Set(objectNames);
+  const hasChangedScope = Array.isArray(changedObjectNames);
+  const scopedObjectNames = hasChangedScope
+    ? Array.from(
+        new Set(
+          changedObjectNames
+            .map((name) => String(name || '').trim())
+            .filter((name) => name.length > 0),
+        ),
+      )
+    : objectNames;
+  const scopedObjectNameSet = new Set(scopedObjectNames);
+
+  for (const scopedName of scopedObjectNames) {
+    if (!objectNameSet.has(scopedName)) {
+      throw createOverrideSaveError(400, {
+        error: `Changed object ${scopedName} is not part of the selected file.`,
+      });
+    }
+  }
 
   const overridesByObject = new Map<string, any>();
   for (const entry of overrides) {
@@ -247,7 +268,7 @@ const performOverrideSave = async (params: {
     previousContent?: string | null;
   }> = [];
 
-  for (const objectName of objectNames) {
+  for (const objectName of scopedObjectNames) {
     const fileName = buildOverrideFileName(resolved.vendor, objectName);
     const overridePathId = `${resolved.overrideRoot}/${fileName}`;
     const listingEntry = listing.find(
@@ -315,7 +336,13 @@ const performOverrideSave = async (params: {
     }
 
     const payload = JSON.stringify(desiredEntry, null, 2);
-    if (existingContent && existingContent.trim() === payload.trim()) {
+    const normalizedExistingEntry = existingEntry
+      ? normalizeOverrideEntry(existingEntry, objectName, resolvedMethod)
+      : null;
+    if (
+      normalizedExistingEntry &&
+      JSON.stringify(normalizedExistingEntry) === JSON.stringify(desiredEntry)
+    ) {
       continue;
     }
 
@@ -331,7 +358,7 @@ const performOverrideSave = async (params: {
   if (legacyListingEntry && legacyFormat) {
     const legacyRemainingOverrides = legacyOverrides.filter((entry: any) => {
       const name = entry?.['@objectName'];
-      return !name || !objectNameSet.has(name);
+      return !name || !scopedObjectNameSet.has(name);
     });
     if (legacyRemainingOverrides.length === 0) {
       writeQueue.push({
@@ -345,7 +372,9 @@ const performOverrideSave = async (params: {
         legacyFormat === 'object' && legacyRemainingOverrides.length === 1
           ? JSON.stringify(legacyRemainingOverrides[0], null, 2)
           : JSON.stringify(legacyRemainingOverrides, null, 2);
-      if (!legacyContent || legacyContent.trim() !== legacyPayload.trim()) {
+      const legacySemanticCurrent = JSON.stringify(legacyOverrides);
+      const legacySemanticNext = JSON.stringify(legacyRemainingOverrides);
+      if (legacySemanticCurrent !== legacySemanticNext) {
         writeQueue.push({
           pathId: String(legacyListingEntry?.PathID || ''),
           fileName: String(legacyListingEntry?.PathName || ''),
@@ -765,7 +794,7 @@ router.post('/save', async (req: Request, res: Response) => {
     if (!(await requireEditPermission(req, res))) {
       return;
     }
-    const { file_id, overrides, commit_message } = req.body;
+    const { file_id, overrides, commit_message, changed_object_names } = req.body;
     if (!file_id || !Array.isArray(overrides) || commit_message === undefined) {
       return res.status(400).json({ error: 'Missing file_id, overrides, or commit_message' });
     }
@@ -775,6 +804,7 @@ router.post('/save', async (req: Request, res: Response) => {
       fileId: String(file_id),
       overrides,
       commitMessage: String(commit_message),
+      changedObjectNames: Array.isArray(changed_object_names) ? changed_object_names : undefined,
       uaClient,
       serverId,
     });
@@ -794,7 +824,7 @@ router.post('/save-stream', async (req: Request, res: Response) => {
     if (!(await requireEditPermission(req, res))) {
       return;
     }
-    const { file_id, overrides, commit_message } = req.body;
+    const { file_id, overrides, commit_message, changed_object_names } = req.body;
     if (!file_id || !Array.isArray(overrides) || commit_message === undefined) {
       res.status(400).json({ error: 'Missing file_id, overrides, or commit_message' });
       return;
@@ -819,6 +849,7 @@ router.post('/save-stream', async (req: Request, res: Response) => {
       fileId: String(file_id),
       overrides,
       commitMessage: String(commit_message),
+      changedObjectNames: Array.isArray(changed_object_names) ? changed_object_names : undefined,
       uaClient,
       serverId,
       onProgress: (entry) => sendEvent('progress', entry),
