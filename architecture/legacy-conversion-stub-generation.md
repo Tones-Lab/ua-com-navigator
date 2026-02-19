@@ -289,6 +289,68 @@ Operational recommendation:
    - then root-cause deltas with largest magnitude
 4. Feed findings back into parser/lineage heuristics.
 
+## One-command pipeline orchestrator (new)
+
+For iterative rule ingestion, a single command now orchestrates conversion, calibration, and optional drift compare:
+
+- `npm run legacy:pipeline -- --input <legacy-root> [options]`
+
+Pipeline stages:
+
+1. Convert
+- Runs `legacy:convert` with your input paths and conversion options.
+- Produces report + stubs under `conversion/`.
+
+2. Calibrate
+- Runs `legacy:confidence-calibrate` against generated processor stubs.
+- Produces calibration artifacts under `calibration/`.
+
+3. Compare (optional)
+- If `--compare-before <calibration.json>` is provided, runs `legacy:confidence-compare`.
+- Produces drift artifacts under `compare/`.
+
+4. Manifest
+- Writes `pipeline-manifest.json` containing:
+  - resolved options
+  - canonical artifact paths
+  - run metadata (timestamp/run name)
+
+### Pipeline options
+
+- `--input <path>` (repeatable, required)
+- `--output-root <path>` (default: `tmp/legacy-analysis/pipeline`)
+- `--run-name <name>` (default: `run-<timestamp>`)
+- `--include <a,b,c>` / `--exclude <a,b,c>`
+- `--vendor <name>`
+- `--use-mibs` / `--no-mibs`
+- `--use-llm` / `--no-llm`
+- `--dry-run` / `--no-dry-run`
+- `--min-level <low|medium|high>`
+- `--strict-min-level`
+- `--max-items <N>`
+- `--compare-before <path-to-calibration.json>`
+
+### Example workflows
+
+Initial baseline run (no compare):
+
+- `npm run legacy:pipeline -- --input rules/legacy/uploads/NCE --run-name nce-baseline --min-level medium --max-items 25`
+
+Follow-up run with drift compare to previous baseline:
+
+- `npm run legacy:pipeline -- --input rules/legacy/uploads/NCE --run-name nce-iter-2 --min-level medium --max-items 25 --compare-before tmp/legacy-analysis/pipeline/nce-baseline/calibration/legacy-confidence-calibration.json`
+
+Strict low-only calibration in pipeline:
+
+- `npm run legacy:pipeline -- --input rules/legacy/uploads/NCE --run-name nce-strict-low --min-level low --strict-min-level --max-items 25`
+
+### Directory layout per run
+
+- `<output-root>/<run-name>/conversion/...`
+- `<output-root>/<run-name>/calibration/...`
+- `<output-root>/<run-name>/compare/...` (optional)
+- `<output-root>/<run-name>/pipeline-manifest.json`
+
 ## Safety constraints
 
 - Stub generation never mutates source logic.
