@@ -80,6 +80,11 @@ export type LegacyProcessorStub = {
   requiredMappings: string[];
   notes: string[];
   documentationRefs: string[];
+  confidence?: {
+    score: number;
+    level: 'high' | 'medium' | 'low';
+    rationale: string;
+  };
 };
 
 export type LegacyLookupStub = {
@@ -325,13 +330,47 @@ const deriveLookupName = (filePath: string) => {
 };
 
 const splitConcatExpression = (expression: string) => {
-  if (!concatRegex.test(expression)) {
-    return [expression.trim()];
+  const parts: string[] = [];
+  let current = '';
+  let inSingleQuote = false;
+  let inDoubleQuote = false;
+
+  for (let index = 0; index < expression.length; index += 1) {
+    const ch = expression[index];
+    const prev = index > 0 ? expression[index - 1] : '';
+
+    if (ch === "'" && !inDoubleQuote && prev !== '\\') {
+      inSingleQuote = !inSingleQuote;
+      current += ch;
+      continue;
+    }
+    if (ch === '"' && !inSingleQuote && prev !== '\\') {
+      inDoubleQuote = !inDoubleQuote;
+      current += ch;
+      continue;
+    }
+
+    if (!inSingleQuote && !inDoubleQuote && ch === '.') {
+      const before = current.trim();
+      if (before) {
+        parts.push(before);
+      }
+      current = '';
+      continue;
+    }
+
+    current += ch;
   }
-  return expression
-    .split(/\s\.\s/)
-    .map((part) => part.trim())
-    .filter(Boolean);
+
+  const tail = current.trim();
+  if (tail) {
+    parts.push(tail);
+  }
+
+  if (parts.length === 0) {
+    return [expression.trim()].filter(Boolean);
+  }
+  return parts;
 };
 
 const varAssignmentRegex = /^\s*(?:my\s+)?\$([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.+?)\s*;\s*$/;
@@ -1433,6 +1472,56 @@ const createManualStub = (
   documentationRefs: DOC_REFS,
 });
 
+const scoreProcessorStubConfidence = (
+  stub: LegacyProcessorStub,
+): { score: number; level: 'high' | 'medium' | 'low'; rationale: string } => {
+  let score = 0.75;
+
+  if (stub.status === 'direct') {
+    score = 0.9;
+  } else if (stub.status === 'conditional') {
+    score = 0.62;
+  } else if (stub.status === 'manual') {
+    score = 0.3;
+  }
+
+  if (stub.requiredMappings.length > 0) {
+    score -= 0.12;
+  }
+
+  const noteText = (stub.notes || []).join(' ').toLowerCase();
+  const isRegexChain = stub.recommendedProcessor === 'if' || noteText.includes('regex-capture');
+  if (isRegexChain) {
+    score += stub.status === 'direct' ? -0.06 : -0.12;
+  }
+
+  if (noteText.includes('heuristic')) {
+    score -= 0.08;
+  }
+
+  score = Math.max(0.05, Math.min(0.98, score));
+  const rounded = Number(score.toFixed(2));
+  const level: 'high' | 'medium' | 'low' = rounded >= 0.8 ? 'high' : rounded >= 0.55 ? 'medium' : 'low';
+
+  const rationaleParts: string[] = [];
+  rationaleParts.push(`status=${stub.status}`);
+  if (stub.requiredMappings.length > 0) {
+    rationaleParts.push(`requiredMappings=${stub.requiredMappings.length}`);
+  }
+  if (isRegexChain) {
+    rationaleParts.push('regex-branch-chain');
+  }
+  if (noteText.includes('heuristic')) {
+    rationaleParts.push('heuristic-mapping');
+  }
+
+  return {
+    score: rounded,
+    level,
+    rationale: rationaleParts.join(', '),
+  };
+};
+
 const buildAnalysisIndex = (analyses: LegacyFileAnalysis[]) => {
   const byFile = new Map<string, LegacyFileAnalysis>();
   analyses.forEach((analysis) => {
@@ -1445,6 +1534,187 @@ type ResolvedVariableMapping = {
   kind: 'path' | 'literal';
   value: string | number | boolean;
   note?: string;
+};
+
+type RegexCaptureContext = {
+  captureVar: string;
+  captureGroup: number;
+  sourceVar: string;
+  extractionPattern: string;
+  extractionFlags?: string;
+  conditionPattern?: string;
+  conditionFlags?: string;
+};
+
+type ParsedConcatSet = {
+  source: string;
+  args?: string[];
+  requiredMappings: string[];
+  unresolvedParts: string[];
+  mappingNotes: string[];
+};
+
+const findFunctionBlock = (analysis: LegacyFileAnalysis, ruleFunction: string) => {
+  return (
+    analysis.functionBlocks.find((block) => block.name === ruleFunction) ||
+    analysis.functionBlocks.find((block) => block.name === '__global__') ||
+    null
+  );
+};
+
+const extractFieldAssignmentsFromText = (blockText: string, field: string) => {
+  const escapedField = field.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const assignmentRegex = new RegExp(
+    `\\$Event\\s*->\\s*\\{\\s*['\"]?${escapedField}['\"]?\\s*}\\s*=\\s*(.+?);`,
+    'g',
+  );
+  const values: string[] = [];
+  let match = assignmentRegex.exec(blockText);
+  while (match) {
+    values.push(String(match[1] || '').trim());
+    match = assignmentRegex.exec(blockText);
+  }
+  return values;
+};
+
+const parseRegexCaptureContexts = (blockText: string) => {
+  const lines = blockText.split(/\r?\n/);
+  const contexts = new Map<string, RegexCaptureContext>();
+  const recentRegexByLine = new Map<number, { sourceVar: string; pattern: string; flags?: string }>();
+  const recentConditionByLine = new Map<number, { sourceVar: string; pattern: string; flags?: string }>();
+  const inlineIfRegex = /\b(?:if|elsif)\s*\(\s*\$([A-Za-z_][A-Za-z0-9_]*)\s*=~\s*\/(.+?)\/([a-z]*)\s*\)/;
+  const regexEvalRegex = /^\s*\$([A-Za-z_][A-Za-z0-9_]*)\s*=~\s*\/(.+?)\/([a-z]*)\s*;\s*$/;
+  const captureAssignRegex = /^\s*(?:my\s+)?\$([A-Za-z_][A-Za-z0-9_]*)\s*=\s*\$([1-9])\s*;\s*$/;
+
+  lines.forEach((line, lineIndex) => {
+    const ifMatch = line.match(inlineIfRegex);
+    if (ifMatch) {
+      recentConditionByLine.set(lineIndex, {
+        sourceVar: ifMatch[1],
+        pattern: ifMatch[2],
+        flags: ifMatch[3] || undefined,
+      });
+    }
+
+    const regexEvalMatch = line.match(regexEvalRegex);
+    if (regexEvalMatch) {
+      recentRegexByLine.set(lineIndex, {
+        sourceVar: regexEvalMatch[1],
+        pattern: regexEvalMatch[2],
+        flags: regexEvalMatch[3] || undefined,
+      });
+      return;
+    }
+
+    const captureMatch = line.match(captureAssignRegex);
+    if (!captureMatch) {
+      return;
+    }
+
+    const captureVar = captureMatch[1];
+    const captureGroup = Number(captureMatch[2]);
+    let regexContext: { sourceVar: string; pattern: string; flags?: string } | null = null;
+    for (let back = lineIndex - 1; back >= Math.max(0, lineIndex - 8); back -= 1) {
+      const maybe = recentRegexByLine.get(back);
+      if (maybe) {
+        regexContext = maybe;
+        break;
+      }
+    }
+    if (!regexContext) {
+      return;
+    }
+
+    let conditionContext: { sourceVar: string; pattern: string; flags?: string } | null = null;
+    for (let back = lineIndex - 1; back >= Math.max(0, lineIndex - 12); back -= 1) {
+      const maybe = recentConditionByLine.get(back);
+      if (maybe && maybe.sourceVar === regexContext.sourceVar) {
+        conditionContext = maybe;
+        break;
+      }
+    }
+
+    contexts.set(captureVar, {
+      captureVar,
+      captureGroup,
+      sourceVar: regexContext.sourceVar,
+      extractionPattern: regexContext.pattern,
+      extractionFlags: regexContext.flags,
+      conditionPattern: conditionContext?.pattern,
+      conditionFlags: conditionContext?.flags,
+    });
+  });
+
+  return contexts;
+};
+
+const parseConcatExpressionToSet = (
+  expression: string,
+  proposal: LegacyOverrideProposal,
+  analysisIndex: Map<string, LegacyFileAnalysis>,
+  extraMappings?: Record<string, ResolvedVariableMapping>,
+): ParsedConcatSet | null => {
+  const concatParts = splitConcatExpression(expression);
+  if (concatParts.length === 0) {
+    return null;
+  }
+
+  const formatParts: string[] = [];
+  const args: string[] = [];
+  const requiredMappings = new Set<string>();
+  const unresolvedParts: string[] = [];
+  const mappingNotes: string[] = [];
+
+  concatParts.forEach((part) => {
+    const eventMatch = part.match(eventRefRegex);
+    if (eventMatch) {
+      formatParts.push('%s');
+      args.push(`$.event.${eventMatch[1]}`);
+      return;
+    }
+
+    const varMatch = part.match(perlVarRegex);
+    if (varMatch) {
+      const variableName = varMatch[1];
+      const resolvedSource = extraMappings?.[variableName] || resolveVariableMapping(proposal, variableName, analysisIndex);
+      if (resolvedSource) {
+        if (resolvedSource.kind === 'literal') {
+          formatParts.push(String(resolvedSource.value));
+        } else {
+          formatParts.push('%s');
+          args.push(String(resolvedSource.value));
+        }
+        if (resolvedSource.note) {
+          mappingNotes.push(resolvedSource.note);
+        }
+      } else {
+        formatParts.push('%s');
+        args.push(`<map:${variableName}>`);
+        requiredMappings.add(variableName);
+      }
+      return;
+    }
+
+    const trimmed = part.trim();
+    if ((trimmed.startsWith('"') && trimmed.endsWith('"')) || (trimmed.startsWith("'") && trimmed.endsWith("'"))) {
+      formatParts.push(stripOuterQuotes(trimmed));
+      return;
+    }
+
+    unresolvedParts.push(part);
+  });
+
+  if (unresolvedParts.length > 0 || formatParts.length === 0) {
+    return null;
+  }
+
+  return {
+    source: formatParts.join(''),
+    args: args.length > 0 ? args : undefined,
+    requiredMappings: Array.from(requiredMappings),
+    unresolvedParts,
+    mappingNotes,
+  };
 };
 
 const resolveVariableMapping = (
@@ -1484,6 +1754,140 @@ const resolveVariableMapping = (
   }
 
   return null;
+};
+
+const buildRegexDrivenStubForExpression = (
+  proposal: LegacyOverrideProposal,
+  field: string,
+  expression: string,
+  analysisIndex: Map<string, LegacyFileAnalysis>,
+): LegacyProcessorStub | null => {
+  const analysis = analysisIndex.get(proposal.sourceFile);
+  if (!analysis) {
+    return null;
+  }
+  const block = findFunctionBlock(analysis, proposal.ruleFunction);
+  if (!block) {
+    return null;
+  }
+
+  const captureContexts = parseRegexCaptureContexts(block.text);
+  if (captureContexts.size === 0) {
+    return null;
+  }
+
+  const variableMatches = Array.from(expression.matchAll(/\$([A-Za-z_][A-Za-z0-9_]*)/g)).map((m) => m[1]);
+  const captureVarName = variableMatches.find((name) => captureContexts.has(name));
+  if (!captureVarName) {
+    return null;
+  }
+
+  const captureContext = captureContexts.get(captureVarName);
+  if (!captureContext) {
+    return null;
+  }
+
+  const sourceMapping = resolveVariableMapping(proposal, captureContext.sourceVar, analysisIndex);
+  const captureField = `$.tmp.${captureVarName}`;
+  const composedSet = parseConcatExpressionToSet(expression, proposal, analysisIndex, {
+    [captureVarName]: {
+      kind: 'path',
+      value: captureField,
+      note: `Mapped extracted capture variable $${captureVarName} to temporary field ${captureField}.`,
+    },
+  });
+  if (!composedSet) {
+    return null;
+  }
+
+  const fallbackCandidates = extractFieldAssignmentsFromText(block.text, field).filter((candidate) => {
+    const normalized = String(candidate || '').trim();
+    return normalized && normalized !== expression && !normalized.includes(`$${captureVarName}`);
+  });
+  const fallbackExpression = fallbackCandidates[0] || null;
+  const fallbackSet = fallbackExpression
+    ? parseConcatExpressionToSet(fallbackExpression, proposal, analysisIndex)
+    : null;
+
+  const requiredMappings = new Set<string>(composedSet.requiredMappings);
+  if (sourceMapping) {
+    if (sourceMapping.kind === 'path') {
+      // no-op
+    }
+  } else {
+    requiredMappings.add(captureContext.sourceVar);
+  }
+  if (fallbackSet) {
+    fallbackSet.requiredMappings.forEach((name) => requiredMappings.add(name));
+  }
+
+  const sourceField = sourceMapping?.kind === 'path'
+    ? String(sourceMapping.value)
+    : `<map:${captureContext.sourceVar}>`;
+  const extractionPattern = captureContext.extractionPattern;
+  const conditionPattern = captureContext.conditionPattern || extractionPattern;
+  const status: LegacyStubStatus = requiredMappings.size > 0 ? 'conditional' : 'direct';
+
+  const thenSteps: Array<Record<string, any>> = [
+    {
+      regex: {
+        source: sourceField,
+        pattern: extractionPattern,
+        captureGroup: captureContext.captureGroup,
+        targetField: captureField,
+        ...(captureContext.extractionFlags ? { flags: captureContext.extractionFlags } : {}),
+      },
+    },
+    {
+      set: {
+        source: composedSet.source,
+        ...(composedSet.args ? { args: composedSet.args } : {}),
+        targetField: `$.event.${field}`,
+      },
+    },
+  ];
+
+  const elseSteps: Array<Record<string, any>> = fallbackSet
+    ? [
+        {
+          set: {
+            source: fallbackSet.source,
+            ...(fallbackSet.args ? { args: fallbackSet.args } : {}),
+            targetField: `$.event.${field}`,
+          },
+        },
+      ]
+    : [];
+
+  return {
+    objectName: proposal.objectName,
+    sourceFile: proposal.sourceFile,
+    ruleFunction: proposal.ruleFunction,
+    targetField: `$.event.${field}`,
+    expression,
+    status,
+    recommendedProcessor: 'if',
+    template: {
+      if: {
+        condition: {
+          regex: {
+            source: sourceField,
+            pattern: conditionPattern,
+            ...(captureContext.conditionFlags ? { flags: captureContext.conditionFlags } : {}),
+          },
+        },
+        then: thenSteps,
+        ...(elseSteps.length > 0 ? { else: elseSteps } : {}),
+      },
+    },
+    requiredMappings: Array.from(requiredMappings),
+    notes: [
+      'Detected generic regex-capture composition and converted to branch-aware if + regex + set chain.',
+      ...(sourceMapping?.note ? [sourceMapping.note] : []),
+      ...composedSet.mappingNotes,
+    ],
+    documentationRefs: DOC_REFS,
+  };
 };
 
 const buildProcessorStubForField = (
@@ -1596,75 +2000,35 @@ const buildProcessorStubForField = (
     };
   }
 
-  const concatParts = splitConcatExpression(expression);
-  if (concatParts.length > 0) {
-    const formatParts: string[] = [];
-    const args: string[] = [];
-    const requiredMappings = new Set<string>();
-    const unresolvedParts: string[] = [];
+  const regexDrivenStub = buildRegexDrivenStubForExpression(
+    proposal,
+    field,
+    expression,
+    analysisIndex,
+  );
+  if (regexDrivenStub) {
+    return regexDrivenStub;
+  }
 
-    concatParts.forEach((part) => {
-      const eventMatch = part.match(eventRefRegex);
-      if (eventMatch) {
-        formatParts.push('%s');
-        args.push(`$.event.${eventMatch[1]}`);
-        return;
-      }
-      const varMatch = part.match(perlVarRegex);
-      if (varMatch) {
-        const variableName = varMatch[1];
-        const resolvedSource = resolveVariableMapping(proposal, variableName, analysisIndex);
-        if (resolvedSource) {
-          if (resolvedSource.kind === 'literal') {
-            formatParts.push(String(resolvedSource.value));
-          } else {
-            formatParts.push('%s');
-            args.push(String(resolvedSource.value));
-          }
-        } else {
-          formatParts.push('%s');
-          args.push(`<map:${variableName}>`);
-          requiredMappings.add(variableName);
-        }
-        return;
-      }
-      const trimmed = part.trim();
-      if (
-        (trimmed.startsWith('"') && trimmed.endsWith('"')) ||
-        (trimmed.startsWith("'") && trimmed.endsWith("'"))
-      ) {
-        formatParts.push(stripOuterQuotes(trimmed));
-        return;
-      }
-      unresolvedParts.push(part);
-    });
-
-    if (unresolvedParts.length === 0 && formatParts.length > 0) {
-      const sourceValue = formatParts.join('');
-      return {
-        ...base,
-        status: requiredMappings.size > 0 ? 'conditional' : 'direct',
-        recommendedProcessor: 'set',
-        template: {
-          set:
-            args.length > 0
-              ? {
-                  source: sourceValue,
-                  args,
-                  targetField,
-                }
-              : {
-                  source: sourceValue,
-                  targetField,
-                },
+  const parsedConcat = parseConcatExpressionToSet(expression, proposal, analysisIndex);
+  if (parsedConcat) {
+    return {
+      ...base,
+      status: parsedConcat.requiredMappings.length > 0 ? 'conditional' : 'direct',
+      recommendedProcessor: 'set',
+      template: {
+        set: {
+          source: parsedConcat.source,
+          ...(parsedConcat.args ? { args: parsedConcat.args } : {}),
+          targetField,
         },
-        requiredMappings: Array.from(requiredMappings),
-        notes:
-          requiredMappings.size > 0
-            ? ['String composition converted to set+args with variable mapping placeholders.']
-            : ['String composition converted to set processor.'],
-      };
-    }
+      },
+      requiredMappings: parsedConcat.requiredMappings,
+      notes:
+        parsedConcat.requiredMappings.length > 0
+          ? ['String composition converted to set+args with variable mapping placeholders.', ...parsedConcat.mappingNotes]
+          : ['String composition converted to set processor.', ...parsedConcat.mappingNotes],
+    };
   }
 
   if (expression.includes('$extracted_value')) {
@@ -1704,7 +2068,11 @@ const buildProcessorStubsWithAnalysis = (
   const analysisIndex = buildAnalysisIndex(analyses);
   overrides.forEach((proposal) => {
     Object.entries(proposal.fields || {}).forEach(([field, expression]) => {
-      stubs.push(buildProcessorStubForField(proposal, field, String(expression), analysisIndex));
+      const stub = buildProcessorStubForField(proposal, field, String(expression), analysisIndex);
+      stubs.push({
+        ...stub,
+        confidence: scoreProcessorStubConfidence(stub),
+      });
     });
   });
   return stubs;
@@ -2010,6 +2378,18 @@ export const renderLegacyTextReport = (report: LegacyConversionReport) => {
   }
 
   if (report.stubs.processorStubs.length > 0) {
+    const confidenceCounts = report.stubs.processorStubs.reduce(
+      (acc, entry) => {
+        const level = entry.confidence?.level || 'medium';
+        acc[level] += 1;
+        return acc;
+      },
+      { high: 0, medium: 0, low: 0 },
+    );
+    lines.push(
+      `Stub confidence: high ${confidenceCounts.high} | medium ${confidenceCounts.medium} | low ${confidenceCounts.low}`,
+    );
+
     const conditional = report.stubs.processorStubs.filter((entry) => entry.status === 'conditional');
     const manual = report.stubs.processorStubs.filter((entry) => entry.status === 'manual');
     if (conditional.length > 0) {

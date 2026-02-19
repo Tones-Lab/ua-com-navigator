@@ -74,6 +74,33 @@ Expressions that are structurally convertible but require variable-source mappin
 - Example includes `$extracted_value`
 - Output guidance: `regex` + `set` (and optionally `if`).
 
+### Generic regex-capture auto-conversion (new)
+
+The converter now handles a broad regex family without vendor-specific rules:
+
+1. Detect capture lineage in function scope
+- Finds patterns like:
+  - `$sourceVar =~ /.../;`
+  - `my $captured = $1;`
+- Links `$captured` to the source var, regex pattern, and capture group index.
+
+2. Detect capture usage in event assignment composition
+- If a target field expression (for example `Summary`) contains `$captured` inside concatenation, converter emits a branch-capable chain.
+
+3. Emit branch-aware processor template
+- Recommended processor: `if`
+- Then branch:
+  - `regex` extraction into temp field (e.g. `$.tmp.capturedVar`)
+  - `set` composition using extracted value
+- Else branch (when detectable in source rule):
+  - fallback `set` composition without extracted value
+
+4. Preserve safety on unresolved mappings
+- If source variable path cannot be mapped, emit `<map:varName>` and keep status `conditional`.
+- If source mappings are resolved by lineage/aliases, status can become `direct`.
+
+This allows multiple future regex-heavy rule examples to flow through the same conversion pipeline logic.
+
 ### Manual
 
 Expressions not safely parsable into deterministic templates are marked manual and surfaced for review.
@@ -99,6 +126,34 @@ Lookup stubs are generated for `.pl` files whose names indicate lookup behavior.
 - lookup stub sample with entry counts
 
 This is intended to support large-batch triage and prioritization.
+
+## Processor stub confidence scoring (new)
+
+Each generated `processorStub` now includes a deterministic confidence object:
+
+- `confidence.score` (0.05 to 0.98)
+- `confidence.level` (`high`, `medium`, `low`)
+- `confidence.rationale` (compact explanation of why)
+
+Current scoring policy:
+
+- Base by status:
+  - `direct`: 0.90
+  - `conditional`: 0.62
+  - `manual`: 0.30
+- Risk adjustments:
+  - unresolved required mappings: `-0.12`
+  - regex branch chains (`if + regex + set`): `-0.06` when direct, `-0.12` when conditional
+  - heuristic variable mapping (for example `$generic` fallback): `-0.08`
+- Level thresholds:
+  - `high` >= 0.80
+  - `medium` >= 0.55 and < 0.80
+  - `low` < 0.55
+
+Purpose:
+
+- Keep aggressive auto-conversion while exposing relative risk.
+- Support wizard/report prioritization by confidence rather than only direct/conditional/manual buckets.
 
 ## Safety constraints
 
