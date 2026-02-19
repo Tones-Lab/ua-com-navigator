@@ -120,6 +120,15 @@
 	- ✅ Convert legacy rule formats into COM (FCOM/PCOM) with validation output.
 	- ✅ Legacy Conversion UI entry (tab/link) is implemented with upload + report workflows.
 	- ⏳ Remaining: tie into UA assistant/chatbot and add guided apply/wizard steps for unresolved logic.
+	- 🆕 Feature request: Conversion Findings Report + Wizard UX (backlog only)
+		- Objective: provide a guided, step-through conversion workflow for large mixed legacy batches.
+		- Scope (future):
+			- Rich findings report grouped by `direct`, `conditional`, `manual` conversion candidates.
+			- Inline resolution for conditional mappings (map legacy vars to JSONPath sources).
+			- Lookup conversion assistant for `.pl`/table-like files.
+			- Multi-file workflow progress (queue, completion state, unresolved blockers).
+			- Export approved stubs/overrides + audit trail of decisions.
+		- Constraints: keep this as backlog/P1 item; do not block current converter backend improvements.
 - Testing & quality:
 	- 🧪 UI testing strategy (Vitest + RTL; Playwright/Cypress for E2E).
 	- ✅ Code formatting automation (Prettier + ESLint + Husky/lint-staged).

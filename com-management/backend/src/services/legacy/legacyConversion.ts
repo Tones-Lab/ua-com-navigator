@@ -24,6 +24,8 @@ export type LegacyFileAnalysis = {
   performanceHints: string[];
   severityAssignments: Array<{ severity?: string; eventCategory?: string }>;
   severityMaps: Record<string, { severity: string; eventCategory: string }>;
+  lookupPairs: Array<{ key: string; value: string }>;
+  variableMappingsByFunction: Record<string, Record<string, string>>;
   snmpHints: string[];
 };
 
@@ -62,6 +64,47 @@ export type LegacyOverrideProposal = {
   ruleFunction: string;
   fields: Record<string, string>;
   reason: string;
+};
+
+export type LegacyStubStatus = 'direct' | 'conditional' | 'manual';
+
+export type LegacyProcessorStub = {
+  objectName: string;
+  sourceFile: string;
+  ruleFunction: string;
+  targetField: string;
+  expression: string;
+  status: LegacyStubStatus;
+  recommendedProcessor: 'set' | 'copy' | 'replace' | 'regex' | 'if' | 'lookup' | 'manual';
+  template?: Record<string, any>;
+  requiredMappings: string[];
+  notes: string[];
+  documentationRefs: string[];
+};
+
+export type LegacyLookupStub = {
+  sourceFile: string;
+  lookupName: string;
+  status: LegacyStubStatus;
+  entryCount: number;
+  template: Record<string, any>;
+  notes: string[];
+  documentationRefs: string[];
+};
+
+export type LegacyConversionStubs = {
+  processorStubs: LegacyProcessorStub[];
+  lookupStubs: LegacyLookupStub[];
+  summary: {
+    processorTotal: number;
+    processorDirect: number;
+    processorConditional: number;
+    processorManual: number;
+    lookupTotal: number;
+    lookupDirect: number;
+    lookupConditional: number;
+    lookupManual: number;
+  };
 };
 
 export type LegacyMatchDiff = {
@@ -164,6 +207,7 @@ export type LegacyConversionReport = {
   classifications: LegacyFileClassification[];
   legacyObjects: LegacyObject[];
   overrideProposals: LegacyOverrideProposal[];
+  stubs: LegacyConversionStubs;
   matchDiffs: LegacyMatchDiff[];
   matchStats?: LegacyMatchStats | null;
   summaries: {
@@ -190,6 +234,11 @@ export type LegacyConversionReport = {
     unknownFiles: number;
     totalOids: number;
     totalOverrides: number;
+    totalProcessorStubs: number;
+    directProcessorStubs: number;
+    conditionalProcessorStubs: number;
+    manualProcessorStubs: number;
+    totalLookupStubs: number;
   };
 };
 
@@ -216,8 +265,133 @@ const metricIdRegex = /\$MetricID\b/;
 const findCallRegex = /\bFind[A-Za-z0-9_]+\s*\(/g;
 const hashOidRegex = /['"][^'"]+['"]\s*=>\s*['"]?(?:\d+\.){3,}\d+['"]?/g;
 const MATCH_CACHE_TTL_MS = Math.max(0, Number(process.env.LEGACY_MATCH_CACHE_TTL_MS || 5 * 60 * 1000));
+const eventRefRegex = /^\$Event\s*->\s*\{\s*['"]?([A-Za-z0-9_]+)['"]?\s*}$/;
+const perlVarRegex = /^\$([A-Za-z_][A-Za-z0-9_]*)$/;
+const perlSigilRegex = /\$Event\s*->|\$[A-Za-z_][A-Za-z0-9_]*/;
+const concatRegex = /\s\.\s/;
+const lookupPairRegex = /['"]([^'"]+)['"]\s*=>\s*['"]([^'"]+)['"]/g;
 
 const normalizeList = (values: string[]) => Array.from(new Set(values)).filter(Boolean);
+
+const DOC_REFS = [
+  'architecture/fcom-processor-docs-full.md',
+  'architecture/fcom-processor-docs-summary.md',
+  'architecture/legacy-to-fcom-field-mappings.md',
+];
+
+const stripOuterQuotes = (value: string) => {
+  const trimmed = value.trim();
+  if (
+    (trimmed.startsWith('"') && trimmed.endsWith('"')) ||
+    (trimmed.startsWith("'") && trimmed.endsWith("'"))
+  ) {
+    return trimmed.slice(1, -1);
+  }
+  return trimmed;
+};
+
+const parseScalarLiteral = (value: string): string | number | boolean => {
+  const trimmed = value.trim();
+  if (/^-?\d+$/.test(trimmed)) {
+    return Number(trimmed);
+  }
+  if (trimmed.toLowerCase() === 'true') {
+    return true;
+  }
+  if (trimmed.toLowerCase() === 'false') {
+    return false;
+  }
+  return stripOuterQuotes(trimmed);
+};
+
+const extractLookupPairs = (content: string) => {
+  const pairs = new Map<string, string>();
+  lookupPairRegex.lastIndex = 0;
+  let match = lookupPairRegex.exec(content);
+  while (match) {
+    const key = String(match[1] || '').trim();
+    const value = String(match[2] || '').trim();
+    if (key) {
+      pairs.set(key, value);
+    }
+    match = lookupPairRegex.exec(content);
+  }
+  return Array.from(pairs.entries()).map(([key, value]) => ({ key, value }));
+};
+
+const deriveLookupName = (filePath: string) => {
+  const base = path.basename(filePath, path.extname(filePath));
+  return base.replace(/[^A-Za-z0-9_]+/g, '_');
+};
+
+const splitConcatExpression = (expression: string) => {
+  if (!concatRegex.test(expression)) {
+    return [expression.trim()];
+  }
+  return expression
+    .split(/\s\.\s/)
+    .map((part) => part.trim())
+    .filter(Boolean);
+};
+
+const varAssignmentRegex = /^\s*(?:my\s+)?\$([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.+?)\s*;\s*$/;
+const numberedVarRegex = /^\$v(\d+)$/i;
+
+const mapLegacySourceExpression = (expression: string, knownMappings: Record<string, string>) => {
+  const trimmed = String(expression || '').trim();
+  if (!trimmed) {
+    return null;
+  }
+
+  const numberedVar = trimmed.match(numberedVarRegex);
+  if (numberedVar) {
+    const idx = Number(numberedVar[1]);
+    if (!Number.isNaN(idx) && idx > 0) {
+      return `$.trap.variables[${idx - 1}].value`;
+    }
+  }
+
+  const eventMatch = trimmed.match(eventRefRegex);
+  if (eventMatch) {
+    return `$.event.${eventMatch[1]}`;
+  }
+
+  const directVar = trimmed.match(perlVarRegex);
+  if (directVar) {
+    return knownMappings[directVar[1]] || null;
+  }
+
+  return null;
+};
+
+const buildVariableMappingsByFunction = (functionBlocks: LegacyFunctionBlock[]) => {
+  const result: Record<string, Record<string, string>> = {};
+  functionBlocks.forEach((block) => {
+    const mapping: Record<string, string> = {};
+    const lines = block.text.split(/\r?\n/);
+    let changed = true;
+    let guard = 0;
+    while (changed && guard < 8) {
+      changed = false;
+      guard += 1;
+      lines.forEach((line) => {
+        const assignment = line.match(varAssignmentRegex);
+        if (!assignment) {
+          return;
+        }
+        const variableName = assignment[1];
+        const sourceExpr = assignment[2];
+        const resolved = mapLegacySourceExpression(sourceExpr, mapping);
+        if (resolved && mapping[variableName] !== resolved) {
+          mapping[variableName] = resolved;
+          changed = true;
+        }
+      });
+    }
+    result[block.name] = mapping;
+  });
+  return result;
+};
 
 const isIpAddress = (value: string) => {
   if (!ipRegex.test(value)) {
@@ -1066,6 +1240,8 @@ const extractAnalysis = (filePath: string): LegacyFileAnalysis => {
 
   const snmpHints = snmpHintRegex.test(content) ? ['snmp'] : [];
   const severityMaps = fileType === 'pl' ? extractSeverityMaps(content) : {};
+  const lookupPairs = fileType === 'pl' ? extractLookupPairs(content) : [];
+  const variableMappingsByFunction = buildVariableMappingsByFunction(functionBlocks);
 
   return {
     filePath,
@@ -1081,6 +1257,8 @@ const extractAnalysis = (filePath: string): LegacyFileAnalysis => {
     performanceHints,
     severityAssignments: mergedAssignments,
     severityMaps,
+    lookupPairs,
+    variableMappingsByFunction,
     snmpHints,
   };
 };
@@ -1233,6 +1411,311 @@ const buildOverrideProposals = (objects: LegacyObject[]) => {
     });
 };
 
+const expressionHasLegacySyntax = (expression: string) => {
+  return perlSigilRegex.test(expression) || concatRegex.test(expression);
+};
+
+const createManualStub = (
+  proposal: LegacyOverrideProposal,
+  field: string,
+  expression: string,
+  note: string,
+): LegacyProcessorStub => ({
+  objectName: proposal.objectName,
+  sourceFile: proposal.sourceFile,
+  ruleFunction: proposal.ruleFunction,
+  targetField: `$.event.${field}`,
+  expression,
+  status: 'manual',
+  recommendedProcessor: 'manual',
+  requiredMappings: [],
+  notes: [note],
+  documentationRefs: DOC_REFS,
+});
+
+const buildAnalysisIndex = (analyses: LegacyFileAnalysis[]) => {
+  const byFile = new Map<string, LegacyFileAnalysis>();
+  analyses.forEach((analysis) => {
+    byFile.set(analysis.filePath, analysis);
+  });
+  return byFile;
+};
+
+const resolveVariableMapping = (
+  proposal: LegacyOverrideProposal,
+  variableName: string,
+  analysisIndex: Map<string, LegacyFileAnalysis>,
+) => {
+  const analysis = analysisIndex.get(proposal.sourceFile);
+  if (!analysis) {
+    return null;
+  }
+
+  const byFunction = analysis.variableMappingsByFunction || {};
+  const functionScoped = byFunction[proposal.ruleFunction] || {};
+  if (functionScoped[variableName]) {
+    return functionScoped[variableName];
+  }
+
+  const globalScoped = byFunction.__global__ || {};
+  if (globalScoped[variableName]) {
+    return globalScoped[variableName];
+  }
+
+  return null;
+};
+
+const buildProcessorStubForField = (
+  proposal: LegacyOverrideProposal,
+  field: string,
+  expressionInput: string,
+  analysisIndex: Map<string, LegacyFileAnalysis>,
+): LegacyProcessorStub => {
+  const expression = String(expressionInput || '').trim();
+  const targetField = `$.event.${field}`;
+  const base = {
+    objectName: proposal.objectName,
+    sourceFile: proposal.sourceFile,
+    ruleFunction: proposal.ruleFunction,
+    targetField,
+    expression,
+    documentationRefs: DOC_REFS,
+  };
+
+  if (!expression) {
+    return createManualStub(proposal, field, expression, 'Empty expression requires manual review.');
+  }
+
+  if (!expressionHasLegacySyntax(expression)) {
+    return {
+      ...base,
+      status: 'direct',
+      recommendedProcessor: 'set',
+      template: {
+        set: {
+          source: parseScalarLiteral(expression),
+          targetField,
+        },
+      },
+      requiredMappings: [],
+      notes: ['Literal assignment converted to set processor.'],
+    };
+  }
+
+  const directEventRef = expression.match(eventRefRegex);
+  if (directEventRef) {
+    const sourceField = directEventRef[1];
+    return {
+      ...base,
+      status: 'direct',
+      recommendedProcessor: 'copy',
+      template: {
+        copy: {
+          source: `$.event.${sourceField}`,
+          targetField,
+        },
+      },
+      requiredMappings: [],
+      notes: ['Event-field copy converted to copy processor.'],
+    };
+  }
+
+  const directVarRef = expression.match(perlVarRegex);
+  if (directVarRef) {
+    const variableName = directVarRef[1];
+    const resolvedSource = resolveVariableMapping(proposal, variableName, analysisIndex);
+    if (resolvedSource) {
+      return {
+        ...base,
+        status: 'direct',
+        recommendedProcessor: 'copy',
+        template: {
+          copy: {
+            source: resolvedSource,
+            targetField,
+          },
+        },
+        requiredMappings: [],
+        notes: ['Variable reference resolved via lineage mapping and converted to copy processor.'],
+      };
+    }
+    return {
+      ...base,
+      status: 'conditional',
+      recommendedProcessor: 'copy',
+      template: {
+        copy: {
+          source: `<map:${variableName}>`,
+          targetField,
+        },
+      },
+      requiredMappings: [variableName],
+      notes: ['Variable reference needs source-path mapping before automatic conversion.'],
+    };
+  }
+
+  const concatParts = splitConcatExpression(expression);
+  if (concatParts.length > 0) {
+    const formatParts: string[] = [];
+    const args: string[] = [];
+    const requiredMappings = new Set<string>();
+    const unresolvedParts: string[] = [];
+
+    concatParts.forEach((part) => {
+      const eventMatch = part.match(eventRefRegex);
+      if (eventMatch) {
+        formatParts.push('%s');
+        args.push(`$.event.${eventMatch[1]}`);
+        return;
+      }
+      const varMatch = part.match(perlVarRegex);
+      if (varMatch) {
+        const variableName = varMatch[1];
+        const resolvedSource = resolveVariableMapping(proposal, variableName, analysisIndex);
+        formatParts.push('%s');
+        if (resolvedSource) {
+          args.push(resolvedSource);
+        } else {
+          args.push(`<map:${variableName}>`);
+          requiredMappings.add(variableName);
+        }
+        return;
+      }
+      const trimmed = part.trim();
+      if (
+        (trimmed.startsWith('"') && trimmed.endsWith('"')) ||
+        (trimmed.startsWith("'") && trimmed.endsWith("'"))
+      ) {
+        formatParts.push(stripOuterQuotes(trimmed));
+        return;
+      }
+      unresolvedParts.push(part);
+    });
+
+    if (unresolvedParts.length === 0 && args.length > 0) {
+      return {
+        ...base,
+        status: requiredMappings.size > 0 ? 'conditional' : 'direct',
+        recommendedProcessor: 'set',
+        template: {
+          set: {
+            source: formatParts.join(''),
+            args,
+            targetField,
+          },
+        },
+        requiredMappings: Array.from(requiredMappings),
+        notes:
+          requiredMappings.size > 0
+            ? ['String composition converted to set+args with variable mapping placeholders.']
+            : ['String composition converted to set+args.'],
+      };
+    }
+  }
+
+  if (expression.includes('$extracted_value')) {
+    return {
+      ...base,
+      status: 'conditional',
+      recommendedProcessor: 'regex',
+      template: {
+        regex: {
+          source: '<map:source_field>',
+          pattern: '<pattern>',
+          targetField: '<map:extracted_value>',
+        },
+        set: {
+          source: '<compose with extracted value>',
+          targetField,
+        },
+      },
+      requiredMappings: ['source_field', 'extracted_value'],
+      notes: ['Detected extracted-value composition; use regex + set (optionally inside if/else).'],
+    };
+  }
+
+  return createManualStub(
+    proposal,
+    field,
+    expression,
+    'Expression shape is not safely auto-convertible; manual processor design is required.',
+  );
+};
+
+const buildProcessorStubsWithAnalysis = (
+  overrides: LegacyOverrideProposal[],
+  analyses: LegacyFileAnalysis[],
+) => {
+  const stubs: LegacyProcessorStub[] = [];
+  const analysisIndex = buildAnalysisIndex(analyses);
+  overrides.forEach((proposal) => {
+    Object.entries(proposal.fields || {}).forEach(([field, expression]) => {
+      stubs.push(buildProcessorStubForField(proposal, field, String(expression), analysisIndex));
+    });
+  });
+  return stubs;
+};
+
+const buildLookupStubs = (analyses: LegacyFileAnalysis[]): LegacyLookupStub[] => {
+  return analyses
+    .filter((analysis) => {
+      const base = path.basename(analysis.filePath).toLowerCase();
+      return analysis.fileType === 'pl' && base.includes('lookup');
+    })
+    .map((analysis) => {
+      const lookupName = deriveLookupName(analysis.filePath);
+      const lookupEntries = analysis.lookupPairs.slice(0, 500).reduce<Record<string, string>>((acc, entry) => {
+        acc[entry.key] = entry.value;
+        return acc;
+      }, {});
+      const hasPairs = analysis.lookupPairs.length > 0;
+      return {
+        sourceFile: analysis.filePath,
+        lookupName,
+        status: hasPairs ? 'direct' : 'manual',
+        entryCount: analysis.lookupPairs.length,
+        template: {
+          name: lookupName,
+          _type: 'lookup',
+          lookup: lookupEntries,
+        },
+        notes: hasPairs
+          ? ['Generated lookup stub from key/value pairs detected in legacy .pl file.']
+          : ['No simple key/value pairs detected. Review file for custom runtime lookup logic.'],
+        documentationRefs: DOC_REFS,
+      };
+    });
+};
+
+const buildConversionStubs = (
+  overrides: LegacyOverrideProposal[],
+  analyses: LegacyFileAnalysis[],
+): LegacyConversionStubs => {
+  const processorStubs = buildProcessorStubsWithAnalysis(overrides, analyses);
+  const lookupStubs = buildLookupStubs(analyses);
+  const processorDirect = processorStubs.filter((entry) => entry.status === 'direct').length;
+  const processorConditional = processorStubs.filter((entry) => entry.status === 'conditional').length;
+  const processorManual = processorStubs.filter((entry) => entry.status === 'manual').length;
+  const lookupDirect = lookupStubs.filter((entry) => entry.status === 'direct').length;
+  const lookupConditional = lookupStubs.filter((entry) => entry.status === 'conditional').length;
+  const lookupManual = lookupStubs.filter((entry) => entry.status === 'manual').length;
+
+  return {
+    processorStubs,
+    lookupStubs,
+    summary: {
+      processorTotal: processorStubs.length,
+      processorDirect,
+      processorConditional,
+      processorManual,
+      lookupTotal: lookupStubs.length,
+      lookupDirect,
+      lookupConditional,
+      lookupManual,
+    },
+  };
+};
+
 const attachTraversalContext = (objects: LegacyObject[], traversal: LegacyTraversalResult) => {
   if (traversal.entries.length === 0) {
     return objects;
@@ -1333,6 +1816,7 @@ export const convertLegacyRules = (options: LegacyConversionOptions): LegacyConv
   });
   const objectsWithTraversal = attachTraversalContext(objects, traversal);
   const overrides = buildOverrideProposals(objectsWithTraversal);
+  const stubs = buildConversionStubs(overrides, analyses);
   const summaries = buildSummaries(objectsWithTraversal);
   const bundle: LegacyOverrideBundle = {
     manifest: {
@@ -1355,6 +1839,11 @@ export const convertLegacyRules = (options: LegacyConversionOptions): LegacyConv
     unknownFiles: classifications.filter((entry) => entry.ruleType === 'unknown').length,
     totalOids,
     totalOverrides: overrides.length,
+    totalProcessorStubs: stubs.summary.processorTotal,
+    directProcessorStubs: stubs.summary.processorDirect,
+    conditionalProcessorStubs: stubs.summary.processorConditional,
+    manualProcessorStubs: stubs.summary.processorManual,
+    totalLookupStubs: stubs.summary.lookupTotal,
   };
 
   return {
@@ -1372,6 +1861,7 @@ export const convertLegacyRules = (options: LegacyConversionOptions): LegacyConv
     classifications,
     legacyObjects: objectsWithTraversal,
     overrideProposals: overrides,
+    stubs,
     matchDiffs,
     matchStats: matchReport.stats,
     summaries,
@@ -1432,6 +1922,13 @@ export const renderLegacyTextReport = (report: LegacyConversionReport) => {
   lines.push(`Total OIDs: ${report.summary.totalOids}`);
   lines.push(`Override proposals: ${report.summary.totalOverrides}`);
   lines.push(`Bundle overrides: ${report.bundle.overrides.length}`);
+  lines.push(
+    `Processor stubs: ${report.summary.totalProcessorStubs} ` +
+      `(direct ${report.summary.directProcessorStubs}, ` +
+      `conditional ${report.summary.conditionalProcessorStubs}, ` +
+      `manual ${report.summary.manualProcessorStubs})`,
+  );
+  lines.push(`Lookup stubs: ${report.summary.totalLookupStubs}`);
   if (report.matchDiffs.length > 0) {
     lines.push(`Matched diffs: ${report.matchDiffs.length}`);
   }
@@ -1456,6 +1953,36 @@ export const renderLegacyTextReport = (report: LegacyConversionReport) => {
       .map((entry) => `${entry.filePath} (${entry.totalObjects})`)
       .join(', ');
     lines.push(`Top files: ${previewFiles}${report.summaries.byFile.length > 5 ? ' ...' : ''}`);
+  }
+
+  if (report.stubs.processorStubs.length > 0) {
+    const conditional = report.stubs.processorStubs.filter((entry) => entry.status === 'conditional');
+    const manual = report.stubs.processorStubs.filter((entry) => entry.status === 'manual');
+    if (conditional.length > 0) {
+      const preview = conditional
+        .slice(0, 8)
+        .map(
+          (entry) =>
+            `${entry.objectName}.${entry.targetField.replace('$.event.', '')} -> ${entry.requiredMappings.join('|') || 'mapping-needed'}`,
+        )
+        .join(', ');
+      lines.push(`Conditional stubs (sample): ${preview}${conditional.length > 8 ? ' ...' : ''}`);
+    }
+    if (manual.length > 0) {
+      const preview = manual
+        .slice(0, 8)
+        .map((entry) => `${entry.objectName}.${entry.targetField.replace('$.event.', '')}`)
+        .join(', ');
+      lines.push(`Manual stubs (sample): ${preview}${manual.length > 8 ? ' ...' : ''}`);
+    }
+  }
+
+  if (report.stubs.lookupStubs.length > 0) {
+    const preview = report.stubs.lookupStubs
+      .slice(0, 8)
+      .map((entry) => `${entry.lookupName} (${entry.entryCount})`)
+      .join(', ');
+    lines.push(`Lookup stubs (sample): ${preview}${report.stubs.lookupStubs.length > 8 ? ' ...' : ''}`);
   }
   lines.push('');
   report.classifications.forEach((entry) => {

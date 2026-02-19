@@ -162,6 +162,10 @@ const main = () => {
   if (options.reportFormat === 'json' || options.reportFormat === 'both') {
     const reportPath = path.join(options.outputDir, 'legacy-conversion-report.json');
     writeFile(reportPath, `${JSON.stringify(report, null, 2)}\n`);
+    const processorStubPath = path.join(options.outputDir, 'legacy-processor-stubs.json');
+    writeFile(processorStubPath, `${JSON.stringify(report.stubs.processorStubs, null, 2)}\n`);
+    const lookupStubPath = path.join(options.outputDir, 'legacy-lookup-stubs.json');
+    writeFile(lookupStubPath, `${JSON.stringify(report.stubs.lookupStubs, null, 2)}\n`);
   }
 
   if (options.reportFormat === 'text' || options.reportFormat === 'both') {
