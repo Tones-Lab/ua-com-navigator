@@ -125,7 +125,7 @@ export class UAClient {
    */
   async readRule(id: string, revision?: string): Promise<any> {
     try {
-      logger.info(`[UA] Reading rule: ${id}, revision: ${revision || 'HEAD'}`);
+      logger.debug(`[UA] Reading rule: ${id}, revision: ${revision || 'HEAD'}`);
       const response = await this.client.get(`/rule/Rules/${id}`, {
         params: { revision },
       });

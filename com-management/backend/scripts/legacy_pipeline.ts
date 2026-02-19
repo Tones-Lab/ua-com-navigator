@@ -12,6 +12,7 @@ type PipelineOptions = {
   vendor?: string;
   useMibs: boolean;
   useLlm: boolean;
+  useLlmReview: boolean;
   dryRun: boolean;
   minLevel: 'low' | 'medium' | 'high';
   strictMinLevel: boolean;
@@ -31,6 +32,7 @@ type PipelineManifest = {
     vendor?: string;
     useMibs: boolean;
     useLlm: boolean;
+    useLlmReview: boolean;
     dryRun: boolean;
     minLevel: 'low' | 'medium' | 'high';
     strictMinLevel: boolean;
@@ -51,6 +53,29 @@ type PipelineManifest = {
     compareJson?: string;
     compareText?: string;
   };
+  baselineMetrics?: {
+    processorStubs?: {
+      total?: number;
+      direct?: number;
+      conditional?: number;
+      manual?: number;
+      directRate?: number;
+      conditionalRate?: number;
+      manualRate?: number;
+    };
+    unresolvedMappings?: {
+      total?: number;
+      unique?: number;
+    };
+    matching?: {
+      totalLegacyObjects?: number;
+      matchedObjects?: number;
+      matchCoverageRate?: number;
+      conflictObjects?: number;
+      conflictFieldCount?: number;
+      conflictRate?: number;
+    };
+  };
 };
 
 const HELP_TEXT = [
@@ -70,6 +95,7 @@ const HELP_TEXT = [
   '  --vendor <name>                 Optional vendor tag',
   '  --use-mibs / --no-mibs          Enable/disable MIB usage (default: use-mibs)',
   '  --use-llm / --no-llm            Enable/disable LLM usage (default: no-llm)',
+  '  --use-llm-review / --no-llm-review  Enable/disable UA chatbot review scoring (default: no-llm-review)',
   '  --dry-run / --no-dry-run        Conversion dry-run mode (default: dry-run)',
   '  --min-level <low|medium|high>   Calibration selection threshold (default: medium)',
   '  --strict-min-level              Disable calibration fallback when no eligible stubs',
@@ -107,6 +133,7 @@ const parseArgs = (argv: string[]): PipelineOptions => {
   let vendor: string | undefined;
   let useMibs = true;
   let useLlm = false;
+  let useLlmReview = false;
   let dryRun = true;
   let minLevel: PipelineOptions['minLevel'] = 'medium';
   let strictMinLevel = false;
@@ -162,6 +189,14 @@ const parseArgs = (argv: string[]): PipelineOptions => {
       useLlm = false;
       continue;
     }
+    if (arg === '--use-llm-review') {
+      useLlmReview = true;
+      continue;
+    }
+    if (arg === '--no-llm-review') {
+      useLlmReview = false;
+      continue;
+    }
     if (arg === '--dry-run') {
       dryRun = true;
       continue;
@@ -214,6 +249,7 @@ const parseArgs = (argv: string[]): PipelineOptions => {
     vendor,
     useMibs,
     useLlm,
+    useLlmReview,
     dryRun,
     minLevel,
     strictMinLevel,
@@ -269,6 +305,17 @@ const writeManifest = (filePath: string, manifest: PipelineManifest) => {
   fs.writeFileSync(filePath, `${JSON.stringify(manifest, null, 2)}\n`, 'utf8');
 };
 
+const readJsonIfExists = (filePath: string) => {
+  if (!fs.existsSync(filePath)) {
+    return null;
+  }
+  try {
+    return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+  } catch {
+    return null;
+  }
+};
+
 const main = () => {
   const options = parseArgs(process.argv.slice(2));
   const runRoot = path.join(options.outputRoot, options.runName);
@@ -306,11 +353,19 @@ const main = () => {
   convertArgs.push('--output-dir', conversionDir, '--report-format', 'both');
   convertArgs.push(options.useMibs ? '--use-mibs' : '--no-mibs');
   convertArgs.push(options.useLlm ? '--use-llm' : '--no-llm');
+  convertArgs.push(options.useLlmReview ? '--use-llm-review' : '--no-llm-review');
   if (options.dryRun) {
     convertArgs.push('--dry-run');
   }
 
   runNpmScript('legacy:convert', convertArgs);
+
+  const conversionReportJsonPath = path.join(conversionDir, 'legacy-conversion-report.json');
+  const conversionReport = readJsonIfExists(conversionReportJsonPath);
+  const baselineMetrics =
+    conversionReport && typeof conversionReport === 'object' && conversionReport.baselineMetrics
+      ? conversionReport.baselineMetrics
+      : undefined;
 
   const processorStubsPath = path.join(conversionDir, 'legacy-processor-stubs.json');
   const calibrateArgs = [
@@ -362,6 +417,7 @@ const main = () => {
       vendor: options.vendor,
       useMibs: options.useMibs,
       useLlm: options.useLlm,
+      useLlmReview: options.useLlmReview,
       dryRun: options.dryRun,
       minLevel: options.minLevel,
       strictMinLevel: options.strictMinLevel,
@@ -374,7 +430,7 @@ const main = () => {
       conversionDir,
       calibrationDir,
       compareDir: resolvedCompareBefore ? compareDir : undefined,
-      conversionReportJson: path.join(conversionDir, 'legacy-conversion-report.json'),
+      conversionReportJson: conversionReportJsonPath,
       conversionReportText: path.join(conversionDir, 'legacy-conversion-report.txt'),
       processorStubsJson: processorStubsPath,
       calibrationJson: path.join(calibrationDir, 'legacy-confidence-calibration.json'),
@@ -382,6 +438,7 @@ const main = () => {
       compareJson: compareJsonPath,
       compareText: compareTextPath,
     },
+    baselineMetrics,
   };
 
   writeManifest(path.join(runRoot, 'pipeline-manifest.json'), manifest);

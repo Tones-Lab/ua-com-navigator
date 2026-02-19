@@ -66,6 +66,7 @@ export type LegacyConversionRequest = {
   vendor?: string;
   useMibs?: boolean;
   useLlm?: boolean;
+  useLlmReview?: boolean;
 };
 
 export type LegacyUploadEntry = {
@@ -132,13 +133,144 @@ export type LegacyApplyFcomOverridesResponse = {
   overrides: Array<{
     objectName: string;
     sourceFiles: string[];
+    processorSummary?: {
+      totalFields: number;
+      implementedFromParserStubs: number;
+      manualStubCount: number;
+      fallbackSetCount: number;
+    };
     override: Record<string, any>;
   }>;
   generatedDefinitions: Array<{
     objectName: string;
     sourceFile: string;
     reason: string;
+    processorSummary?: {
+      totalFields: number;
+      implementedFromParserStubs: number;
+      manualStubCount: number;
+      fallbackSetCount: number;
+    };
     definition: Record<string, any>;
   }>;
   outputPath?: string;
+};
+
+export type LegacyRunPipelineRequest = {
+  inputPaths: string[];
+  runName?: string;
+  outputRoot?: string;
+  minLevel?: 'low' | 'medium' | 'high';
+  strictMinLevel?: boolean;
+  maxItems?: number;
+  compareMode?: 'none' | 'latest' | 'before';
+  compareBeforePath?: string;
+  useLlmReview?: boolean;
+};
+
+export type LegacyRunPipelineResponse = {
+  success: boolean;
+  command: string;
+  runName: string;
+  runOutputDir: string;
+  stdout: string;
+  stderr: string;
+  manifest: Record<string, any> | null;
+};
+
+export type LegacyPipelineReportRequest = {
+  runOutputDir: string;
+};
+
+export type LegacyPipelineReportResponse = {
+  runOutputDir: string;
+  manifest: Record<string, any>;
+  report: Record<string, any>;
+  textReport: string;
+};
+
+export type LegacyReviewQueueRequest = {
+  report: Record<string, any>;
+  applyPreview?: Record<string, any>;
+  options?: {
+    hideHighConfidence?: boolean;
+    needsInterventionOnly?: boolean;
+    maxItems?: number;
+  };
+};
+
+export type LegacyReviewQueueItem = {
+  reviewItemId: string;
+  queueIndex: number;
+  reviewGroup: {
+    groupId: string;
+    condition: string | null;
+    branchLineStart: number | null;
+    branchLineEnd: number | null;
+    totalItems: number;
+    groupFields: string[];
+  };
+  riskLevel: 'critical' | 'high' | 'medium' | 'low';
+  reviewPriorityScore: number;
+  source: {
+    sourceFile: string;
+    sourceFunction: string;
+    sourceLineStart: number | null;
+    sourceLineEnd: number | null;
+    sourceSnippet: string | null;
+    mappedLineStart: number | null;
+    mappedLineEnd: number | null;
+    mappedLineNumber: number | null;
+    mappedLineText: string | null;
+  };
+  target: {
+    targetType: 'override' | 'generated-definition' | 'unknown';
+    objectName: string;
+    targetField: string;
+    outputFile: string | null;
+    outputLineStart: number | null;
+    outputLineEnd: number | null;
+  };
+  proposal: {
+    processorType: string;
+    processorPayload: Record<string, any> | null;
+    fallbackUsed: boolean;
+  };
+  quality: {
+    confidenceScore: number;
+    confidenceLevel: 'high' | 'medium' | 'low';
+    status: string;
+    rootCauses: string[];
+    requiredMappings: string[];
+    conflictFlag: boolean;
+    needsIntervention: boolean;
+    hiddenByDefault: boolean;
+  };
+  userDecision: {
+    decision: 'accepted' | 'edited' | 'rejected' | 'deferred' | 'unset';
+    editedPayload: Record<string, any> | null;
+    reviewerNote: string;
+  };
+};
+
+export type LegacyReviewQueueResponse = {
+  queueId: string;
+  generatedAt: string;
+  options: {
+    hideHighConfidence: boolean;
+    needsInterventionOnly: boolean;
+    maxItems: number;
+  };
+  summary: {
+    totalItems: number;
+    visibleItems: number;
+    hiddenHighConfidence: number;
+    hiddenByInterventionFilter: number;
+    needsInterventionVisible: number;
+    critical: number;
+    high: number;
+    medium: number;
+    low: number;
+  };
+  items: LegacyReviewQueueItem[];
 };

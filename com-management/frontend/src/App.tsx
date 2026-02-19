@@ -48,6 +48,7 @@ import useUserPreferencesModalProps from './hooks/useUserPreferencesModalProps';
 import useSortableTable from './hooks/useSortableTable';
 import useModalStack from './hooks/useModalStack';
 import useStagedReviewUiState from './hooks/useStagedReviewUiState';
+import frontendLogger from './utils/logger';
 import {
   appendNodeAtPath,
   removeNodeById,
@@ -93,6 +94,7 @@ import {
   inferAppFromPath,
   resolveDeepLinkFileId,
 } from './utils/navigationUtils';
+import type { UAServer } from './types';
 import './App.css';
 
 const COMS_PATH_PREFIX = 'id-core/default/processing/event/fcom/_objects';
@@ -108,6 +110,40 @@ const OVERRIDE_SAVE_TIMING = {
   staggerMs: 140,
   stepMs: 240,
 };
+const FALLBACK_LOGIN_SERVERS: UAServer[] = [
+  {
+    server_id: 'lab-ua-tony02',
+    server_name: 'Lab UA (Tony02) (lab-ua-tony02.tony.lab)',
+    hostname: 'lab-ua-tony02.tony.lab',
+    port: 443,
+    environment: 'dev',
+    svn_url: 'svn://lab-ua-tony02.tony.lab/fcom',
+  },
+  {
+    server_id: 'dev-ua-01',
+    server_name: 'Development UA Primary',
+    hostname: 'ua-dev.example.com',
+    port: 8080,
+    environment: 'dev',
+    svn_url: 'svn://ua-dev.example.com/fcom',
+  },
+  {
+    server_id: 'test-ua-01',
+    server_name: 'Test UA Primary',
+    hostname: 'ua-test.example.com',
+    port: 8080,
+    environment: 'test',
+    svn_url: 'svn://ua-test.example.com/fcom',
+  },
+  {
+    server_id: 'prod-ua-01',
+    server_name: 'Production UA Primary',
+    hostname: 'ua-prod.example.com',
+    port: 8080,
+    environment: 'prod',
+    svn_url: 'svn://ua-prod.example.com/fcom',
+  },
+];
 
 class ErrorBoundary extends React.Component<
   { children: React.ReactNode },
@@ -2235,8 +2271,14 @@ export default function App() {
         if (!serverId && serversResp.data.length > 0) {
           setServerId(serversResp.data[0].server_id);
         }
-      } catch {
-        setError('Failed to load server list');
+      } catch (err) {
+        setServers(FALLBACK_LOGIN_SERVERS);
+        if (!serverId && FALLBACK_LOGIN_SERVERS.length > 0) {
+          setServerId(FALLBACK_LOGIN_SERVERS[0].server_id);
+        }
+        setError(
+          `${getApiErrorMessage(err, 'Failed to load server list')}. Using fallback servers. Verify backend API/proxy is available.`,
+        );
       }
     };
 
@@ -2368,6 +2410,7 @@ export default function App() {
       const resp = await api.login(serverId, effectiveAuthType, credentials);
       // Debug: log login response payload (omit credentials)
       console.info('Login response:', resp?.data);
+      frontendLogger.info('Login response:', resp?.data);
       setSession(resp.data);
       setActiveApp('overview');
     } catch (err: unknown) {
@@ -2817,6 +2860,7 @@ export default function App() {
     const logTiming = (step: string, start: number) => {
       const elapsed = Math.round(nowMs() - start);
       console.info(`[FCOM Timing] ${timingLabel} ${step} ${elapsed}ms`);
+      frontendLogger.info(`[FCOM Timing] ${timingLabel} ${step} ${elapsed}ms`);
     };
     closeBuilder();
     setPanelEditState({});
@@ -3299,6 +3343,9 @@ export default function App() {
       });
     });
     console.info(
+      `[TrapTest] ${sourceLabel}: objects=${objects.length}, tests=${items.length}, missing=${missing}, invalid=${invalid}`,
+    );
+    frontendLogger.info(
       `[TrapTest] ${sourceLabel}: objects=${objects.length}, tests=${items.length}, missing=${missing}, invalid=${invalid}`,
     );
     return { items, missing, invalid };

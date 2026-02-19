@@ -1,7 +1,9 @@
 /// <reference types="node" />
 import fs from 'fs';
 import path from 'path';
-import { convertLegacyRules, renderLegacyTextReport } from '../src/services/legacy/legacyConversion';
+import { convertLegacyRules, renderLegacyTextReport, discoverLegacyTraversal } from '../src/services/legacy/legacyConversion';
+import { runLegacyLinter } from '../src/services/legacy/legacy_linter';
+import { applyLegacyLlmReviewScores } from '../src/services/legacy/llmReview';
 
 type CliOptions = {
   inputs: string[];
@@ -11,6 +13,8 @@ type CliOptions = {
   vendor?: string;
   useMibs: boolean;
   useLlm: boolean;
+  useLlmReview: boolean;
+  lint: boolean;
   reportFormat: 'json' | 'text' | 'both';
   emitRawOverrides: boolean;
   emitPerFile: boolean;
@@ -30,6 +34,8 @@ const parseArgs = (argv: string[]): CliOptions => {
   let emitPerFile = false;
   let useMibs = true;
   let useLlm = false;
+  let useLlmReview = false;
+  let lint = true;
   let dryRun = false;
   let logLevel: CliOptions['logLevel'] = 'info';
   let maxLlmRequests: number | undefined;
@@ -85,6 +91,22 @@ const parseArgs = (argv: string[]): CliOptions => {
       useLlm = false;
       continue;
     }
+    if (arg === '--use-llm-review') {
+      useLlmReview = true;
+      continue;
+    }
+    if (arg === '--no-llm-review') {
+      useLlmReview = false;
+      continue;
+    }
+    if (arg === '--lint') {
+      lint = true;
+      continue;
+    }
+    if (arg === '--no-lint') {
+      lint = false;
+      continue;
+    }
     if (arg === '--raw-overrides') {
       emitRawOverrides = true;
       continue;
@@ -131,6 +153,8 @@ const parseArgs = (argv: string[]): CliOptions => {
     vendor,
     useMibs,
     useLlm,
+    useLlmReview,
+    lint,
     reportFormat,
     emitRawOverrides,
     emitPerFile,
@@ -145,9 +169,37 @@ const writeFile = (filePath: string, content: string) => {
   fs.writeFileSync(filePath, content, 'utf8');
 };
 
-const main = () => {
+const main = async () => {
   const args = process.argv.slice(2);
   const options = parseArgs(args);
+
+  if (options.lint) {
+    // eslint-disable-next-line no-console
+    console.log('Running legacy linter...');
+    const traversal = discoverLegacyTraversal(options.inputs);
+    const filesToLint = traversal.orderedFiles
+      .map(filePath => {
+        try {
+          return { filePath, content: fs.readFileSync(filePath, 'utf8') };
+        } catch {
+          return null;
+        }
+      })
+      .filter((file): file is { filePath: string; content: string } => Boolean(file));
+
+    const linterReport = runLegacyLinter(filesToLint);
+    if (linterReport.summary.totalIssues > 0) {
+      console.log(`Linter found ${linterReport.summary.totalIssues} issues (${linterReport.summary.warnings} warnings, ${linterReport.summary.errors} errors).`);
+      linterReport.issues.forEach(issue => {
+        console.log(`  [${issue.severity}] ${issue.filePath}:${issue.line} - ${issue.message}`);
+      });
+    } else {
+      // eslint-disable-next-line no-console
+      console.log('Linter found no issues.');
+    }
+    console.log('');
+  }
+
   const report = convertLegacyRules({
     inputs: options.inputs,
     includePatterns: options.includePatterns,
@@ -155,7 +207,14 @@ const main = () => {
     vendor: options.vendor,
     useMibs: options.useMibs,
     useLlm: options.useLlm,
+    useLlmReview: options.useLlmReview,
   });
+
+  if (options.useLlmReview) {
+    // eslint-disable-next-line no-console
+    console.log('Running LLM review for conversion items...');
+    await applyLegacyLlmReviewScores(report);
+  }
 
   fs.mkdirSync(options.outputDir, { recursive: true });
 
@@ -191,7 +250,12 @@ const main = () => {
 };
 
 try {
-  main();
+  void main().catch((error) => {
+    const message = error instanceof Error ? error.message : String(error);
+    // eslint-disable-next-line no-console
+    console.error(`Legacy conversion failed: ${message}`);
+    process.exit(1);
+  });
 } catch (error) {
   const message = error instanceof Error ? error.message : String(error);
   // eslint-disable-next-line no-console

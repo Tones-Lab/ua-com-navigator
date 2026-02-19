@@ -22,9 +22,11 @@ type LegacyUploadsPanelProps = {
   conversionStatusTone: 'error' | 'running' | 'ready' | 'idle';
   conversionStatusText: string;
   isReadyToConvert: boolean;
+  showConversionRun?: boolean;
   onUpload: () => void;
   onRefresh: () => void;
-  onToggleSelectAll: () => void;
+  onSelectAll: () => void;
+  onDeselectAll: () => void;
   onToggleSelectedPath: (path: string) => void;
   onOpenEntry: (entry: LegacyUploadEntry) => void;
   onRunConversion: (mode: 'preview' | 'run') => void;
@@ -43,9 +45,11 @@ export default function LegacyUploadsPanel({
   conversionStatusTone,
   conversionStatusText,
   isReadyToConvert,
+  showConversionRun = true,
   onUpload,
   onRefresh,
-  onToggleSelectAll,
+  onSelectAll,
+  onDeselectAll,
   onToggleSelectedPath,
   onOpenEntry,
   onRunConversion,
@@ -75,11 +79,24 @@ export default function LegacyUploadsPanel({
         <div className="legacy-upload-layout">
           <ul className="browse-list legacy-upload-list">
             <li className="legacy-upload-toolbar">
-              <button type="button" className="ghost-button" onClick={onToggleSelectAll}>
-                {selectedPaths.length === fileEntries.length ? 'Clear selection' : 'Select all'}
+              <button
+                type="button"
+                className="ghost-button"
+                onClick={onSelectAll}
+                disabled={selectedPaths.length === fileEntries.length}
+              >
+                Select all
+              </button>
+              <button
+                type="button"
+                className="ghost-button"
+                onClick={onDeselectAll}
+                disabled={selectedPaths.length === 0}
+              >
+                Deselect all
               </button>
               <span className="muted">
-                Selected {selectedPaths.length || fileEntries.length} of {fileEntries.length}
+                Selected {selectedPaths.length} of {fileEntries.length}
               </span>
             </li>
             {fileEntries.map((entry) => (
@@ -97,36 +114,38 @@ export default function LegacyUploadsPanel({
               </li>
             ))}
           </ul>
-          <div className="legacy-upload-meta">
-            <div className="panel-section-title">Conversion Run</div>
-            <div className="muted">
-              {isReadyToConvert
-                ? 'Files are ready. Start a conversion run to generate a report.'
-                : 'Upload files to enable conversion.'}
+          {showConversionRun && (
+            <div className="legacy-upload-meta">
+              <div className="panel-section-title">Conversion Run</div>
+              <div className="muted">
+                {isReadyToConvert
+                  ? 'Files are ready. Start a conversion run to generate a report.'
+                  : 'Upload files to enable conversion.'}
+              </div>
+              <div className="legacy-action-row">
+                <button
+                  type="button"
+                  className="ghost-button"
+                  disabled={!isReadyToConvert || conversionStatus === 'running'}
+                  onClick={() => onRunConversion('run')}
+                >
+                  {conversionStatus === 'running' ? 'Converting…' : 'Run conversion'}
+                </button>
+                <button
+                  type="button"
+                  className="ghost-button"
+                  disabled={!isReadyToConvert}
+                  onClick={() => onRunConversion('preview')}
+                >
+                  Preview report
+                </button>
+              </div>
+              <div className="legacy-status">
+                <span className={`legacy-status-pill legacy-status-${conversionStatusTone}`} />
+                {conversionStatusText}
+              </div>
             </div>
-            <div className="legacy-action-row">
-              <button
-                type="button"
-                className="ghost-button"
-                disabled={!isReadyToConvert || conversionStatus === 'running'}
-                onClick={() => onRunConversion('run')}
-              >
-                {conversionStatus === 'running' ? 'Converting…' : 'Run conversion'}
-              </button>
-              <button
-                type="button"
-                className="ghost-button"
-                disabled={!isReadyToConvert}
-                onClick={() => onRunConversion('preview')}
-              >
-                Preview report
-              </button>
-            </div>
-            <div className="legacy-status">
-              <span className={`legacy-status-pill legacy-status-${conversionStatusTone}`} />
-              {conversionStatusText}
-            </div>
-          </div>
+          )}
         </div>
       )}
     </div>

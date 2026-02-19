@@ -2,8 +2,11 @@ import express from 'express';
 import fs from 'fs';
 import path from 'path';
 import multer from 'multer';
+import { execFile } from 'child_process';
 import AdmZip, { type IZipEntry } from 'adm-zip';
 import { convertLegacyRules, renderLegacyTextReport } from '../services/legacy/legacyConversion';
+import { buildLegacyReviewQueue } from '../services/legacy/reviewQueue';
+import { applyLegacyLlmReviewScores } from '../services/legacy/llmReview';
 import {
   ensureLegacyUploadRoot,
   getLegacyUploadRoot,
@@ -16,6 +19,40 @@ const router = express.Router();
 const allowedUploadExtensions = new Set(['.rules', '.pl', '.includes', '.load', '.txt', '.zip']);
 const allowedConversionExtensions = new Set(['.rules', '.pl', '.includes', '.load', '.txt']);
 const LEGACY_COMS_ROOT = process.env.LEGACY_COMS_ROOT || path.resolve(process.cwd(), '..', '..', 'coms');
+const LEGACY_PIPELINE_TIMEOUT_MS = 15 * 60 * 1000;
+const NAVIGATOR_ROOT = path.resolve(process.cwd(), '..', '..');
+
+const runExecFile = (
+  command: string,
+  args: string[],
+  options: { cwd?: string; timeout?: number; maxBuffer?: number; env?: NodeJS.ProcessEnv },
+) =>
+  new Promise<{ stdout: string; stderr: string }>((resolve, reject) => {
+    execFile(command, args, options, (error, stdout, stderr) => {
+      if (error) {
+        reject({
+          error,
+          stdout: String(stdout || ''),
+          stderr: String(stderr || ''),
+        });
+        return;
+      }
+      resolve({
+        stdout: String(stdout || ''),
+        stderr: String(stderr || ''),
+      });
+    });
+  });
+
+const sanitizeRunName = (value: string) => value.replace(/[^a-z0-9._-]+/gi, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+
+const assertWithinNavigatorRoot = (targetPath: string) => {
+  const resolved = path.resolve(targetPath);
+  if (!resolved.startsWith(NAVIGATOR_ROOT)) {
+    throw new Error('Invalid pipeline output path');
+  }
+  return resolved;
+};
 
 const resolveComsFilePath = (targetPath: string) => {
   const resolvedRoot = path.resolve(LEGACY_COMS_ROOT);
@@ -96,10 +133,112 @@ const deriveLegacyObjectName = (obj: any) => {
   return `legacy_${firstOid}`;
 };
 
+const PROCESSOR_TEMPLATE_KEYS = ['if', 'regex', 'lookup', 'replace', 'copy', 'set'] as const;
+
+const getEventFieldFromTarget = (targetField: string) => {
+  const normalized = String(targetField || '').trim();
+  if (!normalized.startsWith('$.event.')) {
+    return null;
+  }
+  const field = normalized.replace('$.event.', '').trim();
+  return field || null;
+};
+
+const convertTemplateToProcessorOps = (template: any) => {
+  if (!template || typeof template !== 'object' || Array.isArray(template)) {
+    return [] as Array<Record<string, any>>;
+  }
+
+  const ops: Array<Record<string, any>> = [];
+  PROCESSOR_TEMPLATE_KEYS.forEach((key) => {
+    if (Object.prototype.hasOwnProperty.call(template, key)) {
+      ops.push({
+        op: 'add',
+        path: '/-',
+        value: {
+          [key]: template[key],
+        },
+      });
+    }
+  });
+
+  if (ops.length > 0) {
+    return ops;
+  }
+
+  return [
+    {
+      op: 'add',
+      path: '/-',
+      value: template,
+    },
+  ];
+};
+
+const buildProcessorStubIndex = (report: any) => {
+  const stubs = Array.isArray(report?.stubs?.processorStubs) ? report.stubs.processorStubs : [];
+  const index = new Map<string, Map<string, any[]>>();
+
+  stubs.forEach((stub: any) => {
+    const objectName = String(stub?.objectName || '').trim();
+    const sourceFile = String(stub?.sourceFile || '').trim();
+    const targetField = getEventFieldFromTarget(String(stub?.targetField || ''));
+    if (!objectName || !sourceFile || !targetField) {
+      return;
+    }
+
+    const objectKey = `${objectName}::${sourceFile}`;
+    if (!index.has(objectKey)) {
+      index.set(objectKey, new Map<string, any[]>());
+    }
+    const fieldMap = index.get(objectKey)!;
+    if (!fieldMap.has(targetField)) {
+      fieldMap.set(targetField, []);
+    }
+    fieldMap.get(targetField)!.push(stub);
+  });
+
+  return index;
+};
+
+const selectBestStub = (candidates: any[]) => {
+  if (!Array.isArray(candidates) || candidates.length === 0) {
+    return null;
+  }
+  const withTemplate = candidates.filter((entry) => entry?.template && typeof entry.template === 'object');
+  if (withTemplate.length === 0) {
+    return candidates[0] || null;
+  }
+
+  const byStatus = (status: string) => withTemplate.find((entry) => String(entry?.status || '') === status);
+  return byStatus('direct') || byStatus('conditional') || withTemplate[0] || null;
+};
+
+const getBestStubForField = (
+  objectName: string,
+  sourceFiles: string[],
+  field: string,
+  stubIndex: Map<string, Map<string, any[]>>,
+) => {
+  const candidates: any[] = [];
+  sourceFiles.forEach((sourceFile) => {
+    const fieldMap = stubIndex.get(`${objectName}::${sourceFile}`);
+    if (!fieldMap) {
+      return;
+    }
+    const entries = fieldMap.get(field) || [];
+    if (entries.length > 0) {
+      candidates.push(...entries);
+    }
+  });
+  return selectBestStub(candidates);
+};
+
 const buildConfirmedFcomOverrideBundle = (report: any, minScore: number) => {
   const matchDiffs = Array.isArray(report?.matchDiffs) ? report.matchDiffs : [];
   const legacyObjects = Array.isArray(report?.legacyObjects) ? report.legacyObjects : [];
   const overrideProposals = Array.isArray(report?.overrideProposals) ? report.overrideProposals : [];
+  const stubIndex = buildProcessorStubIndex(report);
   const fcomMatches = matchDiffs.filter((entry: any) => entry?.matchedObject?.source === 'fcom');
   const byObject = new Map<string, LegacyObjectBucket>();
 
@@ -170,19 +309,48 @@ const buildConfirmedFcomOverrideBundle = (report: any, minScore: number) => {
   const candidates = Array.from(byObject.values())
     .filter((entry) => entry.fields.size > 0 && entry.conflicts.length === 0)
     .map((entry) => {
-      const processors = Array.from(entry.fields.entries()).map(([field, value]) => ({
-        op: 'add',
-        path: '/-',
-        value: {
-          set: {
-            source: value.value,
-            targetField: `$.event.${field}`,
+      const sourceFiles = Array.from(entry.sourceFiles);
+      const processors: Array<Record<string, any>> = [];
+      let implementedFromStubs = 0;
+      let manualStubCount = 0;
+      let fallbackSetCount = 0;
+
+      Array.from(entry.fields.entries()).forEach(([field, value]) => {
+        const selectedStub = getBestStubForField(entry.objectName, sourceFiles, field, stubIndex);
+        if (selectedStub?.template && typeof selectedStub.template === 'object') {
+          const templateOps = convertTemplateToProcessorOps(selectedStub.template);
+          if (templateOps.length > 0) {
+            implementedFromStubs += 1;
+            if (String(selectedStub.status || '').toLowerCase() === 'manual') {
+              manualStubCount += 1;
+            }
+            processors.push(...templateOps);
+            return;
+          }
+        }
+
+        fallbackSetCount += 1;
+        processors.push({
+          op: 'add',
+          path: '/-',
+          value: {
+            set: {
+              source: value.value,
+              targetField: `$.event.${field}`,
+            },
           },
-        },
-      }));
+        });
+      });
+
       return {
         objectName: entry.objectName,
-        sourceFiles: Array.from(entry.sourceFiles),
+        sourceFiles,
+        processorSummary: {
+          totalFields: entry.fields.size,
+          implementedFromParserStubs: implementedFromStubs,
+          manualStubCount,
+          fallbackSetCount,
+        },
         override: {
           name: `${entry.objectName} Override`,
           description: `Generated from legacy conversion for ${entry.objectName}`,
@@ -218,20 +386,87 @@ const buildConfirmedFcomOverrideBundle = (report: any, minScore: number) => {
       const key = `${String(proposal?.objectName || '')}::${String(proposal?.sourceFile || '')}`;
       return !matchedLegacyKeys.has(key);
     })
-    .map((proposal: any) => ({
-      objectName: String(proposal?.objectName || 'legacy-object'),
-      sourceFile: String(proposal?.sourceFile || ''),
-      reason: 'No existing FCOM match found; generated COM definition proposal.',
-      definition: {
-        name: String(proposal?.objectName || 'legacy-object'),
-        description: `Generated COM definition proposal from ${String(proposal?.sourceFile || 'legacy conversion')}`,
+    .map((proposal: any) => {
+      const objectName = String(proposal?.objectName || 'legacy-object');
+      const sourceFile = String(proposal?.sourceFile || '');
+      const proposalFields = proposal?.fields && typeof proposal.fields === 'object' ? proposal.fields : {};
+      const fieldNames = Object.keys(proposalFields);
+      const fieldMap = stubIndex.get(`${objectName}::${sourceFile}`) || new Map<string, any[]>();
+      const processors: Array<Record<string, any>> = [];
+      let implementedFromStubs = 0;
+      let manualStubCount = 0;
+      let missingStubCount = 0;
+
+      fieldNames.forEach((field) => {
+        const selected = selectBestStub(fieldMap.get(field) || []);
+        if (!selected) {
+          missingStubCount += 1;
+          processors.push({
+            op: 'add',
+            path: '/-',
+            value: {
+              set: {
+                source: parseLegacyValue(proposalFields[field]),
+                targetField: `$.event.${field}`,
+              },
+            },
+          });
+          return;
+        }
+
+        const status = String(selected?.status || '').toLowerCase();
+        if (status === 'manual') {
+          manualStubCount += 1;
+        }
+
+        const templateOps = convertTemplateToProcessorOps(selected?.template);
+        if (templateOps.length > 0) {
+          implementedFromStubs += 1;
+          processors.push(...templateOps);
+          return;
+        }
+
+        missingStubCount += 1;
+        processors.push({
+          op: 'add',
+          path: '/-',
+          value: {
+            set: {
+              source: parseLegacyValue(proposalFields[field]),
+              targetField: `$.event.${field}`,
+            },
+          },
+        });
+      });
+
+      const definition: Record<string, any> = {
+        name: objectName,
+        description: `Generated COM definition proposal from ${sourceFile || 'legacy conversion'}`,
         domain: 'fault',
         method: 'trap',
-        '@objectName': String(proposal?.objectName || 'legacy-object'),
+        '@objectName': objectName,
         _type: 'object',
-        event: { ...(proposal?.fields || {}) },
-      },
-    }));
+      };
+
+      if (processors.length > 0) {
+        definition.processors = processors;
+      } else {
+        definition.event = { ...proposalFields };
+      }
+
+      return {
+        objectName,
+        sourceFile,
+        reason: 'No existing FCOM match found; generated COM definition proposal.',
+        processorSummary: {
+          totalFields: fieldNames.length,
+          implementedFromParserStubs: implementedFromStubs,
+          manualStubCount,
+          fallbackSetCount: missingStubCount,
+        },
+        definition,
+      };
+    });
 
   const conflicts = Array.from(byObject.values())
     .filter((entry) => entry.conflicts.length > 0)
@@ -354,7 +589,7 @@ router.post('/uploads', upload.array('files'), (req, res) => {
   res.json({ uploaded, extracted });
 });
 
-router.post('/convert', (req, res) => {
+router.post('/convert', async (req, res) => {
   const root = ensureLegacyUploadRoot();
   const body = req.body || {};
   const selectedPaths = Array.isArray(body.paths)
@@ -373,12 +608,17 @@ router.post('/convert', (req, res) => {
     return;
   }
   try {
+    const useLlmReview = body.useLlmReview === true;
     const report = convertLegacyRules({
       inputs: filtered,
       vendor: body.vendor ? String(body.vendor) : undefined,
       useMibs: body.useMibs === false ? false : true,
       useLlm: body.useLlm === true,
+      useLlmReview,
     });
+    if (useLlmReview) {
+      await applyLegacyLlmReviewScores(report);
+    }
     const textReport = renderLegacyTextReport(report);
     res.json({ report, textReport });
   } catch (error: any) {
@@ -440,6 +680,158 @@ router.post('/apply-fcom-overrides', (req, res) => {
     });
   } catch (error: any) {
     res.status(500).json({ error: error?.message || 'Failed to generate FCOM override bundle.' });
+  }
+});
+
+router.post('/review-queue', (req, res) => {
+  const body = req.body || {};
+  const report = body.report;
+  if (!report || typeof report !== 'object') {
+    res.status(400).json({ error: 'Missing conversion report payload.' });
+    return;
+  }
+
+  try {
+    const queue = buildLegacyReviewQueue({
+      report,
+      applyPreview:
+        body.applyPreview && typeof body.applyPreview === 'object' ? body.applyPreview : undefined,
+      options: body.options && typeof body.options === 'object' ? body.options : undefined,
+    });
+    res.json(queue);
+  } catch (error: any) {
+    res.status(500).json({ error: error?.message || 'Failed to build review queue.' });
+  }
+});
+
+router.post('/run-pipeline', async (req, res) => {
+  const body = req.body || {};
+  const inputPaths = Array.isArray(body.inputPaths)
+    ? body.inputPaths.map((entry: any) => path.resolve(String(entry || '').trim())).filter(Boolean)
+    : [];
+  if (inputPaths.length === 0) {
+    res.status(400).json({ error: 'At least one input path is required.' });
+    return;
+  }
+
+  const runNameRaw = String(body.runName || '').trim() || `ui-run-${Date.now()}`;
+  const runName = sanitizeRunName(runNameRaw);
+  if (!runName) {
+    res.status(400).json({ error: 'Run name is invalid.' });
+    return;
+  }
+
+  const minLevelRaw = String(body.minLevel || 'medium').toLowerCase();
+  const minLevel = minLevelRaw === 'low' || minLevelRaw === 'high' ? minLevelRaw : 'medium';
+  const strictMinLevel = body.strictMinLevel === true;
+  const maxItemsRaw = Number(body.maxItems ?? 25);
+  const maxItems = Number.isFinite(maxItemsRaw) && maxItemsRaw > 0 ? Math.floor(maxItemsRaw) : 25;
+  const outputRoot = path.resolve(String(body.outputRoot || path.resolve(process.cwd(), '..', '..', 'tmp', 'legacy-analysis', 'pipeline')));
+  const compareMode = String(body.compareMode || 'latest').toLowerCase();
+  const compareBefore = String(body.compareBeforePath || '').trim();
+  const useLlmReview = body.useLlmReview === true;
+
+  const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+  const args = ['run', 'legacy:pipeline', '--'];
+  inputPaths.forEach((entry: string) => {
+    args.push('--input', entry);
+  });
+  args.push('--run-name', runName, '--min-level', minLevel, '--max-items', String(maxItems), '--output-root', outputRoot);
+  if (useLlmReview) {
+    args.push('--use-llm-review');
+  }
+  if (strictMinLevel) {
+    args.push('--strict-min-level');
+  }
+  if (compareMode === 'latest') {
+    args.push('--compare-latest');
+  } else if (compareMode === 'before' && compareBefore) {
+    args.push('--compare-before', path.resolve(compareBefore));
+  }
+
+  try {
+    const { stdout, stderr } = await runExecFile(npmCommand, args, {
+      cwd: process.cwd(),
+      timeout: LEGACY_PIPELINE_TIMEOUT_MS,
+      maxBuffer: 10 * 1024 * 1024,
+      env: process.env,
+    });
+
+    const runOutputDir = path.join(outputRoot, runName);
+    const manifestPath = path.join(runOutputDir, 'pipeline-manifest.json');
+    let manifest: any | null = null;
+    if (fs.existsSync(manifestPath)) {
+      const raw = fs.readFileSync(manifestPath, 'utf8');
+      manifest = JSON.parse(raw);
+    }
+
+    res.json({
+      success: true,
+      command: `${npmCommand} ${args.join(' ')}`,
+      runName,
+      runOutputDir,
+      stdout,
+      stderr,
+      manifest,
+    });
+  } catch (failure: any) {
+    const message = failure?.error?.message || 'Legacy pipeline execution failed.';
+    const stdout = String(failure?.stdout || '');
+    const stderr = String(failure?.stderr || '');
+    res.status(500).json({
+      error: message,
+      stdout,
+      stderr,
+      runName,
+      runOutputDir: path.join(outputRoot, runName),
+    });
+  }
+});
+
+router.post('/pipeline-report', (req, res) => {
+  const body = req.body || {};
+  const runOutputDirRaw = String(body.runOutputDir || '').trim();
+  if (!runOutputDirRaw) {
+    res.status(400).json({ error: 'runOutputDir is required.' });
+    return;
+  }
+
+  try {
+    const runOutputDir = assertWithinNavigatorRoot(runOutputDirRaw);
+    const manifestPath = path.join(runOutputDir, 'pipeline-manifest.json');
+    if (!fs.existsSync(manifestPath)) {
+      res.status(404).json({ error: 'Pipeline manifest not found.' });
+      return;
+    }
+
+    const manifestRaw = fs.readFileSync(manifestPath, 'utf8');
+    const manifest = JSON.parse(manifestRaw);
+    const conversionReportJsonPath = assertWithinNavigatorRoot(
+      String(manifest?.paths?.conversionReportJson || ''),
+    );
+    const conversionReportTextPath = assertWithinNavigatorRoot(
+      String(manifest?.paths?.conversionReportText || ''),
+    );
+
+    if (!conversionReportJsonPath || !fs.existsSync(conversionReportJsonPath)) {
+      res.status(404).json({ error: 'Conversion report JSON not found for this run.' });
+      return;
+    }
+
+    const reportRaw = fs.readFileSync(conversionReportJsonPath, 'utf8');
+    const report = JSON.parse(reportRaw);
+    const textReport = fs.existsSync(conversionReportTextPath)
+      ? fs.readFileSync(conversionReportTextPath, 'utf8')
+      : '';
+
+    res.json({
+      runOutputDir,
+      manifest,
+      report,
+      textReport,
+    });
+  } catch (error: any) {
+    res.status(500).json({ error: error?.message || 'Failed to load pipeline report.' });
   }
 });
 

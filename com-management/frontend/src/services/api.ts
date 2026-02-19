@@ -14,6 +14,12 @@ import type {
   LegacyApplyFcomOverridesResponse,
   LegacyFileReadResponse,
   LegacyUploadsResponse,
+  LegacyPipelineReportRequest,
+  LegacyPipelineReportResponse,
+  LegacyReviewQueueRequest,
+  LegacyReviewQueueResponse,
+  LegacyRunPipelineRequest,
+  LegacyRunPipelineResponse,
   SaveFilePayload,
   SaveFileResult,
 } from '../types/api';
@@ -254,6 +260,18 @@ class ApiClient {
 
   async applyLegacyFcomOverrides(payload: LegacyApplyFcomOverridesRequest) {
     return this.client.post<LegacyApplyFcomOverridesResponse>('/legacy/apply-fcom-overrides', payload);
+  }
+
+  async runLegacyPipeline(payload: LegacyRunPipelineRequest) {
+    return this.client.post<LegacyRunPipelineResponse>('/legacy/run-pipeline', payload);
+  }
+
+  async loadLegacyPipelineReport(payload: LegacyPipelineReportRequest) {
+    return this.client.post<LegacyPipelineReportResponse>('/legacy/pipeline-report', payload);
+  }
+
+  async buildLegacyReviewQueue(payload: LegacyReviewQueueRequest) {
+    return this.client.post<LegacyReviewQueueResponse>('/legacy/review-queue', payload);
   }
 
   async getDevices(params?: { limit?: number; start?: number }) {

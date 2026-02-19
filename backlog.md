@@ -120,6 +120,9 @@
 	- ✅ Convert legacy rule formats into COM (FCOM/PCOM) with validation output.
 	- ✅ Legacy Conversion UI entry (tab/link) is implemented with upload + report workflows.
 	- ⏳ Remaining: tie into UA assistant/chatbot and add guided apply/wizard steps for unresolved logic.
+	- 📝 Nice-to-have (defer): keyboard shortcuts for review throughput in Legacy Human Review Queue (`j/k` item nav, `[`/`]` linked-source-line nav).
+	-	📘 Human Review Queue page-turner implementation plan: architecture/legacy_human_review_page_turner_implementation_plan.md
+	-	✅ Execution checklist: architecture/legacy_human_review_page_turner_execution_checklist.md
 	- 🆕 Feature request: Conversion Findings Report + Wizard UX (backlog only)
 		- Objective: provide a guided, step-through conversion workflow for large mixed legacy batches.
 		- Scope (future):

@@ -84,6 +84,7 @@ export type LegacyProcessorStub = {
     score: number;
     level: 'high' | 'medium' | 'low';
     rationale: string;
+    source?: 'internal' | 'llm';
   };
 };
 
@@ -205,6 +206,7 @@ export type LegacyConversionReport = {
   options?: {
     useMibs?: boolean;
     useLlm?: boolean;
+    useLlmReview?: boolean;
   };
   traversal: LegacyTraversalResult;
   bundle: LegacyOverrideBundle;
@@ -245,6 +247,39 @@ export type LegacyConversionReport = {
     manualProcessorStubs: number;
     totalLookupStubs: number;
   };
+  baselineMetrics: {
+    processorStubs: {
+      total: number;
+      direct: number;
+      conditional: number;
+      manual: number;
+      directRate: number;
+      conditionalRate: number;
+      manualRate: number;
+    };
+    unresolvedMappings: {
+      total: number;
+      unique: number;
+      uniqueMappings: string[];
+    };
+    matching: {
+      totalLegacyObjects: number;
+      matchedObjects: number;
+      matchCoverageRate: number;
+      conflictObjects: number;
+      conflictFieldCount: number;
+      conflictRate: number;
+    };
+  };
+  llmReview?: {
+    enabled: boolean;
+    tool: string;
+    endpoint: string;
+    attempted: number;
+    scored: number;
+    failed: number;
+    averageScore: number;
+  };
 };
 
 export type LegacyConversionOptions = {
@@ -254,6 +289,7 @@ export type LegacyConversionOptions = {
   vendor?: string;
   useMibs?: boolean;
   useLlm?: boolean;
+  useLlmReview?: boolean;
 };
 
 const oidRegex = /(?:\d+\.){3,}\d+/g;
@@ -277,6 +313,13 @@ const concatRegex = /\s\.\s/;
 const lookupPairRegex = /['"]([^'"]+)['"]\s*=>\s*['"]([^'"]+)['"]/g;
 
 const normalizeList = (values: string[]) => Array.from(new Set(values)).filter(Boolean);
+
+const toRate = (numerator: number, denominator: number) => {
+  if (!Number.isFinite(numerator) || !Number.isFinite(denominator) || denominator <= 0) {
+    return 0;
+  }
+  return numerator / denominator;
+};
 
 const DOC_REFS = [
   'architecture/fcom-processor-docs-full.md',
@@ -373,10 +416,10 @@ const splitConcatExpression = (expression: string) => {
   return parts;
 };
 
-const varAssignmentRegex = /^\s*(?:my\s+)?\$([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.+?)\s*;\s*$/;
+const varAssignmentRegex = /^\s*(my\s+)?\$([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.+?)\s*;\s*$/;
 const numberedVarRegex = /^\$v(\d+)$/i;
 
-const mapLegacySourceExpression = (expression: string, knownMappings: Record<string, string>) => {
+const resolveExpression = (expression: string, scope: Scope): string | null => {
   const trimmed = String(expression || '').trim();
   if (!trimmed) {
     return null;
@@ -397,41 +440,81 @@ const mapLegacySourceExpression = (expression: string, knownMappings: Record<str
 
   const directVar = trimmed.match(perlVarRegex);
   if (directVar) {
-    return knownMappings[directVar[1]] || null;
+    return scope.get(directVar[1]);
   }
 
   return null;
 };
 
+class Scope {
+  private variables: Record<string, string> = {};
+  constructor(private parent: Scope | null) {}
+
+  set(name: string, value: string) {
+    this.variables[name] = value;
+  }
+
+  get(name: string): string | null {
+    if (this.variables[name]) {
+      return this.variables[name];
+    }
+    if (this.parent) {
+      return this.parent.get(name);
+    }
+    return null;
+  }
+}
+
 const buildVariableMappingsByFunction = (functionBlocks: LegacyFunctionBlock[]) => {
   const result: Record<string, Record<string, string>> = {};
+  const globalScope = new Scope(null);
+
+  // First pass for global variables
   functionBlocks.forEach((block) => {
-    const mapping: Record<string, string> = {};
-    const lines = block.text.split(/\r?\n/);
-    let changed = true;
-    let guard = 0;
-    while (changed && guard < 8) {
-      changed = false;
-      guard += 1;
+    if (block.name === '__global__') {
+      const lines = block.text.split(/\r?\n/);
       lines.forEach((line) => {
         const assignment = line.match(varAssignmentRegex);
-        if (!assignment) {
-          return;
-        }
-        const variableName = assignment[1];
-        const sourceExpr = assignment[2];
-        const resolved = mapLegacySourceExpression(sourceExpr, mapping);
-        if (resolved && mapping[variableName] !== resolved) {
-          mapping[variableName] = resolved;
-          changed = true;
+        if (assignment) {
+          const isMy = !!assignment[1];
+          const variableName = assignment[2];
+          const sourceExpr = assignment[3];
+          if (!isMy) {
+            const resolved = resolveExpression(sourceExpr, globalScope);
+            if (resolved) {
+              globalScope.set(variableName, resolved);
+            }
+          }
         }
       });
     }
+  });
+
+  functionBlocks.forEach((block) => {
+    const blockScope = new Scope(globalScope);
+    const mapping: Record<string, string> = {};
+    const lines = block.text.split(/\r?\n/);
+    lines.forEach((line) => {
+      const assignment = line.match(varAssignmentRegex);
+      if (!assignment) {
+        return;
+      }
+      const isMy = !!assignment[1];
+      const variableName = assignment[2];
+      const sourceExpr = assignment[3];
+
+      const scopeToUpdate = isMy ? blockScope : globalScope;
+      const resolved = resolveExpression(sourceExpr, blockScope);
+
+      if (resolved) {
+        scopeToUpdate.set(variableName, resolved);
+        mapping[variableName] = resolved;
+      }
+    });
     result[block.name] = mapping;
   });
   return result;
 };
-
 const isIpAddress = (value: string) => {
   if (!ipRegex.test(value)) {
     return false;
@@ -2252,6 +2335,16 @@ export const convertLegacyRules = (options: LegacyConversionOptions): LegacyConv
   };
   const matchReport = buildMatchDiffs(objectsWithTraversal, options);
   const matchDiffs = matchReport.diffs;
+  const unresolvedMappings = stubs.processorStubs.flatMap((entry) =>
+    Array.isArray(entry.requiredMappings) ? entry.requiredMappings.filter(Boolean) : [],
+  );
+  const uniqueUnresolvedMappings = normalizeList(unresolvedMappings);
+  const matchedObjects = matchDiffs.filter((entry) => entry?.matchedObject).length;
+  const conflictObjects = matchDiffs.filter((entry) => Array.isArray(entry?.diffs) && entry.diffs.length > 0).length;
+  const conflictFieldCount = matchDiffs.reduce(
+    (acc, entry) => acc + (Array.isArray(entry?.diffs) ? entry.diffs.length : 0),
+    0,
+  );
   const totalOids = analyses.reduce((acc, entry) => acc + entry.oids.length, 0);
   const summary = {
     totalFiles: analyses.length,
@@ -2267,6 +2360,30 @@ export const convertLegacyRules = (options: LegacyConversionOptions): LegacyConv
     manualProcessorStubs: stubs.summary.processorManual,
     totalLookupStubs: stubs.summary.lookupTotal,
   };
+  const baselineMetrics = {
+    processorStubs: {
+      total: stubs.summary.processorTotal,
+      direct: stubs.summary.processorDirect,
+      conditional: stubs.summary.processorConditional,
+      manual: stubs.summary.processorManual,
+      directRate: toRate(stubs.summary.processorDirect, stubs.summary.processorTotal),
+      conditionalRate: toRate(stubs.summary.processorConditional, stubs.summary.processorTotal),
+      manualRate: toRate(stubs.summary.processorManual, stubs.summary.processorTotal),
+    },
+    unresolvedMappings: {
+      total: unresolvedMappings.length,
+      unique: uniqueUnresolvedMappings.length,
+      uniqueMappings: uniqueUnresolvedMappings,
+    },
+    matching: {
+      totalLegacyObjects: objectsWithTraversal.length,
+      matchedObjects,
+      matchCoverageRate: toRate(matchedObjects, objectsWithTraversal.length),
+      conflictObjects,
+      conflictFieldCount,
+      conflictRate: toRate(conflictObjects, objectsWithTraversal.length),
+    },
+  };
 
   return {
     runId: bundle.manifest.runId,
@@ -2276,6 +2393,7 @@ export const convertLegacyRules = (options: LegacyConversionOptions): LegacyConv
     options: {
       useMibs: options.useMibs,
       useLlm: options.useLlm,
+      useLlmReview: options.useLlmReview,
     },
     traversal,
     bundle,
@@ -2288,6 +2406,7 @@ export const convertLegacyRules = (options: LegacyConversionOptions): LegacyConv
     matchStats: matchReport.stats,
     summaries,
     summary,
+    baselineMetrics,
   };
 };
 
@@ -2305,6 +2424,7 @@ export const renderLegacyTextReport = (report: LegacyConversionReport) => {
   if (report.options) {
     lines.push(`Use MIBs: ${report.options.useMibs ? 'yes' : 'no'}`);
     lines.push(`Use LLM: ${report.options.useLlm ? 'yes' : 'no'}`);
+    lines.push(`Use LLM Review: ${report.options.useLlmReview ? 'yes' : 'no'}`);
   }
   lines.push(`Traversal files: ${report.traversal.orderedFiles.length}`);
   lines.push(`Traversal missing functions: ${report.traversal.missingFunctions.length}`);
@@ -2351,8 +2471,31 @@ export const renderLegacyTextReport = (report: LegacyConversionReport) => {
       `manual ${report.summary.manualProcessorStubs})`,
   );
   lines.push(`Lookup stubs: ${report.summary.totalLookupStubs}`);
+  lines.push(
+    `Stub rates: direct ${(report.baselineMetrics.processorStubs.directRate * 100).toFixed(1)}% | ` +
+      `conditional ${(report.baselineMetrics.processorStubs.conditionalRate * 100).toFixed(1)}% | ` +
+      `manual ${(report.baselineMetrics.processorStubs.manualRate * 100).toFixed(1)}%`,
+  );
+  lines.push(
+    `Unresolved mappings: ${report.baselineMetrics.unresolvedMappings.total} total ` +
+      `(${report.baselineMetrics.unresolvedMappings.unique} unique)`,
+  );
   if (report.matchDiffs.length > 0) {
     lines.push(`Matched diffs: ${report.matchDiffs.length}`);
+  }
+  lines.push(
+    `Match coverage: ${(report.baselineMetrics.matching.matchCoverageRate * 100).toFixed(1)}% ` +
+      `(${report.baselineMetrics.matching.matchedObjects}/${report.baselineMetrics.matching.totalLegacyObjects})`,
+  );
+  lines.push(
+    `Conflict rate: ${(report.baselineMetrics.matching.conflictRate * 100).toFixed(1)}% ` +
+      `(${report.baselineMetrics.matching.conflictObjects}/${report.baselineMetrics.matching.totalLegacyObjects})`,
+  );
+  if (report.llmReview?.enabled) {
+    lines.push(
+      `LLM review: scored ${report.llmReview.scored}/${report.llmReview.attempted} ` +
+        `(failed ${report.llmReview.failed}) · avg ${(report.llmReview.averageScore * 100).toFixed(1)}%`,
+    );
   }
   if (report.matchStats) {
     lines.push(

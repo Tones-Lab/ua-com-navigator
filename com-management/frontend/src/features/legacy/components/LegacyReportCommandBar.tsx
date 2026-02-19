@@ -1,4 +1,7 @@
+import { useState } from 'react';
+
 type LegacyReportCommandBarProps = {
+  productionMode: boolean;
   reportJson: any | null;
   reportText: string;
   reviewHintText: string;
@@ -32,6 +35,7 @@ type LegacyReportCommandBarProps = {
 };
 
 export default function LegacyReportCommandBar({
+  productionMode,
   reportJson,
   reportText,
   reviewHintText,
@@ -59,62 +63,11 @@ export default function LegacyReportCommandBar({
   onToggleRawReport,
   downloadHint,
 }: LegacyReportCommandBarProps) {
+  const [showAdvancedTools, setShowAdvancedTools] = useState(false);
+
   return (
     <div className="legacy-report-actions legacy-command-bar" role="region" aria-label="Legacy command bar">
       {reportJson && <div className="legacy-report-muted">{reviewHintText}</div>}
-      {reportJson && (
-        <label className="legacy-report-hint" htmlFor="cloudy-match-threshold">
-          Cloudy match threshold
-          <input
-            id="cloudy-match-threshold"
-            className="legacy-filter-input"
-            value={cloudyMatchThreshold}
-            onChange={(event) => onCloudyMatchThresholdChange(event.target.value)}
-            placeholder="10"
-            inputMode="numeric"
-          />
-        </label>
-      )}
-      {reportText && (
-        <button type="button" className="ghost-button" onClick={onDownloadText}>
-          Download text
-        </button>
-      )}
-      {reportJson && (
-        <button type="button" className="ghost-button" onClick={onDownloadJson}>
-          Download JSON
-        </button>
-      )}
-      {reportJson && (
-        <button type="button" className="ghost-button" onClick={onDownloadConfidenceCalibrationJson}>
-          Download confidence JSON
-        </button>
-      )}
-      {reportJson && (
-        <button type="button" className="ghost-button" onClick={onDownloadConfidenceCalibrationText}>
-          Download confidence text
-        </button>
-      )}
-      {reportJson && hasConfidenceDrift && (
-        <button type="button" className="ghost-button" onClick={onDownloadConfidenceDriftJson}>
-          Download drift JSON
-        </button>
-      )}
-      {reportJson && hasConfidenceDrift && (
-        <button type="button" className="ghost-button" onClick={onDownloadConfidenceDriftText}>
-          Download drift text
-        </button>
-      )}
-      {traversalFilesCount > 0 && (
-        <button type="button" className="ghost-button" onClick={onCopyTraversalOrder}>
-          Copy traversal order
-        </button>
-      )}
-      {traversalMissingCount > 0 && (
-        <button type="button" className="ghost-button" onClick={onCopyMissingFunctions}>
-          Copy missing functions
-        </button>
-      )}
       {reportJson && (
         <button
           type="button"
@@ -136,6 +89,15 @@ export default function LegacyReportCommandBar({
           {applyingOverrides ? 'Creating…' : 'Create confirmed FCOM override bundle'}
         </button>
       )}
+      {reportJson && !productionMode && (
+        <button
+          type="button"
+          className={`ghost-button ${showAdvancedTools ? 'active' : ''}`}
+          onClick={() => setShowAdvancedTools((prev) => !prev)}
+        >
+          {showAdvancedTools ? 'Hide advanced tools' : 'Show advanced tools'}
+        </button>
+      )}
       {reportJson && (
         <button
           type="button"
@@ -145,25 +107,74 @@ export default function LegacyReportCommandBar({
           {sectionVisibility.matchDiffs ? 'Hide match diffs' : 'Show match diffs'}
         </button>
       )}
-      {hasTraversal && (
-        <button
-          type="button"
-          className={`ghost-button ${sectionVisibility.traversal ? 'active' : ''}`}
-          onClick={onToggleTraversal}
-        >
-          {sectionVisibility.traversal ? 'Hide traversal' : 'Show traversal'}
-        </button>
+      {!productionMode && showAdvancedTools && reportJson && (
+        <>
+          <label className="legacy-report-hint" htmlFor="cloudy-match-threshold">
+            Cloudy match threshold
+            <input
+              id="cloudy-match-threshold"
+              className="legacy-filter-input"
+              value={cloudyMatchThreshold}
+              onChange={(event) => onCloudyMatchThresholdChange(event.target.value)}
+              placeholder="10"
+              inputMode="numeric"
+            />
+          </label>
+          {reportText && (
+            <button type="button" className="ghost-button" onClick={onDownloadText}>
+              Download text report
+            </button>
+          )}
+          <button type="button" className="ghost-button" onClick={onDownloadJson}>
+            Download JSON report
+          </button>
+          <button type="button" className="ghost-button" onClick={onDownloadConfidenceCalibrationJson}>
+            Download confidence JSON
+          </button>
+          <button type="button" className="ghost-button" onClick={onDownloadConfidenceCalibrationText}>
+            Download confidence text
+          </button>
+          {hasConfidenceDrift && (
+            <button type="button" className="ghost-button" onClick={onDownloadConfidenceDriftJson}>
+              Download drift JSON
+            </button>
+          )}
+          {hasConfidenceDrift && (
+            <button type="button" className="ghost-button" onClick={onDownloadConfidenceDriftText}>
+              Download drift text
+            </button>
+          )}
+          {traversalFilesCount > 0 && (
+            <button type="button" className="ghost-button" onClick={onCopyTraversalOrder}>
+              Copy traversal order
+            </button>
+          )}
+          {traversalMissingCount > 0 && (
+            <button type="button" className="ghost-button" onClick={onCopyMissingFunctions}>
+              Copy missing functions
+            </button>
+          )}
+          {hasTraversal && (
+            <button
+              type="button"
+              className={`ghost-button ${sectionVisibility.traversal ? 'active' : ''}`}
+              onClick={onToggleTraversal}
+            >
+              {sectionVisibility.traversal ? 'Hide traversal' : 'Show traversal'}
+            </button>
+          )}
+          {reportText && (
+            <button
+              type="button"
+              className={`ghost-button ${sectionVisibility.rawReport ? 'active' : ''}`}
+              onClick={onToggleRawReport}
+            >
+              {sectionVisibility.rawReport ? 'Hide raw report' : 'Show raw report'}
+            </button>
+          )}
+          {downloadHint && <div className="legacy-report-hint">Artifacts ready for download.</div>}
+        </>
       )}
-      {reportText && (
-        <button
-          type="button"
-          className={`ghost-button ${sectionVisibility.rawReport ? 'active' : ''}`}
-          onClick={onToggleRawReport}
-        >
-          {sectionVisibility.rawReport ? 'Hide raw report' : 'Show raw report'}
-        </button>
-      )}
-      {downloadHint && <div className="legacy-report-hint">Downloads: {downloadHint}</div>}
     </div>
   );
 }

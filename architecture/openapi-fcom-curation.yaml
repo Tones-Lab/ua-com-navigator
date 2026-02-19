@@ -2065,6 +2065,177 @@ paths:
       responses:
         '200':
           description: Confirmed FCOM overrides prepared
+
+  /legacy/review-queue:
+    post:
+      tags:
+        - Legacy Conversion
+      summary: Build legacy human review queue
+      description: |
+        Builds an ordered, risk-ranked review queue from legacy conversion artifacts.
+        By default, high-confidence direct items are hidden and intervention-needed
+        items are prioritized for human review.
+      security:
+        - sessionCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - report
+              properties:
+                report:
+                  type: object
+                  description: Conversion report returned by `/legacy/convert` or `/legacy/pipeline-report`.
+                applyPreview:
+                  type: object
+                  description: Optional payload from `/legacy/apply-fcom-overrides` used for conflict and target-type hints.
+                options:
+                  type: object
+                  properties:
+                    hideHighConfidence:
+                      type: boolean
+                      default: true
+                    needsInterventionOnly:
+                      type: boolean
+                      default: true
+                    maxItems:
+                      type: integer
+                      default: 500
+      responses:
+        '200':
+          description: Review queue generated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  queueId:
+                    type: string
+                  generatedAt:
+                    type: string
+                    format: date-time
+                  options:
+                    type: object
+                    properties:
+                      hideHighConfidence:
+                        type: boolean
+                      needsInterventionOnly:
+                        type: boolean
+                      maxItems:
+                        type: integer
+                  summary:
+                    type: object
+                    properties:
+                      totalItems:
+                        type: integer
+                      visibleItems:
+                        type: integer
+                      hiddenHighConfidence:
+                        type: integer
+                      hiddenByInterventionFilter:
+                        type: integer
+                      needsInterventionVisible:
+                        type: integer
+                      critical:
+                        type: integer
+                      high:
+                        type: integer
+                      medium:
+                        type: integer
+                      low:
+                        type: integer
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        reviewItemId:
+                          type: string
+                        queueIndex:
+                          type: integer
+                        riskLevel:
+                          type: string
+                          enum: [critical, high, medium, low]
+                        reviewPriorityScore:
+                          type: number
+                        source:
+                          type: object
+                          properties:
+                            sourceFile:
+                              type: string
+                            sourceFunction:
+                              type: string
+                            sourceLineStart:
+                              type: integer
+                              nullable: true
+                            sourceLineEnd:
+                              type: integer
+                              nullable: true
+                            sourceSnippet:
+                              type: string
+                              nullable: true
+                        target:
+                          type: object
+                          properties:
+                            targetType:
+                              type: string
+                              enum: [override, generated-definition, unknown]
+                            objectName:
+                              type: string
+                            targetField:
+                              type: string
+                        proposal:
+                          type: object
+                          properties:
+                            processorType:
+                              type: string
+                            processorPayload:
+                              type: object
+                              nullable: true
+                            fallbackUsed:
+                              type: boolean
+                        quality:
+                          type: object
+                          properties:
+                            confidenceScore:
+                              type: number
+                            confidenceLevel:
+                              type: string
+                              enum: [high, medium, low]
+                            status:
+                              type: string
+                            rootCauses:
+                              type: array
+                              items:
+                                type: string
+                            requiredMappings:
+                              type: array
+                              items:
+                                type: string
+                            conflictFlag:
+                              type: boolean
+                            needsIntervention:
+                              type: boolean
+                            hiddenByDefault:
+                              type: boolean
+                        userDecision:
+                          type: object
+                          properties:
+                            decision:
+                              type: string
+                              enum: [accepted, edited, rejected, deferred, unset]
+                            editedPayload:
+                              type: object
+                              nullable: true
+                            reviewerNote:
+                              type: string
+        '400':
+          description: Missing conversion report payload
+        '500':
+          description: Failed to build review queue
           content:
             application/json:
               schema:

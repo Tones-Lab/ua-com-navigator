@@ -34,21 +34,55 @@ export const extractEventFields = (payload: Record<string, any>) => {
       value: value === undefined || value === null ? '' : String(value),
     }));
   }
+
+  const fieldValues = new Map<string, string>();
+  const writeField = (targetField: string, value: string) => {
+    const normalized = String(targetField || '').trim();
+    if (!normalized.startsWith('$.event.')) {
+      return;
+    }
+    const field = normalized.replace('$.event.', '').trim();
+    if (!field || fieldValues.has(field)) {
+      return;
+    }
+    fieldValues.set(field, value);
+  };
+
+  const collectProcessorTargets = (nodeInput: any, contextLabel: string = ''): void => {
+    if (!nodeInput || typeof nodeInput !== 'object') {
+      return;
+    }
+    const node = nodeInput?.value && typeof nodeInput.value === 'object' ? nodeInput.value : nodeInput;
+
+    if (node?.set && typeof node.set === 'object') {
+      writeField(String(node.set.targetField || ''), String(node.set.source ?? ''));
+    }
+    if (node?.copy && typeof node.copy === 'object') {
+      const source = String(node.copy.source ?? '');
+      writeField(String(node.copy.targetField || ''), contextLabel ? `${contextLabel} copy(${source})` : `copy(${source})`);
+    }
+    if (node?.regex && typeof node.regex === 'object') {
+      const source = String(node.regex.source ?? '');
+      writeField(String(node.regex.targetField || ''), contextLabel ? `${contextLabel} regex(${source})` : `regex(${source})`);
+    }
+
+    if (node?.if && typeof node.if === 'object') {
+      const thenSteps = Array.isArray(node.if.then) ? node.if.then : [];
+      thenSteps.forEach((step: any) => collectProcessorTargets(step, '[if-then]'));
+      const elseSteps = Array.isArray(node.if.else) ? node.if.else : [];
+      elseSteps.forEach((step: any) => collectProcessorTargets(step, '[if-else]'));
+    }
+  };
+
   const processors = Array.isArray(payload?.processors) ? payload.processors : [];
-  return processors
-    .map((processor: any) => {
-      const setConfig = processor?.value?.set;
-      const targetField = String(setConfig?.targetField || '');
-      if (!targetField.startsWith('$.event.')) {
-        return null;
-      }
-      return {
-        field: targetField.replace('$.event.', ''),
-        value:
-          setConfig?.source === undefined || setConfig?.source === null ? '' : String(setConfig.source),
-      };
-    })
-    .filter(Boolean) as Array<{ field: string; value: string }>;
+  processors.forEach((processor: any) => {
+    collectProcessorTargets(processor);
+  });
+
+  return Array.from(fieldValues.entries()).map(([field, value]) => ({
+    field,
+    value,
+  }));
 };
 
 export const applyEventFieldsToPayload = (
@@ -133,30 +167,11 @@ export const getReferenceOnlyFieldRows = (
   return dependencyFields
     .filter((field) => !mappedFields.has(field))
     .map((field) => {
-      const normalized = field.toLowerCase();
-      let pattern = 'set + if/else processors';
-      if (normalized.includes('severity') || normalized.includes('category')) {
-        pattern = 'set + map/lookup processor';
-      } else if (
-        normalized.includes('node') ||
-        normalized.includes('subnode') ||
-        normalized.includes('alias')
-      ) {
-        pattern = 'set processor';
-      } else if (
-        normalized.includes('type') ||
-        normalized.includes('code') ||
-        normalized.includes('group') ||
-        normalized.includes('method')
-      ) {
-        pattern = 'if + map/lookup + set processors';
-      }
-
       return {
         field,
         reason:
           'Referenced in legacy rule context/read logic, but no direct assignment was extracted into the phase-1 COM field mapper.',
-        pattern,
+        pattern: 'Parser evidence required (if/regex/copy/set/lookup) — no field-name assumptions.',
       };
     });
 };

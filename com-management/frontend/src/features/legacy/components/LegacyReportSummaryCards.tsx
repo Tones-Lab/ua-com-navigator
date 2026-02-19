@@ -3,6 +3,21 @@ type LegacyReportSummaryCardsProps = {
     totalFiles: number;
     totalLegacyObjects: number;
     totalOverrides: number;
+    baselineMetrics?: {
+      processorStubs?: {
+        directRate?: number;
+        conditionalRate?: number;
+        manualRate?: number;
+      };
+      unresolvedMappings?: {
+        total?: number;
+        unique?: number;
+      };
+      matching?: {
+        matchCoverageRate?: number;
+        conflictRate?: number;
+      };
+    };
   } | null;
   helpKeyCount: number;
   nodeCount: number;
@@ -39,6 +54,15 @@ export default function LegacyReportSummaryCards({
     return null;
   }
 
+  const directRate = Number(reportSummary.baselineMetrics?.processorStubs?.directRate || 0);
+  const conditionalRate = Number(reportSummary.baselineMetrics?.processorStubs?.conditionalRate || 0);
+  const manualRate = Number(reportSummary.baselineMetrics?.processorStubs?.manualRate || 0);
+  const unresolvedTotal = Number(reportSummary.baselineMetrics?.unresolvedMappings?.total || 0);
+  const unresolvedUnique = Number(reportSummary.baselineMetrics?.unresolvedMappings?.unique || 0);
+  const matchCoverageRate = Number(reportSummary.baselineMetrics?.matching?.matchCoverageRate || 0);
+  const conflictRate = Number(reportSummary.baselineMetrics?.matching?.conflictRate || 0);
+  const hasBaselineMetrics = Boolean(reportSummary.baselineMetrics);
+
   return (
     <div className="legacy-report-grid">
       <div className="legacy-report-card">
@@ -56,6 +80,20 @@ export default function LegacyReportSummaryCards({
           <div className="legacy-report-line legacy-report-muted">
             Performance hints: {performanceHintCount}
           </div>
+        )}
+        {hasBaselineMetrics && (
+          <>
+            <div className="legacy-report-line legacy-report-muted">
+              Stub rates: direct {(directRate * 100).toFixed(1)}% · conditional {(conditionalRate * 100).toFixed(1)}%
+              {' '}· manual {(manualRate * 100).toFixed(1)}%
+            </div>
+            <div className="legacy-report-line legacy-report-muted">
+              Unresolved mappings: {unresolvedTotal} ({unresolvedUnique} unique)
+            </div>
+            <div className="legacy-report-line legacy-report-muted">
+              Match coverage: {(matchCoverageRate * 100).toFixed(1)}% · Conflict rate: {(conflictRate * 100).toFixed(1)}%
+            </div>
+          </>
         )}
       </div>
       {hasTraversal && (

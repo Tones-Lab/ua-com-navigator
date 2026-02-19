@@ -7,6 +7,7 @@ import {
 } from '../legacySuggestedUtils';
 
 type LegacySuggestedReviewPanelProps = {
+  simplifiedMode?: boolean;
   hasEditPermission: boolean;
   legacyObjects: any[];
   entries: SuggestedEntry[];
@@ -34,6 +35,7 @@ type LegacySuggestedReviewPanelProps = {
 };
 
 export default function LegacySuggestedReviewPanel({
+  simplifiedMode = false,
   hasEditPermission,
   legacyObjects,
   entries,
@@ -165,89 +167,115 @@ export default function LegacySuggestedReviewPanel({
         </div>
       </div>
 
-      <div className="legacy-filter-row">
-        <button
-          type="button"
-          className={`legacy-filter-chip ${dirtyOnly ? 'active' : ''}`}
-          onClick={() => onDirtyOnlyChange(!dirtyOnly)}
-        >
-          Dirty
-        </button>
-        <button
-          type="button"
-          className={`legacy-filter-chip ${matchedOnly ? 'active' : ''}`}
-          onClick={() => onMatchedOnlyChange(!matchedOnly)}
-        >
-          Matched
-        </button>
-        <button
-          type="button"
-          className={`legacy-filter-chip ${generatedOnly ? 'active' : ''}`}
-          onClick={() => onGeneratedOnlyChange(!generatedOnly)}
-        >
-          Generated
-        </button>
-        <button
-          type="button"
-          className={`legacy-filter-chip ${conflictOnly ? 'active' : ''}`}
-          onClick={() => onConflictOnlyChange(!conflictOnly)}
-        >
-          Conflict
-        </button>
-        <input
-          className="legacy-filter-input"
-          value={searchValue}
-          onChange={(event) => onSearchChange(event.target.value)}
-          placeholder="Search object/source"
-        />
-      </div>
+      {!simplifiedMode && (
+        <>
+          <div className="legacy-filter-row">
+            <span className="legacy-report-hint" title="Dirty: values changed from baseline/default template.">
+              Filters:
+            </span>
+            <button
+              type="button"
+              className={`legacy-filter-chip ${dirtyOnly ? 'active' : ''}`}
+              onClick={() => onDirtyOnlyChange(!dirtyOnly)}
+              title="Show only entries where one or more fields were edited from baseline values."
+            >
+              Dirty changes
+            </button>
+            <button
+              type="button"
+              className={`legacy-filter-chip ${matchedOnly ? 'active' : ''}`}
+              onClick={() => onMatchedOnlyChange(!matchedOnly)}
+              title="Show only entries mapped to an existing FCOM object (override path)."
+            >
+              Matched only
+            </button>
+            <button
+              type="button"
+              className={`legacy-filter-chip ${generatedOnly ? 'active' : ''}`}
+              onClick={() => onGeneratedOnlyChange(!generatedOnly)}
+              title="Show only entries generated as new COM definitions (no existing FCOM match)."
+            >
+              Generated only
+            </button>
+            <button
+              type="button"
+              className={`legacy-filter-chip ${conflictOnly ? 'active' : ''}`}
+              onClick={() => onConflictOnlyChange(!conflictOnly)}
+              title="Show only entries with apply-time field conflicts against existing values."
+            >
+              Conflicts
+            </button>
+            <input
+              className="legacy-filter-input"
+              value={searchValue}
+              onChange={(event) => onSearchChange(event.target.value)}
+              placeholder="Search object or source"
+            />
+          </div>
 
-      <div className="legacy-filter-row">
-        <span className="legacy-report-hint">Density</span>
-        <button
-          type="button"
-          className={`legacy-filter-chip ${densityMode === 'compact' ? 'active' : ''}`}
-          onClick={() => onDensityModeChange('compact')}
-        >
-          Compact
-        </button>
-        <button
-          type="button"
-          className={`legacy-filter-chip ${densityMode === 'comfortable' ? 'active' : ''}`}
-          onClick={() => onDensityModeChange('comfortable')}
-        >
-          Comfortable
-        </button>
-        <span className="legacy-report-hint" style={{ marginLeft: 8 }}>Sort</span>
-        <button
-          type="button"
-          className={`legacy-filter-chip ${sortMode === 'default' ? 'active' : ''}`}
-          onClick={() => onSortModeChange('default')}
-        >
-          Default
-        </button>
-        <button
-          type="button"
-          className={`legacy-filter-chip ${sortMode === 'dirty-first' ? 'active' : ''}`}
-          onClick={() => onSortModeChange('dirty-first')}
-        >
-          Dirty first
-        </button>
-        <button
-          type="button"
-          className={`legacy-filter-chip ${sortMode === 'generated-first' ? 'active' : ''}`}
-          onClick={() => onSortModeChange('generated-first')}
-        >
-          Generated first
-        </button>
-        <button
-          type="button"
-          className={`legacy-filter-chip ${sortMode === 'name-asc' ? 'active' : ''}`}
-          onClick={() => onSortModeChange('name-asc')}
-        >
-          Name A→Z
-        </button>
-      </div>
+          <div className="legacy-report-hint">
+            Dirty = user-edited values · Matched = existing FCOM object override · Generated = new COM object ·
+            Conflicts = fields colliding with current target values.
+          </div>
+
+          <div className="legacy-filter-row">
+            <span className="legacy-report-hint">Density</span>
+            <button
+              type="button"
+              className={`legacy-filter-chip ${densityMode === 'compact' ? 'active' : ''}`}
+              onClick={() => onDensityModeChange('compact')}
+            >
+              Compact
+            </button>
+            <button
+              type="button"
+              className={`legacy-filter-chip ${densityMode === 'comfortable' ? 'active' : ''}`}
+              onClick={() => onDensityModeChange('comfortable')}
+            >
+              Comfortable
+            </button>
+            <span className="legacy-report-hint" style={{ marginLeft: 8 }}>Sort</span>
+            <button
+              type="button"
+              className={`legacy-filter-chip ${sortMode === 'default' ? 'active' : ''}`}
+              onClick={() => onSortModeChange('default')}
+            >
+              Default
+            </button>
+            <button
+              type="button"
+              className={`legacy-filter-chip ${sortMode === 'dirty-first' ? 'active' : ''}`}
+              onClick={() => onSortModeChange('dirty-first')}
+            >
+              Dirty first
+            </button>
+            <button
+              type="button"
+              className={`legacy-filter-chip ${sortMode === 'generated-first' ? 'active' : ''}`}
+              onClick={() => onSortModeChange('generated-first')}
+            >
+              Generated first
+            </button>
+            <button
+              type="button"
+              className={`legacy-filter-chip ${sortMode === 'name-asc' ? 'active' : ''}`}
+              onClick={() => onSortModeChange('name-asc')}
+            >
+              Name A→Z
+            </button>
+          </div>
+        </>
+      )}
+      {simplifiedMode && (
+        <div className="legacy-filter-row">
+          <input
+            className="legacy-filter-input"
+            value={searchValue}
+            onChange={(event) => onSearchChange(event.target.value)}
+            placeholder="Search object or source"
+          />
+        </div>
+      )}
 
       <div className={`legacy-suggested-split legacy-suggested-${densityMode}`}>
         <div className="legacy-suggested-list" role="listbox" aria-label="Suggested COM entries">

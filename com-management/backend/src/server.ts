@@ -29,6 +29,7 @@ import microserviceRoutes from './routes/microservice';
 import healthRoutes from './routes/health';
 import metricsRoutes from './routes/metrics';
 import legacyRoutes from './routes/legacy';
+import logsRoutes from './routes/logs';
 import { startCacheWarmupFromEnv } from './services/cacheWarmup';
 import { startConnectivityStatusPolling } from './services/connectivityStatusCache';
 import { startMicroserviceStatusPolling } from './services/microserviceStatusCache';
@@ -109,6 +110,7 @@ app.use('/api/v1/overview', overviewRoutes);
 app.use('/api/v1/microservice', microserviceRoutes);
 app.use('/api/v1/health', healthRoutes);
 app.use('/api/v1/legacy', legacyRoutes);
+app.use('/api/v1/logs', logsRoutes);
 app.use('/metrics', metricsRoutes);
 
 // Health check
