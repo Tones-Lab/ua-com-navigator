@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import EmptyState from '../../components/EmptyState';
 import InlineMessage from '../../components/InlineMessage';
 import PanelHeader from '../../components/PanelHeader';
@@ -6,6 +6,14 @@ import useRequest from '../../hooks/useRequest';
 import api from '../../services/api';
 import type { LegacyApplyFcomOverridesResponse } from '../../types/api';
 import { getApiErrorMessage } from '../../utils/errorUtils';
+import LegacySuggestedReviewPanel from './components/LegacySuggestedReviewPanel';
+import {
+  applyEventFieldsToPayload,
+  buildEditedPayloadOverrides,
+  buildSuggestedEntriesFromResult,
+  extractEventFields,
+  type SuggestedEntry,
+} from './legacySuggestedUtils';
 
 type LegacyUploadEntry = {
   path: string;
@@ -18,17 +26,12 @@ type LegacyWorkspaceProps = {
   hasEditPermission: boolean;
 };
 
-type SuggestedEntry = {
-  key: string;
-  sourceType: 'matched' | 'generated';
-  objectName: string;
-  sourceLabel: string;
-  fields: Array<{ field: string; value: string }>;
-  payload: Record<string, any>;
-  initialPayload: Record<string, any>;
-  initialFieldValues: Record<string, string>;
-  rawText: string;
-  rawError: string | null;
+const LEGACY_SECTION_VISIBILITY_KEY = 'legacy.v2.sectionVisibility';
+
+type LegacySectionVisibility = {
+  traversal: boolean;
+  matchDiffs: boolean;
+  rawReport: boolean;
 };
 
 export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspaceProps) {
@@ -64,7 +67,6 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
   const [reportError, setReportError] = useState<string | null>(null);
   const [selectedPaths, setSelectedPaths] = useState<string[]>([]);
   const [showAllTraversalEntries, setShowAllTraversalEntries] = useState(false);
-  const [showRawReport, setShowRawReport] = useState(false);
   const [showAllTraversalFiles, setShowAllTraversalFiles] = useState(false);
   const [lastRunLabel, setLastRunLabel] = useState<string | null>(null);
   const [objectTypeFilter, setObjectTypeFilter] = useState<'all' | 'fault' | 'performance' | 'unknown'>(
@@ -93,8 +95,32 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
   );
   const [cloudyMatchThreshold, setCloudyMatchThreshold] = useState('10');
   const [suggestedEntries, setSuggestedEntries] = useState<SuggestedEntry[]>([]);
-  const [suggestedExpanded, setSuggestedExpanded] = useState<Record<string, boolean>>({});
+  const [selectedSuggestedKey, setSelectedSuggestedKey] = useState<string | null>(null);
   const [suggestedRawMode, setSuggestedRawMode] = useState(false);
+  const [suggestedDirtyOnly, setSuggestedDirtyOnly] = useState(false);
+  const [suggestedMatchedOnly, setSuggestedMatchedOnly] = useState(false);
+  const [suggestedGeneratedOnly, setSuggestedGeneratedOnly] = useState(false);
+  const [suggestedConflictOnly, setSuggestedConflictOnly] = useState(false);
+  const [suggestedSearch, setSuggestedSearch] = useState('');
+  const [sectionVisibility, setSectionVisibility] = useState<LegacySectionVisibility>(() => {
+    if (typeof window === 'undefined') {
+      return { traversal: false, matchDiffs: false, rawReport: false };
+    }
+    try {
+      const stored = window.sessionStorage.getItem(LEGACY_SECTION_VISIBILITY_KEY);
+      if (!stored) {
+        return { traversal: false, matchDiffs: false, rawReport: false };
+      }
+      const parsed = JSON.parse(stored);
+      return {
+        traversal: Boolean(parsed?.traversal),
+        matchDiffs: Boolean(parsed?.matchDiffs),
+        rawReport: Boolean(parsed?.rawReport),
+      };
+    } catch {
+      return { traversal: false, matchDiffs: false, rawReport: false };
+    }
+  });
   const [reviewHintText, setReviewHintText] = useState(
     'Preview runs a dry-run and jumps to Match diffs (FCOM + Only diffs) for review.',
   );
@@ -186,7 +212,6 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
 
   useEffect(() => {
     setShowAllTraversalEntries(false);
-    setShowRawReport(false);
     setShowAllTraversalFiles(false);
     setShowAllObjects(false);
     setObjectTypeFilter('all');
@@ -208,10 +233,22 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
     setApplyOverridesResult(null);
     setCloudyMatchThreshold('10');
     setSuggestedEntries([]);
-    setSuggestedExpanded({});
+    setSelectedSuggestedKey(null);
     setSuggestedRawMode(false);
+    setSuggestedDirtyOnly(false);
+    setSuggestedMatchedOnly(false);
+    setSuggestedGeneratedOnly(false);
+    setSuggestedConflictOnly(false);
+    setSuggestedSearch('');
     setReviewHintText('Preview runs a dry-run and jumps to Match diffs (FCOM + Only diffs) for review.');
   }, [reportRunId]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+    window.sessionStorage.setItem(LEGACY_SECTION_VISIBILITY_KEY, JSON.stringify(sectionVisibility));
+  }, [sectionVisibility]);
 
   useEffect(() => {
     if (!selectedObjectId) {
@@ -418,205 +455,14 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
     setMatchSourceFilter('fcom');
     setMatchOnlyDiffs(true);
     setShowAllMatches(true);
+    setSectionVisibility((prev) => ({
+      ...prev,
+      matchDiffs: true,
+    }));
     window.setTimeout(() => {
       matchPanelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       matchPanelRef.current?.focus({ preventScroll: true });
     }, 80);
-  };
-
-  const extractEventFields = (payload: Record<string, any>) => {
-    if (payload?.event && typeof payload.event === 'object' && !Array.isArray(payload.event)) {
-      return Object.entries(payload.event).map(([field, value]) => ({
-        field,
-        value: value === undefined || value === null ? '' : String(value),
-      }));
-    }
-    const processors = Array.isArray(payload?.processors) ? payload.processors : [];
-    return processors
-      .map((processor: any) => {
-        const setConfig = processor?.value?.set;
-        const targetField = String(setConfig?.targetField || '');
-        if (!targetField.startsWith('$.event.')) {
-          return null;
-        }
-        return {
-          field: targetField.replace('$.event.', ''),
-          value:
-            setConfig?.source === undefined || setConfig?.source === null
-              ? ''
-              : String(setConfig.source),
-        };
-      })
-      .filter(Boolean) as Array<{ field: string; value: string }>;
-  };
-
-  const applyEventFieldsToPayload = (
-    payload: Record<string, any>,
-    fields: Array<{ field: string; value: string }>,
-  ) => {
-    const nextPayload: Record<string, any> = { ...(payload || {}) };
-    if (nextPayload.event && typeof nextPayload.event === 'object' && !Array.isArray(nextPayload.event)) {
-      const nextEvent: Record<string, string> = {};
-      fields.forEach((entry) => {
-        if (entry.field.trim()) {
-          nextEvent[entry.field.trim()] = entry.value;
-        }
-      });
-      nextPayload.event = nextEvent;
-      return nextPayload;
-    }
-    nextPayload.processors = fields
-      .filter((entry) => entry.field.trim())
-      .map((entry) => ({
-        op: 'add',
-        path: '/-',
-        value: {
-          set: {
-            source: entry.value,
-            targetField: `$.event.${entry.field.trim()}`,
-          },
-        },
-      }));
-    return nextPayload;
-  };
-
-  const deriveLegacyObjectName = (obj: any) => {
-    const ruleFunction = String(obj?.ruleFunction || '').trim();
-    if (ruleFunction && ruleFunction !== '__global__') {
-      return ruleFunction;
-    }
-    const firstOid = Array.isArray(obj?.oids) && obj.oids.length > 0 ? String(obj.oids[0]) : 'unknown';
-    return `legacy_${firstOid}`;
-  };
-
-  const getSuggestedFieldDependencies = (entry: SuggestedEntry) => {
-    const objects = Array.isArray(reportJson?.legacyObjects) ? reportJson.legacyObjects : [];
-    const sourceFiles = entry.sourceLabel
-      ? entry.sourceLabel.split(',').map((value) => value.trim()).filter(Boolean)
-      : [];
-    const related = objects.filter((obj: any) => {
-      const sameName = deriveLegacyObjectName(obj) === entry.objectName;
-      if (!sameName) {
-        return false;
-      }
-      if (sourceFiles.length === 0) {
-        return true;
-      }
-      return sourceFiles.includes(String(obj?.sourceFile || ''));
-    });
-    const fields = new Set<string>();
-    related.forEach((obj: any) => {
-      const objFields = Array.isArray(obj?.eventFields) ? obj.eventFields : [];
-      objFields.forEach((field: string) => {
-        const normalized = String(field || '').trim();
-        if (normalized) {
-          fields.add(normalized);
-        }
-      });
-    });
-    return Array.from(fields).sort((a, b) => a.localeCompare(b));
-  };
-
-  const getReferenceOnlyFieldRows = (entry: SuggestedEntry, dependencyFields: string[]) => {
-    const mappedFields = new Set(entry.fields.map((item) => item.field));
-    return dependencyFields
-      .filter((field) => !mappedFields.has(field))
-      .map((field) => {
-        const normalized = field.toLowerCase();
-        let pattern = 'set + if/else processors';
-        if (normalized.includes('severity') || normalized.includes('category')) {
-          pattern = 'set + map/lookup processor';
-        } else if (
-          normalized.includes('node') ||
-          normalized.includes('subnode') ||
-          normalized.includes('alias')
-        ) {
-          pattern = 'set processor';
-        } else if (
-          normalized.includes('type') ||
-          normalized.includes('code') ||
-          normalized.includes('group') ||
-          normalized.includes('method')
-        ) {
-          pattern = 'if + map/lookup + set processors';
-        }
-        return {
-          field,
-          reason:
-            'Referenced in legacy rule context/read logic, but no direct assignment was extracted into the phase-1 COM field mapper.',
-          pattern,
-        };
-      });
-  };
-
-  const buildSuggestedEntriesFromResult = (result: LegacyApplyFcomOverridesResponse): SuggestedEntry[] => {
-    const matched = (result.overrides || []).map((entry) => {
-      const payload = { ...(entry.override || {}) };
-      const fields = extractEventFields(payload);
-      const initialPayload = JSON.parse(JSON.stringify(payload || {}));
-      const initialFieldValues = fields.reduce<Record<string, string>>((acc, item) => {
-        acc[item.field] = item.value;
-        return acc;
-      }, {});
-      return {
-        key: `matched:${entry.objectName}:${(entry.sourceFiles || []).join('|')}`,
-        sourceType: 'matched' as const,
-        objectName: entry.objectName,
-        sourceLabel: (entry.sourceFiles || []).join(', '),
-        fields,
-        payload,
-        initialPayload,
-        initialFieldValues,
-        rawText: JSON.stringify(payload, null, 2),
-        rawError: null,
-      };
-    });
-    const generated = (result.generatedDefinitions || []).map((entry) => {
-      const payload = { ...(entry.definition || {}) };
-      const fields = extractEventFields(payload);
-      const initialPayload = JSON.parse(JSON.stringify(payload || {}));
-      const initialFieldValues = fields.reduce<Record<string, string>>((acc, item) => {
-        acc[item.field] = item.value;
-        return acc;
-      }, {});
-      return {
-        key: `generated:${entry.objectName}:${entry.sourceFile}`,
-        sourceType: 'generated' as const,
-        objectName: entry.objectName,
-        sourceLabel: entry.sourceFile,
-        fields,
-        payload,
-        initialPayload,
-        initialFieldValues,
-        rawText: JSON.stringify(payload, null, 2),
-        rawError: null,
-      };
-    });
-    return [...matched, ...generated];
-  };
-
-  const buildEditedPayloadOverrides = () => {
-    const matched = suggestedEntries
-      .filter((entry) => entry.sourceType === 'matched')
-      .map((entry) => ({
-        objectName: entry.objectName,
-        sourceFiles: entry.sourceLabel
-          ? entry.sourceLabel.split(',').map((value) => value.trim()).filter(Boolean)
-          : [],
-        override: entry.payload,
-      }));
-    const generated = suggestedEntries
-      .filter((entry) => entry.sourceType === 'generated')
-      .map((entry) => ({
-        objectName: entry.objectName,
-        sourceFile: entry.sourceLabel,
-        reason: 'User-reviewed generated COM definition.',
-        definition: entry.payload,
-      }));
-    return {
-      overridesOverride: matched,
-      generatedDefinitionsOverride: generated,
-    };
   };
 
   const applyConfirmedOverrides = async (dryRun: boolean, autoRefresh: boolean = false) => {
@@ -631,7 +477,9 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
           report: reportJson,
           dryRun,
           minScore,
-          ...(!autoRefresh && suggestedEntries.length > 0 ? buildEditedPayloadOverrides() : {}),
+          ...(!autoRefresh && suggestedEntries.length > 0
+            ? buildEditedPayloadOverrides(suggestedEntries)
+            : {}),
         }),
       {
         getErrorMessage: (err) =>
@@ -644,12 +492,11 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
     setApplyOverridesResult(resp.data);
     const nextSuggestedEntries = buildSuggestedEntriesFromResult(resp.data);
     setSuggestedEntries(nextSuggestedEntries);
-    setSuggestedExpanded((prev) => {
-      const next: Record<string, boolean> = {};
-      nextSuggestedEntries.forEach((entry, index) => {
-        next[entry.key] = prev[entry.key] ?? index < 6;
-      });
-      return next;
+    setSelectedSuggestedKey((prev) => {
+      if (prev && nextSuggestedEntries.some((entry) => entry.key === prev)) {
+        return prev;
+      }
+      return nextSuggestedEntries[0]?.key || null;
     });
     if (!autoRefresh) {
       setReviewHintText(
@@ -727,24 +574,6 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
     );
   };
 
-  const getSuggestedDirtyMeta = (entry: SuggestedEntry) => {
-    const currentFieldValues = entry.fields.reduce<Record<string, string>>((acc, item) => {
-      acc[item.field] = item.value;
-      return acc;
-    }, {});
-    const fieldKeys = Array.from(
-      new Set([...Object.keys(entry.initialFieldValues), ...Object.keys(currentFieldValues)]),
-    );
-    const changedFields = fieldKeys.filter(
-      (key) => (entry.initialFieldValues[key] ?? '') !== (currentFieldValues[key] ?? ''),
-    );
-    const payloadDirty = JSON.stringify(entry.payload) !== JSON.stringify(entry.initialPayload);
-    return {
-      changedFields,
-      dirty: payloadDirty,
-    };
-  };
-
   const downloadHint = [
     reportText ? getReportFilename('txt') : null,
     reportJson ? getReportFilename('json') : null,
@@ -819,6 +648,17 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
 
   const visibleMatches = showAllMatches ? filteredMatchDiffs : filteredMatchDiffs.slice(0, 8);
   const hasSuggestedRawErrors = suggestedEntries.some((entry) => Boolean(entry.rawError));
+  const conflictCountsByObject = useMemo(() => {
+    const map: Record<string, number> = {};
+    (applyOverridesResult?.conflicts || []).forEach((entry) => {
+      const key = String(entry?.objectName || '').trim();
+      if (!key) {
+        return;
+      }
+      map[key] = Array.isArray(entry?.conflicts) ? entry.conflicts.length : 0;
+    });
+    return map;
+  }, [applyOverridesResult]);
 
   const visibleObjects = showAllObjects ? filteredObjects : filteredObjects.slice(0, 12);
   const selectedObject = selectedObjectId
@@ -982,11 +822,9 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
                 <div className="legacy-report-banner">{lastRunLabel}</div>
               )}
               {(reportText || reportJson) && (
-                <div className="legacy-report-actions">
+                <div className="legacy-report-actions legacy-command-bar" role="region" aria-label="Legacy command bar">
                   {reportJson && (
-                    <div className="legacy-report-muted">
-                      {reviewHintText}
-                    </div>
+                    <div className="legacy-report-muted">{reviewHintText}</div>
                   )}
                   {reportJson && (
                     <label className="legacy-report-hint" htmlFor="cloudy-match-threshold">
@@ -1037,15 +875,6 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
                       Copy missing functions
                     </button>
                   )}
-                  {reportText && (
-                    <button
-                      type="button"
-                      className="ghost-button"
-                      onClick={() => setShowRawReport((prev) => !prev)}
-                    >
-                      {showRawReport ? 'Hide raw report' : 'Show raw report'}
-                    </button>
-                  )}
                   {reportJson && (
                     <button
                       type="button"
@@ -1067,6 +896,48 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
                       {applyingOverrides ? 'Creating…' : 'Create confirmed FCOM override bundle'}
                     </button>
                   )}
+                  {reportJson && (
+                    <button
+                      type="button"
+                      className={`ghost-button ${sectionVisibility.matchDiffs ? 'active' : ''}`}
+                      onClick={() =>
+                        setSectionVisibility((prev) => ({
+                          ...prev,
+                          matchDiffs: !prev.matchDiffs,
+                        }))
+                      }
+                    >
+                      {sectionVisibility.matchDiffs ? 'Hide match diffs' : 'Show match diffs'}
+                    </button>
+                  )}
+                  {hasTraversal && (
+                    <button
+                      type="button"
+                      className={`ghost-button ${sectionVisibility.traversal ? 'active' : ''}`}
+                      onClick={() =>
+                        setSectionVisibility((prev) => ({
+                          ...prev,
+                          traversal: !prev.traversal,
+                        }))
+                      }
+                    >
+                      {sectionVisibility.traversal ? 'Hide traversal' : 'Show traversal'}
+                    </button>
+                  )}
+                  {reportText && (
+                    <button
+                      type="button"
+                      className={`ghost-button ${sectionVisibility.rawReport ? 'active' : ''}`}
+                      onClick={() =>
+                        setSectionVisibility((prev) => ({
+                          ...prev,
+                          rawReport: !prev.rawReport,
+                        }))
+                      }
+                    >
+                      {sectionVisibility.rawReport ? 'Hide raw report' : 'Show raw report'}
+                    </button>
+                  )}
                   {downloadHint && (
                     <div className="legacy-report-hint">Downloads: {downloadHint}</div>
                   )}
@@ -1083,193 +954,28 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
                 </InlineMessage>
               )}
               {suggestedEntries.length > 0 && (
-                <div className="legacy-object-panel">
-                  <div className="legacy-object-header">
-                    <div>
-                      <div className="legacy-report-title">Suggested COM definitions</div>
-                      <div className="legacy-report-muted">
-                        Updates live when threshold changes. {hasEditPermission ? 'Editable.' : 'Read-only access.'}
-                      </div>
-                    </div>
-                    <div className="legacy-object-actions">
-                      <div className="legacy-filter-row" role="tablist" aria-label="Suggested definition mode">
-                        <button
-                          type="button"
-                          className={`legacy-filter-chip ${!suggestedRawMode ? 'active' : ''}`}
-                          role="tab"
-                          aria-selected={!suggestedRawMode}
-                          onClick={() => setSuggestedRawMode(false)}
-                        >
-                          Friendly
-                        </button>
-                        <button
-                          type="button"
-                          className={`legacy-filter-chip ${suggestedRawMode ? 'active' : ''}`}
-                          role="tab"
-                          aria-selected={suggestedRawMode}
-                          onClick={() => setSuggestedRawMode(true)}
-                        >
-                          Raw JSON
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="legacy-match-table">
-                    {suggestedEntries.map((entry) => {
-                      const { changedFields, dirty } = getSuggestedDirtyMeta(entry);
-                      const isExpanded = suggestedExpanded[entry.key] !== false;
-                      const dependencyFields = getSuggestedFieldDependencies(entry);
-                      const referenceOnlyFields = getReferenceOnlyFieldRows(entry, dependencyFields);
-                      return (
-                        <div key={entry.key} className="legacy-match-group">
-                          <div className="legacy-match-row">
-                            <div>
-                              <div className="legacy-summary-path">{entry.objectName}</div>
-                              <div className="legacy-match-subtle">{entry.sourceLabel || 'legacy conversion'}</div>
-                              <div className="legacy-report-muted">
-                                {entry.sourceType === 'matched'
-                                  ? 'Will be emitted as a COM override (matched existing FCOM object).'
-                                  : 'Will be emitted as a generated COM definition (no existing FCOM match).'}
-                              </div>
-                            </div>
-                            <div>
-                              <span className="legacy-match-pill">
-                                {entry.sourceType === 'matched' ? 'existing match' : 'generated'}
-                              </span>
-                              {dirty && (
-                                <span className="legacy-match-pill" style={{ marginLeft: 8 }}>
-                                  Dirty ({changedFields.length})
-                                </span>
-                              )}
-                            </div>
-                            <div>{entry.fields.length} field(s)</div>
-                            <div className="legacy-match-actions">
-                              <button
-                                type="button"
-                                className="ghost-button"
-                                onClick={() =>
-                                  setSuggestedExpanded((prev) => ({
-                                    ...prev,
-                                    [entry.key]: !isExpanded,
-                                  }))
-                                }
-                              >
-                                {isExpanded ? 'Collapse' : 'Expand'}
-                              </button>
-                            </div>
-                          </div>
-                          {isExpanded &&
-                            (suggestedRawMode ? (
-                              <div className="legacy-match-details">
-                                <div className="legacy-report-muted" style={{ marginBottom: 8 }}>
-                                  Field dependencies:{' '}
-                                  {dependencyFields.length > 0
-                                    ? dependencyFields.map((field) => `$Event->{${field}}`).join(', ')
-                                    : 'Dependency mapping unavailable for this item (conversion still included).'}
-                                </div>
-                                {referenceOnlyFields.length > 0 && (
-                                  <div className="legacy-summary-table" style={{ marginBottom: 10 }}>
-                                    <div className="legacy-summary-row legacy-summary-header">
-                                      <div>Referenced only</div>
-                                      <div>Why not mapped</div>
-                                      <div>Suggested COM pattern</div>
-                                    </div>
-                                    {referenceOnlyFields.map((row) => (
-                                      <div key={`${entry.key}-raw-ref-${row.field}`} className="legacy-summary-row">
-                                        <div className="legacy-summary-path">{`$Event->{${row.field}}`}</div>
-                                        <div>{row.reason}</div>
-                                        <div>{row.pattern}</div>
-                                      </div>
-                                    ))}
-                                  </div>
-                                )}
-                                {dependencyFields.length > 0 && referenceOnlyFields.length === 0 && (
-                                  <div className="legacy-report-muted" style={{ marginBottom: 8 }}>
-                                    All detected dependency fields are already mapped into the current COM suggestion.
-                                  </div>
-                                )}
-                                <textarea
-                                  className="code-block"
-                                  value={entry.rawText}
-                                  onChange={(event) => updateSuggestedRaw(entry.key, event.target.value)}
-                                  rows={Math.max(8, entry.rawText.split('\n').length)}
-                                  readOnly={!hasEditPermission}
-                                />
-                                {entry.rawError && <div className="error">{entry.rawError}</div>}
-                              </div>
-                            ) : (
-                              <div className="legacy-match-details">
-                                <div className="legacy-report-muted" style={{ marginBottom: 8 }}>
-                                  Field dependencies:{' '}
-                                  {dependencyFields.length > 0
-                                    ? dependencyFields.map((field) => `$Event->{${field}}`).join(', ')
-                                    : 'Dependency mapping unavailable for this item (conversion still included).'}
-                                </div>
-                                {referenceOnlyFields.length > 0 && (
-                                  <div className="legacy-summary-table" style={{ marginBottom: 10 }}>
-                                    <div className="legacy-summary-row legacy-summary-header">
-                                      <div>Referenced only</div>
-                                      <div>Why not mapped</div>
-                                      <div>Suggested COM pattern</div>
-                                    </div>
-                                    {referenceOnlyFields.map((row) => (
-                                      <div key={`${entry.key}-friendly-ref-${row.field}`} className="legacy-summary-row">
-                                        <div className="legacy-summary-path">{`$Event->{${row.field}}`}</div>
-                                        <div>{row.reason}</div>
-                                        <div>{row.pattern}</div>
-                                      </div>
-                                    ))}
-                                  </div>
-                                )}
-                                {dependencyFields.length > 0 && referenceOnlyFields.length === 0 && (
-                                  <div className="legacy-report-muted" style={{ marginBottom: 8 }}>
-                                    All detected dependency fields are already mapped into the current COM suggestion.
-                                  </div>
-                                )}
-                                {entry.fields.length === 0 ? (
-                                  <div className="legacy-report-muted">No event fields detected for this suggestion.</div>
-                                ) : (
-                                  <div className="legacy-summary-table">
-                                    {entry.fields.map((fieldEntry) => {
-                                      const fieldDirty =
-                                        (entry.initialFieldValues[fieldEntry.field] ?? '') !== fieldEntry.value;
-                                      return (
-                                        <div key={`${entry.key}:${fieldEntry.field}`} className="legacy-summary-row">
-                                          <div className="legacy-summary-path">
-                                            {fieldEntry.field}
-                                            {fieldDirty && (
-                                              <span className="legacy-match-pill" style={{ marginLeft: 8 }}>
-                                                Changed
-                                              </span>
-                                            )}
-                                          </div>
-                                          {hasEditPermission ? (
-                                            <input
-                                              className="legacy-filter-input"
-                                              value={fieldEntry.value}
-                                              onChange={(event) =>
-                                                updateSuggestedField(
-                                                  entry.key,
-                                                  fieldEntry.field,
-                                                  event.target.value,
-                                                )
-                                              }
-                                            />
-                                          ) : (
-                                            <div className="legacy-report-line">{fieldEntry.value || '—'}</div>
-                                          )}
-                                        </div>
-                                      );
-                                    })}
-                                  </div>
-                                )}
-                              </div>
-                            ))}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
+                <LegacySuggestedReviewPanel
+                  hasEditPermission={hasEditPermission}
+                  legacyObjects={legacyObjects}
+                  entries={suggestedEntries}
+                  selectedKey={selectedSuggestedKey}
+                  onSelectEntry={setSelectedSuggestedKey}
+                  rawMode={suggestedRawMode}
+                  onRawModeChange={setSuggestedRawMode}
+                  onFieldChange={updateSuggestedField}
+                  onRawChange={updateSuggestedRaw}
+                  conflictCountsByObject={conflictCountsByObject}
+                  dirtyOnly={suggestedDirtyOnly}
+                  onDirtyOnlyChange={setSuggestedDirtyOnly}
+                  matchedOnly={suggestedMatchedOnly}
+                  onMatchedOnlyChange={setSuggestedMatchedOnly}
+                  generatedOnly={suggestedGeneratedOnly}
+                  onGeneratedOnlyChange={setSuggestedGeneratedOnly}
+                  conflictOnly={suggestedConflictOnly}
+                  onConflictOnlyChange={setSuggestedConflictOnly}
+                  searchValue={suggestedSearch}
+                  onSearchChange={setSuggestedSearch}
+                />
               )}
               {reportSummary ? (
                 <>
@@ -1317,69 +1023,96 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
                     )}
                   </div>
                   {hasTraversal && (
-                    <div className="legacy-report-divider" aria-hidden="true" />
+                    <>
+                      <div className="legacy-report-divider" aria-hidden="true" />
+                      <div className="legacy-match-header">
+                        <div>
+                          <div className="legacy-report-title">Traversal diagnostics</div>
+                          <div className="legacy-report-muted">
+                            {sectionVisibility.traversal
+                              ? 'Expanded detailed traversal diagnostics.'
+                              : 'Collapsed by default to reduce scroll.'}
+                          </div>
+                        </div>
+                        <div className="legacy-object-actions">
+                          <button
+                            type="button"
+                            className="ghost-button"
+                            onClick={() =>
+                              setSectionVisibility((prev) => ({
+                                ...prev,
+                                traversal: !prev.traversal,
+                              }))
+                            }
+                          >
+                            {sectionVisibility.traversal ? 'Collapse' : 'Expand'}
+                          </button>
+                        </div>
+                      </div>
+                    </>
                   )}
-                    {hasTraversal && traversalLoadCalls.length > 0 && (
-                      <div className="legacy-traversal-section">
-                        <div className="legacy-traversal-label">Load calls</div>
-                        <ul className="legacy-traversal-list">
-                          {traversalLoadCalls.slice(0, 10).map((item: string) => (
-                            <li key={item}>{item}</li>
-                          ))}
-                          {traversalLoadCalls.length > 10 && (
-                            <li className="legacy-traversal-muted">
-                              +{traversalLoadCalls.length - 10} more
-                            </li>
-                          )}
-                        </ul>
-                      </div>
-                    )}
-                    {hasTraversal && traversalMissingLoadCalls.length > 0 && (
-                      <div className="legacy-traversal-section">
-                        <div className="legacy-traversal-label">Missing load calls</div>
-                        <ul className="legacy-traversal-list">
-                          {traversalMissingLoadCalls.slice(0, 10).map((item: string) => (
-                            <li key={item}>{item}</li>
-                          ))}
-                          {traversalMissingLoadCalls.length > 10 && (
-                            <li className="legacy-traversal-muted">
-                              +{traversalMissingLoadCalls.length - 10} more
-                            </li>
-                          )}
-                        </ul>
-                      </div>
-                    )}
-                    {hasTraversal && traversalMissingIncludes.length > 0 && (
-                      <div className="legacy-traversal-section">
-                        <div className="legacy-traversal-label">Missing include paths</div>
-                        <ul className="legacy-traversal-list">
-                          {traversalMissingIncludes.slice(0, 10).map((item: string) => (
-                            <li key={item}>{item}</li>
-                          ))}
-                          {traversalMissingIncludes.length > 10 && (
-                            <li className="legacy-traversal-muted">
-                              +{traversalMissingIncludes.length - 10} more
-                            </li>
-                          )}
-                        </ul>
-                      </div>
-                    )}
-                    {hasTraversal && traversalMissingLookups.length > 0 && (
-                      <div className="legacy-traversal-section">
-                        <div className="legacy-traversal-label">Missing lookup files</div>
-                        <ul className="legacy-traversal-list">
-                          {traversalMissingLookups.slice(0, 10).map((item: string) => (
-                            <li key={item}>{item}</li>
-                          ))}
-                          {traversalMissingLookups.length > 10 && (
-                            <li className="legacy-traversal-muted">
-                              +{traversalMissingLookups.length - 10} more
-                            </li>
-                          )}
-                        </ul>
-                      </div>
-                    )}
-                  {hasTraversal && traversalMissing.length > 0 && (
+
+                  {hasTraversal && sectionVisibility.traversal && traversalLoadCalls.length > 0 && (
+                    <div className="legacy-traversal-section">
+                      <div className="legacy-traversal-label">Load calls</div>
+                      <ul className="legacy-traversal-list">
+                        {traversalLoadCalls.slice(0, 10).map((item: string) => (
+                          <li key={item}>{item}</li>
+                        ))}
+                        {traversalLoadCalls.length > 10 && (
+                          <li className="legacy-traversal-muted">
+                            +{traversalLoadCalls.length - 10} more
+                          </li>
+                        )}
+                      </ul>
+                    </div>
+                  )}
+                  {hasTraversal && sectionVisibility.traversal && traversalMissingLoadCalls.length > 0 && (
+                    <div className="legacy-traversal-section">
+                      <div className="legacy-traversal-label">Missing load calls</div>
+                      <ul className="legacy-traversal-list">
+                        {traversalMissingLoadCalls.slice(0, 10).map((item: string) => (
+                          <li key={item}>{item}</li>
+                        ))}
+                        {traversalMissingLoadCalls.length > 10 && (
+                          <li className="legacy-traversal-muted">
+                            +{traversalMissingLoadCalls.length - 10} more
+                          </li>
+                        )}
+                      </ul>
+                    </div>
+                  )}
+                  {hasTraversal && sectionVisibility.traversal && traversalMissingIncludes.length > 0 && (
+                    <div className="legacy-traversal-section">
+                      <div className="legacy-traversal-label">Missing include paths</div>
+                      <ul className="legacy-traversal-list">
+                        {traversalMissingIncludes.slice(0, 10).map((item: string) => (
+                          <li key={item}>{item}</li>
+                        ))}
+                        {traversalMissingIncludes.length > 10 && (
+                          <li className="legacy-traversal-muted">
+                            +{traversalMissingIncludes.length - 10} more
+                          </li>
+                        )}
+                      </ul>
+                    </div>
+                  )}
+                  {hasTraversal && sectionVisibility.traversal && traversalMissingLookups.length > 0 && (
+                    <div className="legacy-traversal-section">
+                      <div className="legacy-traversal-label">Missing lookup files</div>
+                      <ul className="legacy-traversal-list">
+                        {traversalMissingLookups.slice(0, 10).map((item: string) => (
+                          <li key={item}>{item}</li>
+                        ))}
+                        {traversalMissingLookups.length > 10 && (
+                          <li className="legacy-traversal-muted">
+                            +{traversalMissingLookups.length - 10} more
+                          </li>
+                        )}
+                      </ul>
+                    </div>
+                  )}
+                  {hasTraversal && sectionVisibility.traversal && traversalMissing.length > 0 && (
                     <div className="legacy-traversal-section">
                       <div className="legacy-traversal-label">Missing functions</div>
                       <ul className="legacy-traversal-list">
@@ -1394,7 +1127,7 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
                       </ul>
                     </div>
                   )}
-                  {hasTraversal && traversalFiles.length > 0 && (
+                  {hasTraversal && sectionVisibility.traversal && traversalFiles.length > 0 && (
                     <>
                       <div className="legacy-traversal-toggle">
                         <button
@@ -1418,7 +1151,7 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
                       </div>
                     </>
                   )}
-                  {hasTraversal && traversalEntries.length > 0 && (
+                  {hasTraversal && sectionVisibility.traversal && traversalEntries.length > 0 && (
                     <>
                       <div className="legacy-traversal-toggle">
                         <button
@@ -1440,21 +1173,21 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
                         <ul className="legacy-traversal-list">
                           {(showAllTraversalEntries ? traversalEntries : traversalEntries.slice(0, 6)).map(
                             (entry: any, index: number) => (
-                          <li key={`${entry.filePath || 'entry'}-${index}`}>
-                            <div className="legacy-traversal-entry">
-                              <span className="legacy-traversal-kind">{entry.kind}</span>
-                              <span className="legacy-traversal-main">
-                                {entry.functionName || entry.filePath}
-                              </span>
-                            </div>
-                            {entry.condition && (
-                              <div className="legacy-traversal-meta">{entry.condition}</div>
-                            )}
-                            {entry.functionName && entry.filePath && (
-                              <div className="legacy-traversal-meta">{entry.filePath}</div>
-                            )}
-                          </li>
-                          ),
+                              <li key={`${entry.filePath || 'entry'}-${index}`}>
+                                <div className="legacy-traversal-entry">
+                                  <span className="legacy-traversal-kind">{entry.kind}</span>
+                                  <span className="legacy-traversal-main">
+                                    {entry.functionName || entry.filePath}
+                                  </span>
+                                </div>
+                                {entry.condition && (
+                                  <div className="legacy-traversal-meta">{entry.condition}</div>
+                                )}
+                                {entry.functionName && entry.filePath && (
+                                  <div className="legacy-traversal-meta">{entry.filePath}</div>
+                                )}
+                              </li>
+                            ),
                           )}
                         </ul>
                       </div>
@@ -1714,9 +1447,11 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
                       <div>
                         <div className="legacy-report-title">Match diffs</div>
                         <div className="legacy-report-muted">
-                          Showing {visibleMatches.length} of {filteredMatchDiffs.length} filtered matches
+                          {sectionVisibility.matchDiffs
+                            ? `Showing ${visibleMatches.length} of ${filteredMatchDiffs.length} filtered matches`
+                            : 'Collapsed by default to reduce scroll. Expand to inspect match diagnostics.'}
                         </div>
-                        {matchStats && (
+                        {matchStats && sectionVisibility.matchDiffs && (
                           <div className="legacy-match-meta">
                             Index: {matchStats.indexEntries} objects · {matchStats.indexFiles} files ·
                             cache {matchStats.cacheHit ? 'hit' : 'miss'}
@@ -1727,13 +1462,29 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
                         <button
                           type="button"
                           className="ghost-button"
-                          onClick={() => setShowAllMatches((prev) => !prev)}
-                          disabled={filteredMatchDiffs.length === 0}
+                          onClick={() =>
+                            setSectionVisibility((prev) => ({
+                              ...prev,
+                              matchDiffs: !prev.matchDiffs,
+                            }))
+                          }
                         >
-                          {showAllMatches ? 'Show fewer' : 'Show all'}
+                          {sectionVisibility.matchDiffs ? 'Collapse' : 'Expand'}
                         </button>
+                        {sectionVisibility.matchDiffs && (
+                          <button
+                            type="button"
+                            className="ghost-button"
+                            onClick={() => setShowAllMatches((prev) => !prev)}
+                            disabled={filteredMatchDiffs.length === 0}
+                          >
+                            {showAllMatches ? 'Show fewer' : 'Show all'}
+                          </button>
+                        )}
                       </div>
                     </div>
+                    {sectionVisibility.matchDiffs && (
+                      <>
                     <div className="legacy-match-controls">
                       <div className="legacy-filter-row">
                         <button
@@ -1915,6 +1666,8 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
                         })}
                       </div>
                     )}
+                      </>
+                    )}
                   </div>
                 </>
               ) : (
@@ -1922,10 +1675,10 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
                   Run conversion to populate this preview.
                 </div>
               )}
-              {reportText && showRawReport && (
+              {reportText && sectionVisibility.rawReport && (
                 <pre className="code-block legacy-report-raw">{reportText}</pre>
               )}
-              {reportText && !showRawReport && (
+              {reportText && !sectionVisibility.rawReport && (
                 <div className="legacy-report-muted">
                   Raw report hidden. Use “Show raw report” to expand.
                 </div>
