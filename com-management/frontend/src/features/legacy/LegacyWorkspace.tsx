@@ -7,6 +7,10 @@ import api from '../../services/api';
 import type { LegacyApplyFcomOverridesResponse } from '../../types/api';
 import { getApiErrorMessage } from '../../utils/errorUtils';
 import LegacyMatchDiffsPanel from './components/LegacyMatchDiffsPanel';
+import LegacyFolderFileSummaryPanel from './components/LegacyFolderFileSummaryPanel';
+import LegacyObjectPreviewPanel from './components/LegacyObjectPreviewPanel';
+import LegacyReportCommandBar from './components/LegacyReportCommandBar';
+import LegacyReportSummaryCards from './components/LegacyReportSummaryCards';
 import LegacySuggestedReviewPanel from './components/LegacySuggestedReviewPanel';
 import LegacyTraversalDiagnosticsPanel from './components/LegacyTraversalDiagnosticsPanel';
 import {
@@ -860,126 +864,44 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
                 <div className="legacy-report-banner">{lastRunLabel}</div>
               )}
               {(reportText || reportJson) && (
-                <div className="legacy-report-actions legacy-command-bar" role="region" aria-label="Legacy command bar">
-                  {reportJson && (
-                    <div className="legacy-report-muted">{reviewHintText}</div>
-                  )}
-                  {reportJson && (
-                    <label className="legacy-report-hint" htmlFor="cloudy-match-threshold">
-                      Cloudy match threshold
-                      <input
-                        id="cloudy-match-threshold"
-                        className="legacy-filter-input"
-                        value={cloudyMatchThreshold}
-                        onChange={(event) => setCloudyMatchThreshold(event.target.value)}
-                        placeholder="10"
-                        inputMode="numeric"
-                      />
-                    </label>
-                  )}
-                  {reportText && (
-                    <button
-                      type="button"
-                      className="ghost-button"
-                      onClick={() => downloadText(getReportFilename('txt'), reportText)}
-                    >
-                      Download text
-                    </button>
-                  )}
-                  {reportJson && (
-                    <button
-                      type="button"
-                      className="ghost-button"
-                      onClick={() => downloadJson(getReportFilename('json'), reportJson)}
-                    >
-                      Download JSON
-                    </button>
-                  )}
-                  {traversalFiles.length > 0 && (
-                    <button
-                      type="button"
-                      className="ghost-button"
-                      onClick={copyTraversalOrder}
-                    >
-                      Copy traversal order
-                    </button>
-                  )}
-                  {traversalMissing.length > 0 && (
-                    <button
-                      type="button"
-                      className="ghost-button"
-                      onClick={copyMissingFunctions}
-                    >
-                      Copy missing functions
-                    </button>
-                  )}
-                  {reportJson && (
-                    <button
-                      type="button"
-                      className="ghost-button"
-                      disabled={applyingOverrides}
-                      onClick={() => applyConfirmedOverrides(true)}
-                    >
-                      {applyingOverrides ? 'Preparing…' : 'Preview confirmed FCOM overrides'}
-                    </button>
-                  )}
-                  {reportJson && (
-                    <button
-                      type="button"
-                      className="ghost-button"
-                      disabled={applyingOverrides || hasSuggestedRawErrors}
-                      title={hasSuggestedRawErrors ? 'Fix invalid JSON in suggested COM drafts first.' : ''}
-                      onClick={() => applyConfirmedOverrides(false)}
-                    >
-                      {applyingOverrides ? 'Creating…' : 'Create confirmed FCOM override bundle'}
-                    </button>
-                  )}
-                  {reportJson && (
-                    <button
-                      type="button"
-                      className={`ghost-button ${sectionVisibility.matchDiffs ? 'active' : ''}`}
-                      onClick={() =>
-                        setSectionVisibility((prev) => ({
-                          ...prev,
-                          matchDiffs: !prev.matchDiffs,
-                        }))
-                      }
-                    >
-                      {sectionVisibility.matchDiffs ? 'Hide match diffs' : 'Show match diffs'}
-                    </button>
-                  )}
-                  {hasTraversal && (
-                    <button
-                      type="button"
-                      className={`ghost-button ${sectionVisibility.traversal ? 'active' : ''}`}
-                      onClick={() =>
-                        setSectionVisibility((prev) => ({
-                          ...prev,
-                          traversal: !prev.traversal,
-                        }))
-                      }
-                    >
-                      {sectionVisibility.traversal ? 'Hide traversal' : 'Show traversal'}
-                    </button>
-                  )}
-                  {reportText && (
-                    <button
-                      type="button"
-                      className={`ghost-button ${sectionVisibility.rawReport ? 'active' : ''}`}
-                      onClick={() =>
-                        setSectionVisibility((prev) => ({
-                          ...prev,
-                          rawReport: !prev.rawReport,
-                        }))
-                      }
-                    >
-                      {sectionVisibility.rawReport ? 'Hide raw report' : 'Show raw report'}
-                    </button>
-                  )}
-                  {downloadHint && (
-                    <div className="legacy-report-hint">Downloads: {downloadHint}</div>
-                  )}
-                </div>
+                <LegacyReportCommandBar
+                  reportJson={reportJson}
+                  reportText={reportText}
+                  reviewHintText={reviewHintText}
+                  cloudyMatchThreshold={cloudyMatchThreshold}
+                  onCloudyMatchThresholdChange={setCloudyMatchThreshold}
+                  onDownloadText={() => downloadText(getReportFilename('txt'), reportText)}
+                  onDownloadJson={() => downloadJson(getReportFilename('json'), reportJson)}
+                  traversalFilesCount={traversalFiles.length}
+                  traversalMissingCount={traversalMissing.length}
+                  onCopyTraversalOrder={copyTraversalOrder}
+                  onCopyMissingFunctions={copyMissingFunctions}
+                  applyingOverrides={applyingOverrides}
+                  hasSuggestedRawErrors={hasSuggestedRawErrors}
+                  onPreviewConfirmed={() => applyConfirmedOverrides(true)}
+                  onCreateConfirmed={() => applyConfirmedOverrides(false)}
+                  sectionVisibility={sectionVisibility}
+                  hasTraversal={hasTraversal}
+                  onToggleMatchDiffs={() =>
+                    setSectionVisibility((prev) => ({
+                      ...prev,
+                      matchDiffs: !prev.matchDiffs,
+                    }))
+                  }
+                  onToggleTraversal={() =>
+                    setSectionVisibility((prev) => ({
+                      ...prev,
+                      traversal: !prev.traversal,
+                    }))
+                  }
+                  onToggleRawReport={() =>
+                    setSectionVisibility((prev) => ({
+                      ...prev,
+                      rawReport: !prev.rawReport,
+                    }))
+                  }
+                  downloadHint={downloadHint}
+                />
               )}
               {applyOverridesError && <InlineMessage tone="error">{applyOverridesError}</InlineMessage>}
               {applyOverridesResult && (
@@ -1031,49 +953,22 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
               )}
               {reportSummary ? (
                 <>
-                  <div className="legacy-report-grid">
-                    <div className="legacy-report-card">
-                      <div className="legacy-report-title">Summary</div>
-                      <div className="legacy-report-line">
-                        {reportSummary.totalFiles} file(s) · {reportSummary.totalLegacyObjects} object(s)
-                      </div>
-                      <div className="legacy-report-line">
-                        Overrides proposed: {reportSummary.totalOverrides}
-                      </div>
-                      {(helpKeyCount > 0 || nodeCount > 0 || subNodeCount > 0) && (
-                        <div className="legacy-report-line legacy-report-muted">
-                          HelpKeys: {helpKeyCount} · Nodes: {nodeCount} · SubNodes: {subNodeCount}
-                        </div>
-                      )}
-                      {performanceHintCount > 0 && (
-                        <div className="legacy-report-line legacy-report-muted">
-                          Performance hints: {performanceHintCount}
-                        </div>
-                      )}
-                    </div>
-                    {hasTraversal && (
-                      <div className="legacy-report-card">
-                        <div className="legacy-report-title">Traversal</div>
-                        <div className="legacy-report-line">
-                          Ordered files: {traversalFiles.length} · Entries: {traversalEntries.length}
-                        </div>
-                        <div className="legacy-report-line">
-                          Missing functions: {traversalMissing.length}
-                        </div>
-                        <div className="legacy-report-line">
-                          Load calls: {traversalLoadCalls.length} · Missing loads: {traversalMissingLoadCalls.length}
-                        </div>
-                        <div className="legacy-report-line">
-                          Missing includes: {traversalMissingIncludes.length} · Missing lookups: {traversalMissingLookups.length}
-                        </div>
-                        {traversalCountText && (
-                          <div className="legacy-report-line legacy-traversal-counts">
-                            {traversalCountText}
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
+                  <LegacyReportSummaryCards
+                    reportSummary={reportSummary}
+                    helpKeyCount={helpKeyCount}
+                    nodeCount={nodeCount}
+                    subNodeCount={subNodeCount}
+                    performanceHintCount={performanceHintCount}
+                    hasTraversal={hasTraversal}
+                    traversalFilesCount={traversalFiles.length}
+                    traversalEntriesCount={traversalEntries.length}
+                    traversalMissingCount={traversalMissing.length}
+                    traversalLoadCallsCount={traversalLoadCalls.length}
+                    traversalMissingLoadCallsCount={traversalMissingLoadCalls.length}
+                    traversalMissingIncludesCount={traversalMissingIncludes.length}
+                    traversalMissingLookupsCount={traversalMissingLookups.length}
+                    traversalCountText={traversalCountText}
+                  />
                   {hasTraversal && (
                     <LegacyTraversalDiagnosticsPanel
                       expanded={sectionVisibility.traversal}
@@ -1104,250 +999,37 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
                   {legacyObjects.length > 0 && (
                     <div className="legacy-report-divider" aria-hidden="true" />
                   )}
-                  {(folderSummaries.length > 0 || fileSummaries.length > 0) && (
-                    <div className="legacy-summary-panel">
-                      <div className="legacy-report-title">Folder & File Summary</div>
-                      {folderSummaries.length > 0 && (
-                        <div className="legacy-summary-table">
-                          <div className="legacy-summary-row legacy-summary-header">
-                            <div>Folder</div>
-                            <div>Total</div>
-                            <div>Fault</div>
-                            <div>Perf</div>
-                            <div>Unknown</div>
-                          </div>
-                          {folderSummaries.slice(0, 8).map((entry: any) => (
-                            <div key={entry.folder} className="legacy-summary-row">
-                              <div className="legacy-summary-path">{entry.folder}</div>
-                              <div>{entry.totalObjects}</div>
-                              <div>{entry.faultObjects}</div>
-                              <div>{entry.performanceObjects}</div>
-                              <div>{entry.unknownObjects}</div>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                      {fileSummaries.length > 0 && (
-                        <div className="legacy-summary-table">
-                          <div className="legacy-summary-row legacy-summary-header">
-                            <div>File</div>
-                            <div>Total</div>
-                            <div>Fault</div>
-                            <div>Perf</div>
-                            <div>Unknown</div>
-                          </div>
-                          {fileSummaries.slice(0, 8).map((entry: any) => (
-                            <div key={entry.filePath} className="legacy-summary-row">
-                              <div className="legacy-summary-path">{entry.filePath}</div>
-                              <div>{entry.totalObjects}</div>
-                              <div>{entry.faultObjects}</div>
-                              <div>{entry.performanceObjects}</div>
-                              <div>{entry.unknownObjects}</div>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  )}
+                  <LegacyFolderFileSummaryPanel
+                    folderSummaries={folderSummaries}
+                    fileSummaries={fileSummaries}
+                  />
                   {legacyObjects.length > 0 && (
-                    <div className="legacy-object-panel">
-                      <div className="legacy-object-header">
-                        <div>
-                          <div className="legacy-report-title">Object preview</div>
-                          <div className="legacy-report-muted">
-                            Showing {visibleObjects.length} of {filteredObjects.length} filtered objects
-                          </div>
-                        </div>
-                        <div className="legacy-object-actions">
-                          <button
-                            type="button"
-                            className="ghost-button"
-                            onClick={exportObjectsCsv}
-                            disabled={filteredObjects.length === 0}
-                          >
-                            Export CSV
-                          </button>
-                          <button
-                            type="button"
-                            className="ghost-button"
-                            onClick={() => setShowAllObjects((prev) => !prev)}
-                          >
-                            {showAllObjects ? 'Show fewer' : 'Show all'}
-                          </button>
-                        </div>
-                      </div>
-                      <div className="legacy-filter-row">
-                        <button
-                          type="button"
-                          className={`legacy-filter-chip ${objectTypeFilter === 'all' ? 'active' : ''}`}
-                          onClick={() => setObjectTypeFilter('all')}
-                        >
-                          All
-                        </button>
-                        <button
-                          type="button"
-                          className={`legacy-filter-chip ${objectTypeFilter === 'fault' ? 'active' : ''}`}
-                          onClick={() => setObjectTypeFilter('fault')}
-                        >
-                          Fault
-                        </button>
-                        <button
-                          type="button"
-                          className={`legacy-filter-chip ${objectTypeFilter === 'performance' ? 'active' : ''}`}
-                          onClick={() => setObjectTypeFilter('performance')}
-                        >
-                          Performance
-                        </button>
-                        <button
-                          type="button"
-                          className={`legacy-filter-chip ${objectTypeFilter === 'unknown' ? 'active' : ''}`}
-                          onClick={() => setObjectTypeFilter('unknown')}
-                        >
-                          Unknown
-                        </button>
-                        <button
-                          type="button"
-                          className={`legacy-filter-chip ${filterHasCondition ? 'active' : ''}`}
-                          onClick={() => setFilterHasCondition((prev) => !prev)}
-                        >
-                          Has condition
-                        </button>
-                        <button
-                          type="button"
-                          className={`legacy-filter-chip ${filterHasHelpKey ? 'active' : ''}`}
-                          onClick={() => setFilterHasHelpKey((prev) => !prev)}
-                        >
-                          Has HelpKey
-                        </button>
-                        <button
-                          type="button"
-                          className={`legacy-filter-chip ${filterHasPerfHints ? 'active' : ''}`}
-                          onClick={() => setFilterHasPerfHints((prev) => !prev)}
-                        >
-                          Has perf hints
-                        </button>
-                        <button
-                          type="button"
-                          className={`legacy-filter-chip ${filterMissingLookups ? 'active' : ''}`}
-                          onClick={() => setFilterMissingLookups((prev) => !prev)}
-                        >
-                          Missing lookups (global)
-                        </button>
-                        <input
-                          className="legacy-filter-input"
-                          placeholder="Why filter (e.g., EventFields, MetricID)"
-                          value={filterWhy}
-                          onChange={(event) => setFilterWhy(event.target.value)}
-                        />
-                      </div>
-                      <div className="legacy-object-content">
-                        <div className="legacy-object-list">
-                          {filteredObjects.length === 0 ? (
-                            <div className="legacy-report-muted">No objects match the current filters.</div>
-                          ) : (
-                            <div className="legacy-object-table">
-                              <div className="legacy-object-row legacy-object-header-row">
-                                <div>Rule</div>
-                                <div>Type</div>
-                                <div>OIDs</div>
-                                <div>HelpKey</div>
-                                <div>Node/SubNode</div>
-                                <div>Traversal</div>
-                                <div>Perf hints</div>
-                                <div>Why</div>
-                              </div>
-                              {visibleObjects.map((obj: any) => (
-                                <div
-                                  key={obj.id}
-                                  className={`legacy-object-row legacy-object-button${selectedObjectId === obj.id ? ' selected' : ''}`}
-                                  role="button"
-                                  tabIndex={0}
-                                  onClick={() => setSelectedObjectId(obj.id)}
-                                  onKeyDown={(event) => {
-                                    if (event.key === 'Enter' || event.key === ' ') {
-                                      event.preventDefault();
-                                      setSelectedObjectId(obj.id);
-                                    }
-                                  }}
-                                >
-                                  <div>
-                                    <div className="legacy-object-name">{obj.ruleFunction}</div>
-                                    <div className="legacy-object-meta">{obj.sourceFile}</div>
-                                  </div>
-                                  <div className="legacy-object-pill">{obj.ruleType}</div>
-                                  <div className="legacy-object-meta">
-                                    {(obj.oids || []).slice(0, 3).join(', ') || '—'}
-                                  </div>
-                                  <div className="legacy-object-meta">
-                                    {(obj.helpKeys || []).join(', ') || '—'}
-                                  </div>
-                                  <div className="legacy-object-meta">
-                                    {(obj.nodeValues || []).join(', ') || '—'}
-                                    {obj.subNodeValues?.length ? ` / ${obj.subNodeValues.join(', ')}` : ''}
-                                  </div>
-                                  <div className="legacy-object-meta">
-                                    {obj?.traversal?.kind || '—'}
-                                    {obj?.traversal?.condition ? ` (${obj.traversal.condition})` : ''}
-                                  </div>
-                                  <div className="legacy-object-meta">
-                                    {(obj.performanceHints || []).join(', ') || '—'}
-                                  </div>
-                                  <div className="legacy-object-meta">
-                                    {(obj.classificationHints || []).join(', ') || '—'}
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                        <div className="legacy-object-preview-panel">
-                          <div className="legacy-object-preview">
-                            <div className="legacy-object-header">
-                              <div>
-                                <div className="legacy-report-title">Snippet focus</div>
-                                <div className="legacy-report-muted">
-                                  {selectedObject
-                                    ? `${selectedObject.ruleFunction} · ${selectedObject.ruleType}`
-                                    : 'Select a row to highlight its code block'}
-                                </div>
-                              </div>
-                              <div className="legacy-object-actions">
-                                <button
-                                  type="button"
-                                  className="ghost-button"
-                                  onClick={() => setSelectedObjectId(null)}
-                                  disabled={!selectedObject}
-                                >
-                                  Clear selection
-                                </button>
-                              </div>
-                            </div>
-                            <div className="legacy-object-meta">
-                              {selectedObject ? selectedObject.sourceFile : '—'}
-                            </div>
-                            <div
-                              className={`code-block legacy-object-snippet${snippetPulse ? ' legacy-object-snippet-pulse' : ''}`}
-                            >
-                              {snippetLines.length === 0 ? (
-                                <div className="legacy-report-muted">Snippet unavailable for this object.</div>
-                              ) : (
-                                snippetLines.map((line: string, index: number) => (
-                                  <div
-                                    key={`snippet-${snippetStartLine + index}`}
-                                    className={`legacy-snippet-line${selectedObject ? ' highlight' : ''}`}
-                                  >
-                                    <span className="legacy-snippet-gutter">
-                                      {snippetStartLine + index}
-                                    </span>
-                                    <span className="legacy-snippet-code">{line || ' '}</span>
-                                  </div>
-                                ))
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                    <LegacyObjectPreviewPanel
+                      visibleObjects={visibleObjects}
+                      filteredObjects={filteredObjects}
+                      showAllObjects={showAllObjects}
+                      onToggleShowAllObjects={() => setShowAllObjects((prev) => !prev)}
+                      onExportCsv={exportObjectsCsv}
+                      objectTypeFilter={objectTypeFilter}
+                      onObjectTypeFilter={setObjectTypeFilter}
+                      filterHasCondition={filterHasCondition}
+                      onToggleFilterHasCondition={() => setFilterHasCondition((prev) => !prev)}
+                      filterHasHelpKey={filterHasHelpKey}
+                      onToggleFilterHasHelpKey={() => setFilterHasHelpKey((prev) => !prev)}
+                      filterHasPerfHints={filterHasPerfHints}
+                      onToggleFilterHasPerfHints={() => setFilterHasPerfHints((prev) => !prev)}
+                      filterMissingLookups={filterMissingLookups}
+                      onToggleFilterMissingLookups={() => setFilterMissingLookups((prev) => !prev)}
+                      filterWhy={filterWhy}
+                      onFilterWhy={setFilterWhy}
+                      selectedObjectId={selectedObjectId}
+                      onSelectObject={setSelectedObjectId}
+                      onClearSelection={() => setSelectedObjectId(null)}
+                      selectedObject={selectedObject}
+                      snippetPulse={snippetPulse}
+                      snippetLines={snippetLines}
+                      snippetStartLine={snippetStartLine}
+                    />
                   )}
                   <div className="legacy-report-divider" aria-hidden="true" />
                   <LegacyMatchDiffsPanel
