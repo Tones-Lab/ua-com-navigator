@@ -6,7 +6,9 @@ import useRequest from '../../hooks/useRequest';
 import api from '../../services/api';
 import type { LegacyApplyFcomOverridesResponse } from '../../types/api';
 import { getApiErrorMessage } from '../../utils/errorUtils';
+import LegacyMatchDiffsPanel from './components/LegacyMatchDiffsPanel';
 import LegacySuggestedReviewPanel from './components/LegacySuggestedReviewPanel';
+import LegacyTraversalDiagnosticsPanel from './components/LegacyTraversalDiagnosticsPanel';
 import {
   applyEventFieldsToPayload,
   buildEditedPayloadOverrides,
@@ -1023,175 +1025,31 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
                     )}
                   </div>
                   {hasTraversal && (
-                    <>
-                      <div className="legacy-report-divider" aria-hidden="true" />
-                      <div className="legacy-match-header">
-                        <div>
-                          <div className="legacy-report-title">Traversal diagnostics</div>
-                          <div className="legacy-report-muted">
-                            {sectionVisibility.traversal
-                              ? 'Expanded detailed traversal diagnostics.'
-                              : 'Collapsed by default to reduce scroll.'}
-                          </div>
-                        </div>
-                        <div className="legacy-object-actions">
-                          <button
-                            type="button"
-                            className="ghost-button"
-                            onClick={() =>
-                              setSectionVisibility((prev) => ({
-                                ...prev,
-                                traversal: !prev.traversal,
-                              }))
-                            }
-                          >
-                            {sectionVisibility.traversal ? 'Collapse' : 'Expand'}
-                          </button>
-                        </div>
-                      </div>
-                    </>
-                  )}
-
-                  {hasTraversal && sectionVisibility.traversal && traversalLoadCalls.length > 0 && (
-                    <div className="legacy-traversal-section">
-                      <div className="legacy-traversal-label">Load calls</div>
-                      <ul className="legacy-traversal-list">
-                        {traversalLoadCalls.slice(0, 10).map((item: string) => (
-                          <li key={item}>{item}</li>
-                        ))}
-                        {traversalLoadCalls.length > 10 && (
-                          <li className="legacy-traversal-muted">
-                            +{traversalLoadCalls.length - 10} more
-                          </li>
-                        )}
-                      </ul>
-                    </div>
-                  )}
-                  {hasTraversal && sectionVisibility.traversal && traversalMissingLoadCalls.length > 0 && (
-                    <div className="legacy-traversal-section">
-                      <div className="legacy-traversal-label">Missing load calls</div>
-                      <ul className="legacy-traversal-list">
-                        {traversalMissingLoadCalls.slice(0, 10).map((item: string) => (
-                          <li key={item}>{item}</li>
-                        ))}
-                        {traversalMissingLoadCalls.length > 10 && (
-                          <li className="legacy-traversal-muted">
-                            +{traversalMissingLoadCalls.length - 10} more
-                          </li>
-                        )}
-                      </ul>
-                    </div>
-                  )}
-                  {hasTraversal && sectionVisibility.traversal && traversalMissingIncludes.length > 0 && (
-                    <div className="legacy-traversal-section">
-                      <div className="legacy-traversal-label">Missing include paths</div>
-                      <ul className="legacy-traversal-list">
-                        {traversalMissingIncludes.slice(0, 10).map((item: string) => (
-                          <li key={item}>{item}</li>
-                        ))}
-                        {traversalMissingIncludes.length > 10 && (
-                          <li className="legacy-traversal-muted">
-                            +{traversalMissingIncludes.length - 10} more
-                          </li>
-                        )}
-                      </ul>
-                    </div>
-                  )}
-                  {hasTraversal && sectionVisibility.traversal && traversalMissingLookups.length > 0 && (
-                    <div className="legacy-traversal-section">
-                      <div className="legacy-traversal-label">Missing lookup files</div>
-                      <ul className="legacy-traversal-list">
-                        {traversalMissingLookups.slice(0, 10).map((item: string) => (
-                          <li key={item}>{item}</li>
-                        ))}
-                        {traversalMissingLookups.length > 10 && (
-                          <li className="legacy-traversal-muted">
-                            +{traversalMissingLookups.length - 10} more
-                          </li>
-                        )}
-                      </ul>
-                    </div>
-                  )}
-                  {hasTraversal && sectionVisibility.traversal && traversalMissing.length > 0 && (
-                    <div className="legacy-traversal-section">
-                      <div className="legacy-traversal-label">Missing functions</div>
-                      <ul className="legacy-traversal-list">
-                        {traversalMissing.slice(0, 10).map((item: string) => (
-                          <li key={item}>{item}</li>
-                        ))}
-                        {traversalMissing.length > 10 && (
-                          <li className="legacy-traversal-muted">
-                            +{traversalMissing.length - 10} more
-                          </li>
-                        )}
-                      </ul>
-                    </div>
-                  )}
-                  {hasTraversal && sectionVisibility.traversal && traversalFiles.length > 0 && (
-                    <>
-                      <div className="legacy-traversal-toggle">
-                        <button
-                          type="button"
-                          className="ghost-button"
-                          onClick={() => setShowAllTraversalFiles((prev) => !prev)}
-                        >
-                          {showAllTraversalFiles ? 'Show fewer files' : 'Show all files'}
-                        </button>
-                        <span className="muted">{traversalFiles.length} total</span>
-                      </div>
-                      <div className="legacy-traversal-section">
-                        <div className="legacy-traversal-label">Ordered files</div>
-                        <ul className="legacy-traversal-list">
-                          {(showAllTraversalFiles ? traversalFiles : traversalFiles.slice(0, 6)).map(
-                            (filePath: string) => (
-                              <li key={filePath}>{filePath}</li>
-                            ),
-                          )}
-                        </ul>
-                      </div>
-                    </>
-                  )}
-                  {hasTraversal && sectionVisibility.traversal && traversalEntries.length > 0 && (
-                    <>
-                      <div className="legacy-traversal-toggle">
-                        <button
-                          type="button"
-                          className="ghost-button"
-                          onClick={() => setShowAllTraversalEntries((prev) => !prev)}
-                        >
-                          {showAllTraversalEntries ? 'Show fewer entries' : 'Show all entries'}
-                        </button>
-                        <span className="muted">{traversalEntries.length} total</span>
-                      </div>
-                      <div className="legacy-traversal-section">
-                        <div className="legacy-traversal-label">
-                          Traversal entries
-                          {traversalCountText && (
-                            <span className="legacy-traversal-badge">{traversalCountText}</span>
-                          )}
-                        </div>
-                        <ul className="legacy-traversal-list">
-                          {(showAllTraversalEntries ? traversalEntries : traversalEntries.slice(0, 6)).map(
-                            (entry: any, index: number) => (
-                              <li key={`${entry.filePath || 'entry'}-${index}`}>
-                                <div className="legacy-traversal-entry">
-                                  <span className="legacy-traversal-kind">{entry.kind}</span>
-                                  <span className="legacy-traversal-main">
-                                    {entry.functionName || entry.filePath}
-                                  </span>
-                                </div>
-                                {entry.condition && (
-                                  <div className="legacy-traversal-meta">{entry.condition}</div>
-                                )}
-                                {entry.functionName && entry.filePath && (
-                                  <div className="legacy-traversal-meta">{entry.filePath}</div>
-                                )}
-                              </li>
-                            ),
-                          )}
-                        </ul>
-                      </div>
-                    </>
+                    <LegacyTraversalDiagnosticsPanel
+                      expanded={sectionVisibility.traversal}
+                      onToggleExpanded={() =>
+                        setSectionVisibility((prev) => ({
+                          ...prev,
+                          traversal: !prev.traversal,
+                        }))
+                      }
+                      traversalLoadCalls={traversalLoadCalls}
+                      traversalMissingLoadCalls={traversalMissingLoadCalls}
+                      traversalMissingIncludes={traversalMissingIncludes}
+                      traversalMissingLookups={traversalMissingLookups}
+                      traversalMissing={traversalMissing}
+                      traversalFiles={traversalFiles}
+                      traversalEntries={traversalEntries}
+                      traversalCountText={traversalCountText}
+                      showAllTraversalFiles={showAllTraversalFiles}
+                      onToggleShowAllTraversalFiles={() =>
+                        setShowAllTraversalFiles((prev) => !prev)
+                      }
+                      showAllTraversalEntries={showAllTraversalEntries}
+                      onToggleShowAllTraversalEntries={() =>
+                        setShowAllTraversalEntries((prev) => !prev)
+                      }
+                    />
                   )}
                   {legacyObjects.length > 0 && (
                     <div className="legacy-report-divider" aria-hidden="true" />
@@ -1442,233 +1300,40 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
                     </div>
                   )}
                   <div className="legacy-report-divider" aria-hidden="true" />
-                  <div className="legacy-match-panel" ref={matchPanelRef} tabIndex={-1}>
-                    <div className="legacy-match-header">
-                      <div>
-                        <div className="legacy-report-title">Match diffs</div>
-                        <div className="legacy-report-muted">
-                          {sectionVisibility.matchDiffs
-                            ? `Showing ${visibleMatches.length} of ${filteredMatchDiffs.length} filtered matches`
-                            : 'Collapsed by default to reduce scroll. Expand to inspect match diagnostics.'}
-                        </div>
-                        {matchStats && sectionVisibility.matchDiffs && (
-                          <div className="legacy-match-meta">
-                            Index: {matchStats.indexEntries} objects · {matchStats.indexFiles} files ·
-                            cache {matchStats.cacheHit ? 'hit' : 'miss'}
-                          </div>
-                        )}
-                      </div>
-                      <div className="legacy-object-actions">
-                        <button
-                          type="button"
-                          className="ghost-button"
-                          onClick={() =>
-                            setSectionVisibility((prev) => ({
-                              ...prev,
-                              matchDiffs: !prev.matchDiffs,
-                            }))
-                          }
-                        >
-                          {sectionVisibility.matchDiffs ? 'Collapse' : 'Expand'}
-                        </button>
-                        {sectionVisibility.matchDiffs && (
-                          <button
-                            type="button"
-                            className="ghost-button"
-                            onClick={() => setShowAllMatches((prev) => !prev)}
-                            disabled={filteredMatchDiffs.length === 0}
-                          >
-                            {showAllMatches ? 'Show fewer' : 'Show all'}
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                    {sectionVisibility.matchDiffs && (
-                      <>
-                    <div className="legacy-match-controls">
-                      <div className="legacy-filter-row">
-                        <button
-                          type="button"
-                          className={`legacy-filter-chip ${matchSourceFilter === 'all' ? 'active' : ''}`}
-                          onClick={() => setMatchSourceFilter('all')}
-                        >
-                          All sources
-                        </button>
-                        <button
-                          type="button"
-                          className={`legacy-filter-chip ${matchSourceFilter === 'fcom' ? 'active' : ''}`}
-                          onClick={() => setMatchSourceFilter('fcom')}
-                        >
-                          FCOM
-                        </button>
-                        <button
-                          type="button"
-                          className={`legacy-filter-chip ${matchSourceFilter === 'pcom' ? 'active' : ''}`}
-                          onClick={() => setMatchSourceFilter('pcom')}
-                        >
-                          PCOM
-                        </button>
-                        <button
-                          type="button"
-                          className={`legacy-filter-chip ${matchSourceFilter === 'mib' ? 'active' : ''}`}
-                          onClick={() => setMatchSourceFilter('mib')}
-                        >
-                          MIB
-                        </button>
-                        <button
-                          type="button"
-                          className={`legacy-filter-chip ${matchOnlyDiffs ? 'active' : ''}`}
-                          onClick={() => setMatchOnlyDiffs((prev) => !prev)}
-                        >
-                          Only diffs
-                        </button>
-                      </div>
-                      <div className="legacy-filter-row">
-                        <button
-                          type="button"
-                          className={`legacy-filter-chip ${matchMethodFilter === 'all' ? 'active' : ''}`}
-                          onClick={() => setMatchMethodFilter('all')}
-                        >
-                          All methods
-                        </button>
-                        <button
-                          type="button"
-                          className={`legacy-filter-chip ${matchMethodFilter === 'oid' ? 'active' : ''}`}
-                          onClick={() => setMatchMethodFilter('oid')}
-                        >
-                          OID only
-                        </button>
-                        <button
-                          type="button"
-                          className={`legacy-filter-chip ${matchMethodFilter === 'name' ? 'active' : ''}`}
-                          onClick={() => setMatchMethodFilter('name')}
-                        >
-                          Name match
-                        </button>
-                        <button
-                          type="button"
-                          className={`legacy-filter-chip ${matchMethodFilter === 'heuristic' ? 'active' : ''}`}
-                          onClick={() => setMatchMethodFilter('heuristic')}
-                        >
-                          Heuristic
-                        </button>
-                      </div>
-                      <div className="legacy-filter-row">
-                        <input
-                          className="legacy-filter-input"
-                          type="number"
-                          min="0"
-                          placeholder="Min score"
-                          value={matchMinScore}
-                          onChange={(event) => setMatchMinScore(event.target.value)}
-                        />
-                        <input
-                          className="legacy-filter-input"
-                          placeholder="Search legacy/matched/path"
-                          value={matchSearch}
-                          onChange={(event) => setMatchSearch(event.target.value)}
-                        />
-                      </div>
-                      {matchOpenError && (
-                        <div className="legacy-report-banner legacy-report-banner-warn">
-                          {matchOpenError}
-                        </div>
-                      )}
-                    </div>
-                    {filteredMatchDiffs.length === 0 ? (
-                      <div className="legacy-report-muted">
-                        No FCOM/PCOM/MIB matches computed yet.
-                      </div>
-                    ) : (
-                      <div className="legacy-match-table">
-                        <div className="legacy-match-row legacy-match-header-row">
-                          <div>Legacy object</div>
-                          <div>Matched</div>
-                          <div>Method</div>
-                          <div>Score</div>
-                          <div>Diffs</div>
-                          <div>Actions</div>
-                        </div>
-                        {visibleMatches.map((entry: any) => {
-                          const isExpanded = !!expandedMatches[entry.legacyObjectId];
-                          return (
-                            <div key={entry.legacyObjectId} className="legacy-match-group">
-                              <div className="legacy-match-row">
-                                <div>
-                                  <div className="legacy-summary-path">{entry.legacyObjectName}</div>
-                                  <div className="legacy-match-subtle">{entry.sourceFile}</div>
-                                </div>
-                                <div>
-                                  {entry.matchedObject
-                                    ? `${entry.matchedObject.source}:${entry.matchedObject.name}`
-                                    : '—'}
-                                </div>
-                                <div>
-                                  <span className="legacy-match-pill">
-                                    {entry.matchMethod || 'unknown'}
-                                  </span>
-                                </div>
-                                <div>{entry.matchScore ?? '—'}</div>
-                                <div>{entry.diffs?.length || 0}</div>
-                                <div className="legacy-match-actions">
-                                  <button
-                                    type="button"
-                                    className="ghost-button"
-                                    onClick={() =>
-                                      setExpandedMatches((prev) => ({
-                                        ...prev,
-                                        [entry.legacyObjectId]: !isExpanded,
-                                      }))
-                                    }
-                                  >
-                                    {isExpanded ? 'Hide' : 'Show'}
-                                  </button>
-                                  {entry?.matchedObject?.path && (
-                                    <button
-                                      type="button"
-                                      className="ghost-button"
-                                      onClick={() => openMatchFile(entry)}
-                                    >
-                                      Open file
-                                    </button>
-                                  )}
-                                </div>
-                              </div>
-                              {isExpanded && (
-                                <div className="legacy-match-details">
-                                  <div className="legacy-match-detail-row">
-                                    <span className="legacy-match-label">Matched path</span>
-                                    <span className="legacy-match-path">
-                                      {entry?.matchedObject?.path || '—'}
-                                    </span>
-                                  </div>
-                                  {Array.isArray(entry?.diffs) && entry.diffs.length > 0 ? (
-                                    <div className="legacy-match-diffs">
-                                      {entry.diffs.map((diff: any, index: number) => (
-                                        <div key={`${entry.legacyObjectId}-diff-${index}`} className="legacy-match-diff">
-                                          <span className="legacy-match-field">{diff.field}</span>
-                                          <span className="legacy-match-value">
-                                            Legacy: {diff.legacyValue ?? '—'}
-                                          </span>
-                                          <span className="legacy-match-value">
-                                            Existing: {diff.existingValue ?? '—'}
-                                          </span>
-                                        </div>
-                                      ))}
-                                    </div>
-                                  ) : (
-                                    <div className="legacy-report-muted">No field diffs for this match.</div>
-                                  )}
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                      </>
-                    )}
-                  </div>
+                  <LegacyMatchDiffsPanel
+                    panelRef={matchPanelRef}
+                    expanded={sectionVisibility.matchDiffs}
+                    onToggleExpanded={() =>
+                      setSectionVisibility((prev) => ({
+                        ...prev,
+                        matchDiffs: !prev.matchDiffs,
+                      }))
+                    }
+                    showAllMatches={showAllMatches}
+                    onToggleShowAllMatches={() => setShowAllMatches((prev) => !prev)}
+                    filteredMatchDiffs={filteredMatchDiffs}
+                    visibleMatches={visibleMatches}
+                    matchStats={matchStats}
+                    matchOpenError={matchOpenError}
+                    matchSourceFilter={matchSourceFilter}
+                    onMatchSourceFilter={setMatchSourceFilter}
+                    matchMethodFilter={matchMethodFilter}
+                    onMatchMethodFilter={setMatchMethodFilter}
+                    matchOnlyDiffs={matchOnlyDiffs}
+                    onToggleMatchOnlyDiffs={() => setMatchOnlyDiffs((prev) => !prev)}
+                    matchMinScore={matchMinScore}
+                    onMatchMinScore={setMatchMinScore}
+                    matchSearch={matchSearch}
+                    onMatchSearch={setMatchSearch}
+                    expandedMatches={expandedMatches}
+                    onToggleMatchRow={(legacyObjectId: string) =>
+                      setExpandedMatches((prev) => ({
+                        ...prev,
+                        [legacyObjectId]: !prev[legacyObjectId],
+                      }))
+                    }
+                    onOpenMatchFile={openMatchFile}
+                  />
                 </>
               ) : (
                 <div className="legacy-report-line legacy-report-muted">
