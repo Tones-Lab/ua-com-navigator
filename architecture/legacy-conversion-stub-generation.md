@@ -237,6 +237,58 @@ Include entire population (score-ranked all stubs):
 
 - `npm run legacy:confidence-calibrate -- --input tmp/legacy-analysis/nce/legacy-processor-stubs.json --output-dir tmp/legacy-analysis/nce --format both --max-items 50 --min-level high`
 
+## Confidence drift comparison (new)
+
+To track intelligence evolution across runs, compare two calibration outputs (before vs after):
+
+- `npm run legacy:confidence-compare -- --before <before-calibration.json> --after <after-calibration.json> --output-dir <dir> --format both --max-items 20`
+
+Outputs:
+
+- `legacy-confidence-drift.json`
+- `legacy-confidence-drift.txt`
+
+What it compares:
+
+1. Selection policy changes
+- min-level / strict / fallback usage between runs.
+
+2. Aggregate confidence drift
+- deltas for high/medium/low counts.
+- triage/selected candidate count deltas.
+
+3. Root-cause drift
+- per-cause `before -> after` counts + delta:
+  - `manual-expression-shape`
+  - `unresolved-variable-mappings`
+  - `regex-branch-complexity`
+  - `heuristic-alias-mapping`
+  - `missing-confidence-metadata`
+  - `general-medium-confidence`
+
+4. Risk-set membership changes
+- stubs newly appearing in after run (`added`)
+- stubs no longer present (`removed`)
+- stubs present in both (`common`)
+
+5. Per-stub score/level drift (for common entries)
+- score improvements/regressions/unchanged
+- confidence level upgrades/downgrades/unchanged
+- top regressions and top improvements by score delta
+
+Stub identity key for drift matching:
+
+- `objectName|sourceFile|targetField`
+
+Operational recommendation:
+
+1. Run conversion + calibration for baseline dataset.
+2. Add new rules/examples and re-run conversion + calibration.
+3. Run confidence compare and review:
+   - top regressions first
+   - then root-cause deltas with largest magnitude
+4. Feed findings back into parser/lineage heuristics.
+
 ## Safety constraints
 
 - Stub generation never mutates source logic.
